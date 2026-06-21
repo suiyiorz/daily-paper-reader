@@ -177,10 +177,8 @@ function testConferenceDefaultYearOnlySelects2025() {
   __setRunSelectionState({ conferencePairs: [] });
   __initializeConferenceChoices();
   const pairs = __getSelectedConferenceYearPairs().sort();
-  assert.deepEqual(pairs, [
-    'AAAI:2025', 'ACL:2025', 'CVPR:2025', 'EMNLP:2025',
-    'ICLR:2025', 'ICML:2025', 'IJCAI:2025', 'NeurIPS:2025',
-  ]);
+  // 不再默认勾选，由用户手动选择
+  assert.deepEqual(pairs, []);
 }
 
 function testQuickRunUnsavedMessageClearsAfterSave() {
