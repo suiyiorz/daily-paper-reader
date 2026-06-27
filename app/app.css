@@ -6956,6 +6956,10 @@ body.dpr-sidebar-v2 .content {
 .dpr-sidebar-group {
   margin: 6px 0 10px;
 }
+.dpr-sidebar-panel {
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
+}
 .dpr-sidebar-group-title {
   margin: 0;
   padding: 4px 14px;
@@ -6972,12 +6976,143 @@ body.dpr-sidebar-v2 .content {
   display: block !important;
 }
 
+.dpr-sidebar-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: #334155;
+  text-align: left;
+  transition: background .12s ease;
+}
+.dpr-sidebar-panel-header:hover {
+  background: #f1f5f9;
+}
+.dpr-sidebar-panel-title {
+  flex: 1;
+  font-weight: 650;
+  font-size: 12.5px;
+}
+.dpr-sidebar-panel.is-expanded > .dpr-sidebar-panel-header .dpr-sidebar-day-arrow {
+  transform: rotate(90deg);
+}
+.dpr-sidebar-panel-content {
+  display: none;
+}
+.dpr-sidebar-panel.is-expanded > .dpr-sidebar-panel-content {
+  display: block;
+}
+
+.dpr-sidebar-axis-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 6px 14px;
+}
+.dpr-sidebar-axis-toggle {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+.dpr-sidebar-axis-toggle:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+.dpr-sidebar-axis-tabs {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+.dpr-sidebar-axis-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+.dpr-sidebar-axis-tabs::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.dpr-sidebar-axis-tab {
+  flex: 0 0 auto;
+  max-width: 132px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #475569;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.dpr-sidebar-axis-tab.is-active {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #3730a3;
+  font-weight: 650;
+}
+.dpr-sidebar-axis-tab-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dpr-sidebar-axis-tab-count {
+  color: #94a3b8;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+.dpr-sidebar-axis-content {
+  padding-bottom: 2px;
+}
+.dpr-sidebar-axis-section {
+  margin: 0;
+}
+.dpr-sidebar-axis-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px 4px 28px;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+.dpr-sidebar-axis-section-label span {
+  margin-left: auto;
+  color: #94a3b8;
+  font-weight: 500;
+}
+.dpr-sidebar-axis-papers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* 日期 / 会议 折叠头 */
 .dpr-sidebar-day,
 .dpr-sidebar-conf,
 .dpr-sidebar-conf-topic {
   margin: 0;
   display: list-item !important;
+}
+.dpr-sidebar-axis-section {
+  display: block !important;
 }
 .dpr-sidebar-day-header,
 .dpr-sidebar-conf-header {
@@ -7219,14 +7354,16 @@ body.dpr-sidebar-v2 .content {
   display: none;
 }
 #dpr-sidebar-v2.is-filter-unread .dpr-sidebar-day.is-all-read,
-#dpr-sidebar-v2.is-filter-unread .dpr-sidebar-conf.is-all-read {
+#dpr-sidebar-v2.is-filter-unread .dpr-sidebar-conf.is-all-read,
+#dpr-sidebar-v2.is-filter-unread .dpr-sidebar-axis-section.is-all-read {
   display: none;
 }
 .dpr-sidebar-paper[data-search-hidden] {
   display: none !important;
 }
 .dpr-sidebar-day[data-search-hidden],
-.dpr-sidebar-conf[data-search-hidden] {
+.dpr-sidebar-conf[data-search-hidden],
+.dpr-sidebar-axis-section[data-search-hidden] {
   display: none !important;
 }
 /* 搜索时强制展开所有可见组 */
