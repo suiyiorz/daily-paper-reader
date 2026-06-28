@@ -327,6 +327,8 @@ function testSidebarFooterControlsReplaceRefresh() {
   assert.ok(/--dpr-sidebar-collapsed-width:\s*96px/i.test(bodyRule));
   const footerRule = cssRule(css, '.dpr-sidebar-footer');
   assert.ok(/display:\s*flex/i.test(footerRule));
+  assert.ok(/justify-content:\s*center/i.test(footerRule));
+  assert.ok(/box-sizing:\s*border-box/i.test(footerRule));
   assert.ok(/gap:\s*8px/i.test(footerRule));
   assert.ok(/margin-top:\s*auto/i.test(footerRule));
   assert.ok(/background:\s*var\(--dpr-sidebar-surface\)/i.test(footerRule));
@@ -334,6 +336,8 @@ function testSidebarFooterControlsReplaceRefresh() {
   const footerBtnRule = cssRule(css, '.dpr-sidebar-footer-btn');
   assert.ok(/width:\s*34px/i.test(footerBtnRule));
   assert.ok(/height:\s*34px/i.test(footerBtnRule));
+  assert.ok(/flex:\s*0 0 34px/i.test(footerBtnRule));
+  assert.ok(/box-sizing:\s*border-box/i.test(footerBtnRule));
   assert.ok(/display:\s*inline-flex/i.test(footerBtnRule));
 
   const collapsedRootRule = cssRule(css, '#dpr-sidebar-v2.is-collapsed');
@@ -456,7 +460,11 @@ function testSidebarPaperVisualStateCssContract() {
   assert.ok(!css.includes('dpr-sidebar-unread-dot'));
   assert.ok(!css.includes('dpr-sidebar-axis-tab-dot'));
   assert.ok(!css.includes('dpr-sidebar-axis-section-dot'));
-  assert.ok(/#dpr-sidebar-v2\s+\.dpr-sidebar-paper\s*{[^}]*position:\s*relative\s*!important/i.test(css));
+  const scopedPaperRule = cssRule(css, '#dpr-sidebar-v2 .dpr-sidebar-paper');
+  assert.ok(/position:\s*relative\s*!important/i.test(scopedPaperRule));
+  assert.ok(/display:\s*block\s*!important/i.test(scopedPaperRule));
+  assert.ok(/margin:\s*2px 8px\s*!important/i.test(scopedPaperRule));
+  assert.ok(/list-style:\s*none/i.test(scopedPaperRule));
   assert.ok(/\.dpr-sidebar-paper\[data-read="0"\]::after\s*{[^}]*content:\s*""/i.test(css));
   assert.ok(/\.dpr-sidebar-paper\[data-read="0"\]::after\s*{[^}]*background:\s*#ef4444/i.test(css));
   assert.ok(/\.dpr-sidebar-paper\[data-read="0"\]::after\s*{[^}]*right:\s*6px/i.test(css));
@@ -523,6 +531,7 @@ function testSidebarStickyHierarchyCssContract() {
   const css = fs.readFileSync('app/app.css', 'utf8');
   const rootRule = cssRule(css, '#dpr-sidebar-v2');
   assert.ok(/--dpr-sidebar-surface:\s*#ffffff/i.test(rootRule));
+  assert.ok(/--dpr-sidebar-paper-action-reserve:\s*48px/i.test(rootRule));
   assert.ok(/--dpr-sidebar-sticky-mask-bg:\s*var\(--dpr-sidebar-surface\)/i.test(rootRule));
   assert.ok(/--dpr-sidebar-sticky-mask-bleed:\s*8px/i.test(rootRule));
   assert.ok(/--dpr-sidebar-sticky-panel-top:\s*0px/i.test(rootRule));

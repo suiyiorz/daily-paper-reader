@@ -6771,7 +6771,7 @@ body.dpr-sidebar-v2.dpr-sidebar-v2-collapsed .content {
   --dpr-sidebar-sticky-section-top: 70px;
   --dpr-sidebar-sticky-mask-bg: var(--dpr-sidebar-surface);
   --dpr-sidebar-sticky-mask-bleed: 8px;
-  --dpr-sidebar-paper-action-reserve: calc(52px + 2ch);
+  --dpr-sidebar-paper-action-reserve: 48px;
   position: fixed;
   inset: 0 auto 0 0;
   width: var(--dpr-sidebar-width, 280px);
@@ -7291,6 +7291,9 @@ body.dpr-sidebar-resizing {
 }
 #dpr-sidebar-v2 .dpr-sidebar-paper {
   position: relative !important;
+  display: block !important;
+  margin: 2px 8px !important;
+  list-style: none;
 }
 .dpr-sidebar-paper.dpr-sidebar-paper-deep {
   border-left-color: #93c5fd;
@@ -7543,20 +7546,24 @@ body.dpr-sidebar-resizing {
 .dpr-sidebar-footer {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-top: auto;
   padding: 8px 10px;
   border-top: 1px solid #f1f5f9;
   background: var(--dpr-sidebar-surface);
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 .dpr-sidebar-footer-btn {
   width: 34px;
   height: 34px;
+  flex: 0 0 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  box-sizing: border-box;
   font-size: 16px;
   line-height: 1;
   background: #ffffff;
