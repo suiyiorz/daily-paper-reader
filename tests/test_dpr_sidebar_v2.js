@@ -867,6 +867,44 @@ function testRenderBodyPutsConferenceAboveDaily() {
   assert.ok(html.includes('data-axis-mode="date"'));
 }
 
+function testTopLevelPanelsDefaultCollapsed() {
+  const sidebar = loadSidebarForTest('#/conference/neurips-2024/paper-c');
+  const tools = sidebar.__test;
+  const model = tools.parseSidebar(sampleSidebar);
+  const html = tools.renderBodyHtml(model, {});
+
+  assert.ok(/data-panel="conference"/.test(html));
+  assert.ok(/data-panel="daily"/.test(html));
+  assert.ok(!/dpr-sidebar-group-conference[^"]*is-expanded/.test(html));
+  assert.ok(!/dpr-sidebar-group-daily[^"]*is-expanded/.test(html));
+  assert.ok(/data-panel-toggle="conference" aria-expanded="false"/.test(html));
+  assert.ok(/data-panel-toggle="daily" aria-expanded="false"/.test(html));
+}
+
+function testActivePaperDoesNotForceOpenTopLevelPanel() {
+  const js = fs.readFileSync('app/dpr-sidebar.js', 'utf8');
+  const start = js.indexOf('function syncAxisStateToHref(href)');
+  const end = js.indexOf('function buildDailyCalendarView', start);
+  assert.ok(start > 0 && end > start, 'syncAxisStateToHref should be present');
+  const block = js.slice(start, end);
+
+  assert.ok(!block.includes('state.expandedGroups.daily = true'));
+  assert.ok(!block.includes('state.expandedGroups.conference = true'));
+}
+
+function testPanelHeaderClickOnlyChangesSidebarViewState() {
+  const js = fs.readFileSync('app/dpr-sidebar.js', 'utf8');
+  const start = js.indexOf("var panelHeader = e.target.closest('.dpr-sidebar-panel-header');");
+  const end = js.indexOf("var axisToggle = e.target.closest('.dpr-sidebar-axis-toggle');", start);
+  assert.ok(start > 0 && end > start, 'panel header click handler should be present');
+  const block = js.slice(start, end);
+
+  assert.ok(block.includes('state.expandedGroups[panel] = !state.expandedGroups[panel];'));
+  assert.ok(block.includes('rerenderSidebarBody(rerenderOptionsForPanelToggle(panel));'));
+  assert.ok(!block.includes('state.expandedGroups.daily ='));
+  assert.ok(!block.includes('state.expandedGroups.conference ='));
+}
+
 function testAxisSectionsAreExpandable() {
   const sidebar = loadSidebarForTest('#/conference/neurips-2024/paper-c');
   const tools = sidebar.__test;
@@ -1218,6 +1256,19 @@ function testAxisControlClicksKeepSidebarScrollInPlace() {
   assert.ok(!block.includes('rerenderOptionsForAxisInteraction(tabGroup)'));
 }
 
+function testAxisToggleCollapsesOnlyItsOwnPanel() {
+  const js = fs.readFileSync('app/dpr-sidebar.js', 'utf8');
+  const start = js.indexOf("var axisToggle = e.target.closest('.dpr-sidebar-axis-toggle');");
+  const end = js.indexOf("var calendarNav = e.target.closest('.dpr-sidebar-calendar-nav');", start);
+  assert.ok(start > 0 && end > start, 'axis toggle click handler should be present');
+  const block = js.slice(start, end);
+
+  assert.ok(block.includes('state.expandedGroups[axisGroup] = false;'));
+  assert.ok(block.includes('persistCollapse();'));
+  assert.ok(!block.includes('state.expandedGroups.daily = false;'));
+  assert.ok(!block.includes('state.expandedGroups.conference = false;'));
+}
+
 function testReadStatusNormalization() {
   const sidebar = loadSidebarForTest('#/202606/24/paper-a');
   const tools = sidebar.__test;
@@ -1250,6 +1301,9 @@ testEvidenceCssIsPersistent();
 testSidebarPaperVisualStateCssContract();
 testSidebarStickyHierarchyCssContract();
 testRenderBodyPutsConferenceAboveDaily();
+testTopLevelPanelsDefaultCollapsed();
+testActivePaperDoesNotForceOpenTopLevelPanel();
+testPanelHeaderClickOnlyChangesSidebarViewState();
 testAxisSectionsAreExpandable();
 testPanelCountsUseFullModel();
 testSearchResultsComeFromFullModel();
@@ -1262,6 +1316,7 @@ testUnreadClickPendingHrefKeepsClickedPaperVisibleBeforeHashUpdates();
 testPaperLinkClickStoresPendingHrefBeforeRouteChange();
 testStatusClickKeepsPaperRowInPlace();
 testAxisControlClicksKeepSidebarScrollInPlace();
+testAxisToggleCollapsesOnlyItsOwnPanel();
 testReadStatusNormalization();
 
 console.log('dpr sidebar v2 tests passed');

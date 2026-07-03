@@ -6,7 +6,7 @@
  *
  * UI：
  *   - 顶部工具条：[全部 / 未读] segmented control + 搜索框（debounce 200ms）
- *   - 主体：日报（按日期分组，默认只展开当前日）+ 会议（默认全部折叠）
+ *   - 主体：会议论文 + 日报两个一级面板默认收起，用户分别展开
  *   - 阅读状态接入 window.DPRReadStateSync（Supabase）或 localStorage 回退
  *   - hashchange → syncActive() 高亮 + 滚动居中
  */
@@ -19,7 +19,7 @@
   var REFRESH_AFTER_HIDDEN_MS = 5 * 60 * 1000;
   var SEARCH_DEBOUNCE_MS = 200;
   var FILTER_KEY = 'dpr_sidebar_filter_v2';
-  var COLLAPSE_KEY = 'dpr_sidebar_collapse_v2';
+  var COLLAPSE_KEY = 'dpr_sidebar_collapse_v3';
   var WIDTH_KEY = 'dpr_sidebar_width_v2';
   var DEFAULT_SIDEBAR_WIDTH = 280;
   var MIN_SIDEBAR_WIDTH = 240;
@@ -306,6 +306,13 @@
     return {
       syncActive: false,
       scrollPanel: panelKey || '',
+    };
+  }
+  function rerenderOptionsForPanelToggle(panelKey) {
+    return {
+      syncActive: false,
+      scrollPanel: panelKey || '',
+      dispatchUpdated: false,
     };
   }
   function rerenderOptionsForAxisControlClick() {
@@ -951,7 +958,6 @@
   function syncAxisStateToHref(href) {
     var daily = findDailyRecordByHref(state.model, href);
     if (daily) {
-      state.expandedGroups.daily = true;
       state.activeDailyDate = daily.dateKey;
       state.activeDailyMonth = monthKeyFromDateKey(daily.dateKey) || state.activeDailyMonth;
       var dailyTags = paperTagLabels(daily.paper);
@@ -960,7 +966,6 @@
     }
     var conf = findConferenceRecordByHref(state.model, href);
     if (conf) {
-      state.expandedGroups.conference = true;
       state.activeConference = conf.confKey;
       var confTags = paperTagLabels(conf.paper);
       if (confTags.indexOf(state.activeConferenceTag) === -1) state.activeConferenceTag = confTags[0] || '';
@@ -1171,6 +1176,16 @@
     if (Array.isArray(value)) return new Set(value);
     return new Set();
   }
+  function defaultExpandedGroups() {
+    return { conference: false, daily: false };
+  }
+  function normalizeExpandedGroups(groups) {
+    if (!groups || typeof groups !== 'object') return defaultExpandedGroups();
+    return {
+      conference: groups.conference === true,
+      daily: groups.daily === true,
+    };
+  }
 
   // ---------- 状态 ----------
   var state = {
@@ -1184,7 +1199,7 @@
     unreadResultPaperIds: null,
     pendingPaperHref: '',
     lastFetchAt: 0,
-    expandedGroups: { conference: true, daily: true },
+    expandedGroups: defaultExpandedGroups(),
     collapsedAxisSections: new Set(),
     dailyViewMode: 'date',
     dailyCalendarPlacement: 'top',
@@ -1219,10 +1234,7 @@
       var obj = JSON.parse(raw);
       if (!obj || typeof obj !== 'object') return null;
       return {
-        expandedGroups: obj.groups && typeof obj.groups === 'object' ? {
-          conference: obj.groups.conference !== false,
-          daily: obj.groups.daily !== false,
-        } : null,
+        expandedGroups: normalizeExpandedGroups(obj.groups),
         collapsedAxisSections: Array.isArray(obj.sections) ? new Set(obj.sections) : new Set(),
       };
     } catch (e) {
@@ -1232,7 +1244,7 @@
   function persistCollapse() {
     try {
       var payload = {
-        groups: state.expandedGroups || { conference: true, daily: true },
+        groups: state.expandedGroups || defaultExpandedGroups(),
         sections: state.collapsedAxisSections ? Array.prototype.slice.call(state.collapsedAxisSections) : [],
       };
       window.localStorage && window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify(payload));
@@ -1382,7 +1394,7 @@
   function resolveViewState(viewState) {
     var vs = viewState || state;
     return {
-      expandedGroups: vs.expandedGroups || { conference: true, daily: true },
+      expandedGroups: normalizeExpandedGroups(vs.expandedGroups),
       dailyViewMode: vs.dailyViewMode === 'tag' ? 'tag' : 'date',
       dailyCalendarPlacement: vs.dailyCalendarPlacement === 'bottom' ? 'bottom' : 'top',
       conferenceViewMode: vs.conferenceViewMode === 'tag' ? 'tag' : 'conf',
@@ -2095,10 +2107,10 @@
       var panelHeader = e.target.closest('.dpr-sidebar-panel-header');
       if (panelHeader) {
         var panel = panelHeader.getAttribute('data-panel-toggle');
-        if (!state.expandedGroups) state.expandedGroups = { conference: true, daily: true };
+        if (!state.expandedGroups) state.expandedGroups = defaultExpandedGroups();
         state.expandedGroups[panel] = !state.expandedGroups[panel];
         persistCollapse();
-        rerenderSidebarBody(rerenderOptionsForAxisInteraction(panel));
+        rerenderSidebarBody(rerenderOptionsForPanelToggle(panel));
         return;
       }
       var axisToggle = e.target.closest('.dpr-sidebar-axis-toggle');
@@ -2110,6 +2122,9 @@
         } else if (axisGroup === 'conference') {
           state.conferenceViewMode = state.conferenceViewMode === 'tag' ? 'conf' : 'tag';
         }
+        if (!state.expandedGroups) state.expandedGroups = defaultExpandedGroups();
+        state.expandedGroups[axisGroup] = false;
+        persistCollapse();
         rerenderSidebarBody(rerenderOptionsForAxisControlClick());
         return;
       }
@@ -2266,13 +2281,13 @@
 
   // ---------- 启动 ----------
   function determineInitialExpansion() {
-    // 默认展开两个一级面板；若用户在本地保留过折叠状态则尊重它
+    // 默认收起两个一级面板；用户展开/收起后再尊重本地状态。
     var persisted = loadPersistedCollapse();
     if (persisted) {
-      state.expandedGroups = persisted.expandedGroups || { conference: true, daily: true };
+      state.expandedGroups = persisted.expandedGroups || defaultExpandedGroups();
       state.collapsedAxisSections = persisted.collapsedAxisSections || new Set();
     } else {
-      state.expandedGroups = { conference: true, daily: true };
+      state.expandedGroups = defaultExpandedGroups();
       state.collapsedAxisSections = new Set();
     }
     var href = findActivePaper();
@@ -2384,6 +2399,7 @@
         clampSidebarWidth: clampSidebarWidth,
         rerenderOptionsForReadStateEvent: rerenderOptionsForReadStateEvent,
         rerenderOptionsForAxisInteraction: rerenderOptionsForAxisInteraction,
+        rerenderOptionsForPanelToggle: rerenderOptionsForPanelToggle,
         rerenderOptionsForAxisControlClick: rerenderOptionsForAxisControlClick,
         rerenderOptionsForStatusClick: rerenderOptionsForStatusClick,
         syncActiveOptionsForInitialLoad: syncActiveOptionsForInitialLoad,
