@@ -360,13 +360,15 @@ function testDailyCalendarTagViewFiltersActiveDateByKeyword() {
   assert.equal(tagView.activeDateKey, '20260624');
   assert.equal(tagView.activeKey, 'rl');
   assert.deepEqual(tagView.groups[0].papers.map((paper) => paper.title), ['Paper A']);
+  assert.equal(tagView.calendar.days.find((day) => day.dateKey === '20260624').totalCount, 1);
+  assert.equal(tagView.calendar.days.find((day) => day.dateKey === '20260623').totalCount, 1);
 
   const fallbackView = tools.buildDailyCalendarTagView(model, '20260624', 'missing-tag', {}, '202606');
   assert.equal(fallbackView.activeKey, '__all__');
   assert.deepEqual(fallbackView.groups[0].papers.map((paper) => paper.title), ['Paper A', 'Paper B']);
 }
 
-function testDailyCalendarPlacementToggleSwapsCalendarAndTags() {
+function testDailyCalendarPlacementToggleKeepsControlRowFixedAboveLayers() {
   const sidebar = loadSidebarForTest('#/202606/24/paper-a');
   const tools = sidebar.__test;
   const model = tools.parseSidebar(sampleSidebar);
@@ -384,8 +386,19 @@ function testDailyCalendarPlacementToggleSwapsCalendarAndTags() {
     activeDailyDate: '20260624',
   });
 
-  assert.ok(topHtml.indexOf('class="dpr-sidebar-calendar') < topHtml.indexOf('data-axis-tab="daily"'));
-  assert.ok(bottomHtml.indexOf('data-axis-tab="daily"') < bottomHtml.indexOf('class="dpr-sidebar-calendar'));
+  const topToggleIndex = topHtml.indexOf('data-axis-toggle="daily"');
+  const topCalendarIndex = topHtml.indexOf('class="dpr-sidebar-calendar');
+  const topTabsIndex = topHtml.indexOf('data-axis-tab="daily"');
+  const bottomToggleIndex = bottomHtml.indexOf('data-axis-toggle="daily"');
+  const bottomCalendarIndex = bottomHtml.indexOf('class="dpr-sidebar-calendar');
+  const bottomTabsIndex = bottomHtml.indexOf('data-axis-tab="daily"');
+
+  assert.ok(topToggleIndex < topCalendarIndex);
+  assert.ok(topToggleIndex < topTabsIndex);
+  assert.ok(bottomToggleIndex < bottomCalendarIndex);
+  assert.ok(bottomToggleIndex < bottomTabsIndex);
+  assert.ok(topCalendarIndex < topTabsIndex);
+  assert.ok(bottomTabsIndex < bottomCalendarIndex);
   assert.ok(topHtml.includes('data-calendar-date="20260624"'));
   assert.ok(bottomHtml.includes('data-calendar-date="20260624"'));
   assert.ok(topHtml.includes('title="标签上置"'));
@@ -1327,7 +1340,7 @@ testHyphenatedConferenceMarkerParsing();
 testAxisTabsRenderUnreadCounts();
 testDailyCalendarViewUsesMonthGridAndActiveDateOnly();
 testDailyCalendarTagViewFiltersActiveDateByKeyword();
-testDailyCalendarPlacementToggleSwapsCalendarAndTags();
+testDailyCalendarPlacementToggleKeepsControlRowFixedAboveLayers();
 testPaperEvidenceAndActionButtonsRender();
 testPaperMetaOrderKeepsEvidenceBetweenTitleAndStars();
 testQuickLinksCenterTextAndDetachIcon();

@@ -1106,6 +1106,30 @@
     return { activeKey: active, tabs: tabs, groups: order.map(function (key) { return byDate[key]; }) };
   }
 
+  function filterDailyModelByTag(model, tagKey) {
+    if (!tagKey || tagKey === '__all__') return model || { home: null, tutorial: null, daily: [], conferences: [] };
+    var source = model || {};
+    var filtered = {
+      home: source.home || null,
+      tutorial: source.tutorial || null,
+      daily: [],
+      conferences: source.conferences || [],
+    };
+    (source.daily || []).forEach(function (day) {
+      var papers = (day.papers || []).filter(function (paper) {
+        return paperTagLabels(paper).indexOf(tagKey) !== -1;
+      });
+      if (!papers.length) return;
+      var nextDay = {};
+      Object.keys(day || {}).forEach(function (key) {
+        nextDay[key] = day[key];
+      });
+      nextDay.papers = papers;
+      filtered.daily.push(nextDay);
+    });
+    return filtered;
+  }
+
   function buildDailyCalendarTagView(model, activeDateKey, activeTagKey, readMap, activeMonthKey) {
     var map = readMap || {};
     var allKey = '__all__';
@@ -1141,6 +1165,7 @@
       : papers;
     var label = activeDay && (activeDay.dateLabel || formatDateLabel(activeDate)) || formatDateLabel(activeDate);
     if (activeTag && activeTag !== allKey) label += ' / ' + activeTag;
+    var calendarModel = filterDailyModelByTag(model, activeTag);
     return {
       activeKey: activeTag,
       activeDateKey: activeDate,
@@ -1151,7 +1176,7 @@
         papers: filtered,
         unreadCount: countUnreadPapers(filtered, map),
       }] : [],
-      calendar: dateView.calendar,
+      calendar: buildDailyCalendarView(calendarModel, activeDate, activeMonthKey, map),
     };
   }
 
@@ -1707,11 +1732,12 @@
     html.push('  </button>');
     html.push('  <div class="dpr-sidebar-panel-content">');
     if (isDailyNormal) {
+      html.push(renderDailyAxisControl(opts.toggleLabel));
       if (calendarPlacement === 'top') {
         html.push(renderDailyCalendar(opts.view && opts.view.calendar, calendarPlacement));
-        html.push(renderAxisTabs('daily', 'tag', opts.view, opts.toggleLabel));
+        html.push(renderAxisTabs('daily', 'tag', opts.view, opts.toggleLabel, { hideToggle: true, rowClass: 'dpr-sidebar-daily-tabs-row' }));
       } else {
-        html.push(renderAxisTabs('daily', 'tag', opts.view, opts.toggleLabel));
+        html.push(renderAxisTabs('daily', 'tag', opts.view, opts.toggleLabel, { hideToggle: true, rowClass: 'dpr-sidebar-daily-tabs-row' }));
         html.push(renderDailyCalendar(opts.view && opts.view.calendar, calendarPlacement));
       }
     } else {
@@ -1723,14 +1749,27 @@
     return html.join('');
   }
 
-  function renderAxisTabs(group, mode, view, toggleLabel) {
+  function renderDailyAxisControl(toggleLabel) {
+    return [
+      '<div class="dpr-sidebar-axis-row dpr-sidebar-daily-control-row" data-axis-group="daily" data-axis-mode="layout">',
+      '  <button type="button" class="dpr-sidebar-axis-toggle" data-axis-toggle="daily" title="' + safeAttr(toggleLabel) + '">⇄</button>',
+      '  <div class="dpr-sidebar-daily-control-spacer" aria-hidden="true"></div>',
+      '</div>',
+    ].join('');
+  }
+
+  function renderAxisTabs(group, mode, view, toggleLabel, options) {
+    var opts = options || {};
     var html = [];
     var resultMode = !!(view && view.resultMode);
     var axisMode = resultMode ? 'results' : mode;
     var disabled = resultMode ? ' disabled aria-disabled="true"' : '';
     var rowClass = resultMode ? ' dpr-sidebar-axis-row-results' : '';
+    if (opts.rowClass) rowClass += ' ' + opts.rowClass;
     html.push('<div class="dpr-sidebar-axis-row' + rowClass + '" data-axis-group="' + safeAttr(group) + '" data-axis-mode="' + safeAttr(axisMode) + '">');
-    html.push('  <button type="button" class="dpr-sidebar-axis-toggle" data-axis-toggle="' + safeAttr(group) + '" title="' + safeAttr(toggleLabel) + '"' + disabled + '>⇄</button>');
+    if (!opts.hideToggle) {
+      html.push('  <button type="button" class="dpr-sidebar-axis-toggle" data-axis-toggle="' + safeAttr(group) + '" title="' + safeAttr(toggleLabel) + '"' + disabled + '>⇄</button>');
+    }
     html.push('  <div class="dpr-sidebar-axis-tabs" role="tablist">');
     (view.tabs || []).forEach(function (tab) {
       var active = tab.key === view.activeKey ? ' is-active' : '';
