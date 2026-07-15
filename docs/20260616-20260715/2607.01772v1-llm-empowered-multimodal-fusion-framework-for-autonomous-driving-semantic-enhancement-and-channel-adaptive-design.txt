@@ -1,0 +1,316 @@
+Title: LLM-Empowered Multimodal Fusion Framework for Autonomous Driving: Semantic Enhancement and Channel-Adaptive Design
+
+URL Source: https://arxiv.org/pdf/2607.01772v1
+
+Published Time: Fri, 03 Jul 2026 00:47:10 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# LLM-Empowered Multimodal Fusion Framework for Autonomous Driving: Semantic Enhancement and Channel-Adaptive Design 
+
+Wen Wang 1,2,Yaping Sun 1,3,Yejun He 2, Hao Chen 1,Zhiyong Chen 4,Xiaodong Xu 5,1,Nan Ma 5,1,Shuguang Cui 3 
+
+> 1
+
+Department of Broadband Communication, Pengcheng Laboratory, Shenzhen, China  
+
+> 2
+
+College of Electronic and Information Engineering, Shenzhen University, Shenzhen, China  
+
+> 3
+
+Future Network of Intelligence Institute (FNii), the Chinese University of Hong Kong (Shenzhen), Shenzhen, China  
+
+> 4
+
+Cooperative Medianet Innovation Center, Shanghai Jiao Tong University, Shangha,China  
+
+> 5
+
+Beijing University of Posts and Telecommunications, Beijing, China wangwenstu@outlook.com, sunyp@pcl.ac.cn, heyejun@126.com, chenh03@pcl.ac.cn, zhiyongchen@sjtu.edu.cn, xuxd@pcl.ac.cn, manan@bupt.edu.cn, shuguangcui@cuhk.edu.cn 
+
+Abstract —Vision–radar fusion is central to robust autonomous driving, combining dense visual semantics with precise range and velocity measurements from radar. However, real-world fusion quality is fundamentally challenged by dynamically vary-ing input quality, stemming from occlusion, adverse weather, and channel noise. To address this, we re-frame the problem from static data fusion to channel-aware semantic reasoning and propose a Large Language Model-centric Semantic-layer Channel-aware Integrated Perception (LM-SCIP) framework. It places a Large Language Model (LLM) as a central reasoning core to fuse a local visual stream with a quality-varying external radar stream used to cover perception-blind spots. Concretely, LM-SCIP couples a hierarchical radar–vision encoder with a Channel-Adaptive Semantic Module (CASM) that maps link indicators into a “Channel Prompt” to dynamically gate external radar features. A parameter-efficient, LoRA-tuned LLM, in conjunction with a heterogeneous Mixture-of-Experts (H-MoE), then arbitrates between local visual cues and the channel-conditioned radar context. Finally, a decoupled multi-task de-coder outputs localization, trajectory forecasting, and image reconstruction. Experiments on nuScenes and VIRAT validate our approach. On nuScenes, under a controlled toggle of radar input, LM-SCIP reduces localization RMSE by 40.0% versus a vision-only baseline. On VIRAT, the model attains a 0.214m localization RMSE and 0.179m minFDE (k=1). These results reveal that the proposed LM-SCIP enables a robust vision-dominant fallback at low SNR and synergistic fusion at high SNR. 
+
+Index Terms —Multimodal Perception, Channel-Aware Se-mantic Reasoning, Mixture-of-Experts, Large Language Model, Multi-Task Learning. 
+
+I. I NTRODUCTION 
+
+# MULTIMODAL perception that fuses cameras and radar—often via Bird’s-Eye View (BEV) representa-
+
+This work was supported by the National Natural Science Foundation of China under Grant Nos. 62301471 and U2541208, the National Key Re-search and Development Program of China under Grant 2023YFE0107900, the Key Program of Shenzhen Natural Science Foundation under Grant JCYJ20241202124219023, and the Program of Shenzhen Key Laboratory Evaluation under Grant SYSPG20241211173908022. 
+
+tions [1]—has become a cornerstone of robust autonomous driving. These systems leverage the complementary strengths of the two modalities: cameras offer rich semantics and tex-ture, whereas radar provides precise range, velocity measure-ments and robustness in adverse weather [2]. The prevailing paradigm is deep, feature-level fusion—in which features from separate backbones are merged mid-stream—and BEV-transformer families have demonstrated state-of-the-art accu-racy [3]–[5]. 
+
+From single-vehicle to cooperative perception. A funda-mental limitation of single-vehicle systems is their suscep-tibility to occlusions. In complex urban scenes, static struc-tures like buildings create blind regions that onboard sensors cannot fully observe. Cooperative perception has emerged as a powerful solution, extending the effective field of view by sharing sensing evidence among agents via V2X links (e.g., vehicle-to-infrastructure, V2I; vehicle-to-vehicle, V2V). However, this paradigm introduces a critical challenge beyond classical fusion: input quality becomes time-varying. External data streams conveyed over wireless links can degrade due to fluctuations in signal-to-noise ratio (SNR), interference, or packet loss. Most contemporary fusion stacks are funda-mentally context-agnostic; designed under the assumption of reliable inputs, they employ fixed fusion policies and thus exhibit brittle behavior under real-world V2X dynamics [6]. 
+
+Our view. We elevate fusion from the feature level to the 
+
+semantic layer and cast cooperative perception as channel-aware semantic reasoning . We propose LM-SCIP , an LLM-centric framework. LM-SCIP injects instantaneous link qual-ity into the perception loop: a CASM maps physical link indicators (e.g., SNR, modulation index) into a compact 
+
+Channel Prompt that conditions the in-loop LLM. The LLM then adapts the reliance on external radar versus local vision, producing a unified semantic representation for downstream multi-task perception.  
+
+> arXiv:2607.01772v1 [cs.CV] 2 Jul 2026 Fig. 1. Illustration of the cooperative perception scenario to resolve occlu-sion.
+
+Positioning and distinctions. Our work sits at the inter-section of advanced BEV-style fusion and the burgeoning use of LLMs in autonomy. Traditional radar–vision fusion systems [3], [4] and subsequent refinements [5] achieve strong accuracy under stable inputs, but typically assume high-quality sensor streams and implement fixed fusion policies, lacking explicit mechanisms to adapt to instantaneous quality fluctuations arising in cooperative settings. Recent efforts that incorporate LLMs into autonomy primarily treat them as decoupled, high-level planners operating on pre-processed or textual inputs [7]–[9], which introduces an information bottleneck; end-to-end VLMs (e.g., DriveVLM [10]) miti-gate discretization but remain unimodal. Unified perception– prediction–planning frameworks such as UniAD [11] improve holism, yet they generally do not couple LLM-style reasoning to link quality, and thus lack explicit link-aware adaptation in multimodal fusion [12]. In short, prior art does not di-rectly address the core challenge of cooperative perception: dynamically allocating trust across modalities when externally sourced inputs vary with wireless channel conditions.By con-trast, LM-SCIP treats link quality as a first-class context for perception and performs semantic-layer , link-aware reasoning with an in-loop LLM, enabling real-time trust allocation across modalities under time-varying channels. A parallel line of work in semantic communication for integrated sensing and communication (ISAC), exemplified by SIMAC [13], optimizes over-the-air semantic coding and task-oriented decoders. Our focus is complementary: rather than designing a joint source–channel codec, LM-SCIP targets robust, RSU-centric perception conditioned on the quality of an incoming cooperative link, using link indicators as side information to inform fusion and maintain reliability under time-varying channels. 
+
+Contributions —Our main contributions are: (i) A channel-aware, LLM-centric paradigm for cooperative multimodal perception that performs semantic-layer rea-soning beyond static feature fusion. (ii) CASM for link-conditioned, feature-wise gating via a Channel Prompt, enabling robust performance under varying input quality. (iii) A LoRA-tuned LLM with a heterogeneous mixture of experts (H-MoE) and a decoupled decoder for stable, sample-efficient multi-task learning across localization, forecasting, and reconstruction. 
+
+Empirical glimpse. On nuScenes [14] and VIRAT [15], our approach demonstrates strong fusion gains (e.g., large reductions in localization error versus vision-only), while ablations confirm that removing CASM or H-MoE markedly degrades performance under low sensing quality. II. S YSTEM MODEL AND PROBLEM FORMULATION 
+
+As shown in Fig. 1, we consider an infrastructure-centric cooperative perception scenario centered on a primary roadside unit (RSU-A). RSU-A carries a co-located high-resolution camera and a radar. In an urban-corner layout, a building blocks the line-of-sight of RSU-A’s radar toward part of the intersection, creating a radar blind region . The local camera still provides a rich view but only partially observes targets behind the occluder. To close this gap, RSU-A leverages a cooperative node (another RSU or a connected vehicle; denoted RSU-B) whose field of view complements RSU-A and covers the blind region with its radar. The proposed LM-SCIP runs entirely on RSU-A’s edge compute and fuses (i) local visual stream with (ii) a 
+
+quality-varying external radar stream that RSU-B transmits to RSU-A over an RSU-to-RSU V2X sidelink [16]. We assume spatial and temporal calibration across nodes: all streams are time-stamped under a shared clock and mapped, via known extrinsics, into a common reference frame (RSU-A’s camera frame) prior to fusion. For a given target ST n, the system estimates its location, future trajectory, and a high-fidelity visual reconstruction,as shown in Fig. 2. 
+
+A. System Setup and Sensing/Channel Modeling 
+
+Model inputs (LM-SCIP @ RSU-A). The onboard LM-SCIP 
+
+model consumes three inputs:  
+
+> •
+
+Local visual stream. The primary visual input is the image patch mn ∈ RC×H×W captured by RSU-A’s co-located camera. We model this stream as clean and high-fidelity; residual imperfections stem from the physical environment (e.g., adverse weather).  
+
+> •
+
+External radar stream (blind-spot coverage). Because RSU-A’s own radar is ineffective in the occluded sector, the cooperative node (RSU-B) first performs local radar sensing: it transmits an LFM waveform, receives the echo from a target ST n within RSU-A’s blind spot, then transmits the resulting raw complex I/Q waveform 
+
+A(B) 
+
+> n
+
+(t) to RSU-A. The RSU-B to RSU-A transport is modeled as an equivalent complex AWGN channel; thus RSU-A receives the noisy waveform ˜An(t) as as the input to the waveform encoder.  
+
+> •
+
+Channel-state indicators. During reception of the exter-nal radar stream, RSU-A’s modem reports instantaneous Fig. 2. System overview of LM-SCIP .
+
+link indicators Jn = {SNR , mod idx n} , which are fed to CASM as side information. 
+
+LFM–SIMO echo synthesis. Following the standard LFM– SIMO model [17], the complex baseband echo received at the 
+
+k-th antenna can be written as: 
+
+xn,k (t) = λ(dn) ak(θn) s t − τn
+
+ ej2 πμ n
+
+ t−τn
+
+
+
+, (1) stacking the K channels gives the array echo: 
+
+A(B) 
+
+> n
+
+(t) = λ(dn) a(θn) s t − τn
+
+ ej2 πμ n
+
+ t−τn
+
+
+
+. (2) where, 
+
+λ(dn) = ξ · ρn
+
+(4 π)3/2 d2
+
+> n
+
+, ξ = cfc + Kt
+
+. (3) while ρn is the radar cross section (RCS) of the n-th target, 
+
+a(θn) = 1, e−jπ cos θn , . . . , e−j( K−1) π cos θn
+
+⊤ is the K-element ULA steering vector, s(t) is the transmitted LFM baseband waveform, τn = 2dn 
+
+> c
+
+is the round-trip delay for range dn, and μn = 2vn(fc+Kt/2)  
+
+> c
+
+is the Doppler frequency induced by radial velocity vn. Here fc is the carrier frequency, 
+
+Kt is the chirp rate, and c is the speed of light. By synthe-sizing A(B) 
+
+> n
+
+(t) from these physical parameters, we construct training inputs that enable the Waveform Semantic Encoder to learn the inverse mapping from raw waveform to a compact semantic state. 
+
+Waveform-level channel (training emulation). To emulate residual transport distortion under latency-constrained deliv-ery, we inject complex AWGN onto the synthesized echo and form the noisy input used by the encoder: 
+
+˜An(t) = A(B) 
+
+> n
+
+(t) + N(t), (4) where the noise power σ2 
+
+> N
+
+is set relative to the signal power 
+
+σ2 
+
+> A
+
+such that SNR = 10 log 10 (σ2
+
+> A
+
+/σ 2 
+
+> N
+
+).
+
+Semantic-layer channel conditioning. Beyond waveform noise, CASM injects channel awareness at the semantic layer: the indicators Jn are embedded into a multi-token Channel Prompt that dynamically gates the contribution of external-radar features before decoding, enabling vision-dominant fallback when link quality is poor and synergistic gains when the cooperative radar is reliable. 
+
+B. Problem Formulation 
+
+Let D = {(mn, ˜An, yn)}Nn=1 be the dataset, where 
+
+yn = {Ploc , Ptraj , mn} collects the ground-truth labels for localisation, trajectory, and reconstruction. The end-to-end model is: 
+
+ˆyn = FΘ
+
+ mn, ˜An, Jn
+
+, (5) where ˆyn = { ˆPloc , ˆPtraj ,n , ˆmn}, and Θ collects the param-eters of the multimodal encoder, CASM, the LLM–H-MoE reasoning module, and the decoders. Training minimizes a multi-task objective over D and channel draws Jn ∼ p(J ):
+
+Θ∗ = arg min  
+
+> Θ
+
+E(mn,An,yn)∼D , Jn∼p(J )
+
+h
+
+Ltotal 
+
+ ˆyn, yn
+
+ i
+
+,
+
+(6) where Ltotal is a weighted sum of reconstruction, localization, trajectory, and auxiliary losses. III. T HE PROPOSED LM-SCIP F RAMEWORK 
+
+A. Overview 
+
+We elevate multimodal fusion to the semantic layer and cast cooperative perception as channel-aware semantic reasoning .As shown in Fig. 3, LM-SCIP comprises four stages: (i) a Multimodal Semantic Encoder (MSE) that forms a unified, time-aligned radar–vision token sequence; (ii) a Channel-Adaptive Semantic Module (CASM) that embeds V2X link indicators (SNR and modulation) into a compact Channel Prompt to dynamically gate external-radar features; (iii) an in-loop heterogeneous Mixture-of-Experts (H-MoE) with a LoRA-tuned LLM as the central reasoning core; and (iv) a decoupled multi-task decoder for image reconstruction (Recon), localization (Loc), and trajectory (Traj) forecasting. 
+
+B. Multimodal Semantic Encoder (MSE) 
+
+The MSE ingests an image patch and a complex radar waveform with modality-specific backbones (hierarchical ViT for vision; complex CNN for I/Q) and aligns them by a lightweight bidirectional cross-modal attention, yielding a compact sequence Smulti for downstream reasoning. Geom-etry and context alignment is learned implicitly—no explicit BEV calibration is required. 
+
+C. Channel-Adaptive Semantic Module (CASM) 
+
+A core challenge in cooperative fusion over unreliable links is semantic aliasing : when the external stream is degraded, noise makes representations from distinct concepts less sep-arable. CASM addresses this via two steps: (i) it encodes instantaneous link indicators (SNR and modulation) into a multi-token Channel Prompt Pch using a joint embedding (MLP for continuous SNR, embedding table for discrete modulation, merged by a compact Transformer); and (ii) performing feature-wise adaptive gating. A global gate g
+
+(avg-pool over prompt tokens followed by MLP+Sigmoid) rescales the fused sequence: 
+
+Henc = LN 
+
+
+
+Smulti ⊙  1 + g(Pch )
+
+, (7) where ⊙ denotes element-wise multiplication. High SNR yields permissive gates (retain radar-rich semantics); low SNR suppresses unreliable channels and defaults to vision-dominant cues. 
+
+D. LLM-Heterogeneous MoE Core & Decoupled Decoder 
+
+A token-level top-k router dispatches Henc to hetero-geneous MoE [18]—lightweight MLP experts for localiza-tion/reconstruction and a temporal Transformer expert for trajectory-with a small load-balancing loss to avoid collapse. The expert outputs, concatenated with Pch , are fed to a LoRA-tuned GPT-2 that arbitrates task cues and channel context into a globally coherent representation hLLM . A ViT-U style branch reconstructs images, while a self-attention pooling and two MLP heads regress location and future trajectories. Decoupling mitigates dense–sparse gradient in-terference and stabilizes joint training. 
+
+E. Training Objective 
+
+We train end-to-end with a weighted multi-task loss, 
+
+Ltotal = λrec Lrec +λloc Lloc +λtraj Ltraj +λvel Lvel +λbal Lbal ,
+
+(8) where Lrec combines perceptual terms (e.g., ℓ1, SSIM, LPIPS), Lloc and Ltraj are Smooth-ℓ1, Lvel regularizes first-order differences, and Lbal promotes uniform expert utiliza-tion. IV. E XPERIMENTAL EVALUATION 
+
+We evaluate LM -SCIP on VIRAT and conduct a controlled fusion-gain study on nuScenes. The empirical evaluation com-prises three parts: (A) internal validation through ablations; (B) characterization of channel adaptivity; and (C) external positioning via comparisons with state-of-the-art methods. 
+
+A. Experimental Setup 
+
+Dataset curation. On VIRAT, we adopt an automated pipeline: YOLOv10 for detection/tracking and SAM for instance segmentation. Masked patches are used as visual inputs; raw crops are reconstruction targets. For each in-stance, a complex I/Q radar waveform is synthesized from its physical state (range,azimuth,velocity) with world coordinates obtained via official homographies. On nuScenes, we keep the entire recipe fixed and toggle radar availability to isolate fusion gains. 
+
+Scenarios and protocol. We evaluate four representative conditions on VIRAT: Ideal (clean imagery; SNR =25 dB), 
+
+Occlusion (medium) (10–25% random erasing of the visual patch), Rainy Night (image blurring), and Low SNR + Oc-clusion (5 dB SNR plus medium occlusion). For channel adaptivity, we sweep SNR from −5 to 25 dB. 
+
+Metrics and baselines. We report localization (RMSE, me-ters), trajectory ( minFDE 1/ADE, meters), and reconstruction (PSNR, dB). Baselines include Vision-only , w/o CASM (no channel awareness), and w/o H-MoE (no task specializa-tion). For operational usability, we also report per-task QoS accuracy : fraction of test samples meeting fixed thresholds 
+
+τloc =0 .5 m, τADE =0 .5 m, and τPSNR =20 dB. 
+
+B. Ablation Study of Core Components 
+
+Table I reports results across four scenarios; ADE and PSNR follow trends consistent with RMSE and are discussed below. These results support three main observations. (i) Multimodal fusion is essential. compared to the Vision-only baseline, the full model reduces RMSE by 42 .3% under the 
+
+Ideal setting (from 0.3708 to 0.2140 m). (ii) Channel aware-ness is critical. Under Low SNR , removing CASM increases RMSE by 12 .6% (from 0.2435 to 0.2741 m) and ADE by 
+
+14 .5% (from 0.1957 to 0.2240 m), highlighting the benefit of explicit channel conditioning. (iii) Task specialization is necessary. Eliminating the heterogeneous MoE leads to severe degradation; in Ideal , RMSE rises from 0.2140 to 13 .0825 m, indicating that a monolithic block cannot simultaneously support dense reconstruction and sparse forecasting. A vision-masked (radar-only) variant further underscores the comple-mentarity of the modalities: in the Ideal case, localization errors increase to the metre scale (e.g., RMSE > 2.6 m), and image reconstruction becomes infeasible. In addition to RMSE, we further analyse ADE and PSNR, as well as QoS-oriented accuracies defined at task-specific thresholds.Under the Ideal scenario, the full model achieves decimetre-level forecasting (ADE = 0 .170 m) while main-taining high-fidelity reconstruction (PSNR > 22 dB). Under Fig. 3. Network design of the proposed LM-SCIP framework. TABLE I ABLATION ACROSS SCENARIOS FOR LM-SCIP AND ITS VARIANTS 
+
+Scenario LM-SCIP Vision-only w/o CASM w/o H-MoE RMSE ↓ ADE ↓ PSNR ↑ RMSE ↓ ADE ↓ PSNR ↑ RMSE ↓ ADE ↓ PSNR ↑ RMSE ↓ ADE ↓ PSNR ↑
+
+Ideal 0.2140 (↓42.3% ) 0.1704 22.1755 0.3708 0.2329 21.4898 0.2345 0.1911 22.0684 13.0825 1.2398 16.0962 Low SNR 0.2435 0.1957 22.1509 0.3709 0.2332 21.4866 0.2741 0.2240 22.0833 77.6543 1.2409 16.0930 Occlusion Med. 0.3451 0.2486 19.1614 0.5885 0.3770 19.1618 0.3536 0.2550 19.1644 10.2365 1.2724 15.7033 Rainy Night 0.4390 0.2646 19.4864 0.5648 0.3296 19.1367 0.4601 0.2844 19.3162 46.6108 1.2747 15.6050  
+
+> Note. Lower is better for RMSE/ADE ( ↓); higher is better for PSNR ( ↑).
+
+Occlusion and Rainy Night , ADE increases moderately (to approximately 0.25 –0.26 m) and PSNR decreases by about 
+
+3 dB, yet radar-aided geometry keeps the predicted motion stable. QoS-oriented accuracy also remains high. In Ideal ,Loc@0.5 m, Traj@0.5 m, and Recon@20 dB reach 95 .97% ,
+
+93 .20% , and 85 .30% , respectively; in Low SNR , they remain at 93 .77% , 90 .57% , and 85 .33% . Even under Occlusion (medium) and Rainy Night , localisation and trajectory ac-curacies stay in the high– 80% range— 89 .17% /87 .62% for Occlusion and 87 .75% /85 .51% for Rainy Night—while re-construction success remains between 53% and 63% .
+
+C. Channel-Adaptive Multimodal Fusion Performance 
+
+Figure 4 illustrates the performance as a function of SNR in the range from −5 to 25 dB and exhibits two distinct operating regimes: ( i) a stable vision-dominant mode at low SNR, where CASM down-weights unreliable radar features; and ( ii ) a synergistic fusion mode at higher SNR, where errors drop markedly (RMSE decreases from 0.245 to 0.214 mand ADE from 0.196 to 0.170 m as SNR increases from 
+
+15 to 25 dB). PSNR increases monotonically with SNR, indicating progressively cleaner semantic transmission. These trends are consistent with the learned CASM gating, which suppresses less reliable features at low SNR and becomes more permissive as SNR grows.    
+
+> Fig. 4. Channel-adaptive performance of LM -SCIP across SNR.
+
+D. Comparison with State-of-the-Art Methods 
+
+Table II summarizes the comparative results. First, on VIRAT, LM -SCIP attains minFDE 1 = 0 .179 m, matching SimAug (0.179 m) and close to the best reported camera-only forecasters, while simultaneously delivering high-precision localisation (RMSE = 0 .214 m), a metric that vision-only trajectory models typically do not report. Then, on nuScenes, TABLE II SOTA COMPARISON . VIRAT: minFDE 1 (M; LOWER IS BETTER ). 
+
+> NU
+
+SCENES : RELATIVE ∆RMSE Loc VS . VISION -ONLY (LOWER IS BETTER ). 
+
+VIRAT (minFDE 1)
+
+Method Input Error (m) 
+
+Multiverse [19] Camera-only 0.152 
+
+GraphST [20] Camera-only 0.153 SimAug [21] Sim-Seg only 0.179 LM-SCIP (Vision) Camera-only 0.2299 
+
+LM-SCIP (Ours) Camera+Radar 0.179 nuScenes (∆RMSE Loc vs. vision-only) CenterFusion [22] Camera+Radar -9.4% CRAFT [3] Camera+Radar -32.3% 
+
+LM-SCIP (Ours) Camera+Radar -40.0% 
+
+under a controlled setting with identical training recipes and a radar on/off toggle, adding radar to our framework yields 
+
+∆RMSE Loc = −40 .0% (mATE-equivalent), exceeding the relative gains reported by representative fusion frameworks such as CRAFT. Taken together, the ablation studies, channel-sweep exper-iments, and comparisons with state-of-the-art methods show that LM -SCIP (i) provides clear fusion gains under clean con-ditions, (ii) maintains robust performance under adverse links and visual degradation through CASM-driven re-weighting, and (iii) achieves competitive or superior accuracy compared with leading forecasting models, while uniquely offering high-precision localization and high-fidelity reconstruction within a single channel-aware framework. V. C ONCLUSION 
+
+We presented LM-SCIP , a channel-aware, LLM-centric multimodal framework that lifts fusion to the semantic layer for infrastructure-centric cooperative perception. By coupling a hierarchical radar–vision encoder with CASM—which em-beds V2X link indicators as a “Channel Prompt”—and a LoRA-tuned LLM with a heterogeneous MoE (H-MoE), the system adaptively balances external radar against local vision and remains stable across sensing/link variations. Experi-ments on nuScenes and VIRAT show consistent fusion gains, while ablations verify the essential roles of CASM (channel-conditioned re-weighting) and H-MoE (robust reasoning). 
+
+LM-SCIP offers a deployment-friendly path to cooperative, link-aware perception. Future work includes real-world V2X prototypes, richer link side information in CASM, and multi-agent collaboration via prompt-level sharing under dynamic links. REFERENCES [1] Z. Li, W. Wang, H. Li, E. Xie, C. Sima, T. Lu, Q. Yu, and J. Dai, “BEVFormer: Learning Bird’s-Eye-View Representation From LiDAR– Camera via Spatiotemporal Transformers,” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 47, no. 3, pp. 2020–2036, 2025. [2] S. Yao, R. Guan, X. Huang, Z. Li, X. Sha, Y. Yue, E. G. Lim, H. Seo, K. L. Man, X. Zhu et al. , “Radar–Camera Fusion for Object Detection and Semantic Segmentation in Autonomous Driving: A Comprehensive Review,” IEEE Trans. Intell. Veh. , vol. 9, no. 1, pp. 2094–2128, 2023. [3] Y. Kim, S. Kim, J. W. Choi, and D. Kum, “CRAFT: Camera–Radar 3D Object Detection with Spatio–Contextual Fusion Transformer,” in 
+
+Proc. AAAI Conf. Artif. Intell. , vol. 37, no. 1, 2023, pp. 1160–1168. [4] Y. Kim, J. Shin, S. Kim, I.-J. Lee, J. W. Choi, and D. Kum, “CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception,” in 
+
+Proc. IEEE/CVF Int. Conf. Comput. Vis. (ICCV) , 2023, pp. 17 569– 17 580. [5] Z. Wu, G. Chen, Y. Gan, L. Wang, and J. Pu, “MVFusion: Multi-View 3D Object Detection with Semantic-Aligned Radar and Camera Fusion,” in Proc. IEEE Int. Conf. Robot. Autom. (ICRA) , 2023, pp. 2766–2773. [6] J. Li, R. Xu, X. Liu, J. Ma, Z. Chi, J. Ma, and H. Yu, “Learning for Vehicle-to-Vehicle Cooperative Perception under Lossy Communica-tion,” IEEE Trans. Intell. Veh. , vol. 8, no. 4, pp. 2650–2660, 2023. [7] J. Mao, Y. Qian, H. Zhao, and Y. Wang, “GPT-Driver: Learning to Drive with GPT,” in Proc. NeurIPS Found. Models for Decis. Making Workshop , 2023. [8] Y. Cui, S. Huang, J. Zhong, Z. Liu, Y. Wang, C. Sun, B. Li, X. Wang, and A. Khajepour, “DriveLLM: Charting the Path Toward Full Au-tonomous Driving with Large Language Models,” IEEE Trans. Intell. Veh. , vol. 9, no. 1, pp. 1450–1464, 2023. [9] Y. Zhang, E. L. Haß, K.-Y. Chao, N. Petrovic, Y. Song, C. Wu, and A. Knoll, “A Unified Perception–Language–Action Framework for Adaptive Autonomous Driving,” arXiv , 2025, arXiv:2507.23540. [10] X. Tian, J. Gu, B. Li, Y. Liu, Y. Wang, Z. Zhao, K. Zhan, P. Jia, X. Lang, and H. Zhao, “DriveVLM: The Convergence of Autonomous Driving and Large Vision–Language Models,” in Proc. Conf. Robot Learn. (CoRL) , 2024. [11] Y. Hu, J. Yang, L. Chen, K. Li, C. Sima, X. Zhu, S. Chai, S. Du, T. Lin, W. Wang et al. , “Planning-Oriented Autonomous Driving,” in 
+
+Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2023, pp. 17 853–17 862. [12] Z. Yang, X. Jia, H. Li, and J. Yan, “LLM4Drive: A Survey of Large Language Models for Autonomous Driving,” in Proc. NeurIPS Workshop on Open-World Agents , 2024. [13] Y. Peng, L. Xiang, K. Yang, F. Jiang, K. Wang, and D. O. Wu, “SIMAC: A Semantic-Driven Integrated Multimodal Sensing and Communication Framework,” IEEE J. Sel. Areas Commun. , 2025. [14] H. Caesar, V. Bankiti, A. H. Lang, S. Vora, V. E. Liong, Q. Xu, A. Krishnan, Y. Pan, G. Baldan, and O. Beijbom, “nuScenes: A Multimodal Dataset for Autonomous Driving,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2020, pp. 11 621–11 631. [15] S. Oh, A. Hoogs, A. Perera, N. Cuntoor, C.-C. Chen, J. T. Lee, S. Mukherjee, J. K. Aggarwal, H. Lee, L. Davis et al. , “A Large-Scale Benchmark Dataset for Event Recognition in Surveillance Video,” in 
+
+Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2011, pp. 3153–3160. [16] M. H. C. Garcia, A. Molina-Galan, M. Boban, J. Gozalvez, B. Coll-Perales, T. S ¸ ahin, and A. Kousaridas, “A Tutorial on 5G NR V2X Communications,” IEEE Commun. Surveys Tuts. , vol. 23, no. 3, pp. 1972–2026, 2021. [17] S. M. Patole, M. Torlak, D. Wang, and M. Ali, “Automotive Radars: A Review of Signal Processing Techniques,” IEEE Signal Process. Mag. ,vol. 34, no. 2, pp. 22–35, 2017. [18] N. Xue, Y. Sun, Z. Chen, M. Tao, X. Xu, L. Qian, S. Cui, W. Zhang, and P. Zhang, “WDMoE: Wireless Distributed Mixture of Experts for Large Language Models,” IEEE Trans. Wireless Commun. , 2025. [19] J. Liang, L. Jiang, K. Murphy, T. Yu, and A. Hauptmann, “The Garden of Forking Paths: Towards Multi-Future Trajectory Prediction,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , 2020, pp. 10 508–10 518. [20] L. Li, M. Pagnucco, and Y. Song, “Graph-Based Spatial Transformer with Memory Replay for Multi-Future Pedestrian Trajectory Predic-tion,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) ,2022, pp. 2231–2241. [21] J. Liang, L. Jiang, and A. Hauptmann, “SimAug: Learning Robust Representations from Simulation for Trajectory Prediction,” in Proc. Eur. Conf. Comput. Vis. (ECCV) , 2020, pp. 275–292. [22] R. Nabati and H. Qi, “CenterFusion: Center-Based Radar and Camera Fusion for 3D Object Detection,” in Proc. IEEE/CVF Winter Conf. Appl. Comput. Vis. (WACV) , 2021, pp. 1527–1536.

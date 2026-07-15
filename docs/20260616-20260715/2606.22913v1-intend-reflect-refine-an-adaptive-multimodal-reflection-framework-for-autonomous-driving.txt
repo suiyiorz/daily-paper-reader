@@ -1,0 +1,935 @@
+Title: Intend, Reflect, Refine: An Adaptive Multimodal Reflection Framework for Autonomous Driving
+
+URL Source: https://arxiv.org/pdf/2606.22913v1
+
+Published Time: Tue, 23 Jun 2026 02:42:58 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Intend, Reflect, Refine: An Adaptive Multimodal Reflection Framework for Autonomous Driving 
+
+Zisheng Chen 1,∗
+
+, Yuping Qiu 2,∗, Jianhua Han 3, Tao Tang 1, Xiuwei Chen 1,Likui Zhang 1, Ying-Cong Chen 2, Hang Xu 3, Xiaodan Liang 1,†
+
+1 Sun Yat-sen University 2 HKUST(GZ) 
+
+3 Yinwang Intelligent Technology Co. Ltd. Stage 1 Pretrain          
+
+> Detection
+> Behavior
+> Caption
+> Future BEV
+> Stage 2 Supervised Fine -Tuning
+> Simple Scene:
+> Ego Status
+> Instruction
+> Images
+> Ego Trajectory
+> Intention
+> Images
+> Intention
+> →Planning
+> Challenging Scene:
+> Intention
+> →BEV Reflection
+> →Refined Planning
+> Stage 3 Reinforcement Learning
+> Adaptive Multimodal Reflection
+> Policy Model
+> Format Reward PDMS Reward
+> OBB Reward Reflection Reward
+> Supervision
+> Understand the
+> driving world
+> Generate the
+> Future BEV
+> Trajectory
+> Planning
+> Adaptive
+> Reflection
+> More Reliable Trajectory Planning
+> More Efficient Adaptive Reflection
+> IRR -Drive
+> -4B
+> PDMS on NAVSIM v1
+> DriveVLA -W0
+> -3B 90.3
+> ELF -VLA -
+> 8B 91.0
+> LaST -VLA
+> -8B 91.3
+> 91.3
+> EPDMS on NAVSIM v2
+> 86.1
+> 87.1
+> 87.1
+> 89.0
+> Refine
+
+IRR -Drive 
+
+> IRR -Drive
+> -4B
+> DriveVLA -W0
+> -3B
+> ELF -VLA -
+> 8B
+> LaST -VLA
+> -8B
+
+Figure 1: Visual overview of IRR-Drive. The model learns through three progressive stages. We first pretrain the model on driving world understanding and future BEV generation to establish foundational perception and future forecasting capability. Then, we fine-tune the model, applying direct execution for simple scenes and BEV-based reflection for challenging ones to learn adaptive reasoning. Finally, we use reinforcement learning, incorporating multiple reward functions to refine the policy, enabling more reliable trajectory planning and more efficient adaptive reflection. The results on the right show that IRR-Drive-4B achieves highly competitive PDMS and superior EPDMS scores on NAVSIM benchmarks despite a smaller parameter scale. 
+
+Abstract 
+
+Recent Vision-Language-Action (VLA) models have advanced end-to-end au-tonomous driving by incorporating reasoning for better interpretability and planning quality. However, most existing approaches directly generate the final trajectory without explicitly examining its future consequences, which limits their reliability in complex and dynamic environments. To address this limitation, we propose 
+
+IRR-Drive (Intend, Reflect, Refine ), an adaptive multimodal reflection framework for autonomous driving. Specifically, to tightly couple high-level reasoning with physical constraints, IRR-Drive first generates an initial textual trajectory intention and anticipates potential interactions by predicting future semantic bird’s-eye view (BEV) representations. This dual-modal (Text + BEV) reflection space explic-itly models anticipated scene evolution, enabling the model to perform grounded self-correction and refine its initial intent before generating the final trajectory. 
+
+> ∗
+
+These authors contributes equally 
+
+> †
+
+Corresponding Author Preprint. 
+
+> arXiv:2606.22913v1 [cs.CV] 22 Jun 2026
+
+Furthermore, to balance planning performance and computational efficiency, we construct reflection-oriented training data and design an adaptive reflection reward, enabling the model to adaptively select its reasoning mode according to scene complexity. Instead of using reasoning primarily as an auxiliary interpretation, IRR-Drive directly integrates an adaptive reflection mechanism into the planning framework, enabling grounded, decision-aware trajectory correction that is driven by scene complexity. Our method achieves state-of-the-art performance on the NAVSIM benchmark in both PDMS and EPDMS. Extensive experiments demon-strate the effectiveness of our multimodal reflection framework and validate the efficacy of the proposed adaptive reflection strategy. 
+
+1 Introduction 
+
+Recent Vision-Language-Action (VLA) approaches have advanced end-to-end autonomous driving by integrating perception, reasoning, and planning within a unified framework [ 19 ; 46 ; 41 ; 43 ]. By incorporating reasoning mechanisms, these models improve interpretability and enable more informed decision-making than purely reactive policies. However, the majority of current methods produce trajectories in a single pass, lacking an explicit assessment of how candidate actions will shape future states. Effective driving requires not only producing a feasible trajectory, but also evaluating and revising it before execution. This motivates reflective planning, where candidate actions are assessed and refined according to their anticipated outcomes. Despite recent progress, current reasoning paradigms remain limited in supporting such grounded reflective decision-making. A key challenge lies in the lack of a suitable representation space for plan verification and correction. Existing reasoning-based driving methods [ 20 ; 19 ; 46 ] often express intermediate reasoning through textual or symbolic abstractions, which are interpretable but too coarse to capture fine-grained spatial interactions required for trajectory refinement. In contrast, vision-based approaches [ 43 ; 21 ] preserve richer physical details, yet typically use them as implicit features or auxiliary supervision rather than as an explicit space for evaluating planned actions. As a result, reasoning remains weakly grounded in the physical consequences of actions, limiting its effectiveness in complex driving scenarios. To address these limitations, we propose IRR-Drive (Intend, Reflect, Refine ), an action-conditioned multimodal framework with adaptive reflection for autonomous driving. Given an input scene, IRR-Drive first generates an initial trajectory intention. Conditioned on both the current scene and this intention, it predicts future semantic bird’s-eye view (BEV) representations, which serve as a structured reflection space for analyzing future interactions and risks. The model then refines the initial intention based on this multimodal reflection and produces the final trajectory. To improve efficiency, IRR-Drive further learns adaptive reflection behavior, directly outputting trajectories in simple scenes while invoking reflective refinement in challenging ones. Thus, reflection is no longer a static post-hoc explanation, but an adaptive, decision-aware process for trajectory correction. In implementation, we first pretrain the model on driving understanding data and semantic BEV generation data, then construct NAVSIM-derived [ 6 ] non-reflection and multimodal reflection data for supervised fine-tuning. This enables the model to operate in both non-reflective and reflective reasoning modes. Finally, we apply GSPO reinforcement learning with rewards that jointly consider planning quality, trajectory alignment, and reflection efficiency, encouraging a better trade-off between closed-loop performance and computational cost. Our main contributions are summarized as follows: • We design a multimodal reflection module that integrates textual reasoning with semantic BEV prediction, providing a grounded space for trajectory verification and refinement. • We develop an adaptive reflection strategy that selects direct prediction or reflective refinement based on scene complexity, improving efficiency while preserving planning quality. • We conduct extensive experiments on NAVSIM v1 and v2, demonstrating strong closed-loop planning performance and validating the effectiveness of multimodal reflection, adaptive mode selection, and reinforcement learning. 
+
+2 Related Work 
+
+Reasoning and Self-Reflection in VLA. Building on the VLA paradigm, recent work has placed increasing emphasis on explicit reasoning in driving decision-making. FSDrive [ 43 ] replaces purely 2textual reasoning with visual spatio-temporal chain-of-thought by generating future visual states, thereby preserving finer spatial details during deliberation. AutoVLA [ 46 ] unifies reasoning and action generation within a single autoregressive framework and incorporates adaptive reasoning together with reinforcement fine-tuning to improve planning performance. AdaThinkDrive [ 19 ]introduces fast and slow reasoning modes, allowing the model to allocate inference depth according to scene complexity. Beyond descriptive reasoning, self-reflective planning has also emerged as an important direction. Counterfactual VLA (CF-VLA) [ 24 ] combines time-segmented meta-actions with counterfactual analysis to revise planned behaviors based on simulated outcomes. ELF-VLA [20 ] leverages teacher-generated structured diagnoses and corrected trajectories to perform failure-driven refinement during training. Additional related works on Vision-Language and Vision-Language-Action Models for Autonomous Driving and Future Scene Modeling for Autonomous Driving are provided in the Supplementary Material A.1 .
+
+3 Method 
+
+In this section, we describe IRR-Drive . Sec. 3.1 presents the semantic BEV tokenizer, which converts BEV images into discrete codes. Sec. 3.2 describes the construction of pretraining, supervised fine-tuning, and RL training data. Sec. 3.3 introduces the two-stage supervised fine-tuning procedure, and Sec. 3.4 presents reinforcement learning for improving planning performance and adaptive reflection. 
+
+3.1 Semantic BEV Tokenizer 
+
+Inspired by autoregressive image generation paradigms [ 7 ; 31 ] and unified vision-language models (VLMs) [ 9; 4; 34 ], we develop a semantic BEV tokenizer that discretizes BEV into code tokens, thereby enabling unified autoregressive reasoning and planning. Specifically, given a BEV representation B ∈ RH×W ×C , we first extract semantic features using a frozen encoder Eθ (·): F = Eθ (B). The features are projected via an MLP gϕ(·) into a quantization space: H = gϕ(F ). We then apply vector quantization with a learnable codebook Z = {zk}Kk=1 ,where feature is mapped to its nearest code: 
+
+Zq, I q = arg min 
+
+> k∈{ 1,...,K }
+
+∥H − Z[k]∥22 (1) Where K is the codebook size, Zq is the quantized feature, and Iq is the quantized index. The quantized features are then decoded by Dψ (·) to reconstruct the semantic representation: ˆF =
+
+Dψ (Zq ). The tokenizer is trained with a standard VQ objective: 
+
+L = Lsem (F, ˆF ) + ∥sg [H] − Zq ∥22 + β∥H − sg [Zq ]∥22 (2) where Lsem represents the mean squared error loss, sg [·] denotes the stop-gradient operator. The semantic BEV tokenizer converts BEV representations into discrete codes, thereby enabling seamless integration with existing VLA frameworks. Please refer to Supplementary Material A.2 
+
+for the semantic training framework and the corresponding preprocessing illustrations. 
+
+3.2 Data Preparation 
+
+To equip the VLM with driving scene understanding, BEV semantic forecasting, and adaptive multimodal reflection capabilities, we perform a data preparation stage as follows: 
+
+a) Pretraining Data: To adapt VLMs to autonomous driving scenarios, we leverage diverse mul-timodal datasets for both driving scene understanding and BEV modeling. Specifically, we incorporate open-source understanding datasets, including DriveLM [ 28 ], NuInstruct [ 36 ], nuSce-nesQA [ 25 ], CODA-LM [ 14 ], and others [ 22 ; 38 ; 16 ]. In addition, we construct BEV recon-struction and prediction data using the NAVSIM v1 [ 6] simulator. The reconstruction data maps current multi-view observations to BEV representations, capturing the present spatial layout. The prediction data maps observations and future trajectories to future BEV representations, enabling trajectory-conditioned scene forecasting. 3Low score  High score  
+
+> Multi -
+> Views
+> Instr. & Ego
+> State
+> *trained on navtrain
+
+Qwen2.5 -VL -3B                   
+
+> infer
+> Predicted Trajectories
+> score
+> PDMS
+> Challenging Scene Simple Scene
+> (a) Proxy Scoring
+> Predicted
+> Trajectories
+> Human
+> Trajectories
+> NAVSIM Qwen2.5 -
+> 72B
+> Future BEV
+> at 4s
+> Trajectory
+> Intent
+> x-direction:
+> 0.0s~1.0s: decelerate to 5.3,
+> 1.0s~4.0s: accelerate to 7.7;
+> y-direction:
+> 0.0s~0.5s: accelerate to 0.4,
+> 0.5s~4.0s: maintain
+> (b) Generate BEV & Intent
+> (d) Data Structure Illustration
+> Simple Scene: Human Traj . Intent →Final Traj .
+> Challenging Scene:
+> Low score Traj . Intent →Future BEV at 4s →BEV -based Reflective Text →Refined Traj . Intent →Final Traj .
+> BEV Description:
+> Describe the situation, surrounding
+> traffic based on the BEV image.
+> Safety Assessment:
+> Safety status of the EGO vehicle
+> (collision risk, drivable area, etc.).
+> Trajectory Suggestions:
+> Suggest modifications to the
+> current trajectory
+
+Qwen2.5 -VL -72B 
+
+> PDMS
+> Trajectories
+> Future BEV
+> (c) BEV -based Reflective
+> Text Generation
+
+Figure 2: Adaptive multimodal reflection data construction. (a) A lightly fine-tuned planner is used to split the NAVSIM navtrain set into challenging and simple scenes based on predicted PDMS. (b) The simulator generates future BEV representations, while the LLM generates trajectory intents. (c) A VLM generates BEV-grounded reflective text. (d) The resulting data structures for simple and challenging scenes. 
+
+b) Supervised Fine-Tuning Data: To endow the model with trajectory planning capability, we utilize the official NAVSIM v1 navtrain split, denoted as Dtraj . Each sample takes scene context and ego states as inputs and provides future trajectories over a 4-second horizon with a 0.5-second sampling interval as outputs. To support adaptive multimodal reflection, we further construct reflection data from Dtraj . As shown in Fig. 2, we first train a base VLA on Dtraj and use its predicted PDMS scores to split the data into challenging and simple scenes. The bottom 4,000 low-scoring samples are labeled as challenging scenes ( D+
+
+> ref l
+
+), while the remaining samples are treated as simple scenes ( D−
+
+> ref l
+
+). For each sample, we use the predicted trajectory to generate an intent-conditioned future BEV with the NAVSIM v1 simulator, and use the human trajectory to generate the target trajectory intention with an LLM. For low-scoring samples, failures such as collisions or insufficient safety margins become spatially observable in the predicted future BEV, providing grounded evidence for reflection. We then feed the trajectory, future BEV representation, and corresponding PDMS score into an open-source VLM to generate the textual reflection component. The data structure of the final reflection dataset is shown in Fig. 2 (d). For simple scenes, the model infers the intention and generates the trajectory. For challenging scenes, the model infers the intention, performs multimodal reflection, refines it, and then generates the final trajectory. For detailed data examples, please refer to Supplementary Material A.3 .
+
+c) RL Training Data: We observe that during the RL training stage, a substantial portion of rollout sequences receive maximal rewards, resulting in a lack of discriminative training signals. To address this, we introduce a score-and-variance-based sampling strategy to select more informative training samples. Specifically, we estimate the reward distribution of each sample in Dref l using the SFT-trained model under stochastic rollouts. Based on the resulting score statistics, we first select samples with low rewards, and then identify those with high score variance as informative instances to form the subset Drl ref l . The pseudocode is available in 
+
+Supplementary Material A.4 .
+
+3.3 Two-Stage Supervised Fine-tuning 
+
+In the first stage, we fine-tune the model using the pretraining data from Sec. 3.2, including driving VQA datasets and BEV reconstruction and prediction data. This stage enables the model to perceive drivable regions, understand road conditions, and learn the mapping from multi-view images to BEV. In the second stage, we perform supervised fine-tuning on Dtraj and Dref l (defined in Sec. 3.2) to equip the model with capabilities for trajectory planning and adaptive multimodal reflection. For 4RL for Adaptive Reflection 
+
+IRR -Drive Adaptive Planner 
+
+Instruction 
+
+Turn Left /Turn Right /Go Straight 
+
+Ego Status 
+
+Vel. & Acc. & His. Traj .
+
+> Vision Language
+> Action Model
+
+Multi Views 
+
+Instruction 
+
+Ego Status 
+
+Multi Views 
+
+VLA 
+
+> (SFT initialized)
+
+Non -reflective 
+
+answer 
+
+Reflective 
+
+answer 
+
+Format 
+
+Reward 
+
+PDMS 
+
+Reward 
+
+OBB 
+
+Reward 
+
+Reflection 
+
+Reward 
+
+Multi -objective Rewards  Σ
+
+Final Trajectory  (+3.70,+0.01,0)(+7.37,+0.04,+0.01)… 
+
+Refined Intent 
+
+> x-direction:0.0s~2.0s: decelerate to 6.5,…;
+> y-direction:0.0s~0.5s: no lateral movement,…
+
+Refine 
+
+BEV -Grounded Reasoning 
+
+> Description:[…]
+> Safety Assessment:[…]
+> Trajectory suggestions:[…]
+
+Reflect 
+
+Intent -Conditioned BEV Forecasting 
+
+> <IMG_OF_0951>…<IMG_OF_0751>…<IMG_OF_1008>…
+
+Non -reflection 
+
+Reflection 
+
+Intend 
+
+Initial Intent  
+
+> x-direction:0.0s~4.0s: accelerating from 7.5 to 11.8;
+> y-direction:0.0s~1.5s: drifting right at -0.1,….
+
+Figure 3: We present IRR-Drive , an end-to-end autonomous driving framework that adaptively selects between “Non-Reflection” and “Reflection” modes depending on scene complexity. Within its reflection framework, it integrates visual and textual reasoning to refine intentions and trajectories. In the reinforcement learning stage, multiple rewards, including PDMS, Format, and OBB rewards, are combined with the proposed adaptive reflection reward. each scene query q = {qcam , q ego , q his }, outputs are supervised by otraj from Dtraj and oref l from 
+
+Dref l , with the objective of maximizing conditional likelihood: 
+
+LSFT = E(q,o )∼{D traj ,Dref l } [− log πθ (o | q)] . (3) This stage enables model to produce diverse response modes for subsequent reinforcement learning. challenging 
+
+> simple
+
+Tag 
+
+Challenging Reward: 
+
+Reflection  1
+
+Non -reflection 
+
+& PDMS > 1
+
+Non -reflection 
+
+& PDMS <=  0
+
+Simple Reward: 
+
+Reflection  0
+
+Non -reflection  1
+
+Policy 
+
+Model 
+
+RL Data 
+
+Input :
+
+1.  Multi -Views 
+
+2.  Instruction 
+
+3.  Ego Status 
+
+Info :
+
+1.  Human Traj .
+
+2.  Scene Tag 
+
+(b) Adaptive Reflection Reward  
+
+> Start Point
+> Human End Point
+> Predicted End Point
+> Human Traj .
+> Predicted Traj.
+
+If  Predicted End Point:   
+
+> 1In OBB L1
+> In OBB L2 0.9
+> In OBB L3 0.8
+
+(a) Concentric OBB -FDE Reward 
+
+Concentric OBB -FDE Reward 
+
+τ
+
+τ
+
+Figure 4: (a) The concentric OBB-FDE reward assigns tiered endpoint rewards using heading-aware bounding boxes around the expert endpoint. (b) The adaptive reflection reward encourages direct prediction in simple scenes, while allowing non-reflection in challenging scenes only when the current rollout already achieves sufficiently high PDMS. 53.4 Adaptive Reflection via Reinforcement Learning 
+
+The two-stage supervised fine-tuning equips the model with an adaptive multimodal reflection mechanism, which directly drives its trajectory planning capabilities. However, imitation learning is constrained by predefined reflection labels and demonstration trajectories. Since these static targets may be suboptimal under closed-loop evaluation, the learned policy is limited to reproducing the training distribution and cannot explore alternative behaviors through interaction with the environment. To overcome this limitation and optimize the planner under closed-loop physical feedback, we further introduce reinforcement learning. Due to the substantial length difference between reflective and non-reflective responses, token-level policy optimization can bias training toward longer reflective outputs and destabilize mode selection. To mitigate this issue, we adopt GSPO [ 45 ], which optimizes at the sequence level and provides a more balanced learning signal across reasoning modes. Furthermore, our reward function is composed of four components: 
+
+a) PDMS Reward: We directly utilize the PDMS score as the reward signal, which assesses trajectory safety and performance via the NAVSIM v1 [ 6] simulator. The score is represented as a continuous value ranging from 0 to 1, and is formulated as follows: PDMS = NC · DAC · 5 · TTC + 5 · EP + 2 · C
+
+12 (4) where PDMS integrates five sub-metrics: No At-Fault Collision (NC), Drivable Area Com-pliance (DAC), Time-to-Collision (TTC), Comfort (C), and Ego Progress (EP) to produce a comprehensive closed-loop planning score. 
+
+b) Concentric OBB-FDE Reward: To evaluate spatial precision, we introduce a concentric OBB-FDE reward ( Robb ), shown in Fig. 4 (a). Instead of continuous distance penalties, this mechanism assigns a discrete, decaying reward based on the tightest bounding box from a set of concentrically scaled tiers (e.g., L1 for 1.0× scale, L2 for 1.25 × scale) that encloses the predicted endpoint. This stepwise design prevents overfitting to suboptimal human trajectories, enabling broader reinforcement learning exploration. Crucially, by projecting the spatial deviation into the local coordinate frame of the ground truth pose to evaluate this required scaling factor against the ego-vehicle’s asymmetric physical dimensions, specifically the front overhang ( lf ront ), rear overhang ( lback ), and half-width ( whalf ), Robb intrinsically accounts for anisotropic physical occupancy. This provides a more accurate geometric constraint. Detailed computation of the Concentric OBB-FDE Reward is provided in the Supplementary Material A.5 .
+
+c) Adaptive Reflection Reward: To prevent the model from collapsing into a single mode of reasoning, we introduce an adaptive reflection reward ( Rref l ). Since the scene tags in Dref l 
+
+are generated in an earlier stage, they are static and no longer aligned with the model’s current capabilities, making simple policy alignment unsuitable. In contrast, our design introduces a dynamic mechanism to adapt to changes in the model’s capabilities during training, as shown in Fig. 4 (b). Specifically, for simple scenes, we disable reflection and enforce a direct reasoning mode. For difficult scenes, however, we impose a score-based requirement: the model may use direct reasoning if the PDMS score exceeds τ , and is otherwise required to perform reflection for refinement. Through this adaptive mechanism, the model learns to allocate its computational resources more intelligently, which improves both reasoning quality and inference efficiency. 
+
+d) Format Reward: The format reward Rf ormat enforces adherence to the predefined output format, including the correct placement and usage of all required tags as well as valid reflection and trajectory content. The overall reward function in the reinforcement learning stage is defined as follows: 
+
+R = λ1(RPDMS + ROBB ) + λ2Rrefl + λ3Rformat . (5) where λ1, λ 2, λ 3 denote the weight coefficients of each reward term, which balance their contributions to the total reward R.Through these reward designs, the policy learns an adaptive reflection strategy during reinforcement learning and explores diverse alternatives around suboptimal human trajectories. 64 Experiments 
+
+4.1 Experimental Setup Dataset: We perform comprehensive experiments on NAVSIM [ 6 ], a data-driven non-reactive simulation benchmark for autonomous driving planning, built upon OpenScene. In addition, the driving-domain pretraining data, the NAVSIM BEV reconstruction/prediction data, and the adaptive reflection data are constructed as described in Sec. 3.2. 
+
+Metric: We evaluate our method on closed-loop benchmark NAVSIM v1 [ 6] and NAVSIM v2 [ 2]. The NAVSIM v1 benchmark provides a nonreactive simulation environment and employs the Predictive Driver Model Score (PDMS) as its closed-loop planning metric, as defined in Equation 4. Similarly, the NAVSIM v2 introduces the Extended Predictive Driver Model Score (EPDMS). For the details of EPDMS, please refer to Supplementary Material A.6 .
+
+Training Details: We use Qwen2.5-VL-3B [ 32 ] and Qwen3-VL-4B [ 1] as the base model, with the corresponding semantic encoder used to initialize the encoder of the semantic BEV tokenizer. The ablation experiments are conducted using Qwen3-VL-4B. For more training details, please refer to 
+
+Supplementary Material A.7 .
+
+4.2 Performance Comparison 
+
+Table 1: Comparison on NAVSIM v1. Abbreviation: Diff. (Diffusion), Comf. (Comfort), Cam (Camera), L (LiDAR).                                                                                                                                                                          
+
+> Method Backbone Input NC ↑DAC ↑TTC ↑Comf. ↑EP ↑PDMS ↑
+> Traditional End-to-End Methods
+> VADv2 [3] –Cam 97.2 89.1 91.6 100 76.0 80.9 TransFuser [5] –Cam + L 97.7 92.8 92.8 100 79.2 84.0 Hydra-MDP++ [13] –Cam + L 98.3 96.0 94.6 100 78.7 86.5 Artemis [26] –Cam 98.3 95.1 94.3 99.8 81.4 87.0 DiffusionDrive [17] –Cam + L 98.2 96.1 94.8 100 82.2 88.1 DriveDPO [27] –Cam + L 98.5 98.1 94.8 99.9 84.3 90.0
+> VLA Methods w/o Explicit Reasoning
+> DrivingGPT [38] LLaMA2-7B [30] Cam 98.1 90.7 94.9 95.6 79.7 82.4 Epona [44] DiT-2.5B [23] Cam 97.9 95.1 93.8 99.9 80.4 86.2 ReCogDrive [16] InternVL3-8B [47] Cam 98.2 97.5 95.2 99.9 83.5 89.6 DriveVLA-W0 [15] Qwen2.5-VL-3B [32] Cam 98.7 99.1 95.3 99.3 83.3 90.3
+> VLA Methods w/ Textual Reasoning
+> AutoVLA [46] Qwen2.5-VL-3B [32] Cam 98.4 95.6 98.0 99.9 81.9 89.1 AdaThinkDrive [19] InternVL3-8B [47] Cam 98.4 97.8 95.2 100 84.4 90.3 AutoDrive-R2[42] Qwen2.5-VL-7B [32] Cam 98.5 95.9 95.4 100 82.7 89.1 ELF-VLA-8B [20] InternVL3-8B [47] Cam 98.9 98.1 96.0 100 85.3 91.0
+> VLA Methods w/ Visual Reasoning
+> FSDrive [43] Qwen2-VL-2B [33] Cam 98.2 93.8 93.3 99.9 80.1 85.1 DAP [40] MiMo-VL-7B [12] Cam+L 95.2 97.4 96.5 100 82.2 87.2 PWM [8] Show-o [35] Cam 98.6 95.9 95.4 100 81.8 88.1 LaST-VLA [21] InternVL3-8B [47] Cam 98.7 97.9 95.6 100 86.8 91.3
+> IRR-Drive-3B Qwen2.5-VL-3B [32] Cam 98.0 97.4 94.4 100 87.4 90.6
+> IRR-Drive-4B Qwen3-VL-4B [1] Cam 98.0 98.3 93.7 100 88.5 91.3
+
+NAVSIM Benchmark. Tab. 1 and Tab. 2 present comparisons of our method with others on the NAVSIM benchmark. On NAVSIM v1, our method achieves competitive performance, reaching 91.3 PDMS, outperforming traditional end-to-end methods and recent VLA methods. In addition to PDMS, our model consistently improves trajectory-related metrics such as DAC and EP, indicating enhanced decision consistency and control quality. On the more challenging NAVSIM v2 benchmark, our advantages become more pronounced. IRR-Drive achieves 89.0 EPDMS, surpassing the previous best result (e.g., ELF-VLA-8B, 87.1) by a clear margin of +1.9. Meanwhile, we achieve the highest EP (92.3), demonstrating stronger task-completion capability in complex scenes. These results suggest that our method achieves stronger generalization and robustness. 7Table 2: Comparison with state-of-the-art methods on NAVSIM v2 with EPDMS.                                                                                                                         
+
+> Method NC ↑DAC ↑DDC ↑TLC ↑EP ↑TTC ↑LK ↑HC ↑EC ↑EPDMS ↑
+> Traditional End-to-End Methods
+> HydraMDP++ [13] 97.2 97.5 99.4 99.6 83.1 96.5 94.4 98.2 70.9 81.4 DriveSuprim [39] 97.5 96.5 99.4 99.6 88.4 96.6 95.5 98.3 77.0 83.1 DiffusionDrive [17] 98.2 95.9 99.4 99.8 87.5 97.3 96.8 98.3 87.7 84.5
+> VLA Methods w/o Explicit Reasoning
+> RecogDrive-8B [16] 98.3 95.2 99.5 99.8 87.1 97.5 96.6 98.3 86.5 83.6 WAM-Flow-1.5B [37] 98.5 94.5 99.5 99.8 86.9 96.8 97.4 97.6 73.9 84.7 DriveVLA-W0-3B [15] 98.5 99.1 98.0 99.7 86.4 98.1 93.2 97.9 58.9 86.1
+> VLA Methods w/ Textual Reasoning
+> ELF-VLA-8B [20] 98.9 98.1 99.4 99.8 88.5 98.4 96.9 98.3 87.2 87.1 Senna-2-3B [29] 98.5 97.8 99.5 99.8 88.1 97.5 97.0 98.6 88.4 86.6
+> VLA Methods w/ Visual Reasoning
+> LaST-VLA-8B [21] 98.7 97.9 99.2 99.7 90.3 98.2 96.6 98.3 86.3 87.1
+> IRR-Drive-3B 97.3 97.4 98.7 99.6 91.9 97.1 95.7 97.9 76.9 87.9
+> IRR-Drive-4B 97.0 98.3 98.9 99.5 92.3 96.8 95.8 97.6 82.2 89.0
+
+Table 3: Comparison with different reasoning modes. Runtime denotes the average inference time per sample on navtest, measured on a single H800 GPU. 
+
+Model NC ↑ DAC ↑ TTC ↑ Comf. ↑ EP ↑ PDMS ↑ Runtime (s) 
+
+Non-Reflection 98.1 97.9 93.4 100 87.6 90.6 1.46 Reflection 98.5 97.9 95.2 100 86.2 90.8 3.03 
+
+IRR-Drive 98.0 98.3 93.7 100 88.5 91.3 1.70 
+
+Adaptive Reflection Performance. We modify the format reward function in the reinforcement learning stage to enforce single-mode reasoning during exploration. As shown in Tab. 3, applying a uniform Reflection mode across all scenarios incurs a substantial computational overhead, increasing the runtime from 1.46s to 3.03s while yielding only a marginal +0.2 improvement in PDMS over the Non-Reflection baseline. This result highlights the inefficiency of indiscriminate reflective reasoning. In contrast, IRR-Drive adaptively allocates computation only when necessary. Consequently, it achieves the best trade-off, reaching 91.3 PDMS with only 1.70s runtime, demonstrating both the effectiveness and efficiency of the proposed adaptive reflection reward function. 
+
+4.3 Ablation Studies 
+
+Table 4: Ablation on Reward Functions. Refl. Ratio denotes the proportion of samples that adopt reflection during inference on the navtest.                                            
+
+> ID PDMS Adaptive Reflection Concentric OBB-FDE NC ↑DAC ↑TTC ↑Comf. ↑EP ↑PDMS ↑Refl. Ratio
+> 198.6 95.6 95.4 100 81.1 87.6 11.1% 2✓98.0 95.9 91.7 99.9 84.1 88.9 1.9% 3✓✓96.9 97.4 91.1 99.9 90.8 90.5 22.9% 4✓✓✓98.0 98.3 93.7 100 88.5 91.3 20.6%
+
+Ablation on Reward Functions. Tab. 4 illustrates the impact of different reward combinations on closed-loop metrics. Experiment 1 reflects the pre-RL model performance and is adopted as the baseline. With only the basic PDMS reward, the model achieves a PDMS score of 88.9, representing an improvement of only 1.3 over the baseline. Additionally, its reasoning mode collapsed, with a reflection rate of only 1.9%. Adding the adaptive reflection reward significantly improves the score to 90.5, and its adaptive reflection mode is effectively explored, achieving a 22.9% reflection rate. Incorporating our proposed Concentric OBB-FDE reward further elevates the PDMS metric to a peak of 91.3, while maintaining a stable reflection rate of 20.6%. These results demonstrate that the Concentric OBB-FDE reward effectively strikes an optimal balance between accommodating 8Table 5: Ablation on CoT content. Text+BEV reasoning achieves the best performance after both SFT and RL, showing the complementarity between textual reasoning and BEV reflection. 
+
+Text BEV SFT RL PDMS ↑ NC ↑ DAC ↑ TTC ↑ Comf. ↑ EP ↑ PDMS ↑
+
+✗ ✗ 87.3 97.5 97.0 93.0 100 87.4 89.9 
+
+✓ ✗ 87.2 97.9 97.6 93.5 100 87.9 90.6 
+
+✗ ✓ 87.2 98.8 97.5 96.4 100 84.8 90.5 
+
+✓ ✓ 87.6 98.0 98.3 93.7 100 88.5 91.3 
+
+Table 6: Ablation on Group Size. A group size of 8 yields the best performance, indicat-ing a favorable trade-off between rollout diver-sity and training efficiency.                              
+
+> Group Size NC ↑DAC ↑TTC ↑Comf. ↑EP ↑PDMS ↑
+> w/o RL 98.6 95.6 95.4 100 81.1 87.6 497.7 97.7 92.7 99.9 86.2 90.8 898.0 98.3 93.7 100 88.5 91.3 12 98.5 97.9 95.2 100 86.2 91.2
+
+Table 7: Ablation on Training Stages. Pretraining improves generalization over SFT alone, while RL fine-tuning further enhances closed-loop planning performance, leading to the best overall result.                         
+
+> Model NC ↑DAC ↑TTC ↑Comf. ↑EP ↑PDMS ↑
+> SFT 97.7 93.3 93.9 100 80.5 85.7 Pre+SFT 98.6 95.6 95.4 100 81.1 87.6 Pre+SFT+RL 98.0 98.3 93.7 100 88.5 91.3
+
+sub-optimal human trajectories and facilitating RL exploration, thereby further enhancing the model’s performance. 
+
+Ablation on CoT Content. Tab. 5 presents an ablation study on the impact of different CoT content on NAVSIM v1. Results show that relying on a single modality (either Text or BEV) yields limited gains in the RL stage. In contrast, combining Text and BEV yields the best overall performance. The multimodal CoT achieves the highest PDMS in the SFT stage (87.6) and further benefits from RL fine-tuning, reaching 91.3. These results suggest that the spatial geometric information from BEV and the reasoning capability of text are complementary, and their integration is crucial for improving CoT effectiveness in trajectory planning. 
+
+Ablation on Group Size. As shown in Tab. 6, while applying RL significantly elevates the PDMS over the baseline (87.6), the performance gain saturates as the group size increases. Specifically, the PDMS improves from 90.8 to 91.3 when scaling the group size from 4 to 8, but slightly drops to 91.2 at a group size of 12. This demonstrates that a group size of 8 is sufficient to achieve optimal planning capability without redundant computational overhead. 
+
+Ablation on Training Stage. Tab. 7 validates the effectiveness of the proposed multi-stage training pipeline. Incorporating pretraining into the SFT baseline consistently improves generalization (PDMS +1.9). Further introducing reinforcement learning leads to substantial improvements in decision-making performance, with notable gains in DAC and EP. The full pipeline (Pre+SFT+RL) achieves the best overall performance, reaching a PDMS of 91.3 (+5.6 over SFT), thereby highlighting the critical role of RL in closed-loop execution. More ablation studies on High Score Thresholds( τ ) and Training Data in RL are provided in Supple-mentary Material A.8 .
+
+5 Conclusion 
+
+In this paper, we argue that existing reasoning paradigms for autonomous driving are weakly grounded and treat reflection as a static, post-hoc process. To address this, we propose IRR-Drive, a novel multimodal reflection framework that leverages predicted future semantic BEV representations as a structured space for plan verification. In addition, we enable adaptive reflection, allowing the model to dynamically adjust reasoning based on scene complexity through a reinforcement learning pipeline. Experiments on NAVSIM v1 and v2 demonstrate the effectiveness of IRR-Drive, showing that multimodal reasoning is complementary and that adaptive reflection balances inference efficiency and performance. 9Limitation and Future Work. Although our model achieves competitive performance and incor-porates an adaptive reasoning paradigm, it is still not fully suitable for real-time inference. Future work will focus on real-time deployment and improving inference efficiency (e.g., through model quantization and distillation). 
+
+References 
+
+[1] Shuai Bai, Yuxuan Cai, Ruizhe Chen, Keqin Chen, Xionghui Chen, Zesen Cheng, Lianghao Deng, Wei Ding, Chang Gao, Chunjiang Ge, et al. Qwen3-vl technical report. arXiv preprint arXiv:2511.21631 , 2025. [2] Wei Cao, Marcel Hallgarten, Tianyu Li, Daniel Dauner, Xunjiang Gu, Caojun Wang, Yakov Miron, Marco Aiello, Hongyang Li, Igor Gilitschenski, et al. Pseudo-simulation for autonomous driving. arXiv preprint arXiv:2506.04218 , 2025. [3] Shaoyu Chen, Bo Jiang, Hao Gao, Bencheng Liao, Qing Xu, Qian Zhang, Chang Huang, Wenyu Liu, and Xinggang Wang. Vadv2: End-to-end vectorized autonomous driving via probabilistic planning, 2024. URL 
+
+https://arxiv.org/abs/2402.13243 .[4] Zisheng Chen, Chunwei Wang, Runhui Huang, Hongbin Xu, Xiuwei Chen, Jun Zhou, Jianhua Han, Hang Xu, and Xiaodan Liang. Semhitok: A unified image tokenizer via semantic-guided hierarchical codebook for multimodal understanding and generation. arXiv preprint arXiv:2503.06764 , 2025. [5] Kashyap Chitta, Aditya Prakash, Bernhard Jaeger, Zehao Yu, Katrin Renz, and Andreas Geiger. Transfuser: Imitation with transformer-based sensor fusion for autonomous driving. Pattern Analysis and Machine Intelligence (PAMI) , 2023. [6] Daniel Dauner, Marcel Hallgarten, Tianyu Li, Xinshuo Weng, Zhiyu Huang, Zetong Yang, Hongyang Li, Igor Gilitschenski, Boris Ivanovic, Marco Pavone, Andreas Geiger, and Kashyap Chitta. Navsim: Data-driven non-reactive autonomous vehicle simulation and benchmarking. In Advances in Neural Information Processing Systems (NeurIPS) , 2024. [7] Patrick Esser, Robin Rombach, and Bjorn Ommer. Taming transformers for high-resolution image synthesis. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 12873–12883, 2021. [8] Ignat Georgiev, Varun Giridhar, Nicklas Hansen, and Animesh Garg. Pwm: Policy learning with multi-task world models, 2025. URL https://arxiv.org/abs/2407.02466 .[9] Runhui Huang, Chunwei Wang, Junwei Yang, Guansong Lu, Yunlong Yuan, Jianhua Han, Lu Hou, Wei Zhang, Lanqing Hong, Hengshuang Zhao, et al. Illume+: Illuminating unified mllm with dual visual tokenization and diffusion refinement. arXiv preprint arXiv:2504.01934 , 2025. [10] Feiyang jia, Lin Liu, Ziying Song, Caiyan Jia, Hangjun Ye, Xiaoshuai Hao, and Long Chen. Driveworld-vla: Unified latent-space world modeling with vision-language-action for autonomous driving, 2026. URL 
+
+https://arxiv.org/abs/2602.06521 .[11] Bo Jiang, Shaoyu Chen, Bencheng Liao, Xingyu Zhang, Wei Yin, Qian Zhang, Chang Huang, Wenyu Liu, and Xinggang Wang. Senna: Bridging large vision-language models and end-to-end autonomous driving, 2024. URL https://arxiv.org/abs/2410.22313 .[12] Jiaze Li, Jingyang Chen, Yuxun Qu, Shijie Xu, Zhenru Lin, Junyou Zhu, Boshen Xu, Wenhui Tan, Pei Fu, Jianzhong Ju, et al. Xiaomi mimo-vl-miloco technical report. arXiv preprint arXiv:2512.17436 , 2025. [13] Kailin Li, Zhenxin Li, Shiyi Lan, Yuan Xie, Zhizhong Zhang, Jiayi Liu, Zuxuan Wu, Zhiding Yu, and Jose M. Alvarez. Hydra-mdp++: Advancing end-to-end driving via expert-guided hydra-distillation, 2025. URL https://arxiv.org/abs/2503.12820 .[14] Yanze Li, Wenhua Zhang, Kai Chen, Yanxin Liu, Pengxiang Li, Ruiyuan Gao, Lanqing Hong, Meng Tian, Xinhai Zhao, Zhenguo Li, et al. Automated evaluation of large vision-language models on self-driving corner cases. arXiv preprint arXiv:2404.10595 , 2024. [15] Yingyan Li, Shuyao Shang, Weisong Liu, Bing Zhan, Haochen Wang, Yuqi Wang, Yuntao Chen, Xiaoman Wang, Yasong An, Chufeng Tang, Lu Hou, Lue Fan, and Zhaoxiang Zhang. Drivevla-w0: World models amplify data scaling law in autonomous driving, 2025. URL https://arxiv.org/abs/2510.12796 .[16] Yongkang Li, Kaixin Xiong, Xiangyu Guo, Fang Li, Sixu Yan, Gangwei Xu, Lijun Zhou, Long Chen, Haiyang Sun, Bing Wang, et al. Recogdrive: A reinforced cognitive framework for end-to-end autonomous driving. arXiv preprint arXiv:2506.08052 , 2025. 
+
+10 [17] Bencheng Liao, Shaoyu Chen, Haoran Yin, Bo Jiang, Cheng Wang, Sixu Yan, Xinbang Zhang, Xiangyu Li, Ying Zhang, Qian Zhang, and Xinggang Wang. Diffusiondrive: Truncated diffusion model for end-to-end autonomous driving, 2025. URL https://arxiv.org/abs/2411.15139 .[18] Xueyi Liu, Zuodong Zhong, Yuxin Guo, Yun-Fu Liu, Zhiguo Su, Qichao Zhang, Junli Wang, Yinfeng Gao, Yupeng Zheng, Qiao Lin, Huiyong Chen, and Dongbin Zhao. Reasonplan: Unified scene prediction and decision reasoning for closed-loop autonomous driving, 2025. URL https://arxiv.org/abs/2505. 20024 .[19] Yuechen Luo, Fang Li, Shaoqing Xu, Zhiyi Lai, Lei Yang, Qimao Chen, Ziang Luo, Zixun Xie, Shengyin Jiang, Jiaxin Liu, Long Chen, Bing Wang, and Zhi xin Yang. Adathinkdrive: Adaptive thinking via reinforcement learning for autonomous driving, 2025. URL https://arxiv.org/abs/2509.13769 .[20] Yuechen Luo, Qimao Chen, Fang Li, Shaoqing Xu, Jaxin Liu, Ziying Song, Zhi xin Yang, and Fuxi Wen. Unleashing vla potentials in autonomous driving via explicit learning from failures, 2026. URL 
+
+https://arxiv.org/abs/2603.01063 .[21] Yuechen Luo, Fang Li, Shaoqing Xu, Yang Ji, Zehan Zhang, Bing Wang, Yuannan Shen, Jianwei Cui, Long Chen, Guang Chen, et al. Last-vla: Thinking in latent spatio-temporal space for vision-language-action in autonomous driving. arXiv preprint arXiv:2603.01928 , 2026. [22] Ana-Maria Marcu, Long Chen, Jan Hünermann, Alice Karnsund, Benoit Hanotte, Prajwal Chidananda, Saurabh Nair, Vijay Badrinarayanan, Alex Kendall, Jamie Shotton, et al. Lingoqa: Visual question answering for autonomous driving. In European Conference on Computer Vision , pages 252–269. Springer, 2024. [23] William Peebles and Saining Xie. Scalable diffusion models with transformers. In Proceedings of the IEEE/CVF international conference on computer vision , pages 4195–4205, 2023. [24] Zhenghao "Mark" Peng, Wenhao Ding, Yurong You, Yuxiao Chen, Wenjie Luo, Thomas Tian, Yulong Cao, Apoorva Sharma, Danfei Xu, Boris Ivanovic, Boyi Li, Bolei Zhou, Yan Wang, and Marco Pavone. Counterfactual vla: Self-reflective vision-language-action model with adaptive reasoning, 2025. URL 
+
+https://arxiv.org/abs/2512.24426 .[25] Tianwen Qian, Jingjing Chen, Linhai Zhuo, Yang Jiao, and Yu-Gang Jiang. Nuscenes-qa: A multi-modal visual question answering benchmark for autonomous driving scenario. arXiv preprint arXiv:2305.14836 ,2023. [26] Jihao Qiu, Yuan Zhang, Xi Tang, Lingxi Xie, Tianren Ma, Pengyu Yan, David Doermann, Qixiang Ye, and Yunjie Tian. Artemis: Towards referential understanding in complex videos, 2024. URL 
+
+https://arxiv.org/abs/2406.00258 .[27] Shuyao Shang, Yuntao Chen, Yuqi Wang, Yingyan Li, and Zhaoxiang Zhang. Drivedpo: Policy learning via safety dpo for end-to-end autonomous driving, 2025. URL https://arxiv.org/abs/2509.17940 .[28] Chonghao Sima, Katrin Renz, Kashyap Chitta, Li Chen, Hanxue Zhang, Chengen Xie, Jens Beißwenger, Ping Luo, Andreas Geiger, and Hongyang Li. Drivelm: Driving with graph visual question answering. In 
+
+European conference on computer vision , pages 256–274. Springer, 2024. [29] Yuehao Song, Shaoyu Chen, Hao Gao, Yifan Zhu, Weixiang Yue, Jialv Zou, Bo Jiang, Zihao Lu, Yu Wang, Qian Zhang, and Xinggang Wang. Senna-2: Aligning vlm and end-to-end driving policy for consistent decision making and planning, 2026. URL https://arxiv.org/abs/2603.11219 .[30] Hugo Touvron, Louis Martin, Kevin Stone, Peter Albert, Amjad Almahairi, Yasmine Babaei, Nikolay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti Bhosale, et al. Llama 2: Open foundation and fine-tuned chat models. arXiv preprint arXiv:2307.09288 , 2023. [31] Aaron Van Den Oord, Oriol Vinyals, et al. Neural discrete representation learning. Advances in neural information processing systems , 30, 2017. [32] Peng Wang, Shuai Bai, Sinan Tan, Shijie Wang, Zhihao Fan, Jinze Bai, Keqin Chen, Xuejing Liu, Jialin Wang, Wenbin Ge, Yang Fan, Kai Dang, Mengfei Du, Xuancheng Ren, Rui Men, Dayiheng Liu, Chang Zhou, Jingren Zhou, and Junyang Lin. Qwen2-vl: Enhancing vision-language model’s perception of the world at any resolution. arXiv preprint arXiv:2409.12191 , 2024. [33] Peng Wang, Shuai Bai, Sinan Tan, Shijie Wang, Zhihao Fan, Jinze Bai, Keqin Chen, Xuejing Liu, Jialin Wang, Wenbin Ge, et al. Qwen2-vl: Enhancing vision-language model’s perception of the world at any resolution. arXiv preprint arXiv:2409.12191 , 2024. 
+
+11 [34] Junfeng Wu, Yi Jiang, Chuofan Ma, Yuliang Liu, Hengshuang Zhao, Zehuan Yuan, Song Bai, and Xiang Bai. Liquid: Language models are scalable and unified multi-modal generators. International Journal of Computer Vision , 134(1):39, 2026. [35] Jinheng Xie, Weijia Mao, Zechen Bai, David Junhao Zhang, Weihao Wang, Kevin Qinghong Lin, Yuchao Gu, Zhijie Chen, Zhenheng Yang, and Mike Zheng Shou. Show-o: One single transformer to unify multimodal understanding and generation. arXiv preprint arXiv:2408.12528 , 2024. [36] Ding Xinpeng, Han Jinahua, Xu Hang, Laing Xiaodan, Hang Xu, Zhang Wei, and Li Xiaomeng. Holistic autonomous driving understanding by bird’s-eye-view injected multi-modal large models. 2024. [37] Yifang Xu, Jiahao Cui, Feipeng Cai, Zhihao Zhu, Hanlin Shang, Shan Luan, Mingwang Xu, Neng Zhang, Yaoyi Li, Jia Cai, and Siyu Zhu. Wam-flow: Parallel coarse-to-fine motion planning via discrete flow matching for autonomous driving. In CVPR , 2026. [38] Zhenhua Xu, Yujia Zhang, Enze Xie, Zhen Zhao, Yong Guo, Kwan-Yee K Wong, Zhenguo Li, and Hengshuang Zhao. Drivegpt4: Interpretable end-to-end autonomous driving via large language model. 
+
+IEEE Robotics and Automation Letters , 9(10):8186–8193, 2024. [39] Wenhao Yao, Zhenxin Li, Shiyi Lan, Zi Wang, Xinglong Sun, Jose M. Alvarez, and Zuxuan Wu. Drivesuprim: Towards precise trajectory selection for end-to-end planning, 2025. URL https: //arxiv.org/abs/2506.06659 .[40] Bowen Ye, Bin Zhang, and Hang Zhao. Dap: A discrete-token autoregressive planner for autonomous driving. arXiv preprint arXiv:2511.13306 , 2025. [41] Yuqi Ye, Zijian Zhang, Junhong Lin, Shangkun Sun, Changhao Peng, and Wei Gao. AutoDrive-Pi 3:Unified chain of perception-prediction-planning thought via reinforcement fine-tuning. arXiv preprint arXiv:2603.28116 , 2026. [42] Zhenlong Yuan, Chengxuan Qian, Jing Tang, Rui Chen, Zijian Song, Lei Sun, Xiangxiang Chu, Yujun Cai, Dapeng Zhang, and Shuo Li. AutoDrive-R 2: Incentivizing reasoning and self-reflection capacity of vla models in autonomous driving. arXiv preprint arXiv:2509.01944 , 2025. [43] Shuang Zeng, Xinyuan Chang, Mengwei Xie, Xinran Liu, Yifan Bai, Zheng Pan, Mu Xu, Xing Wei, and Ning Guo. Futuresightdrive: Thinking visually with spatio-temporal cot for autonomous driving, 2025. URL https://arxiv.org/abs/2505.17685 .[44] Kaiwen Zhang, Zhenyu Tang, Xiaotao Hu, Xingang Pan, Xiaoyang Guo, Yuan Liu, Jingwei Huang, Li Yuan, Qian Zhang, Xiao-Xiao Long, Xun Cao, and Wei Yin. Epona: Autoregressive diffusion world model for autonomous driving, 2025. URL https://arxiv.org/abs/2506.24113 .[45] Chujie Zheng, Shixuan Liu, Mingze Li, Xiong-Hui Chen, Bowen Yu, Chang Gao, Kai Dang, Yuqiong Liu, Rui Men, An Yang, et al. Group sequence policy optimization. arXiv preprint arXiv:2507.18071 , 2025. [46] Zewei Zhou, Tianhui Cai, Seth Z. Zhao, Yun Zhang, Zhiyu Huang, Bolei Zhou, and Jiaqi Ma. Au-tovla: A vision-language-action model for end-to-end autonomous driving with adaptive reasoning and reinforcement fine-tuning, 2025. URL https://arxiv.org/abs/2506.13757 .[47] Jinguo Zhu, Weiyun Wang, Zhe Chen, Zhaoyang Liu, Shenglong Ye, Lixin Gu, Hao Tian, Yuchen Duan, Weijie Su, Jie Shao, et al. Internvl3: Exploring advanced training and test-time recipes for open-source multimodal models. arXiv preprint arXiv:2504.10479 , 2025. 
+
+12 A Supplementary Material 
+
+A.1 More Related Work Vision-Language and Vision-Language-Action Models for Autonomous Driving. The integration of large vision-language models into autonomous driving enables semantic-level decision-making grounded in scene understanding and commonsense knowledge. DriveGPT4 [ 38 ] is among the earliest efforts to jointly model driving interpretation and action prediction within a unified vision-language framework. To address the limited precision of language models in continuous planning, Senna [ 11 ] decouples semantic decision-making from trajectory prediction, using language-based meta-actions as the interface between a high-level LVLM and a low-level planner. ReCogDrive [ 16 ] further addresses domain gap, language–action mismatch, and imitation bias through a three-stage pipeline consisting of driving VQA pretraining, a cognitive-guided diffusion planner, and reinforcement learning fine-tuning. These works demonstrate the promise of the VLA paradigm for autonomous driving, while most of them still rely on single-pass generation without an explicit feedback mechanism for validating the physical consequences of planned behaviors. 
+
+Future Scene Modeling for Autonomous Driving. Another closely related line of work incorporates future prediction or world modeling into driving planning. ReasonPlan [ 18 ] combines self-supervised next-scene prediction with decision chain-of-thought to jointly model scene forecasting and decision reasoning in closed-loop driving. Epona [44] proposes an autoregressive diffusion world model for long-horizon driving video generation and applies the learned world model to planning. DriveVLA-W0 [ 15 ] addresses the supervision deficit in VLA training by using future image prediction as a dense self-supervised signal. DriveWorld-VLA [ 10 ] further couples world dynamics with the planner in latent space, enabling decision-making to directly leverage latent representations of future scene evolution. Collectively, these methods incorporate future scenario modeling in different forms, including auxiliary supervision, reasoning support, and latent planning. 
+
+A.2 Semantic Tokenizer 
+
+As shown in Fig. 5, we demonstrate how to train a semantic BEV tokenizer and how to use it to convert BEV maps into discrete special tokens compatible with the autoregressive VLM interface. (a) Training of Semantic BEV Tokenizer  
+
+> Input
+> BEV
+> Semantic
+> Codebook
+> Features F
+> Semantic
+> loss
+
+(b) Turn BEV to Image Code  
+
+> Qwen -VL
+> Encoder
+> BEV
+> Decoder
+> Features F
+> Qwen -VL
+> Encoder
+> BEV
+> Semantic
+> Codebook
+> 951
+> 723
+> 534
+> 517
+
+# …
+
+> <IMG_OF_0951>
+> <IMG_OF_0723>
+> <IMG_OF_0534>
+> <IMG_OF_0517>
+> MLP
+> B
+> Z
+> v
+
+Figure 5: (a) Training framework of the semantic BEV tokenizer. A frozen semantic encoder processes the BEV representation to extract features, which are then discretized and decoded to reconstruct the continuous semantic features. (b) The trained semantic BEV tokenizer is used to convert BEV representations into discrete codes. To align with the autoregressive workflow of the VLM, these codes are further mapped into special tokens in the format <IMG_OF_XXXX>. 13 A.3 Adaptive Data Examples 
+
+We present examples of data from simple and challenging scenarios in Fig. 6 and 7, respectively. Front  Front_left  Front_right 
+
+> Left
+> Right
+
+Back Back_left  Back_right 
+
+Simple Scene Reasoning 
+
+Initial Intention 
+
+x-direction: 0.0s~1.0s: accelerate to 0.7, 1.0s~3.0s: accelerate to 2.9, 3.0s~4.0s: decelerate to 
+
+2.7; y -direction: 0.0s~1.5s: no lateral movement, 1.5s~4.0s: accelerating left to -3.3; 
+
+(+0.05,+0.00,+0.00)(+0.39, -0.01, -0.01)(+1.13, -0.02, -0.05)(+2.17, -0.10, -0.12)(+3.47, -0.33, -
+
+0.27)(+4.94, -0.90, -0.51)(+6.42, -1.99, -0.78)(+7.78, -3.63, -1.02) 
+
+Reflect 
+
+This trajectory does not need adjustment. 
+
+Final Trajectory 
+
+Front  Front_left  Front_right 
+
+> Left
+> Right
+
+Back Back_left  Back_right 
+
+Simple Scene Reasoning 
+
+Initial Intention 
+
+x-direction: 0.0s~4.0s: decelerate to 3.4; y -direction: 0.0s~4.0s: no lateral movement; 
+
+(+4.14,+0.01,+0.00)(+8.05,+0.03,+0.01)(+11.65,+0.05,+0.00)(+14.86,+0.06,+0.00)(+17.68,+0.0 
+
+6,+0.00)(+20.08,+0.07,+0.00)(+22.11,+0.05,+0.00)(+23.82,+0.04,+0.00) 
+
+Reflect 
+
+This trajectory does not need adjustment. 
+
+Final Trajectory 
+
+Figure 6: Illustrative examples of simple scenes. Challenging Scene Reasoning 
+
+Initial Intention 
+
+x-direction: 0.0s~1.0s: decelerate to 3.5, 1.0s~2.0s: decelerate to 1.5, 2.0s~3.0s: decelerate 
+
+to 0.0, 3.0s~4.0s: decelerate to -0.5; y -direction: 0.0s~0.5s: drifting left at 0.1, 0.5s~2.5s: no 
+
+lateral movement, 2.5s~4.0s: drifting right at -0.1; 
+
+Reflect 
+
+1.Intent  - conditioned BEV Forecasting 
+
+<IMG_OF_1008><IMG_OF_0511><IMG_OF_0367><IMG_OF_0890><IMG_OF_0474><IMG_ 
+
+OF_0748><IMG_OF_0817><IMG_OF_0306><IMG_OF_0466><IMG_OF_0256><IMG_OF_003 
+
+3><IMG_OF_0952><IMG_OF_0952><IMG_OF_0306><IMG_OF_0730><IMG_OF_0227><IM 
+
+G_OF_0179>… 
+
+2.BEV Grounded reasoning 
+
+Global Description 
+
+The ego vehicle is positioned at the center of a multi -lane road, surrounded by several other 
+
+vehicles ahead and to the sides. A stop line is visible ahead, indicating an upcoming 
+
+intersection or controlled crossing. The road includes clearly defined lanes and a curved 
+
+section to the right, bordered by a pedestrian walkway. The ego is aligned with the lane 
+
+centerline and appears to be approaching the stop line with safe spacing from surrounding 
+
+traffic. 
+
+Safety Assessment 
+
+The ego vehicle maintains safe margins from all nearby vehicles and is fully within the 
+
+drivable area. Its current progress reflects moderate efficiency, suggesting room for 
+
+smoother acceleration without compromising safety. No immediate collision risk is present. 
+
+Trajectory suggestions 
+
+direction: keep, speed: accelerate 
+
+Refine 
+
+1.Refined Intent 
+
+x-direction: 0.0s~4.0s: decelerate to 2.9; y -direction: 0.0s~4.0s: no lateral movement 
+
+2.Final Trajectory 
+
+(+2.36, -0.01,+0.00)(+4.61, -0.01,+0.00)(+6.80, -0.02,+0.00)(+8.92, -0.01,+0.00) 
+
+(+10.94,+0.01,+0.01)(+12.81,+0.03,+0.01)(+14.50,+0.03,+0.01)(+15.94,+0.05,+0.01) 
+
+Challenging Scene Reasoning 
+
+Initial Intention 
+
+x-direction: 0.0s~3.0s: accelerating to 4.8, 3.0s~4.0s: decelerating to 4.7; y -direction: 
+
+0.0s~2.0s: accelerating left to 1.5, 2.0s~3.5s: maintaining left drift at 1.9, 3.5s~4.0s: 
+
+decelerating left to 1.6; 
+
+Reflect 
+
+1.Intent  - conditioned BEV Forecasting 
+
+<IMG_OF_0847><IMG_OF_0777><IMG_OF_1007><IMG_OF_0711><IMG_OF_0073><IMG_ 
+
+OF_0620><IMG_OF_0519><IMG_OF_0847><IMG_OF_0649><IMG_OF_0958><IMG_OF_063 
+
+0><IMG_OF_0493><IMG_OF_0011><IMG_OF_0428><IMG_OF_0227><IMG_OF_0506><IM 
+
+G_OF_0543><IMG_OF_0495>… 
+
+2.BEV Grounded reasoning 
+
+Global Description 
+
+The ego vehicle is positioned centrally in a multi -lane road, flanked by multiple vehicles 
+
+ahead and to both sides. The road includes clear lane markings and is bordered by walkways 
+
+on either side. No stop lines or intersections are visible ahead. The ego is aligned with the 
+
+centerline of its lane, surrounded by other vehicles maintaining consistent spacing. 
+
+Safety Assessment 
+
+The ego vehicle is operating safely with no immediate collision risk and is fully within the 
+
+drivable area. The trajectory is efficient, showing good progress without unnecessary delays 
+
+or deviations. Surrounding vehicles maintain safe margins, and the environment remains 
+
+predictable and clear. 
+
+Trajectory suggestions 
+
+direction: turn right, speed: accelerate 
+
+Refine 
+
+1.Refined Intent 
+
+x-direction: 0.0s~0.5s: accelerate to 4.2, 0.5s~4.0s: maintain speed at 5.4; y -direction: 
+
+0.0s~0.5s: accelerating left to 0.3, 0.5s~4.0s: maintain left drift at 0.7; 
+
+2.Final Trajectory 
+
+(+2.06,+0.09,+0.08)(+4.23,+0.29,+0.12)(+6.53,+0.55,+0.14)(+8.96,+0.86,+0.14)(+11.52, 
+
++1.20,+0.14)(+14.20,+1.56,+0.14)(+16.97,+1.95,+0.14)(+19.86,+2.41,+0.15) 
+
+Front  Front_left  Front_right 
+
+> Left
+> Right
+
+Back Back_left  Back_right 
+
+Front  Front_left  Front_right 
+
+> Left
+> Right
+
+Back Back_left  Back_right 
+
+Figure 7: Illustrative examples of challenging scenes. 
+
+A.4 Pseudocode for data construction and filtering 
+
+We present the pseudocode for data construction, as shown in Algs 1 and 2. 14 A.5 Detailed computation of the Concentric OBB-FDE Reward 
+
+We provides the formal mathematical definition of the concentric OBB-FDE reward ( Robb ) introduced in the main text. The calculation is decoupled into two stages: computing the geometric spatial deviation and mapping it to a discrete reward score. 
+
+Spatial Deviation Calculation Let Pgt = ( xgt , y gt , θ gt ) denote the ground truth pose of the ego-vehicle at the final trajectory timestep, and Pres = ( xres , y res ) denote the predicted endpoint. We first calculate the global positional error and project it into the local coordinate frame of the ground truth pose: xlocal 
+
+ylocal 
+
+
+
+=
+
+ cos θgt sin θgt 
+
+− sin θgt cos θgt 
+
+  xres − xgt 
+
+yres − ygt 
+
+
+
+. (6) To account for the asymmetric physical dimensions of the ego-vehicle, we define the front overhang as lf ront , the rear overhang as lback , and the half-width as whalf . The spatial deviation is quantified by the minimum concentric scaling factor k required for the ego-vehicle’s oriented bounding box to fully enclose the predicted endpoint. Instead of employing a piecewise function, this factor can be elegantly computed as the maximum required expansion ratio across both the longitudinal and lateral axes in a single unified expression: 
+
+k = max 
+
+ xlocal 
+
+lf ront 
+
+, −xlocal 
+
+lback 
+
+, |ylocal |
+
+whalf 
+
+
+
+. (7) This formulation naturally handles the longitudinal asymmetry, as the max() operator inherently filters out the irrelevant negative term depending on whether the prediction falls in front of or behind the vehicle’s geometric center. 
+
+Stepwise Reward Calculation Once the spatial scaling factor k is obtained, it is mapped to a discrete reward score Robb ∈ [0 , 1] . We employ a stepwise decaying function based on predefined scale thresholds, representing concentrically expanded bounding boxes. The discrete reward is assigned as follows: 
+
+Robb (k) = 
+
+
+
+1.0, if k ≤ 1.0 (Within physical ego box) 
+
+0.9, if 1.0 < k ≤ 1.25 0.8, if 1.25 < k ≤ 1.50.6, if 1.5 < k ≤ 2.00.4, if 2.0 < k ≤ 3.00.2, if 3.0 < k ≤ 5.00.0, otherwise (Severe deviation) 
+
+. (8) This step-down mechanism avoids zero-sum binary penalties and provides a smooth, progressive learning signal during the reinforcement learning process while strictly adhering to the vehicle’s physical collision boundaries. 
+
+A.6 Detail of EPDMS 
+
+The EPDMS metric is calculated as follows: 
+
+EPDMS = NC · DAC · DDC · TLC ·
+
+ 5EP + 2LK + 2HC + 5TTC + 2EC 16 
+
+
+
+. (9) where NC, DAC, Driving Direction Compliance (DDC), Traffic Light Compliance (TLC), EP, TTC, Lane Keeping (LK), History Comfort (HC), and Extended Comfort (EC) jointly provide a comprehensive evaluation of safety, comfort, and driving performance. 
+
+A.7 More Training Details 
+
+The model is trained in three stages, as described in Sec. 3.3 and 3.4. In the first stage, we conduct SFT on pre-training data for 5 epochs with a learning rate of 2 × 10 −5 and batch size 128. The second stage fine-tunes the model on supervised trajectory and reflection data ( Dtraj , Drefl ) for 5 epochs using a learning rate of 1 × 10 −5, batch size 128. In the third stage, we apply reinforcement learning for 3 15 epochs on Drl ref l , with a learning rate of 2 × 10 −6, using a rollout size of 8 and a batch size of 128. In addition, in the Concentric OBB-FDE Reward, the front overhang ( lf ront ), rear overhang ( lback ), and half-width ( whalf ) are set to 2.0, 1.2, and 1.0, respectively. The default high score threshold τ
+
+for the Adaptive Reflection Reward is 0.92. All experiments are conducted on the H800. 
+
+A.8 Ablation on High Score Thresholds and Training Data in RL. 
+
+Table 8: Ablation on high score thresholds. HST 
+
+means high score thresholds τ .                                  
+
+> HST NC ↑DAC ↑TTC ↑Comf. ↑EP ↑PDMS ↑Refl. Ratio
+> 0.90 98.0 98.2 93.1 100 87.9 90.2 14.9% 0.92 98.0 98.3 93.7 100 88.5 91.3 20.6% 0.94 98.2 98.0 94.2 100 88.1 91.2 29.1% 0.96 98.0 98.1 93.4 100 88.3 90.1 34.8%
+
+Table 9: Ablation study on the number of training data in RL. *: Sampled based on score and variance. †: Random Sampled.                        
+
+> Num. NC ↑DAC ↑TTC ↑Comf. ↑EP ↑PDMS ↑
+> 132k 96.2 97.3 93.4 100 88.5 87.7 15k †96.1 96.6 89.8 100 86.2 86.2 15k *98.0 98.3 93.7 100 88.5 91.3
+
+Tab. 8 ablates the high score threshold ( τ ). The results indicate that τ = 0 .92 is the optimal operating point, yielding the highest PDMS of 91.3 while avoiding the computational overhead and performance degradation (90.1 PDMS) associated with excessive reflection ( τ = 0 .96 ). Tab. 9 validates our score-and-variance-based sampling strategy during the RL stage. Fine-tuning with only 15k targeted informative samples (15k*) drastically outperforms not only the 15k random subset (86.2 PDMS) but also the full 132k dataset (87.7 PDMS), reaching 91.3 PDMS. This highlights that data quality and targeted exploration are far more crucial than sheer data volume for refining driving policies. 
+
+A.9 Broader impacts 
+
+Autonomous driving is inherently safety-critical, a concern that becomes even more significant when language guidance is incorporated into VLA models. Such integration requires strong defenses against adversarial attacks, as well as mechanisms to detect and filter unsafe or malicious human instructions in advance. To reduce potential security risks, secure in-vehicle communication channels should be established, and model deployment should adopt a gated-release update strategy instead of relying on online continual reinforcement fine-tuning directly on individual vehicles. 
+
+A.10 LLM usage 
+
+As described in Sec 3.2, we use open-source LLMs and VLMs to construct the dataset. In addition, we utilize closed-source models (GPT, Gemini) to assist in paper writing. 16 Algorithm 1 Data Preparation for Reflection-Augmented Training 
+
+1: Input: driving understanding data Dunder , NAVSIM, trajectory data Dtraj , base planner M, VLM V,LLM L, rollout number K = 8 , temperature τtemp = 1 , hard-sample number Nhard = 4000 
+
+2: Output: pretraining data Dpre , reflection data Dref l , RL data Drl ref l 
+
+3: Construct Dpre from Dunder , BEV reconstruction data, and BEV prediction data 
+
+4: Train M on Dtraj 
+
+5: for each sample x ∈ D traj do 
+
+6: Predict trajectory ˆy ← M (x)
+
+7: Compute PDMS score s with NAVSIM 
+
+8: end for 
+
+9: Rank all samples by PDMS score 
+
+10: Define the bottom Nhard samples as D+ 
+
+> ref l
+
+and the remaining ones as D−
+
+> ref l
+
+11: for each sample x ∈ D traj do 
+
+12: Obtain ground-truth trajectory y∗
+
+13: Generate trajectory intention z ← L (y∗)
+
+14: if x ∈ D + 
+
+> ref l
+
+then 
+
+15: Generate future BEV Bf with NAVSIM conditioned on ˆy
+
+16: Generate textual reflection r ← V (ˆ y, Bf , s )
+
+17: Add reflective sample (x, z, Bf , r, y∗) to Dref l 
+
+18: else 
+
+19: Add non-reflective sample (x, z, y∗) to Dref l 
+
+20: end if 
+
+21: end for 
+
+22: Train an SFT model on Dtraj ∪ D ref l 
+
+23: for each sample d ∈ D ref l do 
+
+24: Perform K rollouts with temperature τtemp 
+
+25: Compute rollout PDMS scores 
+
+26: Compute mean score μd and variance σ2
+
+> d
+
+27: end for 
+
+28: Select samples with low mean score and high variance to form Drl ref l 
+
+29: return Dpre , Dref l , Drl ref l 
+
+Algorithm 2 Informative Sample Selection for RL Training 
+
+1: Input: Reflection dataset Dref l , SFT model Msf t , rollout number K = 8 , temperature τ = 1 
+
+2: Output: RL training subset Drl ref l 
+
+3: Initialize Drl ref l ← ∅ 
+
+4: for each sample d ∈ D ref l do 
+
+5: Sample K rollout trajectories {ˆy1, . . . , ˆyK } from Msf t with temperature τ
+
+6: Evaluate PDMS scores {s1, . . . , s K }
+
+7: Compute mean score μd ← 1
+
+> K
+
+PKk=1 sk
+
+8: Compute variance σ2 
+
+> d
+
+← 1
+
+> K
+
+PKk=1 (sk − μd)2
+
+9: end for 
+
+10: Select samples with low μd and high σ2
+
+> d
+
+11: Add selected samples into Drl ref l 
+
+12: return Drl ref l 
+
+17
