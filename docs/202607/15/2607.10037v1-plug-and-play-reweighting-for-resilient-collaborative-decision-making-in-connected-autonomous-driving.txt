@@ -1,0 +1,349 @@
+Title: Plug-and-Play Reweighting for Resilient Collaborative Decision-Making in Connected Autonomous Driving
+
+URL Source: https://arxiv.org/pdf/2607.10037v1
+
+Published Time: Tue, 14 Jul 2026 00:42:52 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Plug-and-Play Reweighting for Resilient Collaborative Decision-Making in Connected Autonomous Driving 
+
+Jiewen Liu 1, Rui Liu 2, Matthew Lee 3, Ming C. Lin 2, Xiaorui Liu 1, and Peng Gao 1
+
+Abstract — Collaborative decision-making is a fundamental capability in multi-robot systems, such as connected au-tonomous vehicles. However, perceptual noise and adversarial attacks in collaborators can severely affect decision reliability. Overall, existing methods typically rely on retraining with attack-specific defenses or on restrictive perturbation assump-tions to improve resilience, which limits their practicality. In this paper, we propose a novel Resilient Collaborative Decision-Making (RCDM) framework that consists of an attention-based encoder for extracting individual robot perceptual embeddings and an attention-based decoder for fusing collaborator percep-tions and making decisions. To improve resilience to corrupted observations, we design a novel plug-and-play reweighting module that down-weights the influence of corrupted inputs by analyzing the consistency of neighborhood points relative to the local structure and assigning smaller weights to points that deviate strongly from the local median. This module can be seamlessly integrated into attention-based collaborative decision-making without requiring additional training. We eval-uate our method in high-fidelity simulations, considering per-ceptual noise and five types of attacks across diverse accident-prone scenarios. Experimental results demonstrate that our approach consistently outperforms existing methods by up to 26% and achieves state-of-the-art resilient performance. 
+
+I. INTRODUCTION Multi-robot systems have been widely studied for decades due to their scalability, reliability and parallelism. To enable efficient multi-robot collaboration, a fundamental capability is collaborative decision-making, with the goal of enabling the robots to make informed decisions by leveraging knowl-edge shared and integrated across teammates. It has a variety of applications, such as multi-robot collaborative search and rescue [1], [2], connected autonomous driving [3], and collaborative manufacturing [4]. However, collaborative decision-making is highly vul-nerable to corrupted observations, which may arise from perceptual noise in individual robots or from adversarial data transmitted by collaborators [5]. Such corrupted observations distort the collective understanding of the environment and can ultimately lead to unsafe decisions. As shown in Fig-ure 1, the yellow collaborator assists the ego vehicle by sharing its perception of an oncoming red vehicle that may 
+
+> 1
+
+Jiewen Liu, Xiaorui Liu and Peng Gao are with the Department of Computer Science, North Carolina State University. Email: {jliu222, xliu96, pgao5 }@ncsu.edu. 2Rui Liu and Ming C. Lin are with the Department of Computer Science, University of Maryland, College Park. Email: {ruiliu, lin }@umd.edu. 3Matthew Lee is with University of North Carolina at Chapel Hill. Email: matthewlee01234@gmail.com.              
+
+> © 2026 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works.
+
+Fig. 1. An illustrative example of resilient collaborative decision-making in connected autonomous driving scenarios under corrupted observations. The collaborator assists the ego vehicle by sharing its perception of an oncoming red vehicle in an overtaking scenario. When the shared observations are reliable, the ego vehicle fuses the collaborator’s information with its own perception and makes a correct decision (e.g., braking) to avoid a collision. However, in the presence of perceptual noise or malicious attack that randomly drops points along the vertical (height) dimension, as indicated by the red dots in the Bird’s Eye view (BEV), naively fusing such corrupted observations causes the ego vehicle’s perceived environment to deviate from the true state, thus leading to potential collisions. 
+
+cause a serious collision. Due to perceptual noise or adver-sarial attacks in the collaborator’s observations, the shared information becomes inaccurate or misleading. When the ego vehicle naively merges these corrupted observations into its own perception, the resulting fused perception deviates from the true environment, causing the ego vehicle to make incorrect decisions. Given the importance of resilient collaborative decision making under corrupted observations, many methods have been studied. First, adversarial training methods improve ro-bustness to known perturbations by augmenting training data with attack-specific samples [6], [7]. Second, certified re-silience methods provide provable guarantees under bounded perturbation assumptions, typically at the cost of additional computational overhead and restrictive attack models [8], [9]. Third, point removal and denoising methods attempt to filter suspicious points in raw observations based on heuristic rules, which may discard informative geometric arXiv:2607.10037v1 [cs.RO] 10 Jul 2026 structures [10], [11]. Finally, consensus-based methods mit-igate adversarial collaborators by comparing shared obser-vations with trusted observations and iteratively aggregating consistent information to reach consensus [12], [13]. To sum up, none of these methods can jointly improve resilience at both the individual and collaborative levels while preserving informative geometric structures and operating at inference time without retraining. 
+
+In this paper, we propose a novel Resilient Collaborative Decision-Making (RCDM) method. RCDM consists of an attention-based encoder that extracts embeddings from indi-vidual observations and an attention-based decoder that fuses information shared by collaborators to make final decisions, such as braking. To improve the resilience to corrupted observations, we introduce a novel reweighting mechanism that evaluates the consistency of neighborhood points relative to the locally consistent structure and assigns smaller weights to those points deviating strongly from the local median. The reweighting mechanism is plug-and-play, which does not introduce any extra learning parameters and is only activated in the execution phase to enhance attention-based collaborative decision-making. Our key contribution is the introduction of resilient col-laborative decision-making under corrupted observations. Specifically,  
+
+> •
+
+We introduce a novel resilient collaborative decision-making method by statistically analyzing neighborhood points consistency relative to the locally consistent structure during aggregation and down-weighting the importance of corrupted observations . Our method is resilient to both (i) perceptual noise in individual per-ception and (ii) attack data shared by collaborators.  
+
+> •
+
+We introduce a novel plug-and-play reweighting mod-ule that can be seamlessly integrated into attention-based collaborative decision-making without requiring additional training or architectural modification . This plug-and-play design enables broad applicability across different attack models and collaborative decision-making scenarios, substantially improving deployability in real-world safety-critical systems by up to 26% .II. R ELATED WORK 
+
+A. Collaborative Decision Making in Autonomous Driving 
+
+Existing collaborative decision making (CDM) methods can be divided into two groups, including rule-based meth-ods and learning-based methods. Rule-based collaborative decision-making methods rely on predefined heuristics, man-ually designed cost functions, or explicit coordination rules to guide collaboration among vehicles, such as decentral-ized lane-changing strategies based on hand-crafted decision scores [14], rule-based merging with predefined temporal schedules [15], and game-theoretic formulations that com-bine manually specified objectives with model predictive control for merging or roundabout scenarios [16], [17]. Recently, learning-based collaborative decision-making (CDM) methods show promising performance. Graph learn-ing approaches model traffic scenes as vehicle graphs and apply message passing to fuse neighboring states before making ego decisions [18]–[20]. End-to-end collaborative driving methods directly fuse shared learned features to predict actions or trajectories, such as Coopernaut sharing BEV features among connected vehicles for decision-making in accident-prone scenarios [21] and CoDriving that fuses V2X features to predict future waypoints [22]. Extensions further incorporate multi-modal sensing [23] or learn com-munication policies under bandwidth constraints [24]–[26]. Even though these methods achieve promising performance, none of them can address corrupted observations to improve resilience of collaborative decision-making, which is partic-ularly important in accident-prone scenarios. 
+
+B. Attacks Defense 
+
+Attacks on LiDAR-based perception aim to manipulate point clouds or learned representations to induce erroneous predictions in downstream models. Representative attacks perturb LiDAR data through coordinate shifts, point addition, removal, or rotation, thereby disrupting local geometric struc-ture and causing misclassification or unsafe decisions [27]– [31]. Beyond single-modality manipulation, some attacks jointly corrupt LiDAR and camera inputs to exploit cross-modal dependencies in fused perception systems [32], [33]. In addition, backdoor attacks embed hidden triggers during training so that specific input patterns activate malicious be-havior at inference time [34]–[36]. Motivated by these attack models, we evaluate RCDM under three levels of increasing sophistication, including stochastic point perturbations that corrupt global geometry, targeted geometry manipulation that disrupts local structure, and gradient-based white-box attacks that exploit model internals. Existing methods against LiDAR attacks can be generally divided into four groups. First, adversarial-training-based methods augments training data with attack-specific samples to improve resilience [6], [7], [37], [38], which cannot work well with unseen attacks. Second, certified resilience methods provide provable guarantees under bounded pertur-bation assumptions, such as randomized subsampling with majority voting [8], [9], [39]. However, these methods typically introduce substantial computational overhead and rely on restrictive attack models. Third, point removal and denoising methods attempt to filter suspicious points before inference given heuristic rules [10], [11], [40], which may discard informative geometric structure. Finally, consensus-based methods identify unreliable collaborators by com-paring their information with trusted observations, such as the ego robot [12] or neighboring collaborators [13], [41], and iteratively aggregate consistent information to reach consensus. Overall, these methods require either retraining the ex-isting model, modeling specific attack, losing informative geometric structure, or assuming reliable observations from ego or collaborator robots. How to address the corrupted observations in both ego and collaborator robots without retraining has not been well studied yet. III. A PPROACH 
+
+Notation. Matrices are represented as boldface capital letters, e.g., M = {Mi,j } ∈ Rn×m. Mi,j denotes the element in the i-th row and j-th column of M. Vectors are denoted as boldface lowercase letters v ∈ R n and scalars are denoted as lowercase letters. 
+
+A. Problem Definition 
+
+We discuss our RCDM approach that enables resilient collaborative decision-making under corrupted observations. The overview of RCDM is illustrated in Figure 2. Assume that we have n vehicles with one ego vehicle and n − 1
+
+collaborators. Each vehicle provides a LiDAR point cloud 
+
+P = {pi} and its velocity v. We first design an encoder 
+
+{hi} = ψ(P) to extract the embeddings {hi} of points in the point cloud. Then, each vehicle down-samples the raw points, denoted as {pi}m, where m denotes the number of down-sampled points. Then, the collaborator vehicles share their down-sampled points {pi}m and corresponding point embeddings {hi}m with ego vehicle. Once the ego vehicle receives these from its collaborators, it converts the collaborators’ point clouds into ego coordi-nates. The transformation matrix can be obtained from the GNSS or HD map. Then, the ego vehicle merges all shared points, the merged point cloud is defined as P′ = {pi}m′
+
+,where m′ denotes the number of merged points. Given the merged points P′ and their associated embeddings {hi}m′
+
+,we further design a decoder y = ϕ(P′, {hi}m′
+
+) to make the decision y for the ego vehicle, where y = 1 indicates the ego vehicle applying brake decision and y = 0 corresponds to maintaining motion without braking. In real-world environments, malicious attacks or noisy perception in both the ego vehicle or its collaborators can severely undermine the reliability of collaborative decision-making, especially in accident-prone scenarios. In this paper, we mainly address two sub-problems.  
+
+> •
+
+Individual point embedding under perceptual noise .Each individual vehicle generates reliable feature em-beddings from noisy perception, especially in accident-prone scenarios where accurate representations are crit-ical for supporting timely braking decisions to avoid collisions.  
+
+> •
+
+Collaborative decision-making under malicious at-tacks . The capability of connected vehicles to maintain resilient collaborative decision-making under malicious attacks (e.g., deliberate manipulation of point loca-tions), where a single corrupted message may propa-gate through perception fusion, thus leading to unsafe decisions. 
+
+B. Individual Point Embedding under Perceptual Noise 
+
+In real-world scenarios, LiDAR points often suffer from noisy sensing, which significantly degrades the expressive-ness of individual perceptual embeddings. To address this challenge, we design a novel attention-based encoder that an-alyzes the statistics of LiDAR points during data aggregation and reduces the importance of noisy data that deviate from the group median in the embedding space, thus generating resilient feature embeddings. Specifically, we generate the embedding of each point as fi = Wp i, where W is a learnable matrix. Then, we compute the query, key and value embeddings, which are defined as follows: 
+
+qi = Wq fi, kj = Wkfj , vj = Wv fj (1) where Wq , Wk and Wv denote learnable matrices. fj is the embedding of one of the K nearest neighbors of pi. To encode the geometric cues into the embedding, we compute the positional embedding of the i-th point with respect to its nearest neighbors, which is defined as ∆i,j = MLP( pi−pj ),where ∆i,j encodes the relative distance between pairs of points. Then, we compute the attention as ai,j = MLP( qi −
+
+kj + ∆ i,j ). To normalize the attention, we further apply softmax on it, defined as 
+
+αi,j = exp( ai,j )
+
+P  
+
+> j′∈N (i)
+
+exp( ai,j ′ ) (2) where exp denotes the exponential operation and N (i)
+
+denotes the neighbors of the i-th point. The final embedding of the i-th point is defined as hi, which is computed by aggregating the neighbor embeddings weighted by attention: 
+
+hi = X 
+
+> j∈N (i)
+
+αi,j (vj + ∆ i,j ). (3) Due to the existence of noise in P, the computed embed-ding hi can be distorted by unreliable neighbors during ag-gregation, thus leading to inaccurate embedding. Motivated by robust statistics [42]–[46], we design a novel plug-and-play reweighting module to suppress outliers during embed-ding aggregation, which can be integrated into the encoder 
+
+ψ during the execution phase. Specifically, we first compute the Euclidean distance between the value embedding vi and the aggregated embedding hi, which is defined as 
+
+rij = vj − hi 2, (4) This distance ri,j indicates how far each neighbor deviates from the aggregated embedding. Based on the set of dis-tances {ri,j }j∈N (i) across all neighbors of the i − th node, we compute reference statistics as follows, 
+
+c = median j∈N (i) ri,j (5) 
+
+d = max 
+
+
+
+median j∈N (i)|ri,j − c|, ε 
+
+
+
+. (6) where c denotes the median of distances set {ri,j }m across all neighbors of the i-th node, d denotes the median absolute deviation around c, and ϵ is a hyperparameter, which serves as a lower bound to avoid division by zero in subsequent normalization. We further normalize the deviation as follows: 
+
+uij = rij − ckd , k > 0, (7) where k denotes a hyperparameter that controls the sensi-tivity of the normalization. A smaller k makes the interval around c narrower, so even moderate deviations from c lead to larger standardized scores, while a larger k broadens the interval and treats such deviations as less significant. Given the normalized deviation, we compute the reweighting factor Fig. 2. Overview of our RCDM method. We employ an attention-based encoder-decoder architecture for collaborative decision-making. Due to the existence of perceptual noise and malicious attacks in collaborative observations, these corrupted observations generally break the consistency of local structure during data aggregation. As a result, the generated embeddings will deviate away from the truth state. In our RCDM, by statistically analyzing the consistency of neighborhood points relative to group median, we dynamically down-weight the importance of the corrupted inputs and generate resilient embeddings for decision-making. The full reweighting process does not introduce extra learning parameters, which can be integrated with attention-based collaborative decision-making in a plug-and-play manner. 
+
+as 
+
+wi,j =  max { 1 − | uij |2, 0}2 (8) where wi,j denotes the reweighting factor. The reweighting factor wi,j uses the normalized deviation ui,j , which is computed from each neighbor’s distance ri,j relative to the group median c, so that neighbors close to the group median receive weights near 1 while those deviating significantly are downweighted toward 0. Intuitively, wi,j evaluates each neighbor’s deviation relative to the group median distance, which assigns high weights to consistent neighbors and weakens the influence of outliers that break the consistency of local structure. This leads to embeddings from noisy points receiving very small or even zero weights, effec-tively filtering them out during aggregation. Importantly, the reweighting factor wij can be seamlessly applied in a plug-and-play manner during execution, since it only requires an additional step of computing wij and reweighting the already trained attention without modifying any network parameters. Formally, the reweighted attention is computed as follows: 
+
+ˆαi,j = wij exp( ai,j )
+
+P  
+
+> j′∈N (i)
+
+wij ′ exp( ai,j ′ ) (9) By emphasizing neighbors whose distances are close to the group median and down-weighting those that deviate strongly, the attention captures the importance of points for decision-making. The final embedding of the i-th point with the reweighting update is defined as follows: 
+
+hi = X 
+
+> j∈N (i)
+
+ˆαi,j (vj + ∆ i,j ). (10) The final embedding hi preserves the contribution of reliable neighbors and filters out the abnormal ones. Once each vehicle generates its own embeddings, they share those points {pi}m and associated embeddings {hi}m among all connected vehicles, where m denotes the number of down-sampled points. 
+
+C. Collaborative Decision-Making under Malicious Attacks 
+
+Once the ego vehicle receives the shared point clouds from the collaborators, it will first merge all the points with respect to its own coordinate. Then, the final decision is made through the decoder ϕ(P′, {hi}m′
+
+). However, the shared information can be corrupted by perceptual noise or even intentionally manipulated by malicious attackers. Such unreliable shared information may mislead the ego vehicle’s decision-making process, thus creating significant safety issues. To design a resilient decoder, we first compute the query, key and value embeddings of the i-th point in the merged point cloud ˆP, according to the similar equations defined in Eq. (1). Then, the attention is computed as bi,j = MLP( q′ 
+
+> i
+
+−
+
+k′ 
+
+> j
+
++ ∆ ′ 
+
+> i,j
+
+), where bi,j denotes the attention for decoder and 
+
+∆′ 
+
+> i,j
+
+= MLP( pi − pj ) denotes the positional embedding. The normalized attention is computed as 
+
+βi,j = exp( bi,j )
+
+P  
+
+> j′∈N (i)
+
+exp( bi,j ′ ) (11) where βi,j captures the geometric relationships of the i-th and j-th points in the merged point cloud. However, due to the malicious collaborative information caused by attacks or perceptual noise, the attention in Eq. (11) may assign high weights to corrupted collaborators, causing their misleading embeddings to dominate the final decision-making. Similarly, we compute the reweighting factor wi,j as defined in Eqs. (4 - 8). Then the updated attention for collaborative decision-making is defined as 
+
+ˆβi,j = wij exp( bi,j )
+
+P  
+
+> j′∈N (i)
+
+wij ′ exp( bi,j ′ ) (12) The final embedding for collaborative decision-making is computed as: 
+
+zi = X 
+
+> j∈N (i)
+
+ˆβi,j 
+
+ v′ 
+
+> j
+
++ ∆ ′
+
+> i,j
+
+ (13) where zi denotes the final embedding of the i-th point in the merged point cloud ˆP. The embedding zi captures geometric cues of all the points obtained by the ego and collaborator vehicles. It can weaken malicious inputs that deviate strongly away from the group median, meanwhile preserving useful geometric cues for collaborative decision-making. Then we concatenate all the point embeddings and the ego vehicle’s velocity embedding v, defined as m = concat ({zi}m′
+
+, v).The final decision is made by y = MLP( m), where y = 1 
+
+indicates the ego vehicle applying brake decision and y = 0 
+
+corresponds to maintaining motion without braking. 
+
+D. Unified Training and Plug-Play Execution 
+
+To train our RCDM consisting of an encoder ψ and a decoder ϕ, we use the Binary Cross Entropy Loss (BCE), which is defined as 
+
+LBCE = −(y log ˆ p + (1 − y) log(1 − ˆp)) (14) where ˆp denotes the predicted braking probability and y ∈{0, 1} denotes the ground-truth, with y = 1 indicating that the ego vehicle should brake and y = 0 indicating that it should maintain motion. During the training, RCDM is optimized end-to-end on clean data without noise and attacks. Thus, the reweighting factor defined in Eqs. (4 -8) is deactivated. Thus, the encoder attention ˆα in Eq. (9) is downgraded to α in Eq. (2). Similarly, the decoder attention 
+
+ˆβ in Eq. (12) is downgraded to β in Eq. (11). During the execution, the reweighting factor is activated in both encoder and decoder to enhance resilience against noisy or malicious attacks. By activating the reweighting factor, the same trained parameters are reused, and only the additional reweighting step is applied. This plug-and-play design allows the trained model to operate without retraining and provides resilience against malicious inputs while incurring only minor computational overhead. IV. E XPERIMENT 
+
+A. Experimental Setup 
+
+We use the CARLA [47] with the AutoCastSim [48] to generate three connected autonomous driving (CAD) sce-narios. The simulator contains one ego vehicle and 3 − 30 
+
+collaborator vehicles. All the vehicles can share observations with each other once they reach a communication radius, which is set to 150 m. Each vehicle is mounted with a LiDAR sensor. The ground truth control of the ego vehicle can be directly obtained via the simulator. As shown in Figure 3, we set up three accident-prone scenarios including  
+
+> •
+
+Overtaking : a truck occludes the ego vehicle’s for-ward view on a two-lane road while oncoming traffic approaches from the opposite lane, requiring the ego vehicle to decide when to overtake safely.  
+
+> •
+
+Left Turn : the ego vehicle attempts a left turn at an intersection where oncoming straight traffic is occluded by a vehicle ahead.             
+
+> Fig. 3. Illustration of scenarios and attacks in experiments. The top row shows BEVs of the three accident-prone scenarios with the highlight of ego vehicle and the occluded vehicle. The middle and bottom rows visualize the LiDAR point clouds under different conditions, including the original point cloud, point clouds corrupted by Jitter noise, Dropout (red dots indicate the original locations of removed points), LNR and LRS geometry manipulation attacks (green lines indicate the displacement of targeted points), and the gradient-based PGD attack. These attacks span different corruption patterns, increasing risks to safety-critical decision-making.
+> •
+
+Red Light Violation : the ego vehicle proceeds straight through an intersection while another vehicle runs the red light from a perpendicular direction, occluded by adjacent vehicles. All three scenarios feature occlusion-induced collision risks that demand timely braking decisions. In each scenario, we evaluate five attacks grouped into three categories, as shown in Figure 3, including  
+
+> •
+
+Stochastic Point Perturbations globally affect all points, including Jitter [49] , which adds independent Gaussian noise (σ = 1.0 m) to point coordinates, and Dropout [49] , which randomly removes 60% of points and pads the cloud back to the original size by duplicating remaining points.  
+
+> •
+
+Geometry Manipulation Attacks corrupt local struc-ture in targeted regions, including LNR [50] (Local-ized Neighbor Relocation), which identifies the densest azimuth sector ( 60 ◦) and relocates selected points and their neighbors to distant positions, and LRS [50] 
+
+(Localized Radial Shift), which shifts 65% of points in the densest sector 1 m radially outward.  
+
+> •
+
+Gradient-Based White-Box Attacks include 
+
+PGD [51], which iteratively perturbs each point coordinate along the adversarial gradient to suppress the predicted braking probability, with a maximum perturbation of ϵ = 1 .0 m per coordinate, a step size of 
+
+α = 0 .4 m per iteration, for a total of 3 iterations. All five attacks are applied to different targets, including Ego 
+
+vehicle only, first k collaborators where k = 1 , 2, 3, and All 
+
+vehicles including both ego and collaborators. Each LiDAR point cloud is bounded to x, y ∈ [−70 , 70] mand z ∈ [−2.5, −0.3] m, voxelized at 0.5m resolution, and re-sampled to 2048 points. Local neighborhoods are constructed using k=16 nearest neighbors. We use PointTransformer [52] as the backbone, projecting 3D coordinates to a 32-dimensional feature space. Two downsampling stages reduce points by 4× each while increasing feature dimensions to 128, producing 128 representative points per vehicle. Collaborator features are transformed into the ego frame, concatenated, voxel-pooled at 0.5,m, and resampled to match the ego points. The fused ego–collaborator points are further processed to obtain 64 final representative points, which are max-pooled and concatenated with an ego speed embedding before a prediction head outputs the brake logit. We generate 12 trials for training and 12 trials for testing, where each trial corresponds to a continuous driving episode, yielding over 700 brake decisions for both training and testing. The training trials are randomly split into 80% for training and 20% for validation. The model is optimized using the Adam optimizer [53] with a learning rate of 
+
+10 −3 and weight decay of 10 −5. Training is performed for up to 200 epochs with early stopping based on validation performance. We further compare our RCDM method with one vanilla baseline and one existing method, including  
+
+> •
+
+Vanilla : we create a baseline method that uses our RCDM without enabling reweighting module.  
+
+> •
+
+RoboSAC [12] : a sampling-based consensus defense that uses the ego-only prediction as an anchor and ac-cepts collaborator subsets within a consensus threshold. It requires that the ego observation is always reliable. We follow the recent work [23], which uses ADR (Accident Detection Rate) as the evaluation metric that is defined as the ratio of correct prediction over ground-truth. We also report corruption statistics to quantify attack intensity using two metrics. First, chg measures the percentage of points displaced beyond 0.25 m. Second, p95 denotes the 95th-percentile of point-wise displacement magnitude (in meters), capturing the typical upper bound of geometric distortion while being resilient to extreme outliers. 
+
+B. Experimental Results in CAD scenarios 
+
+This experimental setting is particularly challenging due to the high intensity and diversity of corruption applied to                  
+
+> TABLE I
+> SUMMARY OF CORRUPTION STATISTICS . T HE COMBINATION OF CHG (%) AND P 95 REVEALS DISTINCT CORRUPTION PATTERNS ,
+> RANGING FROM OVERALL DISPLACEMENT OF POINTS (J ITTER , PGD) TO LOCAL STRUCTURED GEOMETRIC DISTORTION (LNR, LRS). D ROPOUT WILL NOT INTRODUCE DISPLACEMENT OF POINTS .
+> Attack chg (%) p95 (meter)
+> Jitter 93.7–95.8% 2.16–2.38 Dropout ––LNR 5.1–8.6% 0.31–0.74 LRS 32.8–43.0% ∼1.00 PGD 71.2–95.0% 1.17–1.35
+
+ego-collaborator LiDAR observations. As shown in Table I, under the Jitter and PGD attacks, more than 90% of points are displaced beyond 0.25 m (e.g., chg% up to 95.8%), with 95th-percentile displacements exceeding 2.3 m, indicating severe global geometric distortion. Even localized attacks such as LNR introduce non-negligible perturbations, with p95 displacements reaching 0.7–0.74 m, which is sufficient to disrupt fine-grained geometric cues critical for braking decisions. Moreover, attacks targeting multiple collaborators (“All” or increasing k) compound these effects by simulta-neously corrupting shared information, making it difficult to make decisions based solely on reliable observations. Table II summarizes the quantitative performance of our RCDM compared with baseline and prior method based on ADR under five attacks and various target configurations. Given the quantitative results, we mainly answer these four questions. Q1 How effectively does RCDM perform un-der different attacks and target configurations? Our RCDM consistently shows the best performance on ADR under all attack-target combinations across all three scenarios. Specif-ically, PGD as the strongest attack causes the largest ADR drops in the vanilla model. Under the most severe setting (PGD applied to all vehicles), compared with the vanilla model, our RCDM improves the performance on ADR from 
+
+0.68 to 0.95 , 0.43 to 0.68 and 0.41 to 0.47 in three scenarios. The consistent improvements indicate the effectiveness of our method under both individual and collaborative perceptual corruption. 
+
+Q2 What are the benefits of RCDM compared with prior method? Our RCDM consistently outperforms the prior work RoboSAC under all attack-target combinations across all three scenarios. This is because RoboSAC always assumes a trustworthy ego vehicle to provide a reliable ego-centric anchor that enables effective incorporation of collaborators’ observations. However, this assumption no longer holds in our experimental setting. In addition, RoboSAC will reject all the collaborative information based on the thresholding of trust. In contrast, RCDM operates at the point level rather than rejecting the entire observation. It preserves useful points while downweighting only those points that deviate statistically from the group median. 
+
+Q3 Why does RCDM show improvements even with original observations? RCDM outperforms standard collab-orative decision-making methods even in the absence of attacks because real-world LiDAR observations inherently contain inconsistencies due to occlusion and limited sam-pling density, which lead to inconsistent observations across robots. Conventional softmax-based attention assigns non-zero weights to all neighbors and therefore cannot fully suppress the influence of inconsistent collaborators. In con-trast, RCDM adaptively down-weights these inconsistent neighbors through its reweighting mechanism, leading to more reliable information fusion and improved collaborative decision-making performance even under nominal, noise-only conditions. 
+
+Q4 How resilient is RCDM to attacks targeting individ-ual robots and collaborators? While performance does not TABLE II 
+
+QUANTITATIVE RESULTS OF RCDM UNDER FIVE ATTACKS COMPARED WITH PRIOR AND BASELINE METHODS BASED ON ADR (ACCIDENT DETECTION RATE ) METRICS IN CAD SCENARIOS . B OLD INDICATES THE BEST PERFORMANCE WITHIN EACH ROW . Ours consistently achieved the highest level of accuracy and robustness , 
+
+> COMPARED TO OTHER
+
+SOTA METHODS ACROSS ALL SCENARIOS .                                                                                                                                                                                                                                                       
+
+> Attack Target Overtaking Left Turn Red Light Violation
+> Van. RoboSAC Ours Van. RoboSAC Ours Van. RoboSAC Ours Original —0.9424 —0.9798 0.7279 —0.8309 0.5357 —0.6012 Jitter
+> Ego 0.9366 —0.9741 0.5809 —0.8162 0.5952 —0.6905
+> k=1 0.9395 0.5706 0.9798 0.6912 0.7279 0.8088 0.5179 0.4643 0.5714
+> k=2 0.9395 0.5793 0.9798 0.6838 0.7059 0.8456 0.4821 0.4167 0.5476
+> k=3 0.9395 0.5850 0.9798 0.6912 0.7132 0.8015 0.4821 0.3988 0.5417
+> All 0.9164 —0.9683 0.6250 —0.7941 0.5774 —0.6190 Dropout
+> Ego 0.9481 —0.9712 0.6397 —0.7574 0.5595 —0.6369
+> k=1 0.9366 0.5648 0.9856 0.6838 0.7206 0.8015 0.5476 0.4405 0.5833
+> k=2 0.9135 0.5879 0.9769 0.6765 0.6912 0.8309 0.5536 0.4405 0.6131
+> k=3 0.9107 0.5793 0.9741 0.6838 0.6985 0.7868 0.5774 0.4464 0.6488
+> All 0.9280 —0.9654 0.6176 —0.7574 0.5893 —0.6667 LNR
+> Ego 0.9107 —0.9452 0.6618 —0.7794 0.5000 —0.5655
+> k=1 0.9424 0.5879 0.9769 0.6691 0.7279 0.8015 0.4940 0.4524 0.5655
+> k=2 0.9251 0.5850 0.9769 0.6985 0.7132 0.8162 0.4524 0.4226 0.5714
+> k=3 0.9193 0.5735 0.9798 0.6912 0.7132 0.8309 0.4464 0.4048 0.5595
+> All 0.8818 —0.9424 0.6838 —0.8162 0.4167 —0.5000 LRS
+> Ego 0.9251 —0.9798 0.6618 —0.8162 0.4940 —0.5655
+> k=1 0.9481 0.5850 0.9798 0.6985 0.6912 0.8235 0.5298 0.4524 0.5774
+> k=2 0.9395 0.5764 0.9798 0.7206 0.7279 0.8309 0.5179 0.4345 0.5357
+> k=3 0.9481 0.5850 0.9827 0.6985 0.7279 0.8162 0.4881 0.4583 0.5714
+> All 0.9251 —0.9712 0.6838 —0.8235 0.5298 —0.5774 PGD
+> Ego 0.8617 —0.9625 0.4632 —0.6397 0.4583 —0.5536
+> k=1 0.9020 0.6167 0.9741 0.6838 0.7279 0.7868 0.5119 0.4226 0.5833
+> k=2 0.8300 0.5908 0.9712 0.7206 0.7059 0.8235 0.4524 0.4226 0.4940
+> k=3 0.8184 0.5764 0.9654 0.6838 0.7279 0.8088 0.4464 0.4107 0.5476
+> All 0.6801 —0.9481 0.4265 —0.6765 0.4107 —0.4702
+
+decrease monotonically as the attack scope expands from ego to collaborators and all robots, RCDM consistently outperforms the vanilla baseline across all attack targets. In particular, RCDM maintains clear advantages under ego-only attacks and retains higher ADR than the vanilla baseline when collaborators or all robots are attacked. For example, under the PGD-All setting, RCDM achieves ADRs of 0.9481, 0.6765, and 0.4702 in three scenarios, whereas the vanilla baseline attains 0.6801, 0.4265, and 0.4107 in the same scenarios. This demonstrates improved tolerance to corrupted individual and collaborative observations. 
+
+C. Discussion 
+
+In Figure 4, we analyze how RCDM reweights attention under corrupted observations by visualizing the attention dif-ference of downsampled points before and after applying our reweighting module. The attention difference is computed as ∆ = Attn RCDM − Attn vanilla , where ∆ quantifies how the introduction of reweighting module alters the relative importance assigned to each ego or collaborator observation during collaborative decision making. The visualization provides consistent evidence that this reweighting module is effective under diverse attacks. Across Noise, LRS, Dropout, Jitter, PGD and LNR attacks, RCDM consistently reduces attention on corrupted points (blue cir-cles) while increasing attention on consistent points (red crosses) within the region of interest (ROI). This behavior is further quantified by the positive total attention difference 
+
+∆total by adding up all the attention difference within the Δ > 0 (Attn. Increase) 
+
+> Δ < 0 (Attn. Decrease)
+
+Δ total = +0.076  Δ total = +0.379  Δ total = +0.133 
+
+Δ total = +0.813  Δ total = +0.327  Δ total = +0.109 
+
+Origina l LRS 
+
+Jitter  PGD 
+
+Dropout 
+
+LNR 
+
+Fig. 4. The visualization of attention changes of downsampled LiDAR points under various types of corruption. The first row shows the ROI in the red bounding box. The second and third rows show the attention changes after applying RCDM. Star markers indicate the ego vehicle. Points in red and blue denote the increase and decrease of attention separately. Overall, RCDM increases attention in the safety-critical region under all corruptions. 
+
+ROI, with values of +0 .076 , +0 .379 , +0 .133 , +0 .813 ,
+
++0 .327 , and +0 .109 . These results demonstrate that RCDM effectively mitigates the influence of perceptual corruption. V. C ONCLUSION 
+
+In this paper, we introduce RCDM that is a novel resilient collaborative decision-making method designed to handle corruption in both individual and collaborative perception. RCDM consists of an attention-based encoder for extracting individual robot perceptual embeddings and an attention-based decoder for fusing collaborator perceptions and mak-ing decisions. To improve resilience to corrupted observa-tions, we design a novel plug-and-play reweighting module that downweights the influence of corruption by analyzing the consistency of neighborhood points relative to the local structure and assigning smaller weights to points that deviate strongly from the local median. Extensive experiments in high-fidelity simulations with diverse attacks and accident-prone scenarios demonstrate that RCDM achieves state-of-the-art resilient performance under corrupted observations. Our approach presents several limitations that suggest directions for future research. First, while RCDM has been validated in collaborative decision-making among connected vehicles, extending the framework to broader multi-robot settings, such as aerial–ground or heterogeneous robot teams, remains an open challenge. Second, the current design focuses on LiDAR-based perception. Integrating additional modalities such as camera, radar, or V2X signals could further enhance resilience and generalization in complex environments. REFERENCES [1] C. Wang, C. Yu, X. Xu, Y. Gao, X. Yang, W. Tang, S. Yu, Y. Chen, F. Gao, Z. Jian, et al. , “Multi-robot system for cooperative exploration in unknown environments: A Survey,” arXiv preprint arXiv:2503.07278 , 2025. [2] Y. Rizk, M. Awad, and E. W. Tunstel, “Cooperative heterogeneous multi-robot systems: A Survey,” ACM Computing Surveys , vol. 52, 2019. [3] Y. Tao, S. Hu, Z. Fang, and Y. Fang, “Directed-cp: Directed collabo-rative perception for connected and autonomous vehicles via proactive attention,” in ICRA , 2025. [4] C. Li, Y. Yin, H. Ye, P. Zheng, and S. K. Gupta, “A mixed-reality-augmented deep reinforcement learning approach for multi-robot safe motion generation in human–robot collaborative manufacturing cells,” 
+
+IEEE Transactions on Automation Science and Engineering , vol. 22, pp. 21 033–21 046, 2025. [5] J. Tu, T. Wang, J. Wang, S. Manivasagam, M. Ren, and R. Urtasun, “Adversarial attacks on multi-agent communication,” in ICCV , 2021. [6] R. Wang, Y. Yang, and D. Tao, “Art-point: Improving rotation ro-bustness of point cloud classifiers via adversarial rotation,” in CVPR ,2022. [7] L. Yu, Y. Qiu, Q. Yao, Y. Shen, X. Zhang, and J. Wang, “Robust com-municative multi-agent reinforcement learning with active defense,” in 
+
+AAAI , 2024. [8] H. Liu, J. Jia, and N. Z. Gong, “Pointguard: Provably robust 3D point cloud classification,” in CVPR , 2021. [9] J. Zhang, J. Jia, H. Liu, and N. Z. Gong, “Pointcert: Point cloud classification with deterministic certified robustness guarantees,” in 
+
+CVPR , 2023. [10] H. Zhou, K. Chen, W. Zhang, H. Fang, W. Zhou, and N. Yu, “Dup-net: Denoiser and upsampler network for 3D adversarial point clouds defense,” in ICCV , 2019. [11] J. Sun, Y. Cao, C. Choy, Z. Yu, A. Anandkumar, Z. M. Mao, and C. Xiao, “Adversarially robust 3D point cloud recognition using self-supervisions,” in NeurIPS , 2021. [12] Y. Li, Q. Fang, J. Bai, S. Chen, F. Juefei-Xu, and C. Feng, “Among us: Adversarially robust collaborative perception by consensus,” in ICCV ,2023. [13] Z. Li and J. Chen, “Robust consensus for multi-agent systems commu-nicating over stochastic uncertain networks,” SIAM Journal on Control and Optimization , vol. 57, pp. 3553–3570, 2019. [14] J. Nie, J. Zhang, W. Ding, X. Wan, X. Chen, and B. Ran, “De-centralized cooperative lane-changing decision-making for connected autonomous vehicles,” IEEE access , vol. 4, pp. 9413–9420, 2017. [15] J. Ding, L. Li, H. Peng, and Y. Zhang, “A rule-based cooperative merg-ing strategy for connected and automated vehicles,” IEEE Transactions on Intelligent Transportation Systems , vol. 21, no. 8, pp. 3436–3446, 2019. [16] P. Hang, C. Lv, C. Huang, Y. Xing, and Z. Hu, “Cooperative deci-sion making of connected automated vehicles at multi-lane merging zone: A coalitional game approach,” IEEE Transactions on Intelligent Transportation Systems , vol. 23, no. 4, pp. 3829–3841, 2021. [17] P. Hang, C. Huang, Z. Hu, Y. Xing, and C. Lv, “Decision making of connected automated vehicles at an unsignalized roundabout consider-ing personalized driving behaviours,” IEEE Transactions on Vehicular Technology , vol. 70, no. 5, pp. 4051–4064, 2021. [18] S. Chen, J. Dong, P. Ha, Y. Li, and S. Labi, “Graph neural network and reinforcement learning for multi-agent cooperative control of con-nected autonomous vehicles,” Computer-Aided Civil and Infrastructure Engineering , vol. 36, no. 7, pp. 838–857, 2021. [19] P. Gao, Y. Shen, and M. C. Lin, “Collaborative decision-making using spatiotemporal graphs in connected autonomy,” in ICRA , 2024. [20] M. Klimke, B. V¨ olz, and M. Buchholz, “Cooperative behavior plan-ning for automated driving using graph neural networks,” in 2022 IEEE Intelligent Vehicles Symposium (IV) . IEEE, 2022, pp. 167– 174. [21] J. Cui, H. Qiu, D. Chen, P. Stone, and Y. Zhu, “Coopernaut: End-to-end driving with cooperative perception for networked vehicles,” in 
+
+CVPR , 2022. [22] H. Yu, W. Yang, J. Zhong, Z. Yang, S. Fan, P. Luo, and Z. Nie, “End-to-end autonomous driving through V2X cooperation,” in AAAI , 2025. [23] R. Liu, Z. Wang, P. Gao, Y. Shen, P. Tokekar, and M. Lin, “MMCD: Multi-modal collaborative decision-making for connected autonomy with knowledge distillation,” in IROS , 2025. [24] Y.-C. Liu, J. Tian, C.-Y. Ma, N. Glaser, C.-W. Kuo, and Z. Kira, “Who2com: Collaborative perception via learnable handshake com-munication,” in ICRA , 2020. [25] Y.-C. Liu, J. Tian, N. Glaser, and Z. Kira, “When2com: Multi-agent perception via communication graph grouping,” in CVPR , 2020. [26] Y. Hu, S. Fang, Z. Lei, Y. Zhong, and S. Chen, “Where2comm: Communication-efficient collaborative perception via spatial confi-dence maps,” in NeurIPS , 2022. [27] C. Xiang, C. R. Qi, and B. Li, “Generating 3D adversarial point clouds,” in CVPR , 2019. [28] T. Zheng, C. Chen, J. Yuan, B. Li, and K. Ren, “Pointcloud saliency maps,” in ICCV , 2018. [29] Y. Zhao, Y. Wu, C. Chen, and A. Lim, “On isometry robustness of deep 3D point cloud models under adversarial attacks,” in CVPR , 2020. [30] Y. Cao, C. Xiao, B. Cyr, Y. Zhou, W. Park, S. Rampazzi, Q. A. Chen, K. Fu, and Z. M. Mao, “Adversarial sensor attack on LiDAR-based perception in autonomous driving,” in CCS , 2019. [31] Y. Li, C. Wen, F. Juefei-Xu, and C. Feng, “Fooling LiDAR perception via adversarial trajectory perturbation,” in ICCV , 2021. [32] R. S. Hallyburton, Y. Liu, Y. Cao, Z. M. Mao, and M. Pajic, “Security analysis of Camera-LiDAR fusion against Black-Box attacks on autonomous vehicles,” in USENIX Security , 2022. [33] M. Abdelfattah, K. Yuan, Z. J. Wang, and R. Ward, “Towards universal physical attacks on cascaded Camera-LiDAR 3D object detection models,” in ICIP , 2021. [34] Z. Xiang, D. J. Miller, S. Chen, X. Li, and G. Kesidis, “A backdoor attack against 3D point cloud classifiers,” in ICCV , 2021. [35] Y. Zhang, Y. Zhu, Z. Liu, C. Miao, F. Hajiaghajani, L. Su, and C. Qiao, “Towards backdoor attacks against LiDAR object detection in autonomous driving,” in SenSys , 2022. [36] S. S. Chaturvedi, L. Zhang, W. Zhang, P. He, and X. Yuan, “Badfusion: 2D-Oriented backdoor attacks against 3D object detection,” in IJCAI ,2024. [37] G. Li, G. Xu, H. Qiu, R. He, J. Li, and T. Zhang, “Improving adversarial robustness of 3D point cloud classification models,” in 
+
+ECCV , 2022. [38] Q. Ji, L. Wang, C. Shi, S. Hu, Y. Chen, and L. Sun, “Benchmarking and analyzing robust point cloud recognition: Bag of tricks for defending adversarial examples,” in ICCV , 2023. [39] Z. Huang, W. Chu, L. Li, C. Xu, and B. Li, “Commit: certifying robustness of multi-sensor fusion systems against semantic attacks,” in AAAI , 2025. [40] X. Li, J. Lu, H. Ding, C. Sun, J. T. Zhou, and Y. M. Chee, “Pointcvar: risk-optimized outlier removal for robust 3d point cloud classification,” in AAAI , 2024. [41] W. Xue, W. Qiu, B. An, Z. Rabinovich, S. Obraztsova, and C. K. Yeo, “Mis-spoke or mis-lead: Achieving robustness in multi-agent communicative reinforcement learning,” in AAMAS , 2022. [42] A. E. Beaton and J. W. Tukey, “The fitting of power series, meaning polynomials, illustrated on band-spectroscopic data,” Technometrics ,vol. 16, pp. 147–185, 1974. [43] P. Bloomfield and W. L. Steiger, Least absolute deviations: theory, applications, and algorithms . Springer, 1983, vol. 6. [44] P. J. Huber, “Robust regression: asymptotics, conjectures and monte carlo,” The Annals of Statistics , vol. 1, pp. 799–821, 1973. [45] C.-H. Zhang, “Nearly unbiased variable selection under minimax concave penalty,” The Annals of Statistics , vol. 38, pp. 894–942, 2010. [46] Z. Hou, W. Gao, Y. Shen, F. Wang, and X. Liu, “Protransformer: Robustify transformers via plug-and-play paradigm,” NeurIPS , 2024. [47] A. Dosovitskiy, G. Ros, F. Codevilla, A. Lopez, and V. Koltun, “CARLA: An open urban driving simulator,” in CoRL , 2017. [48] H. Qiu, P. Huang, N. Asavisanu, X. Liu, K. Psounis, and R. Govin-dan, “Autocast: Scalable infrastructure-less cooperative perception for distributed collaborative driving,” in MobiSys , 2022. [49] J. Ren, L. Pan, and Z. Liu, “Benchmarking and analyzing point cloud classification under corruptions,” in ICML , 2022. [50] D. Liu and W. Hu, “Explicitly perceiving and preserving the local geometric structures for 3D point cloud attack,” in AAAI , 2024. [51] A. Madry, A. Makelov, L. Schmidt, D. Tsipras, and A. Vladu, “Towards deep learning models resistant to adversarial attacks,” in 
+
+ICLR , 2018. [52] H. Zhao, L. Jiang, J. Jia, P. H. Torr, and V. Koltun, “Point transformer,” in ICCV , 2021. [53] D. P. Kingma and J. Ba, “Adam: A method for stochastic optimiza-tion,” in ICLR , 2015.

@@ -1,0 +1,674 @@
+Title: Physics-Regularized Machine Learning for Proprioceptive Vehicle Localization Using Onboard Sensors
+
+URL Source: https://arxiv.org/pdf/2607.05663v1
+
+Published Time: Wed, 08 Jul 2026 00:15:46 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Physics-Regularized Machine Learning for Proprioceptive Vehicle Localization Using Onboard Sensors 
+
+Abinav Kalyanasundaram 1, Karthikeyan Chandra Sekaran 1, Wolfgang Utschick 2 and Michael Botsch 1
+
+Abstract — Accurate and robust localization is essential for autonomous mobility systems in real-world environments. While fusing Inertial Measurement Unit (IMU) data with satellite-based correction signals provides precise vehicle pose estimates, performance degrades substantially during outages. Recent studies indicate that Machine Learning (ML) can improve IMU-based proprioceptive localization, highlighting untapped potential for onboard sensors readily available in production vehicles. This paper introduces Physics-Regularized Machine Learning for Localization (PRML2), a hybrid frame-work that combines the complementary strengths of Kalman filtering and data-driven learning to estimate vehicle pose directly from onboard sensors. A key aspect of PRML2 is its physics-regularized learning, enabled by end-to-end training of an ML model through a differentiable Kalman filter. This improves consistency with vehicle motion models, thereby enhancing both localization accuracy and generalization across driving conditions. We evaluate the performance limits of ML-enhanced onboard odometry on a publicly available dataset and show that PRML2 achieves superior localization accuracy and demonstrates real-time capability. This work also introduces a novel dataset to support vehicle localization research under low-friction conditions. The proposed framework provides a robust and cost-effective solution for vehicle localization un-der degraded sensing conditions by integrating learning with physics-based priors. 
+
+I. I NTRODUCTION 
+
+Precise localization is crucial for the safe and reliable oper-ation of autonomous vehicles. The knowledge about the ego vehicle’s pose acts as a foundation for critical downstream tasks such as path planning, motion control, and decision-making [1]. Accurate localization is typically achieved by fusing an IMU with Global Navigation Satellite System (GNSS) measurements [2]. However, during GNSS outages, dead reckoning based on commercial-grade IMUs rapidly degrades due to drift accumulation [3]. While fusing IMUs with cameras and LiDAR can reduce drift, such approaches increase system cost, complexity, and are sensitive to envi-ronmental conditions [4]. Alternatively, commonly available onboard sensors such as steering wheel angle, wheel speeds, and yaw rate provide valuable odometry signals for vehicle localization [5], [6]. Being proprioceptive, they can measure vehicle motion independently without reliance on external signals or the environment. Therefore, exploring the achiev-able performance of vehicle localization using only onboard sensors is critical for robust and cost-effective autonomy under degraded GNSS conditions.      
+
+> 1AImotion Bavaria, Technische Hochschule Ingolstadt, Germany,
+
+firstname.lastname@thi.de  
+
+> 2Technische Universit¨ at M¨ unchen, Germany,
+
+utschick@tum.de PRML2  
+
+> Wheel
+> Speeds
+> Input: Onboard
+> Sensors
+> Steering
+> Wheel Angle
+> Localization
+> IMU Correvit GNSS
+> +RTK
+> Ground Truth
+
+Fig. 1: Overview of the test vehicle configuration and the objective of PRML2 for proprioceptive localization. State-of-the-art (SOTA) methods for vehicle localization during GNSS outages can be broadly categorized into three groups: HD map–based methods, multi-sensor fusion tech-niques, and dead-reckoning approaches [7]. HD map–based methods achieve high localization accuracy but require pre-built and continuously maintained maps [4]. Multi-sensor fusion techniques, such as VINS, LiDAR-IMU odometry, and SLAM, often require expensive sensors and can be sensitive to environmental conditions [4], [8]. In contrast, dead reckoning based on IMUs or onboard sensors is pro-prioceptive and inexpensive, yet prone to drift [8]. Classical Bayesian filters for IMUs generalize well but are limited by noise accumulation, leading to significant drift during GNSS outages [3], [9]. Data-driven learning methods can tackle sensor noise but suffer from a lack of physical consistency, generalization across driving conditions, and challenges in real-time deployment [10]. These complementary limitations motivate hybrid ML approaches that combine the generaliza-tion and physical consistency of model-based filtering with the noise-handling capacity of data-driven methods. While ML-based IMU drift correction and inertial odometry have been extensively investigated [11], [12], the potential of ML-enhanced odometry using standard onboard vehicle sensors remains relatively underexplored [13]. To overcome these limitations, this work introduces 
+
+Physics-Regularized Machine Learning for Localization (PRML2), a novel hybrid architecture for vehicle localization that relies solely on onboard sensors as illustrated in Fig. 1. PRML2 integrates a transformer-based [14] ML model with a physics guard layer and an adaptive Extended Kalman Filter arXiv:2607.05663v1 [cs.RO] 6 Jul 2026 (EKF), as shown in Fig. 2. A key feature of PRML2 is the end-to-end training of the ML model through the differ-entiable EKF, which acts as a physics-informed regularizer to improve vehicle dynamic consistency and generalization. By relying exclusively on onboard sensors, PRML2 is cost-effective, always available, and reduces drift by integrating learning with physics-based filtering. The main contributions of this work are as follows:  
+
+> •
+
+Introduction of PRML2, an end-to-end trainable hybrid architecture integrating a transformer-based ML model with a differentiable EKF for vehicle localization using onboard sensor measurements.  
+
+> •
+
+Theoretical and empirical validation that Kalman filters act as a physics regularizer in end-to-end training, penalizing physical and temporal inconsistencies.  
+
+> •
+
+Demonstration of PRML2’s ability to generalize across challenging low-friction driving conditions.  
+
+> •
+
+Publication of a novel dataset to support vehicle local-ization research under low-friction conditions. 1
+
+II. R ELATED WORKS 
+
+Proprioceptive sensors measure a vehicle’s motion directly, without relying on external signals or environmental fea-tures. While IMUs are the most common proprioceptive sensors used for localization [7], production vehicles also contain standard onboard sensors that provide high frequency motion-related information [5], [13]. Proprioceptive localiza-tion methods can be broadly categorized into model-based Bayesian filtering approaches and data-driven ML methods. Recursive Bayesian filters, including the Kalman Filter (KF), EKF, error-state EKF, and particle filters, perform dead reckoning by propagating motion models and fusing IMU measurements [4]. Although these methods generalize well, they are vulnerable to complex, multifaceted noise that degrades localization accuracy over time [3], [9]. Adaptive filtering strategies attempt to mitigate this by adjusting pro-cess and measurement noise covariances [11], [15], yet IMU-based dead reckoning remains prone to quadratic growth of position error [3]. Incorporating velocity information, such as wheel-mounted IMU measurements [16] or onboard sensor-based velocity estimates [17] using vehicle dynamic models, can reduce drift rate. However, complete onboard sensor-based localization is fundamentally constrained by the assumptions of the vehicle motion models, which hold only under certain driving conditions [18]. Data-driven proprioceptive localization approaches em-ploy ML techniques to calibrate IMU measurements [19], compensate integration drift [20], and adaptively model sensor noise [10], [21]. In [22], deep learning was used to enhance the performance of low-cost IMUs and mimic the output characteristics of high-grade sensors. Although ML-based methods have been widely explored for handling stochastic noise in IMU-based localization, their application to onboard odometry has been less studied. Recent works [5],  
+
+> 1Dataset and code to replicate results are available at https://gith ub.com/MB-Team-THI/PRML2-for-Vehicle-Localization
+
+[12], [23] demonstrate the potential of combining onboard sensors with ML techniques, showing that ML models can transform onboard sensor measurements into accurate vehicle dynamic state estimates without complex vehicle dynamic models. However, the main challenges of learning-based odometry include limited generalization and lack of compliance with physical constraints [8], [10], [24]. Recently, differentiable filtering approaches [25], [26], [27] aim to bridge model-based estimation and data-driven learning by training neural networks with Bayesian filters. However, these methods have primarily been investigated in monocular visual odometry. We extend this paradigm to onboard proprioceptive localization by introducing atransformer-based measurement model with physics guard and provide insight into its physics regularization effect. To the best of our knowledge, real-time localization relying exclusively on standard onboard sensors, without IMUs or exteroceptive measurements, remains underexplored. We address this gap with PRML2, a framework orthogonal to multi-sensor fusion yet extensible to include additional sensing modalities. III. METHODOLOGY 
+
+This section presents the problem formulation and the proposed PRML2 architecture. The overall framework is depicted in Fig. 2, and the subsequent subsections provide a detailed explanation about each component. 
+
+A. Problem Formulation 
+
+This work addresses the problem of vehicle localization using only onboard sensors in GNSS-denied conditions. The objective is to compute the dead-reckoning pose Tk ∈ SE (3) 
+
+at any time step k in global coordinates, with SE (3) denot-ing the space of 3D rigid-body transformations. It can be recursively computed using the relative pose transformations 
+
+Tt,t −1 from time (t − 1) → t as follows: 
+
+Tk =
+
+ kY
+
+> t=1
+
+Tt,t −1
+
+
+
+T0 = Tk,k −1 · · · T1,0T0, (1) where T0 denotes the initial vehicle pose in global coor-dinates. This work proposes a physics-informed mapping function gΘ to compute the relative transformation from Onboard Sensor Data (OSD): 
+
+Tt,t −1 = gΘ(Ot; L, m ), (2) where Ot = {ot−L+1 , . . . , ot} ∈ RL×m denotes the OSD for an observation window of L time steps. Each measure-ment vector ot = {ojt }mj=1 ∈ Rm contains the readings from 
+
+m onboard sensors at time step t. The data obtained from a precise vehicle localization system serves as a reference for ground truth (gt) vehicle state: 
+
+xgt  
+
+> t
+
+= dgt  
+
+> t
+
+, θgt  
+
+> t
+
+, zgt 
+
+> t
+
+⊤ , (3) where dgt  
+
+> t
+
+and θgt  
+
+> t
+
+denote the vehicle position and orienta-tion, respectively, forming the vehicle pose. The vector zgt 
+
+> t
+
+contains the vehicle dynamic quantities, including velocities 
+
+vgt  
+
+> t
+
+, accelerations agt  
+
+> t
+
+, and angular rates ωgt  
+
+> t
+
+.Machine Learning  Model 
+
+> t-L
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> .
+> t
+> FC
+
+Physics Regularizer (EKF)  
+
+> State Model Measurement
+> Posterior
+> ZY
+> XYaw
+> Roll
+> Pitch
+> Domain
+> Knowledge
+> Loss
+> Physics
+> Guard
+> Wheel
+> Speeds
+> Onboard Sensors
+> ESP Lat
+> Acc
+> Brake
+> Pressure
+> Steering
+> Wheel Angle
+> t-
+> L+H
+
+Fig. 2: The PRML2 architecture contains two core components: A trasformer based ML model and a differentiable Extended Kalman Filter (EKF). The ML model processes the vehicle’s onboard sensor measurements ot to estimate the vehicle dynamic state zt along with its uncertainty δz [t]. A physics guard layer bounds these estimates within the vehicle’s dynamic limits. Finally, these estimates act as pseudo measurements for the EKF to compute the a posteriori vehicle pose. In PRML2, the loss for training the ML model is backpropagated through the differentiable EKF, which acts as a physics regularizer. 
+
+B. PRML2 Architecture 
+
+The proposed PRML2 architecture, illustrated in Fig. 2 represents the mapping function gΘ in Eq. (2) by decompos-ing it into two complementary components: a data-driven ML model and a filter-based EKF. The ML model gml (zt|Ot; Θ)
+
+acts as a time-series regressor that maps onboard sensor measurements to vehicle dynamic states zt, which the EKF uses to compute the pose. Since the proposed ML model performs sequence-to-sequence regression, a transformer-based architecture [14] was chosen to capture long-range temporal dependencies in onboard sensor data, inspired by prior attention-based designs [5]. 
+
+1) Machine Learning Model in PRML2: The input se-quence Ot ∈ RL×m composed of L observation steps is divided into two parts following [28]. The first H steps are processed by a transformer encoder Tenc which captures the vehicle dynamics context and produces a feature rep-resentation Fenc ∈ RH×d. The decoder Tdec then takes the remaining observations Odec as queries and attends to the encoder output Fenc to estimate the vehicle dynamic states 
+
+zt ∈ [vt, at, ωt], i. e., zt = Tdec (Odec , Fenc ) as in Fig. 2. Two extensions were introduced to the transformer-based ML model to adapt it for vehicle localization. First, prior knowledge about vehicle dynamic limits is incorporated through a physics guard layer. Second, an uncertainty es-timation module was integrated into the model to enable uncertainty-aware predictions that support the subsequent adaptive EKF in vehicle localization. 
+
+Physics Guard: The domain knowledge about vehicle dynamic limits is embedded in the ML model via a physics guard layer to bound the predictions. For example, the max-imum attainable acceleration amax of a vehicle is governed by the tire-road friction coefficient μ and bounded by the Kamm’s circle: 
+
+amax = μg, a2 
+
+> x
+
++ a2 
+
+> y
+
+≤ a2max (4) Similarly, the vehicle has an upper bound on velocity. The velocity and acceleration estimates from ML model are clamped based on their Euclidean norms, while the rotation rate is limited to the maximum allowable angular velocity: 
+
+ut = ˜ ut · min 
+
+
+
+1, umax 
+
+∥ ˜ut∥2 + ϵ
+
+
+
+,
+
+ωt = clip( ˜ ωt, −ωmax , ωmax ),
+
+(5) where ˜ut, ˜ωt denote the raw ML predictions, ut ∈ { μv , μ a}
+
+is the clamped velocity or acceleration estimate and ϵ is a small numerical stabilization term. When the physics guard scales a raw prediction, the corresponding variance is scaled by the square of the factor to maintain consistency. This formulation ensures that the ML predictions remain bounded within the vehicle dynamic limits. 
+
+Uncertainty Quantification in ML Model: The bounded vehicle dynamic estimates zt obtained after the physics guard are approximated as Gaussian random variables [29]. The ML model has a mean μz [t] and a variance δz [t]
+
+for each decoder time step after the physics guard. Let 
+
+Dt = {t ∈ [ t−L+H +1 , t ]} denote the set of time steps for 
+
+Tdec . The predicted mean and variance are used to compute the negative log likelihood loss 
+
+LNLL = X
+
+> t∈D t
+
+(zgt  
+
+> t
+
+−μz [t]) ⊤Σz [t]−1(zgt  
+
+> t
+
+−μz [t])+log |Σz [t]|. (6) Here, Σz [t] is the diagonal covariance matrix, with each entry constrained to be strictly positive ( δz [t] > 0) to ensure numerical stability. This loss formulation allows the ML model to express uncertainty by producing higher variance for less certain predictions [5]. During inference, the pre-dicted mean and covariance for vehicle dynamic states at time step t are 
+
+zt = μz [t] , Σz [t] = diag( δz [t]) . (7) The proposed approach leverages variance estimates from the ML model for the EKF, enabling an adaptive measure-ment noise covariance to improve accuracy. The architecture is lightweight as well, supporting real-time execution. 2) Extended Kalman Filter (EKF) in PRML2: In the proposed PRML2 architecture, the vehicle dynamic states 
+
+zt estimated by the ML model serve as measurements for the EKF. The EKF, then recursively updates its belief of the vehicle state xt using these estimates zt and the vehicle motion model. Since the ML outputs are fused with aphysics-based state-space model implemented via an EKF, the overall PRML2 framework is physics-informed. 
+
+State Model: The EKF utilizes a kinematic motion model for robustness against extensive parametrization [6]. The state vector of the vehicle xt is defined as: 
+
+xt = [ dt, θt, ωt, vt, at]⊤, (8) where dt, θt, ωt, vt, and at denote the vehicle’s position, Euler angles, angular velocity, linear velocity, and linear acceleration, respectively. The a priori state prediction of the EKF is computed using numerical integration under a constant acceleration motion model 
+
+xt+1 |t =
+
+
+
+dt + R(θt)vt∆t + 12 R(θt)at∆t2
+
+θt + ωt∆t
+
+ωt
+
+vt + at∆t
+
+at
+
+ + ηs. (9) Here, R(θt) ∈ SO (3) is the rotation matrix computed using roll-pitch-yaw sequence, mapping linear velocities and accelerations from the vehicle frame to the global frame [30]. For typical ground vehicles, small roll and pitch angles ensure that Euler angles do not suffer from gimbal lock. The process model in Eq. (9) is nonlinear due to R(θt),and its uncertainty is modeled as zero-mean Gaussian noise 
+
+ηs ∼ N (0, Q), where Q is the process noise covariance. 
+
+Measurement Model: In the proposed EKF, the estimated vehicle dynamic states μz [t] and associated uncertainties 
+
+δz [t] from the ML model serve as pseudo-measurements. The measurement vector and adaptive noise covariance matrix are then defined as 
+
+zt = μz [t] = μω , μ v , μ a
+
+⊤, Σz [t] = diag  δω , δ v , δ a
+
+. (10) The EKF operates recursively at the sampling frequency of onboard sensor data. The global vehicle pose can be computed using the a posteriori estimates xt|t of the EKF as follows 
+
+Tt = Tt, 0T0 =
+
+R(θ[t|t]) d[t|t]
+
+0⊤ 1
+
+
+
+T0 (11) where Tt, 0 is the cumulative transformation matrix. In contrast to many existing vehicle localization pipelines, the EKF component in PRML2 is implemented in a differ-entiable manner, allowing loss gradients to propagate back to the ML model, as detailed in the following subsection. 
+
+C. Differentiable Kalman filters as physics regularizer 
+
+Conventional ML models learn their parameters Θ purely from data, capturing statistical correlations but not physical relationships or causal dependencies. Consequently, the ve-hicle dynamic estimates zt in Eq. (7) may deviate from the physically consistent manifold defined by the vehicle motion models. This lack of physical inductive bias in purely data-driven estimators can be mitigated through physics-based regularization or physics-informed architectures [31]. While standard Bayesian filters can impose such constraints at inference, they cannot enforce physics-aware learning of the ML model parameters. In PRML2, the EKF is integrated with the ML model in a fully differentiable manner, enforcing temporal and physical consistency on the ML predictions during training. 
+
+1) Differentiable EKF: The prediction and update steps for the computation of first and second order statistical moments are made fully differentiable to support backpropa-gation [32]. The state prediction step of a standard EKF [30] can be defined as 
+
+xt|t−1 = f (xt−1|t−1) , Ft = Jf
+
+ xt−1|t−1
+
+
+
+Pt|t−1 = Ft Pt−1|t−1 F ⊤ 
+
+> t
+
++ Q. (12) Here, f denotes the nonlinear process model in Eq. (9), Ft is the Jacobian linearization, and Q is the process noise matrix. In practice, computing the Jacobian numerically can break the computational graph or introduce instability. To address this, we compute Ft analytically as follows: 
+
+Ft =
+
+
+
+I3 ∂R
+
+> ∂θ
+
+
+
+vt∆t+ at∆t2
+
+> 2
+
+
+
+03×3 R∆t R∆t2
+
+> 2
+
+03×3 I3 ∆t I 3 03×3 03×3
+
+03×3 03×3 I3 03×3 03×3
+
+03×3 03×3 03×3 I3 ∆t I 3
+
+03×3 03×3 03×3 03×3 I3
+
+
+
+Here, I3 represents the 3 × 3 identity matrix, and ∂R 
+
+> ∂θ
+
+is the standard derivative of the rotation matrix [30]. The observation moments ˆzt|t−1, St|t−1 do not encounter this issue in PRML2, as the observation matrix H corresponds to a direct mapping from the state space to pseudo ML measurements. The update step in the EKF to compute aposteriori state moments is defined as 
+
+xt|t = xt|t−1 + Kt (zt − ˆzt|t−1),
+
+Pt|t = ( I−KtH)Pt|t−1(I−KtH)⊤+KtΣz [t]K⊤ 
+
+> t
+
+,
+
+Kt = Pt|t−1 H⊤ S−1
+
+> t|t−1
+
+.
+
+(13) Here, the Kalman gain Kt can suffer from numerical instability due to inversion of the innovation covariance 
+
+St|t−1. To address this, St|t−1 is factorized using Cholesky decomposition, and Kt is computed by solving a linear system rather than explicit inversion. The posterior covari-ance Pt|t is updated using the Joseph form, which preserves symmetry and positive semi-definiteness, improving stability for end-to-end training. The differentiable EKF additionally supports batch-wise training. 
+
+2) Physics-Based Regularization: This mechanism guides the ML optimization to favour solutions consistent with physical laws, improving generalization [31]. Haarnoja et al. [25] first introduced neural network training with aKalman filter. Subsequent works on differentiable filtering combined classical filtering techniques with learning-based approaches [26], [27]. However, a systematic analysis of the physical and temporal consistency induced by differentiable filters, particularly in end-to-end training, remains limited. In contrast, this paper shows that the Kalman filter acts as a physics-based regularizer in end-to-end training. A decompo-sition of the overall loss function shows that the Kalman filter introduces structured regularization terms that constrain the ML parameter space to comply with the underlying physical model. This interpretation is supported by both a formal loss decomposition and empirical validation in section V-B for the vehicle localization task. Let Xgt = {xgt  
+
+> 0
+
+, .., xgt  
+
+> t
+
+} denote the sequence of vehicle’s ground truth states, X = {x1|1, .., xt|t} denote the a posteri-ori estimates from a differentiable EKF, and Z = {z1, .., zt}
+
+denote the measurements from a ML model parameterized by Θ. End-to-end training of a ML based measurement model gml (zt|Ot; Θ) with a differentiable Kalman filter, by backpropagating the loss through the a posteriori estimates, inherently regularizes the learning process. This is motivated by the following mathematical formulation for the loss function: 
+
+L(Θ) = 
+
+> T
+
+X
+
+> t=1
+
+xt|t(Θ) − xgt 
+
+> t
+> 2
+
+= X
+
+> t
+
+xt|t−1 −xgt 
+
+> t
+
+| {z } 
+
+> Prior residual (∆ et)
+
++Kt
+
+ zt − Hxt|t−1
+
+| {z }
+
+> Innovation ( rt)
+> 2
+
+= X
+
+> t
+
+xt|t−1(Θ) − xgt  
+
+> t
+> 2
+
++ λ ΦKF  
+
+> t
+
+(Θ).
+
+(14) Here, both the predicted state xt|t−1 and the Kalman gain 
+
+Kt are functions of Θ, as they are computed recursively from previous xt−1|t−1(Θ) and zt(Θ). Finally, the loss function in Eq. (14) can be expressed as a standard L2 loss 
+
+∆et
+
+> 2
+
+, summed over all time steps and a Kalman filter-based regularization term ΦKF  
+
+> t
+
+(Θ), defined as 
+
+ΦKF  
+
+> t
+
+(Θ) = ( Ktrt)⊤(Ktrt)+2(∆ et)⊤(Ktrt), λ = 1 (15) Thus, learning the parameters Θ to minimize the Loss in Eq. (14) can be interpreted as learning the parameters Θ to minimize the squared prediction error ∆et with the regu-larization term from Eq. (15). The loss encourages the ML model to produce measurement estimates consistent with the state model and coherent across time steps. This understand-ing emphasizes the interpretation of proposed architecture as a physics-regularized machine learning framework. The loss propagation for PRML2 follows backpropagation through time similar to [25]. The PRML2 architecture leverages this KF-based physics regularization to improve vehicle localization accuracy and generalization. 
+
+D. Training Strategy for PRML2 
+
+The training of the PRML2 architecture is divided into two stages to ensure reliable convergence [33]. 
+
+1) Pretraining (Data-Driven): Initially the ML model is pretrained to estimate the vehicle dynamic states zt using a purely data driven approach. The optimization is performed using the negative log-likelihood loss function defined in Eq. (6), which jointly improves the mean μz [t] and variance 
+
+δz [t] estimates. This pretraining stage ensures that the mea-surement model gml (zt|Ot; Θ) is prepared for subsequent end-to-end training with the differentiable EKF. 
+
+2) Fine-tuning (Physics Regularizer): The ML trans-former model is fine-tuned by backpropagating the loss through the differentiable EKF. For a single data sample 
+
+(Ot, zgt ), the ML model predicts the measurements z[t] and its covariance matrix Σz [t] for all decoder time steps Dt. The EKF is then executed recursively to produce the a posteriori 
+
+state estimates xt|t. The overall loss function is defined as 
+
+Ltotal = X
+
+> t∈D t
+
+LNLL +β ·tanh 1
+
+β
+
+X
+
+> t∈D t
+
+dt −dgt 
+
+> t
+> 2
+
+!
+
+. (16) Here, β is a hyperparameter, and tanh activation is employed to mitigate exploding gradients [34]. The position loss en-sures that the estimated vehicle positions dt closely align with the ground truth to enhance localization accuracy. IV. D ATASET AND BASELINES 
+
+A. Dataset 
+
+Most existing dead-reckoning approaches using propri-oceptive sensors focus primarily on IMU-based localiza-tion [4], [8], [16]. These methods are typically evaluated on the KITTI [35] dataset or other proprietary datasets [3], [6], [12]. In contrast, this work emphasizes localization using only onboard sensors. The KITTI dataset is not suitable here because it does not provide the necessary onboard sensor data. Therefore, the publicly available Real-world Vehicle State Estimation Dataset (ReV-StED) [36] is used to evaluate the proposed method. While ReV-StED primarily contains recordings in bright weather and mild rain, evaluating the generalization of physics-regularized models requires more challenging, out-of-distribution conditions. To address this, a novel dataset is introduced under heavy snow and low-friction (low-μ) con-ditions. This dataset comprises approximately two hours of driving data (0.37 million samples) collected from multiple drivers to ensure behavioral diversity and includes diverse vehicle dynamic maneuvers. Recordings were obtained on a test track using the test vehicle in Fig. 1. A navigation-grade IMU [37] equipped with RTK positioning provided ground truth vehicle states with centimeter-level accuracy. The datasets provide a comprehensive set of onboard signals 
+
+ot at 50 Hz, as described below. 
+
+ot = vs, δ sw , ˙ψ, a y, p br , v fl , v fr , v rl , v rr 
+
+T , (17) where vs denotes speedometer reading, δsw the steering wheel position, ˙ψ the yaw rate, vfl , v fr , v rl , v rr the wheel speeds, pbr 
+
+the brake pressure, and ay the lateral acceleration. As the onboard sensors do not provide height measure-ments, the vehicle motion is assumed to be planar. Accord-ingly, localization is performed in 2D using the estimated ve-hicle dynamic states defined at the vehicle’s center of gravity (COG) in the vehicle frame, zt = [ vx, v y , a x, a y , ω z ]T.B. Baselines 
+
+The proposed method is compared against the following baseline methods. These baselines estimate the vehicle dy-namic states zt using Onboard Sensor Data (OSD). Vehicle localization is then obtained by processing zt as pseudo measurements in a standard EKF (for baselines 1-4), analo-gous to the differentiable EKF in section III-C. The process and measurement noise matrices for these EKF models are tuned using the validation dataset. Additionally, an advanced baseline (5), using joint training with EKF is also compared. 
+
+1) OSD-Baseline: This baseline serves as a simple clas-sical model-based approach. Unlike IMU-based localization, classical motion models cannot be readily implemented using OSD due to the lack of longitudinal acceleration ax data in ReV-StED [5]. However, wheel speed measurements allow an approximate estimation of the longitudinal velocity vx for a simple kinematic model [38, p. 414]. The resulting baseline estimates are given by: 
+
+vx ≈ vfl +vfr +vrl +vrr 
+
+4 , a y = aosd  
+
+> y
+
+−bay , ω z = ωosd  
+
+> z
+
+−bωz
+
+(18) where bay and bωz denote the standstill sensor biases [6]. 
+
+2) NN-VDM [24]: A neural network-based vehicle dy-namics model employing a Gated Recurrent Unit (GRU) architecture for dynamic state estimation. 
+
+3) DL-AVL [12]: A Long Short-Term Memory (LSTM)-based model that refines noisy IMU data for localization. 
+
+4) RNN-EKF [11]: A complex architecture combining a GRU network with attention to improve localization. 
+
+5) Backprop-KF [25]: An observation model trained jointly with a differentiable EKF. The original learnt model is adapted to suit OSD. Although the architectures in [11], [12] were developed for IMU-based localization, their problem formulation closely aligns with this work, making them suitable baselines. V. E XPERIMENTS AND RESULTS 
+
+This section presents the experimental setup, implemen-tation details, and evaluation results. It aims to address the following research questions: (1) How accurately does PRML2 estimate the vehicle dynamic states zt? (2) What performance gains does a physics-regularized machine learn-ing architecture provide for vehicle localization? (3) Does PRML2 have improved generalization to low-μ conditions? (4) Can the proposed architecture operate in real-time? 
+
+A. Experimental Setup 1) Implementation details: The transformer-based ML model uses two attention layers with eight heads (d = 512), with L = 250 and H = 150 . The ML model and differ-entiable EKF are trained jointly using Adam ( lr = 10 −4,cosine schedule, b = 250 ) for 20 epochs. Pretraining and fine-tuning in PRML2 were split in a 70 : 30 ratio of total epochs to ensure reliable convergence. The total loss scaling parameter was set to β = 8 based on a hyperparameter study. The physics guard imposes a friction-dependent acceleration bound described in Eq. (4), yielding amax = 10 m s −2 for dry road and amax = 5 m s −2 for low-friction conditions (μ ≤ 0.5). The velocity and yaw-rate limits are fixed at 
+
+vmax = 30 m s −1 and ωmax = 1 .5 rad s −1, respectively. The ReV-StED dataset is partitioned into training, validation, and test in a 70:10:20 ratio, ensuring temporal continuity across the time domain as proposed in [5]. All training was performed on a single NVIDIA Quadro RTX 5000 GPU. 
+
+2) Evaluation metrics: The accuracy of vehicle dynamic state estimation is evaluated using the widely adopted Root Mean Squared Error (RMSE) [24] metric. Vehicle localiza-tion accuracy during dead reckoning is assessed using RMSE and Max Error (MAX) metrics [6], [16]. 
+
+B. Evaluation and Results 1) Evaluation of vehicle dynamic state estimation: The proposed PRML2 architecture outperformed all five base-lines, as well as PRML2*, which corresponds to training the ML component for total epochs without the fine-tuning stage. A quantitative evaluation on the ReV-StED test dataset is presented in Table I. Compared to the previous best performing baseline model NN-VDM [24] for zt estima-tion, the proposed PRML2 architecture achieves significant improvements in vx and ωz estimation. This gain can be attributed to both the attention mechanism in the transformer model and physics-based regularization introduced by the differentiable EKF. Notably, the 28% and 25% improvement of PRML2 over the pretraining variant in vx and ωz esti-mation highlights the effectiveness of EKF based physics regularization during the fine-tuning stage. This shows that PRML2 improves vehicle dynamic state estimates, providing more reliable inputs for localization. TABLE I: Comparison of vehicle dynamic state estimation using RMSE in ReV-StED [36]                                         
+
+> Models vxvyaxayωz
+> OSD-Baseline 0.22 --0.20 0.43 NN-VDM [24] 0.06 0.03 0.13 0.13 0.41 DL-AVL [12] 0.07 0.03 0.16 0.13 0.46 RNN-EKF [11] 0.07 0.02 0.13 0.13 0.44 Backprop-KF [25] 0.12 0.02 0.31 0.15 0.38 PRML2* 0.03 0.01 0.18 0.13 0.24 PRML2 0.02 0.01 0.15 0.12 0.18
+> PRML2* denotes the variant without physics-based regularization. OSD-Baseline cannot estimate dashed quantities.
+
+2) Accuracy of vehicle localization using onboard sen-sors: The onboard sensor-based localization was evaluated over 60 s intervals, a standard approach for assessing drift during GNSS outages [7], [11]. To ensure a robust evaluation, 45 non-overlapping one-minute scenarios were analyzed in ReV-StED, and the aggregated results are summarised in Table II. The proposed PRML2 architecture achieved the highest localization accuracy among all compared methods. Compared to RNN-EKF [11], the position RMSE was re-duced by 28%. The MAX metric representing the worst-case position drift within each 60 s sequence was also lowest for PRML2, highlighting its reliability. −160 −140 −120 −100 −80 −60 −40 
+
+> −150  −100
+> x [m]
+> y [m]
+> GT
+> OSD
+> NN-VDM
+> DL-AVL
+> RNN-EKF
+> Backprop-KF
+> PRML2*
+> PRML2
+
+(a) Longitudinal −70 −60 −50 −40 −30 −20 −10  
+
+> −40  −20  0 20
+> x [m]
+> y [m]  GT
+> OSD
+> NN-VDM
+> DL-AVL
+> RNN-EKF
+> Backprop-KF
+> PRML2*
+> PRML2
+
+(b) Lateral −100 −50 0 
+
+> −150  −100  −50  0
+> x [m]
+> y [m]
+> GT
+> OSD
+> NN-VDM
+> DL-AVL
+> RNN-EKF
+> Backprop-KF
+> PRML2*
+> PRML2
+
+(c) Mixed −150 −100 −50 0 50  
+
+> −200  −150  −100  −50  0 50
+> x [m]
+> y [m]
+> GT
+> OSD
+> NN-VDM
+> DL-AVL
+> RNN-EKF
+> Backprop-KF
+> PRML2*
+> PRML2
+
+(d) Snow (low-μ)
+
+Fig. 3: Vehicle localization performance over 60 s under longitudinal, lateral, and mixed dynamic conditions in the ReV-StED dataset. The Snow (low-μ) indicates generalization performance on the proposed low-friction dataset without training. TABLE II: Horizontal position error ( m) and its standard deviation over 60 s dead-reckoning using onboard sensors. 
+
+ReV-StED Snow (low-μ)Models RMSE MAX RMSE MAX 
+
+OSD-Baseline 5.3 ± 2.1 9.2 ± 4.0 5.7 ± 3.1 9.7 ± 4.8
+
+NN-VDM [24] 2.9 ± 2.4 5.6 ± 4.7 3.7 ± 2.7 7.2 ± 5.0
+
+DL-AVL [12] 2.5 ± 2.2 5.0 ± 4.1 3.8 ± 2.7 7.5 ± 5.0
+
+RNN-EKF [11] 2.1 ± 1.5 4.1 ± 3.1 3.8 ± 2.6 7.3 ± 4.9
+
+Backprop-KF [25] 2.6 ± 1.5 5.2 ± 3.4 3.4 ± 2.3 6.0 ± 4.1
+
+PRML2* 2.2 ± 1.9 4.2 ± 3.6 3.6 ± 2.7 7.1 ± 4.9
+
+PRML2 1.5 ± 1.2 2.8 ± 2.2 2.5 ± 1.8 4.3 ± 3.1
+
+The Snow (low-μ) dataset evaluates generalization performance. 
+
+While the RNN-EKF [11] matches the pretraining-only variant PRML2* in ReV-StED, adding physics-based reg-ularization via EKF improves performance. The Backprop-KF [25] underperforms, likely due to its limited observation model. Unlike prior differentiable filters [25], [27], which rely mainly on recursive filtering for temporal structure, PRML2 models it using both the ML model and the filter. Qualitative localization results across different vehicle dy-namic maneuvers in ReV-StED (Fig. 3) demonstrate the lo-calization accuracy and temporal consistency of the proposed approach. An analysis of the drift rate during dead-reckoning further confirms this advantage, with PRML2 exhibiting the lowest error accumulation over time, as shown in Fig. 4. The proposed PRML2 achieves a translational error of 1.07% over 60s intervals on ReV-StED, showing reliable short-term proprioceptive localization using only the onboard sensors. 0 10 20 30 40 50 60 
+
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> Time during outage [s]
+> Mean position drift [m]
+> OSD
+> NN-VDM
+> DL-AVL
+> RNN-EKF
+> Backprop-KF
+> PRML2*
+> PRML2
+
+(a) Mean position drift. 0 10 20 30 40 50 60  
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> Time during outage [s]
+> Mean Heading drift [ °]
+> OSD
+> NN-VDM
+> DL-AVL
+> RNN-EKF
+> Backprop-KF
+> PRML2*
+> PRML2
+
+(b) Mean heading drift. 
+
+Fig. 4: Drift evolution during dead-reckoning in ReV-StED. The shaded region represents the ±0.25 σ band. 
+
+3) Generalization of localization performance: The mod-els trained on the ReV-StED [36] are evaluated on the pro-posed low-μ dataset to test generalization. While some degra-dation is expected in open-set scenarios, PRML2 achieves the highest localization accuracy under low-μ conditions, with the lowest mean RMSE and standard deviation across 45 scenarios (Table II). The Backprop-KF [25], incorporating an EKF in its training regime shows the second-best local-ization performance. These results empirically support that the KF acts as a physics-based regularizer during end-to-end training, guiding the learning process to improve physical and temporal consistency while enhancing generalization. Robust localization under unseen and challenging con-ditions is crucial for safety-critical applications such as autonomous driving. The ability of PRML2 to generalize well to low-μ scenarios highlights its robustness and practical applicability. 
+
+4) Assessment of real-time capability: The PRML2 ar-chitecture was evaluated for real-time deployment on an NVIDIA Orin edge device [39]. The proposed approach has an inference latency of 25 –32 ms , enabling operation at approximately 30 Hz for real-time vehicle localization. This highlights that PRML2, relying solely on onboard sensors, is capable of high-frequency real-time operation. 
+
+C. Ablation Study 
+
+An ablation study was conducted to assess the individual contributions of the PRML2 components, with results sum-marized in Table III. Incorporating uncertainty estimation into the ML model improves localization performance. The physics guard has a minimal effect as it was activated in less than 2% of predictions. Nevertheless, its integration guarantees strict compliance with vehicle dynamic bounds, preventing physically implausible outputs. TABLE III: PRML2 with selective components in ReV-StED. 
+
+Physics guard Uncertainty EKF (Reg) RMSE MAX 
+
+✓ 1.7 2.9 
+
+✓ ✓ 1.5 2.9 
+
+✓ ✓ ✓ 1.5 2.8 VI. C ONCLUSION 
+
+The proposed PRML2 architecture enables accurate esti-mation of vehicle dynamic states using only onboard propri-oceptive sensors. Its physics-informed design incorporates 
+
+a priori domain knowledge and uncertainty modelling to improve vehicle pose estimation. We show that Differentiable Kalman filters inherently act as physics-based regularizers, promoting physical and temporal consistency in ML-based measurement models. PRML2 exploits this property to con-sistently outperform the compared onboard sensor-based lo-calization methods. The physics-based regularization further improves generalization to low-friction driving conditions, which is crucial for autonomous mobility systems. These findings demonstrate that PRML2 offers a robust, real-time solution for proprioceptive vehicle localization using only readily available onboard sensors. In this work, PRML2 is trained offline and evaluated for planar (2D) localization. Future work will explore extensions to 3D with additional sensors, transfer learning across ve-hicles and robotic platforms, and online adaptation during periods of satellite signal availability. VII. ACKNOWLEDGMENT This work was funded by the Deutsche Forschungsgemein-schaft (DFG, German Research Foundation) – FIP 135/1, no. 549102058, and by the Federal Ministry of Education and Research of Germany (BMBF) – HyMne2, no. 13FH7I13IA. The authors would like to thank GeneSys Elektronik GmbH and Gaurav Yadav for their support. REFERENCES [1] S. D. Pendleton, H. Andersen, and X. Du, “Perception, planning, control, and coordination for autonomous vehicles,” Machines , 2017. [2] A. Angrisano, “Gnss/ins integration methods,” PhD dissertation, Parthenope University of Naples, Naples, Italy, 2010. [3] J. Luo, K. Wu, and Wang, “An improved ukf for imu state estimation based on modulation lstm neural network,” IEEE Transactions on Intelligent Transportation Systems , 2024. [4] D. Kumar and N. Muhammad, “A survey on localization for au-tonomous vehicles,” IEEE Access , vol. 11, pp. 115 865–115 883, 2023. [5] A. Kalyanasundaram, W. Utschick, and M. Botsch, “Uncertainty-aware hybrid machine learning in virtual sensors for vehicle sideslip angle estimation,” in 2025 IEEE Intelligent Vehicles Symposium (IV) .[6] S. Goblirsch, M. Weinmann, and J. Betz, “Three-dimensional vehicle dynamics state estimation for high-speed race cars under varying signal quality,” in 2024 IEEE/RSJ IROS . IEEE, 2024. [7] X. Shan, A. Cabani, and H. Chafouk, “A survey of vehicle localization: Performance analysis and challenges,” IEEE Access , vol. 11, 2023. [8] C. Chen and X. Pan, “Deep learning for inertial positioning: A survey,” 
+
+IEEE transactions on intelligent transportation systems , vol. 25, 2024. [9] B. Barshan and H. Durrant-Whyte, “Inertial navigation systems for mobile robots,” IEEE Transactions on Robotics and Automation ,vol. 11, no. 3, pp. 328–342, 1995. [10] M. Brossard, A. Barrau, and S. Bonnabel, “Ai-imu dead-reckoning,” 
+
+IEEE Transactions on Intelligent Vehicles , vol. 5, no. 4, 2020. [11] H. Zhou, Y. Zhao et al. , “Imu dead-reckoning localization with rnn-iekf algorithm,” in 2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 2022. [12] N. Mark´ o, E. Horv´ ath et al. , “Deep learning-based approach for au-tonomous vehicle localization: application and experimental analysis,” 
+
+Machines , vol. 11, no. 12, p. 1079, 2023. [13] Q. Li, B. Zhang et al. , “A hybrid physics-data driven approach for vehicle dynamics state estimation,” Mechanical Systems and Signal Processing , vol. 225, p. 112249, 2025. [14] A. Vaswani, N. Shazeer et al. , “Advances in neural information processing systems,” vol. 30. Curran Associates, Inc., 2017. [15] L. Zhang, D. Sidoti et al. , “On the identification of noise covariances and adaptive kalman filtering: A new look at a 50 year-old problem,” 
+
+IEEE Access , vol. 8, pp. 59 362–59 388, 2020. [16] X. Niu, Y. Wu, and J. Kuang, “Wheel-INS: A wheel-mounted MEMS imu-based dead reckoning system,” IEEE Transactions on Vehicular Technology , vol. 70, no. 10, pp. 9814–9825, 2021. [17] L. Gao, L. Xiong et al. , “Improved vehicle localization using on-board sensors and vehicle lateral velocity,” IEEE Sensors Journal , vol. 22, no. 7, pp. 6818–6831, 2022. [18] M. BROSSARD, “Learning wheel odometry and imu errors for localization,” in 2019 International Conference on Robotics and Au-tomation (ICRA) , 2019, pp. 291–297. [19] Y. Wang, J. Kuang et al. , “Llio: Lightweight learned inertial odometer,” 
+
+IEEE Internet of Things Journal , vol. 10, no. 3, pp. 2508–2518, 2023. [20] Y. Wang, H. Cheng, and M. Q.-H. Meng, “A2dio: Attention-driven deep inertial odometry for pedestrian localization based on 6d imu,” in 2022 International Conference on Robotics and Automation (ICRA) .[21] B. Or and I. Klein, “A hybrid adaptive velocity aided navigation filter with application to ins/dvl fusion,” in OCEANS 2022, Hampton Roads ,2022, pp. 1–5. [22] X. Li, B. Li et al. , “Calib-net: Calibrating the low-cost imu via deep convolutional neural network,” Frontiers in Robotics and AI , 2022. [23] A. Bertipaglia, M. Alirezaei, and R. Happee, “An unscented kalman filter-informed neural network for vehicle sideslip angle estimation,” 
+
+IEEE Transactions on Vehicular Technology , vol. 73, no. 9, 2024. [24] L. Hermansdorfer and Trauth, “End-to-end neural network for vehicle dynamics modeling,” in 2020 6th IEEE Congress on Information Science and Technology (CiSt) , 2020. [25] T. Haarnoja, A. Ajay et al. , “Backprop kf: Learning discriminative deterministic state estimators,” Advances in neural information pro-cessing systems , vol. 29, 2016. [26] X. Ma, P. Karkus et al. , “Particle filter recurrent neural networks,” in 
+
+The Thirty-Fourth AAAI Conference on Artificial Intelligence, 2020 .[27] M. A. Lee, B. Yi et al. , “Multimodal sensor fusion with differentiable filters,” in 2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 2020, pp. 10 444–10 451. [28] N. M. Foumani, L. Miller et al. , “Deep learning for time series clas-sification and extrinsic regression: A current survey,” ACM Comput. Surv. , 2024. [29] C. M. Bishop, Pattern Recognition and Machine Learning , 2006. [30] M. Botsch and W. Utschick, Fahrzeugsicherheit und automatisiertes Fahren . Munchen, Germany: Carl Hanser Verlag GmbH, Jun. 2020. [31] G. E. Karniadakis, I. G. Kevrekidis et al. , “Physics-informed machine learning,” Nature Reviews Physics , vol. 3, no. 6, pp. 422–440, 2021. [32] G. Revach, N. Shlezinger et al. , “Kalmannet: Data-driven kalman filtering,” in ICASSP 2021 - 2021 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , 2021. [33] S. Wang, S. Sankaran et al. , “An expert’s guide to training physics-informed neural networks (2023),” Preprint at https://arxiv. org/pdf/2308.08468. pdf , 2023. [34] R. Gnanasambandam, B. Shen et al. , “Self-scalable tanh (stan): Multi-scale solutions for physics-informed neural networks,” IEEE Transactions on Pattern Analysis and Machine Intelligence , vol. 45, no. 12, pp. 15 588–15 603, 2023. [35] A. Geiger, P. Lenz, and R. Urtasun, “Are we ready for autonomous driving? the kitti vision benchmark suite,” in Conference on Computer Vision and Pattern Recognition (CVPR) , 2012. [36] A. Kalyanasundaram, “Real-world vehicle state estimation dataset (ReV- StED), IEEE IV 2025,” Apr. 2025, available:https://doi.org/ 10.5281/zenodo.15270060. [37] Genesys Offenburg, “Adma-g pro+ high-precision gnss/inertial sys-tem,” https://genesys-offenburg.de/adma-g/, accessed: 2025-Nov. [38] R. Isermann, “Fault-diagnosis systems. an introduction from fault detection to fault tolerance,” Jul. 2006, place: Germany. [39] “Nvidia jetson orin developer kit,” 2023, available:https://developer. nvidia.com/embedded/jetson-orin.

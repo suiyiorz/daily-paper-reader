@@ -1,0 +1,172 @@
+Title: Multimodal Scenario Similarity Search for Autonomous Driving
+
+URL Source: https://arxiv.org/pdf/2607.09428v1
+
+Published Time: Mon, 13 Jul 2026 01:13:35 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Multimodal Scenario Similarity Search for Autonomous Driving 
+
+# Tam´ as Matuszka aiMotive 
+
+> tamas.matuszka@aimotive.com
+
+# Andr´ as Tam´ asy aiMotive 
+
+> andras.tamasy@aimotive.com
+
+# Bal´ azs Szol´ ar aiMotive 
+
+> balazs.szolar@aimotive.com
+
+# Abstract 
+
+Large-scale autonomous-driving datasets contain vast numbers of recorded scenarios, creating a need for efficient retrieval methods that can identify situations similar to a given query. Existing approaches typically rely on either vi-sual representations or motion-based descriptions, making it difficult to understand their relative strengths and limi-tations for scenario retrieval. In this work, we present a multimodal framework for autonomous-driving scenario re-trieval that combines visual and trajectory-based represen-tations within a unified retrieval pipeline. We investigate two trajectory-based approaches: Exo-Trajectory, an ex-plicit matching method based on surrounding-agent motion, and ScenarioFormer, a transformer-based representation learned from object trajectories using contrastive learn-ing. We compare these approaches against strong vision-based baselines and analyze their behavior across a di-verse set of driving scenarios. Experimental results show that trajectory representations provide strong retrieval per-formance for motion-centric events such as cut-ins, turning maneuvers, and traffic queueing, while visual embeddings excel when appearance cues are informative. Most impor-tantly, combining visual and trajectory information con-sistently improves retrieval quality, yielding the best over-all performance. These findings demonstrate that appear-ance and motion capture are complementary notions of sce-nario similarity and motivate multimodal retrieval systems for autonomous-driving data mining, dataset curation, and scenario-based validation. 
+
+# 1. Introduction 
+
+Modern autonomous-driving systems generate and process enormous amounts of sensor data, resulting in datasets con-taining millions of recorded driving scenarios. Efficient retrieval of scenarios similar to a given query is essen-tial for dataset curation, corner-case discovery, validation, and data-driven development workflows. However, defining similarity between driving scenarios remains a challenging problem. Two scenarios may appear visually different while exhibiting similar traffic interactions, or conversely share a similar visual context while containing fundamentally dif-ferent vehicle and agent behaviors. Existing scenario retrieval approaches typically focus on a single notion of similarity. Vision-based methods lever-age video representations to capture scene appearance and spatio-temporal context, while trajectory-based approaches compare vehicle motions and traffic participant behavior. Although both perspectives are relevant for autonomous-driving applications, their relative strengths and limitations have not been systematically studied within a unified re-trieval framework. In this work, we investigate multimodal scenario re-trieval by combining visual and trajectory-based represen-tations. We evaluate two vision-based retrieval methods and introduce two trajectory-based approaches. The first, Exo-Trajectory, explicitly compares the motion patterns of surrounding traffic participants using trajectory matching. The second, ScenarioFormer, is a transformer-based repre-sentation learned from object trajectories using contrastive learning. Together, these methods enable a direct compar-ison between appearance-driven and motion-driven notions of scenario similarity. Experimental results on a manually annotated driving-scene similarity benchmark show that visual and trajectory representations capture complementary information. Vision models perform best when appearance cues are informa-tive, whereas trajectory-based methods excel on motion-centric scenarios such as cut-ins, turning maneuvers, and traffic queueing. Furthermore, combining visual and trajec-tory information consistently improves retrieval quality and achieves the best overall performance. The main contributions of this work are: • We present a multimodal framework for autonomous-driving scenario retrieval that enables the joint study of visual and trajectory-based similarity representations. • We introduce two trajectory-based retrieval approaches: Exo-Trajectory, an explicit matching method based on surrounding-agent motion, and ScenarioFormer, atransformer-based trajectory representation learned using contrastive learning. 1arXiv:2607.09428v1 [cs.CV] 10 Jul 2026 • We demonstrate through extensive experiments that vi-sual and trajectory representations capture complemen-tary notions of scenario similarity and that their fusion yields the strongest retrieval performance. 
+
+# 2. Related Work 
+
+2.1. Visual Scenario Retrieval 
+
+Recent advances in video representation learning have en-abled effective retrieval and similarity search in large-scale video collections. Transformer-based architectures such as ViViT [1] learn spatio-temporal representations directly from video sequences and have achieved strong perfor-mance across a variety of video understanding tasks. More recently, large vision-language models such as Qwen3-VL [6] have demonstrated impressive transfer capabili-ties, producing semantically meaningful embeddings that can be used for retrieval without task-specific supervision. Such representations capture scene appearance, object con-text, and high-level semantics, making them attractive for autonomous-driving scenario search. However, visual rep-resentations may struggle to distinguish scenarios that ex-hibit similar appearance while differing significantly in agent behavior and motion patterns. 
+
+2.2. Trajectory-Based Scenario Retrieval 
+
+Trajectory information provides an alternative notion of similarity by explicitly modeling the motion of traffic par-ticipants. Traditional approaches compare trajectories us-ing geometric distance measures such as Dynamic Time Warping (DTW) [8] or Fr´ echet distance [4], which have been widely used for trajectory matching and motion anal-ysis. In autonomous driving, trajectory-based retrieval has been explored for scenario mining, corner-case discovery, and dataset search, where the objective is to identify situa-tions exhibiting similar interactions between vehicles and other road users. Compared with visual representations, trajectory-based methods focus directly on dynamic behav-ior and are therefore particularly suitable for motion-centric scenarios. 
+
+2.3. Trajectory Representation Learning 
+
+Recent work has increasingly adopted learned trajectory representations to capture higher-level behavioral seman-tics. Transformer architectures have proven effective for modeling interactions among multiple traffic participants and forecasting future motion. Scene Transformer [9] intro-duced a unified attention-based framework for representing complex traffic scenes, demonstrating the ability of trans-former models to encode rich relational information be-tween agents. Contrastive learning has further emerged as a powerful approach for learning task-agnostic embeddings from structured data by encouraging similar samples to be mapped close together in the representation space. Mo-tivated by these advances, our proposed ScenarioFormer learns trajectory embeddings directly from agent trajecto-ries using a transformer encoder trained with a contrastive objective, enabling efficient retrieval based on scene dy-namics. 
+
+# 3. Methodology 
+
+We investigate autonomous-driving scenario retrieval using two complementary modalities: visual representations ex-tracted from video data and trajectory-based representations derived from the motion of traffic participants. Given a query scenario, each retrieval method produces a similarity score between the query and candidate scenarios. We eval-uate both standalone retrieval performance and multimodal fusion of visual and trajectory-based similarity measures. Each scenario is first preprocessed to extract relevant fea-tures (video frames, ego-motion matrices, and object trajec-tories), which are then encoded into a compact vector rep-resentation or distance matrix. Scenario similarity is ex-pressed through cosine similarity or distance-based mea-sures, depending on the modality. This section introduces the individual components of the framework. 
+
+3.1. Visual Retrieval 
+
+Visual retrieval methods represent a driving scenario using image or video embeddings extracted from RGB observa-tions. These embeddings capture appearance, scene con-text, object semantics, and temporal visual cues. Similarity between scenarios is computed using cosine similarity in the embedding space. We evaluate two visual retrieval ap-proaches. 
+
+3.1.1. ViViT 
+
+We employ ViViT [1], a transformer-based video model designed for capturing both spatial and temporal depen-dencies. The model tokenizes an input video into frame patches, processes them through multiple transformer lay-ers, and produces a d-dimensional embedding vector. We use the hidden state of the first token, analogous to the [CLS] token in BERT [3], as the global video represen-tation. To improve computational efficiency, the videos are subsampled to 32 frames and cropped to exclude non-informative regions (e.g., sky or camera mount). All em-beddings are precomputed offline, enabling fast similarity queries using cosine similarity: 
+
+cos( vi, vj ) = vi · vj
+
+∥vi∥ ∥ vj ∥
+
+where vi and vj are the embeddings of two scenarios. 
+
+3.1.2. Qwen3-VL 
+
+We utilize Qwen3-VL-2B [6] as a vision-language retrieval baseline due to its strong multimodal representation capa-2bilities. For each driving scenario, 32 frames are sampled uniformly from the video clip and processed by the model to obtain a fixed-length embedding. Timestamp informa-tion is included in the visual input to preserve temporal context, enabling the model to distinguish between simi-lar visual scenes occurring at different stages of a maneu-ver. We extract embeddings using the Matryoshka Repre-sentation Learning (MRL) representation with 768 dimen-sions and compute scenario similarity using cosine simi-larity between query and candidate embeddings. Unlike ViViT, which is trained specifically for video understand-ing, Qwen3-VL leverages large-scale multimodal pretrain-ing and produces semantically rich representations that cap-ture scene appearance, object context, and high-level traffic semantics. 
+
+3.2. Trajectory-Based Retrieval 
+
+While visual representations capture scene appearance and semantic context, many driving scenarios are primarily de-fined by the motion and interactions of traffic participants. We therefore investigate trajectory-based retrieval meth-ods that compare scenarios using the temporal evolution of agent motion. We consider both explicit trajectory match-ing and learned trajectory representations. 
+
+3.2.1. Exo-Trajectory-based Similarity Search 
+
+Exo-Trajectory represents a scenario using the trajectories of surrounding traffic participants and measures similarity through explicit trajectory matching. Unlike visual embed-dings, which rely on appearance and scene context, Exo-Trajectory directly compares motion patterns and interac-tions between agents. To explicitly account for the behavior of other traffic par-ticipants, we developed the Exo-Trajectory similarity search method that compares the motion patterns of surrounding vehicles, pedestrians, and other dynamic objects. When 3D bounding boxes are available, we extract trajectories of all exo-objects and group them by type: vehicle, stopped vehi-cle, pedestrian, and rideable. The trajectories are matched when the distance matrix is calculated. We used the Hungarian Algorithm [5] to find the best matching/assignment between trajectories. The Hungarian Algorithm is a combinatorial optimization algo-rithm that solves the assignment problem. To further re-fine the matching, we introduce a penalty mapping for un-matched trajectories on a per-class basis. In this mapping, unmatched vehicles incur a higher penalty, whereas, for example stopped vehicles incur a relatively lower penalty. This avoids overly penalizing scenarios that differ mainly by stationary objects, while emphasizing the importance of matching active ones. This solution ensures that scenarios with a similar number of objects and comparable movement patterns receive higher similarity values. The exo-trajectory-based similarity search process can be written as follows: • Distance matrix calculation for two scenarios. An 
+
+N xM matrix is calculated using the Fr´ echet Distance be-tween the trajectories of the two scenarios, where N and M are the number of trajectories of the first and second scenarios, respectively. The comparison disregards tra-jectories belonging to different groups (e.g., a vehicle and a pedestrian). • Matching similar trajectories from two scenarios. The Hungarian Algorithm solves the assignment problem, re-sulting in an optimal matching between exo-trajectories. Unmatched exo-trajectories are penalized. • Aggregation. The similarity between the two scenarios is calculated by aggregating the Fr´ echet-distance of matched trajectories while considering the penalties. Akey factor here is the matched ratio, defined as 
+
+matched = 1 − unmatched total 
+
+This rewards scenarios with more matched objects. This ratio is incorporated into a combined cost term along with the mean matched distance and the total unmatched penalty. Finally, the combined cost is converted into a [0,1] similar-ity measure through a scaling function: 
+
+11 + combined k
+
+The penalization process is especially beneficial when the two scenarios have similar numbers of other traffic par-ticipants, but these objects cannot be matched due to cate-gory mismatches. This way, the exo-trajectory-based sim-ilarity search ensures the sensitivity to the movement pat-terns of all objects, considering their object categories. 
+
+3.2.2. ScenarioFormer 
+
+ScenarioFormer is our proposed trajectory-based retrieval model. Unlike Exo-Trajectory, which relies on explicit tra-jectory matching, ScenarioFormer learns a compact embed-ding representation directly from agent trajectories using contrastive learning. The objective is to map scenarios ex-hibiting similar motion patterns to nearby locations in the embedding space while separating dissimilar scenarios. While the Exo-Trajectory similarity search method pro-vides an explainable solution for comparing autonomous driving scenarios, its high computation intensity might hin-der large-scale deployment. Therefore, we developed a data-driven solution that enables a computationally less in-tensive precomputation method and allows fast querying. We designed, developed, and trained a model, called ScenarioFormer, which is based on the vision transformer model [9]. The exo-trajectories of a scenario can be repre-sented by tensors with a shape (N +1 , T, C ) where N is the 3number of non-ego objects, T is the number of timesteps, and C is the number of attributes of the object. We set 
+
+N = 25 (with zero padding when the object number is less than 25), T = 15 , and C = 8 . The following bounding box properties were included in the input tensor after a BEV projection: • longitudinal position (x coordinate), • lateral position (y coordinate), • object length, • object width, • heading (yaw angle), • longitudinal velocity, • lateral velocity. • class ID The input tensor is projected into a high-dimensional embedding space by a Linear layer. Then, positional en-coding is added to retain the spatio-temporal information within the Transformer layers. The output of the model is a 
+
+d-dimensional embedding. ScenarioFormer is a Siamese-Transformer [2] where the model is fed by two input tensors and is trained with con-trastive learning. One input tensor represents the original scenario input, while the second input tensor is the aug-mented version of the first input. We utilized the following augmentations: • random longitudinal offset, • random lateral offset, • random length extension, • random width extension, • random heading perturbation, • random velocity noise, • random dropout of objects. Contrastive learning aims to pull similar scenarios close to each other in the embedding space while pushing dif-ferent scenarios far away. Similar scenarios can be gener-ated by augmenting the original scenario with the above-mentioned augmentations. These (original, augmented) scenarios are the positive pairs that will be close to each other in the embedding space. Negative pairs can easily be formed by taking all other scenarios contained by the same batch. The metric used to determine the similarity between two scenarios is cosine similarity. We used the InfoNCE loss represented by a CrossEntropy loss. Since contrastive learning is sensitive to batch size, we utilized gradient accu-mulation to increase the effective batch size without running out of GPU memory. The scalability of this approach is ensured by the pre-computation of the embeddings. Then, the same similarity search described in the video-based method can be used. To find similar scenarios to a new one, it has to be encoded by the model, and then cosine similarity can be used to query similar scenarios from the embedding pool. 
+
+3.3. Multimodal Fusion 
+
+Visual and trajectory representations capture complemen-tary aspects of scenario similarity. To combine their strengths, we perform score-level fusion between the visual and trajectory retrieval modules. Given a visual similarity score svision and a trajectory similarity score straj , the final similarity score is computed as 
+
+s = αs traj + (1 − α)svision , (1) where α controls the contribution of the trajectory rep-resentation. Fusion allows the retrieval system to leverage both appearance-based and motion-based cues when rank-ing candidate scenarios. 
+
+# 4. Experiments 
+
+4.1. Benchmark Dataset and Evaluation Protocol 
+
+We evaluate our scenario retrieval solution on a subset of the extended version of the aiMotive Multimodal Dataset [7]. The benchmark contains 13 scenario categories cover-ing both dynamic traffic interactions and appearance-driven scene characteristics. Following our focus on motion-aware retrieval, we primarily report results on a challenging dy-namic subset consisting of seven topics: exo-vehicle cut-ins, highway cut-ins, pedestrian crossings, pedestrian cross-ings during ego turns, cyclist interactions, ego turning ma-neuvers, and traffic queueing. Each topic contains approximately 100 manually anno-tated clips with graded similarity labels (overall annotated dataset size is 682). Clips are assigned relevance scores from 0 to 3, where 3 denotes highly similar scenarios, 2 denotes similar scenarios with minor differences, 1 denotes weak similarity, and 0 denotes unrelated scenarios. The similarity labels were manually assigned by domain experts familiar with autonomous-driving scenarios. Every grade-3 clip (overall 97) serves as a query and is evaluated against all the clips. Our primary metric is Normalized Discounted Cumula-tive Gain (NDCG@10), which accounts for graded rele-vance and rewards rankings that place highly similar sce-narios above partially matching ones. We additionally re-port Recall (Recall@k ≥g2: fraction of clearly-useful clips retrieved in top-k, Recall@k (g3) : fraction of strict positives found in top-15) metric. All methods are evaluated using a unified candidate pool and identical query sets, enabling direct comparison between visual and trajectory-based ap-proaches. 
+
+4.2. Standalone Retrieval Performance 
+
+Table 1 compares the four retrieval modules evaluated in this work. Two methods operate on visual representations 4(a) Pedestrian crossing scenario 
+
+> (b) Cut-in scenario
+
+Figure 1. Examples from the evaluation benchmark, illustrating representative pedestrian-crossing and cut-in scenarios. Best viewed by zooming in. 
+
+5Table 1. Standalone retrieval performance on the dynamic subset of the benchmark. Higher is better for all metrics. 
+
+Method NDCG@10 Rec@15 ≥2 Rec@15 (3) 
+
+ViViT 0.514 0.421 0.363 ScenarioFormer 0.565 0.441 0.388 Exo-Trajectory 0.565 0.475 0.434 Qwen3-VL-2B 0.621 0.513 0.463    
+
+> Table 2. Best score-level fusion results on the dynamic bench-mark. ∆denotes the improvement in NDCG@10 over the corre-sponding vision-only baseline.
+
+Fusion Method α NDCG@10 ∆
+
+ViViT + ScenarioFormer 0.4 0.599 +0.085 ViViT + Exo-Trajectory 0.5 0.616 +0.102 Qwen3 + ScenarioFormer 0.3 0.662 +0.041 Qwen3 + Exo-Trajectory 0.3 0.671 +0.050 (ViViT and Qwen3VL-2B), while two methods rely exclu-sively on trajectory information (Exo-Trajectory and Sce-narioFormer). Qwen3-VL-2B achieves the strongest overall perfor-mance, reaching an NDCG@10 of 0.621. Among the trajectory-based approaches, Exo-Trajectory and Scenari-oFormer obtain nearly identical performance (both 0.565 NDCG@10), substantially outperforming the weaker visual baseline (ViViT, 0.514). The per-topic analysis reveals a complementary behav-ior between visual and trajectory representations. Visual embeddings perform best on scenarios where appearance cues and semantic context provide strong signals, includ-ing pedestrian interactions and cyclist-related events. In contrast, trajectory-based methods excel in scenarios whose defining characteristics arise primarily from motion pat-terns. Traffic queueing and turning maneuvers are particu-larly well captured by trajectory representations, indicating that explicit motion modeling provides information that is difficult to infer from appearance alone. These results suggest that visual and trajectory modali-ties capture different aspects of scenario similarity and mo-tivate their combination through multimodal fusion. 
+
+4.3. Multimodal Fusion 
+
+To combine visual and trajectory information, we perform score-level fusion, 
+
+s = αs traj + (1 − α)svision , (2) where α controls the contribution of the trajectory model.         
+
+> Table 3. Per-topic NDCG@10 comparison between Exo-Trajectory and ScenarioFormer. Positive ∆indicates an advantage for Exo-Trajectory, while negative values favor ScenarioFormer. Although both methods achieve nearly identical macro perfor-mance, they exhibit complementary strengths. Exo-Trajectory per-forms better on cut-in and cyclist scenarios, while ScenarioFormer excels on pedestrian interactions and traffic queueing.
+
+Topic Exo Scene ∆
+
+01 Cut-in (env. invariant) 0.491 0.377 +0.114 02 Highway cut-in 0.597 0.473 +0.124 03 Pedestrian crossing 0.613 0.703 -0.090 04 Pedestrian + ego turn 0.417 0.564 -0.147 05 Cyclist interaction 0.525 0.465 +0.060 06 Ego turning at intersection 0.511 0.489 +0.022 07b Traffic queue 0.802 0.884 -0.082 Macro Average 0.565 0.565 +0.000 Results are summarized in Table 2. Fusion consis-tently improves retrieval performance over the correspond-ing visual baseline, demonstrating that trajectory informa-tion contributes complementary cues not captured by ap-pearance embeddings. The strongest overall result is obtained by com-bining Qwen3-VL-2B with Exo-Trajectory, yielding an NDCG@10 of 0.671, corresponding to an absolute im-provement of 5.0% over Qwen3-VL-2B alone. Similarly, combining Qwen3-VL-2B with ScenarioFormer increases NDCG@10 from 0.621 to 0.662. The effect is even larger for the weaker ViViT baseline, where fusion with Exo-Trajectory improves NDCG@10 from 0.514 to 0.616. The per-topic analysis in Table 4 reveals that the benefit of fusion depends strongly on the scenario category. Tra-jectory information is particularly valuable for cut-in and cyclist-interaction scenarios, where the Exo-Trajectory fu-sion achieves the best performance. In contrast, pedestrian-related scenarios and traffic queueing are best handled by the ScenarioFormer-based fusion, suggesting that the learned trajectory embedding captures higher-level seman-tic interactions between traffic participants. Overall, no sin-gle fusion strategy dominates across all topics, further sup-porting the hypothesis that visual and trajectory representa-tions capture complementary aspects of scenario similarity. Overall, the fusion experiments demonstrate that motion-aware retrieval and visual retrieval are complemen-tary and that combining both modalities yields the most ro-bust similarity search system. 
+
+4.4. Analysis of Trajectory Representations 
+
+We next compare the two trajectory representations directly. Although their overall NDCG@10 scores are nearly identi-cal, they exhibit different strengths. 6Table 4. Best per-topic NDCG@10 obtained by each fusion method. For each topic, the fusion weight α is independently selected to maximize NDCG@10. Bold values indicate the best fusion result for that topic. 
+
+Topic ViViT+ScenarioFormer ViViT+Exo Qwen3-VL+ScenarioFormer Qwen3-VL+Exo 01 Cut-in (env. invariant) 0.397 0.491 0.405 0.491 
+
+02 Highway cut-in 0.612 0.682 0.658 0.680 03 Pedestrian crossing 0.793 0.777 0.869 0.854 04 Pedestrian + ego turn 0.617 0.604 0.713 0.691 05 Cyclist interaction 0.473 0.537 0.649 0.663 
+
+06 Ego turning at intersection 0.575 0.523 0.549 0.531 07b Traffic queue 0.890 0.843 0.920 0.913   
+
+> Table 5. Ablation study of the ScenarioFormer. Results are re-ported as macro NDCG@10 on the dynamic benchmark.
+
+Configuration NDCG@10 Gain Simple (global) augm. 0.444 –Hard (object-level) augm. 0.510 +0.066 Semantic (class-aware) augm. 0.516 +0.006 Semantic augm. + 2 × data 0.531 +0.015 + Ego-motion augm. 0.565 +0.034 Exo-Trajectory performs best on cut-in scenarios and cy-clist interactions, achieving substantial gains on both high-way and urban cut-in topics. These scenarios are charac-terized by distinctive geometric motion patterns, which are effectively captured by explicit trajectory matching using Fr´ echet-distance-based costs. In contrast, ScenarioFormer performs best on pedestrian-centric scenarios and traffic queueing. The learned repre-sentation benefits from object-type embeddings and seman-tic augmentations, enabling it to better distinguish interac-tions involving different actor categories. The complementary behavior of the two trajectory mod-els explains why both serve as effective fusion partners de-spite having similar aggregate performance. Exo-Trajectory provides stronger geometric matching, while Scenario-Former captures higher-level semantic relationships be-tween dynamic actors. 
+
+4.5. Ablation Study 
+
+Table 5 presents an ablation study of the ScenarioFormer training procedure. We evaluate progressively stronger aug-mentation strategies while keeping the model architecture fixed. Starting from a simple augmentation policy (global jitter), introducing stronger trajectory perturbations (per-object jitter, dropout, position noise) increases NDCG@10 from 0.444 to 0.510. Adding class-aware semantic aug-mentations (class-aware jitter, dropout) yields a further im-provement to 0.516, while increasing the amount of training data (from 150k sequences to over 300k) raises performance to 0.531. The final improvement comes from incorporating ego-vehicle motion into the scenario representation. Incorporat-ing an ego-motion together with maneuver-preserving per-turbations increases NDCG@10 to 0.565, producing the best-performing ScenarioFormer model. The ablation study highlights augmentation design as the dominant factor affecting retrieval quality. Weak aug-mentations allow the contrastive objective to exploit trivial correspondences between positive pairs, whereas stronger semantic and motion-preserving augmentations encourage learning representations that capture meaningful scene-level structure. 
+
+4.6. Discussion 
+
+The experimental results reveal three key findings. First, modern vision-language embeddings provide a strong base-line for scenario retrieval, particularly when semantic ap-pearance cues are informative. Second, trajectory represen-tations remain highly valuable for events defined primarily by motion dynamics, such as cut-ins, turning maneuvers, and traffic queueing. Third, combining visual and trajec-tory information consistently yields the best overall perfor-mance, demonstrating that the two modalities encode com-plementary notions of similarity. These findings support the use of multimodal retrieval systems for autonomous-driving data mining, where rele-vant scenarios often depend simultaneously on visual con-text and temporal motion patterns. Figures 1 and 2 provide qualitative examples of the benchmark and retrieval results. Figure 1 depicts query scenarios together with the top-1 re-trieval returned by each model, highlighting the different notions of similarity captured by visual and trajectory-based representations. Figure 2 presents the top-5 retrieval re-sults obtained by ScenarioFormer for a pedestrian-crossing query, demonstrating that the learned trajectory represen-tation successfully retrieves scenarios exhibiting similar pedestrian-vehicle interactions despite variations in visual appearance and scene context. 7Figure 2. Visualization of the top-5 retrieval result of Scenario-Former in a pedestrian crossing use case. 
+
+# 5. Conclusion 
+
+We presented a multimodal framework for autonomous-driving scenario similarity search that combines visual and trajectory-based representations. We evaluated two off-the-shelf vision models and two proposed trajectory-based ap-proaches on a manually annotated driving-scene similarity benchmark. The results show that trajectory information provides a strong retrieval signal for motion-centric scenar-ios such as cut-ins, turning maneuvers, and traffic queueing, while visual embeddings perform best when appearance cues are informative. Although the strongest vision model achieved the best standalone performance, both trajectory-based methods achieved competitive results and exhibited complementary strengths. Most importantly, combining vi-sual and trajectory information consistently improved re-trieval quality, yielding the best overall performance. Future work will focus on larger-scale benchmarks, end-to-end multimodal representations that jointly encode visual context and agent motion, and retrieval-driven applications for dataset curation and autonomous-driving system valida-tion. 
+
+# References 
+
+[1] Anurag Arnab, Mostafa Dehghani, Georg Heigold, Chen Sun, Mario Luˇ ci´ c, and Cordelia Schmid. Vivit: A video vision transformer. In Proceedings of the IEEE/CVF international conference on computer vision , pages 6836–6846, 2021. 2 [2] Wele Gedara Chaminda Bandara and Vishal M Patel. Atransformer-based siamese network for change detection. In 
+
+IGARSS 2022-2022 IEEE International Geoscience and Re-mote Sensing Symposium , pages 207–210. IEEE, 2022. 4 [3] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transform-ers for language understanding. In Proceedings of the 2019 conference of the North American chapter of the association for computational linguistics: human language technologies, volume 1 (long and short papers) , pages 4171–4186, 2019. 2 [4] Thomas Eiter, Heikki Mannila, et al. Computing discrete fr´ echet distance. 1994. 2 [5] Harold W Kuhn. The hungarian method for the assignment problem. Naval research logistics quarterly , 2(1-2):83–97, 1955. 3 [6] Mingxin Li, Yanzhao Zhang, Dingkun Long, Keqin Chen, Sibo Song, Shuai Bai, Zhibo Yang, Pengjun Xie, An Yang, Dayiheng Liu, et al. Qwen3-vl-embedding and qwen3-vl-reranker: A unified framework for state-of-the-art multimodal retrieval and ranking. arXiv preprint arXiv:2601.04720 , 2026. 2[7] Tamas Matuszka, Ivan Barton, ´Ad´ am Butykai, P´ eter Hajas, D´ avid Kiss, Domonkos Kov´ acs, S´ andor Kuns´ agi-M´ at´ e, P´ eter Lengyel, G´ abor N´ emeth, Levente Pet˝ o, et al. aimotive dataset: A multimodal dataset for robust autonomous driving with long-range perception. In International Conference on Learn-ing Representations 2023 Workshop on Scene Representations for Autonomous Driving . 4 
+
+8[8] M M¨ uller. Dynamic time warping. information retrieval for music and motion, springer. 2007. 2 [9] Jiquan Ngiam, Vijay Vasudevan, Benjamin Caine, Zheng-dong Zhang, Hao-Tien Lewis Chiang, Jeffrey Ling, Rebecca Roelofs, Alex Bewley, Chenxi Liu, Ashish Venugopal, et al. Scene transformer: A unified architecture for predicting future trajectories of multiple agents. In International Conference on Learning Representations . 2 
+
+9
