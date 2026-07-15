@@ -1,0 +1,414 @@
+Title: RGMP: Recurrent Geometric-prior Multimodal Policy for Generalizable Humanoid Robot Manipulation
+
+URL Source: https://ojs.aaai.org/index.php/AAAI/article/download/38539/42501
+
+Number of Pages: 9
+
+Markdown Content:
+# RGMP: Recurrent Geometric-prior Multimodal Policy for Generalizable Humanoid Robot Manipulation 
+
+# Xuetao Li 1* , Wenke Huang 1* , Nengyuan Pan 2, Kaiyan Zhao 1, Songhua Yang 1, Yiming Wang 3,Mengde Li 4, Mang Ye 1, Jifeng Xuan 1, Miao Li 1,4,5† 
+
+> 1
+
+School of Computer Science, Wuhan University 
+
+> 2
+
+Faculty of Artificial Intelligence, Hubei University 
+
+> 3
+
+State Key Laboratory of Internet of Things for Smart City, University of Macau 
+
+> 4
+
+Institute of Technological Sciences, Wuhan University 
+
+> 5
+
+School of Robotics, Wuhan University 
+
+{xtli312, wenkehuang, yemang, jxuan, miao.li }@whu.edu.cn 
+
+Abstract 
+
+Humanoid robots exhibit significant potential in executing di-verse human-level skills. However, current research predomi-nantly relies on data-driven approaches that necessitate exten-sive training datasets to achieve robust multimodal decision-making capabilities and generalizable visuomotor control. These methods raise concerns due to the neglect of geometric reasoning in unseen scenarios and the inefficient modeling of robot-target relationships within the training data, result-ing in a significant waste of training resources. To address these limitations, we present the Recurrent Geometric-prior 
+
+Multimodal Policy ( RGMP ), an end-to-end framework that unifies geometric-semantic skill reasoning with data-efficient visuomotor control. For perception capabilities, we propose the Geometric-prior Skill Selector, which infuses geomet-ric inductive biases into a vision language model, produc-ing adaptive skill sequences for unseen scenes with mini-mal spatial common sense tuning. To achieve data-efficient robotic motion synthesis, we introduce the Adaptive Recur-sive Gaussian Network, which parameterizes robot-object in-teractions as a compact hierarchy of Gaussian processes that recursively encode multi-scale spatial relationships, yielding dexterous, data-efficient motion synthesis even from sparse demonstrations. Evaluated on both our humanoid robot and desktop robot, the RGMP framework achieves 87% task suc-cess in generalization tests and exhibits 5× greater data effi-ciency than the state-of-the-art model. This performance un-derscores its superior cross-domain generalization, paving the way for more versatile and data-efficient robotic systems. 
+
+Code — https://github.com/xtli12/RGMP.git 
+
+# 1 Introduction 
+
+Humanoid robots demonstrate substantial potential in per-forming diverse human-level tasks, ranging from adaptive decision-making to complex manipulation (Tong, Liu, and Zhang 2024; Li et al. 2024a). However, current research 
+
+> *
+
+These authors contributed equally. 
+
+> †
+
+Corresponding author Copyright © 2026, Association for the Advancement of Artificial Intelligence (www.aaai.org). All rights reserved. May I have the Coke?                  
+
+> 12
+> Maybe Ishould grasp it
+> 12
+> 12
+> + Our RGMP
+> Geometric common sense
+> Generalization ability
+> DP
+> Our
+> DP
+> Our
+> 0.87
+> Data efficiency
+> 0.7
+> 1×
+> 5×“Cylinder ”
+> “Grasp ”
+> “Squashed ”
+> “Lift up ”
+> ……
+> Image patches
+> Skill command
+> Adaptive recursive process
+> Input: Output:
+
+Figure 1: Overview of our framework. By applying seman-tic cues from human instructions with common sense infor-mation derived from visual perception, our RGMP formu-lates the robot-targets spatial relationships for tasks. RGMP achieves an 8% performance improvement and exhibits 5× greater data efficiency than Diffusion Policy. predominantly relies on data-driven approaches, which re-quire extensive training datasets to achieve robust multi-modal decision-making and generalizable visuomotor con-trol (Zitkovich et al. 2023; Liu et al. 2024c; Intelligence et al. 2025). While these methods show promise in task-specific applications, they often overlook geometric rea-soning and spatial awareness, limiting the ability of robots to perceive contextually under unseen environments. Thus, developing data-efficient and reasoning-capable methods is imperative to achieve the context-aware, adaptable hu-manoid systems required for real-world applications (Abu-Jassar et al. 2025; Skubis and Wodarski 2023). Traditional Vision-Language Models (VLMs) such as PaLM-E (Driess et al. 2023) and InstructBLIP (Liu et al. 2024a) demonstrate remarkable capabilities in parsing se-mantic intent from language-vision inputs. These models The Fortieth AAAI Conference on Artificial Intelligence (AAAI-26) 
+
+15153 leverage large-scale pretraining to generate task plans con-ditioned on visual observations, yet their ability to associate abstract instructions with contextually appropriate robotic skills remains constrained (Team et al. 2024). For instance, those models struggle to resolve ambiguities in skill se-lection (e.g., grasping vs. pinching) when confronted with targets of varying shapes in unseen scenes. This limitation stems from insufficient integration of spatial object geome-try (e.g., bounding boxs, shapes) with semantic task spec-ifications, which is a gap exacerbated in dynamic environ-ments where skill feasibility depends on generalized spatial reasoning (Rothert et al. 2024). Given this context, a fun-damental question is: I) How can robots leverage spatial-geometric reasoning to enable feasible skill selection? 
+
+Meanwhile, learning precise action policies from limited demonstrations remains an open challenge. While diffusion models (Chi et al. 2025) and transformer-based architec-tures (Vaswani et al. 2017) have shown promise in trajectory generation, their reliance on extensive training data (10k+ trajectories) and computational complexity (1–5 Hz infer-ence rates (Zitkovich et al. 2023)) limits practical deploy-ment. Imitation learning methods (Zhang et al. 2018) par-tially mitigate this by leveraging human priors, but they often overfit to demonstration-specific features, achieving merely 40–60 % success rates on unseen objects (Liang et al. 2023). The crux lies in disentangling task-invariant visual features (e.g., context-based features) from task-specific mo-tion patterns. Therefore, an additional intriguing question is: 
+
+II) How can the inherent mechanisms of robot learn the gen-eralized ability with limited demonstrations? 
+
+To bridge these critical gaps, we introduce the RGMP 
+
+(Recurrent Geometric-prior Multimodal Policy), an end-to-end architecture that synergizes multimodal spatial-geometric reasoning with data-efficient visuomotor con-trol. Regarding the issue of spatial-geometric reasoning discussed in I) , we present Geometric-prior Skill Selector (GSS): the first framework to explicitly bridge geometric reasoning with semantic task planning through a novel geometric-object decomposition mechanism. By incorpo-rating geometric inductive biases into a VLM with mini-mal common-sense tuning, the GSS introduces a human-like decision-making process that mirrors how humans com-bine visual geometry and task semantics to select appropri-ate skills. Our geometric priors are plug-and-play, modular, and minimal (e.g., basic shape/affordance heuristics), requir-ing only 20 rule-based constraints for robust performance. On a humanoid robot, the GSS enables the manipulation of diverse objects in unseen scenes via geometric consistency checks, proving its effectiveness in real-world deployment. Regarding the challenge of data efficiency discussed in II) , we propose Adaptive Recursive Gaussian Network (ARGN): a framework that dynamically models spatial de-pendencies between the robot and targets by adaptively reconstructing spatial memory . In robotics, the high cost and labor intensity of data collection often result in lim-ited dataset sizes, which can lead to overfitting if the vi-sual processing network lacks careful architectural design to uncover latent data relationships. To this end, our ARGN employs Rotary Position Embedding (RoPE) to establish an implicit association between each observed image patch and the final executed action. We then introduce recursive com-putation in the Spatial Mixing Block to progressively model global spatial relationships from the first to the last visual patch. This recursive global connection forms the spatial memory of observed images for the robot, enabling it to identify end-effector positions most relevant to task execu-tion. However, recursive computation is prone to vanishing gradients, which increases training difficulty and requires substantial data to mitigate this issue. To address this, we propose an Adaptive Decay Mechanism that dynamically controls the decay rate of historical memory, preventing the loss of key spatial memories and adaptively amplifying the weights of task-critical patches. Furthermore, we utilize Gaussian Mixture Models (GMM) to fit six Gaussian dis-tributions, approximating a series of motions controlled by distinct joints of a six-degree-of-freedom robotic arm. Our contributions are as follows: 
+
+❶ A geometric-prior skill selector. We propose the GSS, which enhances a VLM with low-rank geometric adapters to select parameterized skills from a pretrained library. By infusing shape-level commonsense, GSS prioritizes skills that satisfy latent geometric constraints, enabling human-aligned reasoning without task-specific fine-tuning. 
+
+❷ A plug-and-play data-efficient visuomotor. We propose ARGN to modulate latent representations via adaptive decay mechanisms and rotary embedding to capture di-rectional spatial dependencies in a temporally-consistent latent space. A hierarchical fusion block retains multi-scale visual cues and feeds them into a Gaussian Mix-ture encoder that factorizes 6-DoF trajectories into a com-pact mixture of full-covariance, enabling explicit goal-conditional density modeling under severe data scarcity. 
+
+❸ Comprehensive real-robot evaluation. Our RGMP un-dergoes rigorous evaluation on two physical robotic plat-forms, exhibiting robust performance by jointly cou-pling geometric-semantic reasoning with recursive Gaus-sian feature re-weighting. Compared to Diffusion Policy, RGMP achieves 87% success rate in generalization tests and exhibits 5× greater data efficiency. 
+
+# 2 Related Work 
+
+2.1 Vision-Language Models 
+
+Large Language Models (LLMs) are pivotal for robotic task planning, leveraging their capabilities in complex reason-ing and response generation to autonomously create con-trol code with loops, conditionals, and subroutines (Ahn et al. 2022). This makes them well-suited for intricate perception-control tasks. Models like Palm-E (Driess et al. 2023) exemplify this by integrating visual, linguistic, and robot state data to enable dynamic task execution (Liang et al. 2023). Despite these advancements, current mod-els still struggle to meet the diverse demands of real-world robotics. Recent progress in Vision-Language Mod-els (VLMs) has significantly advanced vision-and-language integration tasks. Models like InstructBLIP (Dai et al. 2023), InstructGPT (Ouyang et al. 2022), LLaVA (Liu et al. 15154 May I have the Fenda?                     
+
+> Observation
+> Text
+> Image
+> Skill Library of RGMP
+> Pinch Grasp Lift up √
+> Stem Layer
+> Stage 1
+> DRWKV Block × 2
+> Action
+> GMM
+> Final Action
+> Deliver
+> to
+> Human
+> Here you are.
+> Freeze
+> Box the target
+> Geometric-prior Skill Selector (GSS)
+> 𝝓𝝓 (𝓞𝓞 )
+> Multimodal Input
+> You are a robot with Skills :Grasp ,
+> Lift up , and Pinch . Based on the observation, the
+> Coordinates and the Shape information of the object, Choose the skill without collision…
+> {Cylinder ,Grasp }{Squashed ,Lift up }{Irregular ,Pinch }
+> …
+> Predefined Geometric-prior common sense
+
+Our Recurrent Geometric-prior Multimodal Policy (RGMP)        
+
+> Stage 1
+> DRWKV Block × 2
+> Stage 1
+> DRWKV Block × 2
+> 𝑲𝑲 &𝑽𝑽
+> × 2
+> …
+> ……
+> …
+> … …
+> 𝜽𝜽
+> ……
+> Conv Conv
+> 𝑾𝑾
+> Recursive computation
+> Residual Connection
+> Rotary Position Embedding (RoPE)
+> Input
+> Spatial Mixing Block Channel Mixing Block
+> Eq.( )
+> Multi-Scale Fusion
+> cos( ) sin( ) sin( ) cos( )
+
+θθθθ    
+
+> 
+> Down-Sampling
+> Residual Connection 5
+
+Figure 2: Pipeline of RGMP . Upon receiving a speech command, the robot utilizes GSS to identify and localize the target object. By integrating object coordinates, shape cues (from Yolov8n-seg (Yaseen 2024) model ϕ() ), and geometric-prior knowl-edge, the robot selects an appropriate skill from the skill library, each associated with a pretrained RGMP model. The selected RGMP model then executes the task precisely through adaptive recursive feature extraction and GMM-based refinement. 2024b,a), and PALM (Chowdhery et al. 2022) leverage instruction tuning to improve image-text integration, set-ting new state-of-the-art benchmarks. However, their use in robotics applications faces considerable challenges due to real-world variability, platform heterogeneity, and the ne-cessity for reliable action control (Driess et al. 2023; Shrid-har, Manuelli, and Fox 2023; Team et al. 2024; Huang et al. 2025a). These challenges often result in suboptimal perfor-mance in highly dynamic environments. To this end, we in-troduce the GSS to fuse the Qwen-VL (Yang et al. 2024) with low-rank geometric adapters to dispatch parameter-ized manipulation skills from a pre-computed library us-ing common-sense priors. Compared to previous models, GSS effectively manages uncertainties and dynamic require-ments, making it a stable solution for robotic tasks. 
+
+2.2 Learning-Based Action Generation 
+
+Sophisticated manipulation systems drive the shift toward learning-based motion planning (Team et al. 2024; Liu et al. 2024c; Huang et al. 2025b,c). However, those methods en-counter three primary constraints: systematic dependence on predefined motion primitives (Cruciani et al. 2018, 2019), inadequate cross-domain adaptability (Liang et al. 2021), and inherent complexities in reward formulation (Kim et al. 2023; Zeng et al. 2018; Xu et al. 2021). Imitation learning is effective in physical deployments (Zhang et al. 2018; Hal-dar et al. 2023; Li et al. 2023; Bogdanovic, Khadiv, and Righetti 2020), though its performance is bound to demon-stration fidelity and scalability issues (Chen et al. 2021; Xu et al. 2022). Emerging diffusion-based generative frame-works have shown potential for robotic decision-making, utilizing multi-stage probabilistic optimization for trajectory synthesis (Zhang, Rao, and Agrawala 2023; Yoneda et al. 2023; Huang et al. 2023; Li et al. 2024b). However, slow inference from sequential reverse diffusion precludes time-sensitive applications (Dong et al. 2024). Our RGMP frame-work overcomes this by merging objective-aware action syn-thesis with statistical motion modeling. It avoids iterative denoising while maintaining robustness, enabling efficient multimodal inference. The hierarchical architecture further unifies task planning and motor control via distilled action primitives and adaptive distributions. 
+
+# 3 Methodology 
+
+Our RGMP framework (as shown in Algorithm 1) integrates two components: the GSS, which translates verbal com-mands and visual cues into executable skills using geomet-ric commonsense, and the ARGN, which processes visual inputs to predict manipulation actions. The policy learns to infer 3D spatial relationships directly from RGB by associ-ating visual cues with actions, relying on an efficient implicit representation instead of explicit 3D reconstruction. 
+
+3.1 Geometric-prior Skill Selector 
+
+Motivation. A key challenge in robotics is fine-grained skill selection (e.g., grasping vs. pinching) for diverse-shaped tar-gets or in unseen scenes. Traditional VLMs, despite enabling 15155 object recognition and localization, fail to map semantic ob-servations to accurate actions due to overlooking geomet-ric priors in vision-action mapping. This motivates our pio-neering GSS framework, which bridges geometric reasoning and semantic task planning via a novel geometric-object de-composition mechanism. The GSS comprises two stages. In the first stage, a VLM (Bai et al. 2023) is utilized to interpret human com-mands, enabling the robot to identify and localize the tar-get object within the observed image. In the second stage, based on the bounding box obtained from the first stage, the system analyzes the target object’s common sense informa-tion, including its relative position and its shape information. Subsequently, the system selects the pretrained skill model from a skill library according to the output of the GSS. The planning function operates through:      
+
+> P=plan (I,O | C ),(1)
+
+where P is the generated action plan, I denotes the current user instruction, O is a current visual observation, and C rep-resents a predefined context (instruction, prompt, and com-mon sense) that consists of n examples {(Ii, Oi, Pi)}ni=1 ,enabling in-context learning. Specifically, the observation O is an RGB image anno-tated with a bounding box by the VLM. Subsequently, the VLM generates an executable skill based on the predefined context C and the geometric-prior common sense, which in-cludes relative position and the shape information. For ex-ample, when the instruction is “I want Fanta” , our pipeline adheres to the context “Please box the target object in the in-struction” to identify the “Fanta” can among various other items and apply Yolov8n-seg to obtain the shape information of Fanta. The VLM subsequently synthesizes operational di-rectives by integrating its established contextual framework 
+
+C with geometric-based prior reasoning. Our GSS is plug-and-play, modular, and minimal (for implementation details, please refer to Appendix A in the code repository). 
+
+3.2 Adaptive Recursive Gaussian Network 
+
+Motivation. In robotic tasks, understanding spatial relation-ships from the robot’s visual perspective is essential. The robot must identify which parts of the scene correspond to the position of its end-effector. Previous methods often struggle to uncover the underlying relationships between different image regions in unseen scenes due to inherent lim-itations in visuomotor representation learning, which lim-its generalization capability. To address this issue, we pro-pose the ARGN framework, which is designed to adap-tively model comprehensive spatial dependencies between the robot and target objects in unseen environments, while mitigating overfitting in scenarios with limited training data. In our framework, we apply recursive operation to estab-lish global connection, which establishes the spatial mem-ory of observed images. This memory mechanism enables the identification of end-effector positions most relevant to task execution. However, recursive computation inherently suffers from vanishing gradients, increasing training diffi-culty and demanding substantial data to mitigate this limita-tion. To address this, we propose an Adaptive Decay Mecha-
+
+Algorithm 1: The RGMP Framework                                                                      
+
+> Input: Training epochs E, conversation round T, human speech I, human demonstrations Dwith capacity
+> M, VLM model Q, RGMP Gm
+> Output: Actions of robot a∗
+> for i= 1 ,2, ..., M do
+> di←(Oi,Ji)through Eq. (12)
+> D ← di
+> return D
+> /* RGMP Training pipeline: */
+> for e= 1 ,2, ..., E do
+> F0←Stem (Oi)
+> W, K s, V s← A (F0),R(F0)by Eq. (2))
+> F1, F 2, F 3← S (Ks, V s,W)×3
+> ain ← M (F1, F 2, F 3)by Eq. (7)
+> L ← (ain , a ground )through Eq. (8)
+> Gm← G m−η∇L
+> Θ← J iin Dthrough Eq. (9) return Gm,Θ
+> /* Inferencing pipeline: */
+> for t= 1 ,2, ..., T do
+> Box (x1, y 1, x 2, y 2)← Q (I,O|C )by Eq. (1)
+> Os←(x1, y 1, x 2, y 2), ϕ a(O, Box )
+> P ← Q (I,Os|C )
+> Voice ←response in P
+> if ’Skill’ in Pthen
+> a∗← G m(O)through Eq. (11) return a∗
+
+nism (ADM) to dynamically control historical memory de-cay rates to prevent the vanishing of key spatial memories, and to adaptively amplify weights for task-critical patches. In Stage 1, the input F0 is processed by the Spatial Mix-ing Block, where the ADM generates content-adaptive de-cay factors W to regulate memory retention.     
+
+> W=σ(C1×1(SReLU (C3×3(F0)))) ,(2)
+
+where C1×1(·) represents a convolutional operation with 
+
+1 × 1 kernel that enables channel re-calibrate, σ(·) denotes the Sigmoid activation function. RoPE is then applied to en-code positional information through rotational transforma-tions, enhancing sensitivity to relative spatial offsets with-out learnable position parameters. After applying RoPE, we slice Ks and Vs into 16 × 16 image patches (as illustrated in Fig. 3), and then employ recursive computation in the Spatial Mixing Block to progressively model global spatial relation-ships from the first visual patch to the last:                                  
+
+> W KV i=ni+eu⊙ki⊙vi
+> di+eu⊙ki
+> ,ni=ni−1⊙e−W +ki⊙vi
+> |{z }
+> Cumulative memory of ki⊙vi
+> , d i=di−1⊙e−W +ki
+> |{z }
+> Cumulative memory of ki
+> ,(3)
+
+where i ∈ [0 , (H × W )/(16 × 16)) , ki and vi represent the patches of Ks and Vs, respectively. The initial values n0 and 
+
+d0 are copied from k0. The parameter u ∈ (0 , 1) denotes the learnable position compensation, which enhances the sen-15156 𝐹𝐹 𝑖𝑖           
+
+> 𝑉𝑉 𝑠𝑠 𝐾𝐾 𝑠𝑠
+> 𝑅𝑅𝑅𝑅𝑅𝑅𝑅𝑅
+> 𝑊𝑊 𝐾𝐾𝑉𝑉
+> 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶
+> 𝑅𝑅 𝑠𝑠 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶
+> 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶
+> 𝐹𝐹 𝑆𝑆 𝑖𝑖
+> 𝐹𝐹 𝑟𝑟𝑟𝑟 𝑠𝑠 =𝐹𝐹 𝑖𝑖 +𝐹𝐹 𝑆𝑆 𝑖𝑖
+> 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶 𝐶𝐶 𝑅𝑅 𝐶𝐶𝐶𝐶
+> 𝑅𝑅 𝑐𝑐 𝐾𝐾 𝑐𝑐
+> 𝑂𝑂 𝑐𝑐 𝑉𝑉 𝑐𝑐
+> 𝐹𝐹 𝐶𝐶 𝑖𝑖
+> Element-wise Multiplication
+> Sigmoid Squared ReLU
+> (a) Spatial Mixing Block (b) Channel Mixing Block
+> 𝒲𝒲
+> Gating factor
+
+Figure 3: Structure of (a) Spatial Mixing Block and (b) Channel Mixing Block. The Spatial Mixing Block inte-grates an ADM for Dynamic Decay W and RoPE for direc-tional awareness, enhancing spatial aggregation. The Chan-nel Mixing Block reallocates channel-wise feature responses by integrating correlations between channels. sitivity of the model to local positions. The term W repre-sents content-adaptive decay factors that control the decay rate of historical memory (as shown in Equation 2). Finally, a dynamic weight is generated through the gating factor Rs
+
+to modulate the contribution of the output from the Spatial Mixing Block to the current state: 
+
+FS0 = σ(C1×1(F0)) ⊙ W KV. (4) 
+
+Then, FS0 is residually connected with F0 to obtain Fres (as shown in Fig.3). We apply the Channel Mixing Block to re-allocate channel-wise feature weights for feature extraction: 
+
+FC0 = σ(C1×1(Fres )) ⊙ (SReLU (C3×3(Fres ))) (5) 
+
+F1 is obtained after down-sampling the output of two ARGN blocks using a 3 × 3 convolutional operation. Subsequent stages (Stage 2–3) repeat this process, and multi-scale fea-tures F1, F 2, F 3 are fused via learnable weights: 
+
+Ff = α1(C1×1(F1)) + α2(C1×1(U p (F2))) + α3(U p (F3)) , (6) 
+
+where Fi denotes the feature map processed by the Stage i
+
+(i = 1 , 2, 3), and αi are the learnable parameters that assign weights to feature maps of different levels during the feature fusion process. We then generate the initial predicted action 
+
+ain based on the fused feature map Ff as follows: 
+
+ain = Linear (C3×3(Ff ))) , (7) 
+
+To minimize the mean-squared error (MSE) between the predicted action and the ground truth action, we use the fol-lowing loss function: 
+
+L = MSE( ain , a ground ), (8) where L represents a loss function, aground is the ground truth action from human demonstrations (for detailed for-mulations of ARGN, please refer to Appendix B). 
+
+Why Gaussian Mixture Model? When using a single Gaussian (Chi et al. 2025), the model tends to regress to the mean, suppressing distinct action modes and leading to suboptimal control accuracy. In contrast, a Gaussian Mix-ture Model (GMM) enables the modeling of separate action clusters, each with its own mean and covariance, allowing for more accurate representation of the action distribution. Let x ∈ Rn denote ground-truth joint configurations. The GMM uses K = 6 components with prior αk, mean μk, and covariance Σk, with probability density: 
+
+P (x | Θ) = 
+
+> K
+
+X
+
+> k=1
+
+αkN (x | μk, Σk) , (9) where N is a multivariate Gaussian. Parameters 
+
+{αk, μ k, Σk} are estimated via the EM algorithm to maximize data likelihood, capturing latent joint space structures. The initial prediction ain is compared to GMM clusters using Mahalanobis distance: 
+
+lk =
+
+q
+
+(ain − μωk )T (Σ ω,ω k )−1 (ain − μωk ), (10) 
+
+where lk measures distance to the k-th component. The final action a∗ is the closest cluster center: 
+
+a∗ = arg min 
+
+> μωk
+
+lk , (11) 
+
+where a∗ is the final predicted action (For detailed deriva-tions, please refer to Appendix B and C). 
+
+# 4 Experiments 
+
+We evaluate the effectiveness and generalization of the RGMP framework by assessing its core components (GSS and ARGN) and benchmarking it against state-of-the-art methods. The evaluation metrics, experimental setup, imple-mentation details, and comprehensive results are as follows: 
+
+4.1 Hardware Setup 
+
+We conduct experiments on two robotic platforms: a hu-manoid robot, with evaluations focused on the upper limb (please see Appendix D for details), and a desktop dual-arm robot, designed to test cross-embodiment generalization ca-pability. The desktop robot is equipped with an RGB camera and two 6-DoF arms for manipulation tasks. 
+
+4.2 Dataset and Evaluation Criteria 
+
+To validate the effectiveness of the RGMP, we collected 120 trajectories for the skill library. Each trajectory corresponds to an execution path associated with an RGB image captured prior to the robotic arm performing an action: 
+
+di = ( J , O), (12) 
+
+where J denotes the joint space of the robotic arm, each trajectory specifies the motion of the arm from its initial configuration to the target spatial location and end-effector pose. In real-world evaluations, the model performance is assessed using two complementary metrics. The skill suc-cess rate, denoted as Acc s, is recorded when the robot cor-rectly identifies and selects the appropriate skill for the task. 15157 Here you are.  
+
+> Can you pass me the Tissue?
+> Sure, please wait a second. Ours
+> DP
+
+Figure 4: Pipeline of human-robot interactions . We validate models on the task of “passing me the tissue”, with a training dataset comprising only 40 instances of tissue pinching actions. Our RGMP performs better than DP (Diffusion Policy). Fanta Sprite Tissue Squashed Coke Human Hand Methods Acc s Acc t Acc ↑ Acc s Acc t Acc ↑ Acc s Acc t Acc ↑ Acc s Acc t Acc ↑ Acc s Acc t Acc ↑                                                                                                                            
+
+> with ResNet50
+> Qwen-VL 0.65 0.54 0.35 0.60 0.42 0.25 0.65 0.46 0.30 0.65 0.46 0.30 0.70 0.57 0.40 GSS 0.85 0.53 0.45 0.75 0.46 0.35 0.85 0.47 0.40 0.85 0.47 0.40 0.85 0.56 0.48 with Transformer
+> Qwen-VL 0.60 0.58 0.35 0.65 0.54 0.30 0.70 0.50 0.35 0.60 0.58 0.35 0.65 0.62 0.40 GSS 0.80 0.56 0.45 0.75 0.53 0.40 0.85 0.53 0.45 0.85 0.53 0.45 0.85 0.64 0.54 with ManiSkill2-1st
+> Qwen-VL 0.70 0.57 0.40 0.65 0.69 0.45 0.65 0.53 0.34 0.65 0.54 0.35 0.65 0.62 0.40 GSS 0.85 0.53 0.45 0.80 0.68 0.54 0.85 0.53 0.45 0.80 0.56 0.45 0.85 0.70 0.60 with Diffusion Policy
+> Qwen-VL 0.65 0.76 0.49 0.65 0.75 0.50 0.65 0.68 0.44 0.65 0.62 0.40 0.70 0.71 0.50 GSS 0.85 0.76 0.65 0.80 0.77 0.62 0.85 0.69 0.59 0.85 0.65 0.55 0.90 0.83 0.74
+
+Table 1: Ablation study of GSS and Qwen-VL . Experiments use the scenes with Fanta, Sprite, and tissue paper (objects repositioned randomly per trial). Flattened Coke cans and human hands were tested separately. Each skill category included 40 training demonstrations, with test results from 20 random repositioning trials.                                             
+
+> Methods Fanta ↑Coke ↑Spray ↑Hand ↑Average ↑
+> ManiSkill2-1st 0.70 0.60 0.63 0.62 0.64 Octo 0.65 0.55 0.58 0.62 0.60 OpenVLA 0.68 0.58 0.61 0.60 0.62 RDT-1b 0.70 0.61 0.60 0.62 0.64 Diffusion Policy 0.75 0.65 0.68 0.72 0.70 Dex-VLA 0.87 0.66 0.71 0.84 0.77
+> RGMP(ours) 0.98 0.78 0.81 0.90 0.87
+
+Table 2: Evaluation results of generalized manipulation capability. Models are only trained on 40 Fanta can grasping demonstrations. Metrics indicate grasping success rates for Fanta cans, Coke cans, spray bottles, and human hands. Additionally, the execution accuracy Acc t quantifies the pre-cision with which the robot executes the selected skill to re-trieve the target object. Consequently, the final success rate 
+
+Acc is defined as the product of these two metrics: 
+
+Acc = Acc s × Acc t, (13) 
+
+The detailed criteria for ManiSkill2 manipulation tasks can be referred to in Appendix E in the code link. 
+
+4.3 Performance Comparison and Ablation Study 
+
+To evaluate RGMP, we conducted real-world comparative experiments against ResNet50 (He et al. 2016), Trans-former (Vaswani et al. 2017), the first-place entry (Gao et al. 2023) in the ManiSkill2 challenge, Octo (Team et al. 2024), OpenVLA (Kim et al. 2024), RDT-1b (Liu et al. 2024c), Dex-VLA (Wen et al. 2025), and Diffusion Pol-icy. Experiments involved random target object placement, with success defined as accurate instruction understanding, correct manipulation execution (object delivery to humans), and collision avoidance. To assess generalization and cross-domain transferability, we deployed the trained model on a desktop dual-arm platform, using a low-data setup: 40 in-teraction samples for Fanta can grasping as the exclusive training data, with evaluation on three unseen categories (hu-man hands, spray bottles, Coke cans) at random workspace positions. Tables 1 and 2 show RGMP outperforms base-lines across tasks, with top Acc , Acc s, and Acc t for Fanta cans, Sprite cans, tissue papers, deformed Coke cans, and human hands, validating its effectiveness on regular/irregu-lar objects. As Table 1 demonstrates, our GSS yields a 15-25% accuracy improvement in skill selection compared to Qwen-VL. Ablation studies (Table 3) confirm that integrat-ing GMM with ARGN enhances performance: for Diffu-sion Policy, GSS+GMM yields a 0.55 Acc versus 0.49 with-out GMM, while ARGN with GSS+GMM achieves a 0.69 
+
+Acc in picking squashed Coke, demonstrating the effective-ness of GMM in refining predictions. Additionally, Table 4 validates the contributions of RoPE, Spatial Mixing Blocks (SMB), and Channel Mixing Blocks (CMB): their combined use yields the highest accuracy across all objects (0.98 for 15158 …  
+
+> …
+> …
+> …
+> Training dataset (Only Fanta)
+> Coca at random position
+> Spray at random position Hand at random position Seen Unseen
+> Fanta at random position
+
+Figure 5: Generalization ability of RGMP. We test RGMP on grasping various unseen objects at random positions. Despite being trained on only 40 demonstrations of grasping a Fanta, RGMP reliably grasped the can from any position and generalized this proficiency to unseen objects like a Coke bottle, a spray can, and human hand, demonstrating remarkable versatility. Our RGMP ManiSkill-1st   
+
+> Transformer Diffusion Policy
+> 0.07
+> Push Chair
+> Move Bucket
+> Plug Charger
+> Open
+> Cabinet Door
+> Open
+> Cabinet Drawer
+> 0.08
+> 0.26 0.20
+> 0.14
+
+Figure 6: Performance on ManiSkill2 simulator. We as-sess the effectiveness of RGMP and SOTA models across five manipulation tasks of ManiSkill2. Fanta, 0.78 for Coke, 0.81 for spray, 0.90 for hands). Beyond three primitives (grasp/lift-up/pinch), we evaluate five non-grasp ManiSkill2 tasks, complex tasks like plugging charg-ers (pinch) and opening cabinets (grasp) are dynamically composed from our atomic primitives. As shown in Fig-ure 6, our RGMP achieves the highest performance across all tasks, demonstrating its transferability and generaliza-tion capability. Furthermore, as shown in Table 5, RGMP achieves a score of 0.98 with 40 training samples, using 5 ×
+
+fewer samples than the 200 required by DP. 
+
+# 5 Conclusion and Future Work 
+
+This work addresses semantic-spatial skill alignment and vi-suomotor overfitting in humanoid robotics via our RGMP, an end-to-end framework integrating GSS and ARGN. By dynamically associating contextual skills and decomposing 6-DoF trajectories into probabilistically regularized Gaus-sian components, RGMP achieves 87% generalization suc-cess and 5 × greater data efficiency than Diffusion Policy in human-robot interaction. Results show explicit neuro-symbolic coordination enables robust generalization across unseen objects/scenes, advancing collaboration with a scal-able adaptive manipulation foundation. Future work will ex-plore functional generalization: demonstrating one primary object function allows automatic inference of trajectories for others, eliminating exhaustive teaching and enhancing effi-ciency in dynamic environments.                                   
+
+> Tissue Squashed Coke Methods GMM Acc sAcc tAcc Acc sAcc tAcc
+> –0.85 0.58 0.50 0.80 0.61 0.49 Diffusion policy ✓0.80 0.68 0.56 0.85 0.65 0.55 –0.80 0.69 0.55 0.85 0.71 0.60 ARGN(ours) ✓0.85 0.71 0.60 0.90 0.77 0.69
+
+Table 3: Ablation study of ARGN and GMM . We validate models on the task of passing tissue and squashed Coke.                                   
+
+> RoPE SMB CMB Fanta ↑Coke ↑Spray ↑Hand ↑
+> –✓✓0.86 0.69 0.71 0.77
+> ✓–✓0.83 0.75 0.76 0.82
+> ✓✓–0.91 0.66 0.65 0.74
+> ✓✓✓0.98 0.78 0.81 0.90
+
+Table 4: Ablation study of the components of ARGN. We evaluate RoPE, Spatial Mixing Block (SMB), and Channel Mixing Block (CMB) in grasping tasks. 
+
+Methods 40 80 120 160 200 Diffusion Policy 0.81 0.89 0.94 0.95 0.98 
+
+RGMP(ours) 0.98 0.98 0.99 0.99 0.99 
+
+Table 5: Data efficiency comparison of RGMP and Diffu-sion Policy. RGMP achieves 0.98 with 40 train samples of grasping Fanta (5 × fewer than 200 of DP). 
+
+# Acknowledgements 
+
+This work is supported by National Natural Science Foun-dation of China under Grants (62361166629, 62225113, 623B2080), the Major Project of Science and Tech-nology Innovation of Hubei Province (2024BCA003, 2025BEA002), the Innovative Research Group Project of Hubei Province under Grant 2024AFA017, and the Key Re-search Project of Wuhan City 2024060788020073. The su-percomputing system at the Supercomputing Center and the Learning Algorithms & Soft Manipulation Laboratory of Wuhan University supported the numerical calculations and the robot platforms in this paper. 15159 References 
+
+Abu-Jassar, A. T.; Attar, H.; Amer, A.; Lyashenko, V.; Yevsieiev, V.; and Solyman, A. 2025. Development and In-vestigation of Vision System for a Small-Sized Mobile Hu-manoid Robot in a Smart Environment. International Jour-nal of Crowd Science , 9(1): 29–43. Ahn, M.; Brohan, A.; Brown, N.; Chebotar, Y.; Cortes, O.; David, B.; Finn, C.; Fu, C.; Gopalakrishnan, K.; Hausman, K.; et al. 2022. Do as i can, not as i say: Grounding language in robotic affordances. arXiv:2204.01691. Bai, J.; Bai, S.; Yang, S.; Wang, S.; Tan, S.; Wang, P.; Lin, J.; Zhou, C.; and Zhou, J. 2023. Qwen-vl: A fron-tier large vision-language model with versatile abilities. arXiv:2308.12966. Bogdanovic, M.; Khadiv, M.; and Righetti, L. 2020. Learn-ing variable impedance control for contact sensitive tasks. 
+
+IEEE Robotics and Automation Letters , 5(4): 6129–6136. Chen, L.; Lu, K.; Rajeswaran, A.; Lee, K.; Grover, A.; Laskin, M.; Abbeel, P.; Srinivas, A.; and Mordatch, I. 2021. Decision transformer: Reinforcement learning via sequence modeling. Advances in neural information processing sys-tems , 34: 15084–15097. Chi, C.; Xu, Z.; Feng, S.; Cousineau, E.; Du, Y.; Burchfiel, B.; Tedrake, R.; and Song, S. 2025. Diffusion policy: Visuo-motor policy learning via action diffusion. The International Journal of Robotics Research , 44(10-11): 1684–1704. Chowdhery, A.; Narang, S.; Devlin, J.; Bosma, M.; Mishra, G.; Roberts, A.; Barham, P.; Chung, H. W.; Sutton, C.; Gehrmann, S.; Schuh, P.; Shi, K.; Tsvyashchenko, S.; Maynez, J.; Rao, A.; Barnes, P.; Tay, Y.; Shazeer, N. M.; Prabhakaran, V.; Reif, E.; Du, N.; Hutchinson, B. C.; Pope, R.; Bradbury, J.; Austin, J.; Isard, M.; Gur-Ari, G.; Yin, P.; Duke, T.; Levskaya, A.; Ghemawat, S.; Dev, S.; Michalewski, H.; Garc´ ıa, X.; Misra, V.; Robinson, K.; Fe-dus, L.; Zhou, D.; Ippolito, D.; Luan, D.; Lim, H.; Zoph, B.; Spiridonov, A.; Sepassi, R.; Dohan, D.; Agrawal, S.; Omer-nick, M.; Dai, A. M.; Pillai, T. S.; Pellat, M.; Lewkowycz, A.; Moreira, E.; Child, R.; Polozov, O.; Lee, K.; Zhou, Z.; Wang, X.; Saeta, B.; D´ ıaz, M.; Firat, O.; Catasta, M.; Wei, J.; Meier-Hellstern, K. S.; Eck, D.; Dean, J.; Petrov, S.; and Fiedel, N. 2022. PaLM: Scaling Language Modeling with Pathways. J. Mach. Learn. Res. , 24: 240:1–240:113. Cruciani, S.; Hang, K.; Smith, C.; and Kragic, D. 2019. Dual-Arm In-Hand Manipulation and Regrasping Using Dexterous Manipulation Graphs. arXiv:1904.11382. Cruciani, S.; Smith, C.; Kragic, D.; and Hang, K. 2018. Dexterous manipulation graphs. In 2018 IEEE/RSJ Interna-tional Conference on Intelligent Robots and Systems (IROS) ,2040–2047. Madrid, Spain: IEEE. Dai, W.; Li, J.; Li, D.; Tiong, A. M. H.; Zhao, J.; Wang, W.; Li, B.; Fung, P.; and Hoi, S. 2023. InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning. arXiv:2305.06500. Dong, Z.; Hao, J.; Yuan, Y.; Ni, F.; Wang, Y.; Li, P.; and Zheng, Y. 2024. DiffuserLite: Towards Real-time Diffusion Planning. arXiv:2401.15443. Driess, D.; Xia, F.; Sajjadi, M. S.; Lynch, C.; Chowdhery, A.; Wahid, A.; Tompson, J.; Vuong, Q.; Yu, T.; Huang, W.; et al. 2023. Palm-e: An embodied multimodal language model. In Proceedings of the 40th International Conference on Ma-chine Learning (ICML) , 8469–8488. Hawaii, USA: PMLR. Gao, F.; Li, X.; Yu, J.; and Shaung, F. 2023. A Two-stage Fine-tuning Strategy for Generalizable Manipulation Skill of Embodied AI. arXiv:2307.11343. Haldar, S.; Pari, J.; Rai, A.; and Pinto, L. 2023. Teach a Robot to FISH: Versatile Imitation from One Minute of Demonstrations. arXiv:2303.01497. He, K.; Zhang, X.; Ren, S.; and Sun, J. 2016. Deep residual learning for image recognition. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pat-tern Recognition (CVPR) , 770–778. Las Vegas, Nevada: IEEE/CVF. Huang, S.; Wang, Z.; Li, P.; Jia, B.; Liu, T.; Zhu, Y.; Liang, W.; and Zhu, S.-C. 2023. Diffusion-based gener-ation, optimization, and planning in 3d scenes. In Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 16750–16761. Vancouver, Canada: IEEE/CVF. Huang, W.; Liang, J.; Guo, X.; Fang, Y.; Wan, G.; Rong, X.; Wen, C.; Shi, Z.; Li, Q.; Zhu, D.; et al. 2025a. Keep-ing yourself is important in downstream tuning multimodal large language model. arXiv:2503.04543. Huang, W.; Liang, J.; Shi, Z.; Zhu, D.; Wan, G.; Li, H.; Du, B.; Tao, D.; and Ye, M. 2025b. Learn from Downstream and Be Yourself in Multimodal Large Language Model Fine-Tuning. In Proceedings of the 42th International Conference on Machine Learning (ICML) . Vancouver, Canada: PMLR. Huang, W.; Liang, J.; Wan, G.; Zhu, D.; Li, H.; Shao, J.; Ye, M.; Du, B.; and Tao, D. 2025c. Be Confident: Uncovering Overfitting in MLLM Multi-Task Tuning. In Proceedings of the 42th International Conference on Machine Learning (ICML) . Vancouver, Canada: PMLR. Intelligence, P.; Black, K.; Brown, N.; Darpinian, J.; Dha-balia, K.; Driess, D.; Esmail, A.; Equi, M.; Finn, C.; Fusai, N.; et al. 2025. π0.5: a Vision-Language-Action Model with Open-World Generalization. arXiv:2504.16054. Kim, M.; Han, J.; Kim, J.; and Kim, B. 2023. Pre-and post-contact policy decomposition for non-prehensile manipula-tion with zero-shot sim-to-real transfer. In 2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 10644–10651. IEEE. Kim, M. J.; Pertsch, K.; Karamcheti, S.; Xiao, T.; Balakr-ishna, A.; Nair, S.; Rafailov, R.; Foster, E.; Lam, G.; Sanketi, P.; et al. 2024. Openvla: An open-source vision-language-action model. arXiv:2406.09246. Li, J.; Zhu, Y.; Xie, Y.; Jiang, Z.; Seo, M.; Pavlakos, G.; and Zhu, Y. 2024a. Okami: Teaching humanoid robots manipulation skills through single video imitation. arXiv:2410.11792. Li, R.; Li, R.; Guo, S.; and Zhang, L. 2024b. Source Prompt Disentangled Inversion for Boosting Image Editability with Diffusion Models. arXiv:2403.11105. 15160 Li, S.; Keipour, A.; Jamieson, K.; Hudson, N.; Swan, C.; and Bekris, K. 2023. Demonstrating large-scale pack-age manipulation via learned metrics of pick success. arXiv:2305.10272. Liang, H.; Lou, X.; Yang, Y.; and Choi, C. 2021. Learning visual affordances with target-orientated deep q-network to grasp objects by harnessing environmental fixtures. In 2021 IEEE International Conference on Robotics and Automation (ICRA) , 2562–2568. Xi’an, China: IEEE. Liang, J.; Huang, W.; Xia, F.; Xu, P.; Hausman, K.; Ichter, B.; Florence, P.; and Zeng, A. 2023. Code as policies: Language model programs for embodied control. In 2023 IEEE International Conference on Robotics and Automation (ICRA) , 9493–9500. London, UK: IEEE. Liu, H.; Li, C.; Li, Y.; and Lee, Y. J. 2024a. Improved baselines with visual instruction tuning. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pat-tern Recognition (CVPR) , 26296–26306. Seattle, WA, USA: IEEE/CVF. Liu, H.; Li, C.; Wu, Q.; and Lee, Y. J. 2024b. Visual in-struction tuning. Advances in neural information processing systems , 36: 34892–34916. Liu, S.; Wu, L.; Li, B.; Tan, H.; Chen, H.; Wang, Z.; Xu, K.; Su, H.; and Zhu, J. 2024c. Rdt-1b: a diffusion foundation model for bimanual manipulation. arXiv:2410.07864. Ouyang, L.; Wu, J.; Jiang, X.; Almeida, D.; Wainwright, C.; Mishkin, P.; Zhang, C.; Agarwal, S.; Slama, K.; Ray, A.; et al. 2022. Training language models to follow instructions with human feedback. Advances in neural information pro-cessing systems , 35: 27730–27744. Rothert, J. J.; Lang, S.; Seidel, M.; and Hanses, M. 2024. Sim-to-Real Transfer for a Robotics Task: Challenges and Lessons Learned. In 2024 IEEE 29th International Con-ference on Emerging Technologies and Factory Automation (ETFA) , 1–8. Padova, Italy: IEEE. Shridhar, M.; Manuelli, L.; and Fox, D. 2023. Perceiver-actor: A multi-task transformer for robotic manipulation. In 
+
+Conference on Robot Learning (CoRL) , 785–799. Atlanta, USA: PMLR. Skubis, I.; and Wodarski, K. 2023. HUMANOID ROBOTS IN MANAGERIAL POSITIONS-DECISION-MAKING PROCESS AND HUMAN OVERSIGHT. Sci-entific Papers of Silesian University of Technology Organi-zation and Management Series , 189: 573–596. Team, O. M.; Ghosh, D.; Walke, H.; Pertsch, K.; Black, K.; Mees, O.; Dasari, S.; Hejna, J.; Kreiman, T.; Xu, C.; et al. 2024. Octo: An open-source generalist robot policy. arXiv:2405.12213. Tong, Y.; Liu, H.; and Zhang, Z. 2024. Advancements in humanoid robots: A comprehensive review and future prospects. IEEE/CAA Journal of Automatica Sinica , 11(2): 301–328. Vaswani, A.; Shazeer, N.; Parmar, N.; Uszkoreit, J.; Jones, L.; Gomez, A. N.; Kaiser, L.; and Polosukhin, I. 2017. At-tention Is All You Need. arXiv:1706.03762. Wen, J.; Zhu, Y.; Li, J.; Tang, Z.; Shen, C.; and Feng, F. 2025. Dexvla: Vision-language model with plug-in diffusion expert for general robot control. arXiv:2502.05855. Xu, K.; Yu, H.; Lai, Q.; Wang, Y.; and Xiong, R. 2021. Ef-ficient learning of goal-oriented push-grasping synergy in clutter. IEEE Robotics and Automation Letters , 6(4): 6337– 6344. Xu, M.; Shen, Y.; Zhang, S.; Lu, Y.; Zhao, D.; Tenen-baum, J.; and Gan, C. 2022. Prompting decision trans-former for few-shot policy generalization. In Proceedings of the 39th International Conference on Machine Learning (ICML) , 24631–24645. Baltimore, USA: PMLR. Yang, A.; Yang, B.; Hui, B.; Zheng, B.; Yu, B.; Zhou, C.; Li, C.; Li, C.; Liu, D.; Huang, F.; et al. 2024. Qwen2 technical report. arXiv:2407.10671. Yaseen, M. 2024. What is YOLOv9: An in-depth explo-ration of the internal features of the next-generation object detector. arXiv:2409.07813. Yoneda, T.; Sun, L.; Stadie, B.; Walter, M.; et al. 2023. To the noise and back: Diffusion for shared autonomy. arXiv:2302.12244. Zeng, A.; Song, S.; Welker, S.; Lee, J.; Rodriguez, A.; and Funkhouser, T. 2018. Learning synergies between pushing and grasping with self-supervised deep reinforcement learn-ing. In 2018 IEEE/RSJ International Conference on Intel-ligent Robots and Systems (IROS) , 4238–4245. Detroit MI, USA: IEEE. Zhang, L.; Rao, A.; and Agrawala, M. 2023. Adding con-ditional control to text-to-image diffusion models. In Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 3836–3847. Vancouver, Canada: IEEE/CVF. Zhang, T.; McCarthy, Z.; Jow, O.; Lee, D.; Chen, X.; Gold-berg, K.; and Abbeel, P. 2018. Deep imitation learning for complex manipulation tasks from virtual reality teleopera-tion. In 2018 IEEE International Conference on Robotics and Automation (ICRA) , 5628–5635. Brisbane, Australia: IEEE. Zitkovich, B.; Yu, T.; Xu, S.; Xu, P.; Xiao, T.; Xia, F.; Wu, J.; Wohlhart, P.; Welker, S.; Wahid, A.; et al. 2023. Rt-2: Vision-language-action models transfer web knowledge to robotic control. In Conference on Robot Learning (CoRL) ,2165–2183. Atlanta, USA: PMLR. 15161

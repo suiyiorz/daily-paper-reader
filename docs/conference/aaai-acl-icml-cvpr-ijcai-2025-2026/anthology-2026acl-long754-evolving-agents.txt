@@ -1,0 +1,945 @@
+Title: 2026.acl-long.754.pdf
+
+URL Source: https://aclanthology.org/2026.acl-long.754.pdf
+
+Published Time: Mon, 06 Jul 2026 18:43:04 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+## Evolving Agents 
+
+Leonardo Ranaldi 
+
+ILCC, School of Informatics, University of Edinburgh, United Kingdom 
+
+OMNIA Lab & University of Rome Tor Vergata, Italy Idiap Research Institute, Switzerland 
+
+> {first_name.last_name}@ed.ac.uk
+
+Abstract        
+
+> AI agents powered by LLMs plan, reason and use tools well, but remain brittle to adapt and evolve because they fail to abstract the mech-anisms underlying problem-solving. Reason-ing, memory, and decision-making remain frag-mented, leaving the systematic reuse of ex-perience for adaptation at scale out of reach. In this paper, we introduce E VA ( Ev olving
+> Agents), a framework to improve evolution in agentic reasoning that leverages quasi-symbolic abstractions —semi-structured dynamic repre-sentations that furnish constructs to distil and reuse reasoning mechanisms. They are learned and refined through experience, and when in-stantiated, deliver meta-states for organising reasoning. E VA orchestrates this mechanism via a Perceptor modelling observation and ac-tion, an Actor conditioning its policy on these abstractions, and a Controller overseeing struc-ture to explore paths or initiate rollbacks. As experience accumulates, E VA refines both its abstractions and the modules that construct and instantiate them by learning past trajectories into reusable mechanisms. Our initial analysis shows that E VA improves accuracy and adapts under mid-episode distribution shifts that cause agents to plateau on complex reasoning and interactive planning tasks. These results posi-tion E VA as a step towards adaptive reasoning, memory, and meta-control.
+
+1 Introduction 
+
+AI agents powered by LLMs plan and invoke tools well, effectively decomposing goals into actionable sub-tasks across a growing range of benchmarks (Yao et al., 2023b; Du et al., 2025; Qu et al., 2025). The step-wise alternation between reasoning and execution makes them compelling, setting a practi-cal foundation for solving complex processes and enabling a rapid evolution of the activities they un-dertake, exposing them to a growing experience formed by a combination of scenarios and interac-tions (Wu et al., 2025; Sapkota et al., 2026). Despite serving as frontline proxies, current agents fail to take advantage of the collected expe-rience and systematically struggle to scale up these mechanisms into reusable competence (Ouyang et al., 2026), resulting in repetition of similar mis-takes (Zhu et al., 2025) and losing experience gained from related solutions (Zhang et al., 2025). While recent efforts structure problem solutions into abstract space representations (Ranaldi et al., 2025; Ranaldi and Pucci, 2025; Qu et al., 2026), introduce reasoning memories to distil experiences (Feng et al., 2025; Ouyang et al., 2026; Yu et al., 2026; Xia et al., 2026), or architectures with meta-control mechanisms (Zhang et al., 2026; Dupoux et al., 2026; He et al., 2026); they still overlook a unified model to merge and orchestrate reasoning, memory, and control into a common space. We propose E VA ( Evolving Agents), a founda-tional framework to improve agentic reasoning evo-lution by leveraging quasi-symbolic abstractions –semi-structured representations that are learned and refined through experience, integrated in memory, and when used, furnish dynamic meta-states that scaffold the solving process on demand. EVAorchestrates reasoning and evolution processes through three operating modules (see Figure 1). A Perceptor dynamically distils and refines ab-stractions from observations and actions; an Actor 
+
+grounds its policy and conditions its actions on the abstractions; and a Controller oversees the abstrac-tion as a meta-state to explore alternative paths or trigger rollbacks. Grounding these modules in a unified representational bedrock allows a continu-ous feedback loop between perception, execution, and high-level reasoning. This approach introduces a promising paradigm in which agents can reason and act and, at the same time, evolve through ex-perience—a process that arises as experience per-sistently reshapes the abstractions and the modules used across subsequent interactions to consolidate past trajectories into reusable mechanisms. Perceptor (Observe → Abstract) Actor (Plan → Act) 
+
+Controller (Oversee → Reflect) 
+
+Shared Abstraction   
+
+> Quasi-symbolic Memory
+> Inputs
+> Output
+> Abstraction Engine
+> Task Observations Trajectory Window
+> Active Abstractions
+> Schema Induction
+> Abstraction Update
+> Task (objectives)
+> Tools (external resources)
+> Interaction Loop (per step t)
+
+Perceptor Actor Feedback Environment & Tools 
+
+Data/Information Flow Learning Signal Control/Meta-Action          
+
+> Importance Scoring
+> Induce and refine quasi-symbolic abstraction from interaction
+> Execute action conditioned on abstractions
+> Derive control state select meta-action and oversee execution
+> Abstraction Graph Episodic Memory
+> (Trajectories - abstractions)
+> Procedural Library
+> (Reusable structures/schemata)
+> Inputs
+> Task Observations Abstraction Prior
+> Policy/Reasoning Engine (LLM)
+> Goal Decomposition Reasoning over Abstractions Next Action Selection Tool/API Caling
+> Output Tool/ Environment Action
+> Control-state projection Meta-action manager Adaptation Policy
+> Explore Alternative Paths Retrieve Abstractions Refine Abstractions Rollback
+
+Controller  
+
+> Observe & Abstract
+> ACT
+> ABSTRACT
+> RETRIEVE
+> ROLLBACK
+> Choose Meta-Action Execute Action User, System Environment
+
+Memory Read/Write 
+
+> Consistency/Contradiction Progress/Improvement Novelty
+> (ACT, ABSTRACT, RETRIEVE, ROLLBACK)
+> Execute Action Return Feedback
+> Update Observation Compute reward
+
+Memory Consolidation Figure 1: Overview of the E VA framework. The architecture orchestrates agentic reasoning and self-evolution via three modules ( Perceptor , Actor , and Controller ) grounded in a shared quasi-symbolic abstraction memory. 
+
+To empirically validate our foundational frame-work, we systematically evaluate E VA across di-verse reasoning and interactive planning tasks (ALFWorld, ScienceWorld, and WebShop) and knowledge-intensive QA (Natural Questions, Trivi-aQA, HotPotQA, and 2WikiMultiHopQA). These tasks stress the same mechanism from different angles: interactive environments require coher-ent state tracking across actions, shift settings re-quire revision after a failing trajectory, and retrieval benchmarks require past evidence to return as us-able structure. The experiments show consistent improvements over static architectures. E VA re-duces error rates compared to standard baselines and yields a 3.7× relative convergence ratio against Direct. Furthermore, E VA provides more robust reasoning trajectories under challenging conditions, recovering from mid-stream distribution shifts that stall common baseline agents. Ablation studies at-tribute these gains to the joint effect of the abstrac-tion substrate, structural memory retrieval, and two-timescale adaptation. Additional backbone and frozen-weight evaluations show that the benefits persist across model families and across settings with fixed parameters. Our contributions are the following: • EVA Architecture: We introduce a unified 
+
+Perceptor–Actor–Controller architecture where modules operate together with a shared memory substrate. Capabilities such as verifiable self-correction, structural memory retrieval, and tool unification emerge from this design instead of requiring separate subsystems. • A Unified Representational Hypothesis: We hypothesise that a quasi-symbolic abstraction, ex-tended from isolated problem-solving to continu-ous interaction trajectories, can serve as a struc-tured summary of the execution trace, a shared interface for memory retrieval, and the source representation from which the Controller derives its compact meta-state. This common schema reduces heterogeneity across interfaces among reasoning, memory, and meta-control. • Modular Adaptation Strategy: We formulate a training strategy that orchestrates the Controller and the abstraction, while updating the Perceptor and Actor. We study how this approach enforces an adaptive regime that bypasses the instability inherent in continuous meta-control updates. • Empirical Validation: We provide the first em-pirical evidence across different backbones and diverse task families, detailing consistent and sub-stantial gains in error reduction, distribution-shift resilience, and robustness. These contributions make E VA a foundation for studying adaptive agentic reasoning through struc-tured experience and open a new avenue where evolution in agents requires a shared representa-tional layer where perception, policy, memory, and control can interact across episodes. 2 EVA: Evolving Agents 
+
+To make agents able to evolve and adapt through experience, we introduce E VA ( Ev olving Agents), a foundational framework that extends reason-ing by distilling experience into competencies via 
+
+quasi-symbolic abstractions (§2.1). E VA operates through Perceptor , Actor , and Controller (§2.2), that reason (§2.3) and learn from experience (§2.4). 
+
+2.1 Quasi-Symbolic Abstractions Mechanism 
+
+Integrating symbolic elements into natural lan-guage reasoning is crucial to disentangle the under-lying logical mechanics from surface-level seman-tics. While natural-language demonstrations are practical for organising problem-solving processes (Ranaldi and Freitas, 2024), they entangle logic with concrete knowledge, causing brittle and state-less behaviours. We aim to disentangle the process from content via an intermediate representation, distilling and reusing it. We extend quasi-symbolic reasoning (Ranaldi et al., 2025) to continuous agen-tic scenarios, defining it as a task-agnostic typed representation that isolates the task-invariant prop-erties from its foundation, mapping the reasoning into an abstraction of transitions and outcomes: 
+
+A = ( V, T , C, E), (1) where V denotes variables, entities, tools, or states; 
+
+T encodes the state-action transitions; C express constraints, preconditions; and E captures outcome signals (progress, success). To make continuous agentic evolution, E VA induces this structure from experience. At step t, the system observes an inter-action: 
+
+τ (k) 
+
+> t
+
+=  (oi, a i, f i+1 , o i+1 )t−1
+
+> i=t−k
+
+, (2) where oi is the observation before action ai, fi+1 
+
+is the tool, verifier, or environment feedback pro-duced after that action, and oi+1 is the observa-tion. Given the task goal g and current observation 
+
+ot, the Perceptor maps this trajectory into a quasi-symbolic abstraction: 
+
+At = AθP
+
+ g, o t, τ (k)
+
+> t
+
+, (3) yielding At=( Vt, Tt, Ct, Et), preserving A inter-face while reflecting τ (k) 
+
+> t
+
+. This abstraction func-tions as the experience. E VA distils them into quasi-symbolic structures that serve as proxies, enabling cross context transfer and driving its evolution, sur-passing the limitations of raw trajectories that en-tangle surface features with reasoning. 
+
+2.2 Framework Modules 
+
+EVA orchestrates reasoning and evolution via three interacting modules—the Perceptor , Actor , and 
+
+Controller –unifying how task-solving is abstracted, executed, and distilled for systematic reuse. 
+
+Perceptor (World Modelling). The Perceptor functions as the abstraction engine, instantiating 
+
+AθP on (g, o t, τ (k) 
+
+> t
+
+) (§2.1), and thereby mapping variables, transitions, and constraints that mark the current interaction. It also computes a sequence-confidence proxy ct ∈ E t, the geometric-mean to-ken probability of the generated abstraction: 
+
+ct =
+
+ NtY
+
+> j=1
+
+pθP
+
+ xt,j | xt,<j , g, o t, τ (k)
+
+> t
+
+1/N t
+
+∈ (0 , 1] ,
+
+(4) where xt, 1: Nt denotes the tokens of (Vt, Tt, Ct)
+
+together with the fields of Et generated prior to the proxy. The value ct is appended to Et once these fields are produced and is thereby excluded from its own estimate; the Controller reads it as a confidence signal (Appendix A for stable log-domain form). 
+
+Controller (Meta-Control). The Controller gov-erns the reasoning cycle by deriving a compact meta-state from the active abstraction At and the memory Mt:
+
+smt = Proj( At, Mt) = [ ct, δ t, ν t, ℓ t], (5) which combines the sequence-confidence proxy 
+
+ct ∈ E t, a contradiction ratio δt over the active con-straints Ct, a novelty score νt against memory, and the normalised progress signal ℓt ∈ [0 , 1] recorded in Et (Appendix A for the component definitions). Based on smt , it parameterises a meta-policy 
+
+amt ∼ Πϕ(· | smt ) over four meta-actions: • ACT : proceeds with the Actor’s policy under At.• ABSTRACT : induces a revised abstraction over an extended trajectory. • R ETRIEVE : matches priors from memory. • ROLLBACK : restores the most recent internally consistent abstraction and reasoning context. Rollback does not automatically reverse actions already executed in the environment; the Actor instead replans from the current observation. The Controller regulates the interactions between perception, abstraction, memory, and action with-out replacing the Actor ’s policy; it decides when the agent should continue, reuse experience, or re-cover from a bad reasoning path. Actor (Policy Execution). The Actor executes the goal-directed policy through direct interaction with the environment. It conditions its actions on the quasi-symbolic structures routed by the Con-troller. When prior experience is retrieved and in-stantiated, the Actor conditions on both the active interpretation and the recovered structural prior: 
+
+at ∼ πθA (· | g, o t, At, eAt). (6) This allows past experience to condition the cur-rent policy. The active and grounded abstractions are serialised in the Actor context before action generation, including the generation of tool calls. 
+
+Memory. The memory M stores abstractions that preserve the agent’s interpretation of past sce-narios (states, actions, constraints, and outcomes). It has two roles: (i) episodic , linking abstractions to their source trajectories, and (ii) procedural , retain-ing the operative reasoning state (e.g., completed steps, tools, and active preconditions). Hence, memory grounds reasoning in the current context while allowing past experience to shape future be-haviour. The Controller evaluates the active abstraction 
+
+At. If At is insufficient due to low confidence, missing constraints, or contradictions, it issues R E-
+
+> TRIEVE
+
+. Retrieved experiences provide stateful guidance for refining interpretations and delineat-ing viable reasoning paths. An abstraction At is inserted after a verified suc-cess or an instructive failure: 
+
+M ← M ∪ {A t}. (7) Each stored abstraction retains a link to its source trajectory and an outcome label yt ∈{SUCCESS , FAILURE }.Here, rj = n+ 
+
+> j
+
++ n− 
+
+> j
+
+denotes the number of attributed grounded uses of the stored abstraction 
+
+Aj . While rj < m , the abstraction is protected from pruning. Once rj ≥ m, it is retained when 
+
+qη(Aj ) ≥ λ and pruned otherwise: 
+
+M ← 
+
+(
+
+M, qη(Aj ) ≥ λ, 
+
+M \ {A j }, otherwise . (8) The dynamic utility score is 
+
+qη(Aj ) = n+
+
+> j
+
+n+ 
+
+> j
+
++ n−
+
+> j
+
+· γ∆tj , (9) where n+ 
+
+> j
+
+counts attributed grounded uses followed by successful completion, including defensive uses of failure-derived abstractions as avoidance con-straints. Conversely, n− 
+
+> j
+
+counts uses followed by an attributed R OLLBACK or unsuccessful episode termination. Thus, yj records the abstraction prove-nance, whilst n+ 
+
+> j
+
+and n− 
+
+> j
+
+capture the outcomes of its subsequent reuse, allowing a failure-derived ab-straction to acquire n+ 
+
+> j
+
+> 0.Only retrieved abstractions that survive Bind 
+
+and contribute to eAt receive a utility update. The score qη is defined when rj > 0, whilst pruning is applied only when rj ≥ m. The term ∆tj de-notes the number of episodes since the last posi-tively credited use, or since insertion if none has occurred. Hence, recency discounts previously use-ful but stale abstractions, whilst entries without evidence of positive reuse remain protected until 
+
+rj ≥ m and are then pruned. The hyperparameters 
+
+η = ( γ, m, λ ) control recency, minimum reuse evi-dence, and pruning. At capacity, the lowest-utility eligible entry is removed, with ties resolved by the largest ∆tj .When memory is queried, E VA selects the prior abstractions compatible with the active one: 
+
+Rt = ArgTopK   
+
+> KR,Aj∈M t
+
+sim ψ(At, Aj ), (10) where ArgTopK returns the KR stored abstrac-tions gaining the highest similarity scores and sim ψ
+
+compares their quasi-symbolic variables, states, transitions, constraints, and non-terminal outcome signals. Terminal success and failure labels are retained as metadata and are not used for structural matching. The retrieved set Rt is then instantiated: 
+
+eAt = Bind( At, Rt, o t). (11) The Bind operator maps roles, states, and con-straints from the retrieved abstractions to concrete entities in ot, retaining only compatible mappings. Outcome labels guide instantiation: successful pri-ors contribute reusable transitions, whilst failure-derived priors contribute constraints on transitions that previously led to failure. E VA converts a tran-sition into an avoidance constraint only when the failure can be localised through environmental feed-back, a verifier violation, or the action immediately preceding an attributed rollback; otherwise, the tra-jectory is retained as evidence of episodic failure without becoming a procedural prohibition. The resulting eAt augments the active abstraction with a grounded procedural state to guide the Actor. 2.3 Reasoning Cycle 
+
+At inference time, E VA operates via a recurrent abstraction–memory–action cycle. Given a trajec-tory τ (k) 
+
+> t
+
+, the Perceptor induces the active abstrac-tion At, representing the state space through vari-ables, transitions, constraints, and outcome signals. The Controller derives the compact meta-state smt
+
+from At and Mt, and uses it to select the next meta-action: 
+
+amt ∼ Πϕ(· | smt ). (12) If amt = ACT , the Actor grounds its policy within the abstraction to produce the next action: 
+
+at ∼ πθA (· | g, o t, At). (13) If amt = RETRIEVE , memory returns structurally compatible abstractions, which are grounded in the present context and supplied to the Actor: 
+
+at ∼ πθA (· | g, o t, At, eAt). (14) If amt = ABSTRACT , the Perceptor re-induces the abstraction from an extended interaction-history window τ (k′) 
+
+> t
+
+with k′ > k , without advancing the environment. When amt = ROLLBACK , E VA re-stores the most recent internally consistent abstrac-tion and reasoning context, then replans from the current environment observation. External state is reverted only when the simulator explicitly sup-ports checkpoint restoration. At inference time, E VA constructs, validates, retrieves, grounds, and acts on quasi-symbolic ab-stractions through this recurrent cycle. 
+
+2.4 Learning Scheme 
+
+EVA separates prior meta-control calibration from interaction-time adaptation via two distinct phases. 
+
+Phase I: prior meta-control calibration. Before downstream interaction, the Controller parameters 
+
+ϕ are calibrated on environments drawn from Denv .During this phase, the Perceptor and Actor undergo a fixed number of temporary inner-loop updates, and the resulting post-adaptation performance sup-plies the reward used to update the Controller. The Controller may therefore be revised at scheduled outer-loop intervals during this calibration phase. 
+
+Phase II: interaction-time adaptation. After calibration, the resulting Controller ϕ∗ is frozen. In the full single-agent configuration, only the Per-ceptor θP and Actor θA are updated through the fast inner loop during interaction. The projection 
+
+Proj , structural similarity sim ψ, utility rule qη, and the typed (V, T , C, E) schema also remain fixed. Frozen-weight configurations preserve the same abstraction–memory–action cycle but restrict adap-tation to the construction, retrieval, and consolida-tion of quasi-symbolic abstractions. 
+
+Experience adaptation. During interaction-time adaptation, GRPO updates the Actor from the task-outcome reward and the Perceptor from a combined reward incorporating structural consis-tency and novelty. Perceptor updates are gated by 
+
+ζt = I[ct ≥ κc]; only sufficiently confident seg-ments contribute, whilst KL regularisation limits drift from the pre-adaptation reference. 
+
+Protocol. For each task instance and adaptation round, we sample G = 8 rollouts from the same initial context. After environment or task-verifier feedback, one joint update is applied to θP and θA,while the calibrated Controller ϕ∗ remains fixed. One interaction step denotes an executed environ-ment action; one adaptation step denotes a parame-ter update. Updates occur between episodes, with-out branching or restoring the active environment. Model adapters and episodic memory persist within each run and are reset before every seed and bench-mark. 
+
+Prior calibration. The Controller is calibrated to select meta-actions that support Perceptor and Actor adaptation: 
+
+ϕ∗ = arg max  
+
+> ϕ
+
+Ee∼D env 
+
+F e, ϕ, θ ∗ 
+
+> P
+
+(ϕ), θ ∗
+
+> A
+
+(ϕ) ,
+
+(15) where Denv denotes the calibration environments, 
+
+θ∗ 
+
+> P
+
+and θ∗ 
+
+> A
+
+the post-adaptation parameters (with dependence on e left implicit), and F rewards task success whilst penalising contradictions. We optimise ϕ with a score-function policy-gradient estimator. For each environment, the Perceptor and Actor undergo a fixed number of inner up-dates, followed by a Controller update from the resulting reward; the inner loop is treated as a non-differentiable black box. After calibration, the Con-troller remains frozen and responds to confidence drops or consistency violations through A BSTRACT 
+
+and R OLLBACK .
+
+3 Experiments 
+
+We evaluate E VA across different tasks designed to assess long-horizon interaction, resilience to non-stationarity, and agentic retrieval. We use ALF-World (Shridhar et al., 2021), WebShop (Yao et al., 2023a), AppWorld (Trivedi et al., 2024), report-ing success rates for ALFWorld, average scores for WebShop, alongside Task Goal Completion (TGC) and Scenario Goal Completion (SGC) for AppWorld. To gauge adaptive capacity under dis-tribution shifts, we utilise ScienceWorld (Wang et al., 2022) and ScienceWorld-Shift (SW-Shift), a variant featuring a mid-episode domain change reporting overall success rates. Finally, agentic retrieval is measured via Exact Match on Natu-ral Questions (Kwiatkowski et al., 2019), Trivi-aQA (Joshi et al., 2017), HotpotQA (Yang et al., 2018), and 2Wiki (Ho et al., 2020). 
+
+Additional Metrics. The contradiction ratio δt
+
+may use environment feedback or a consistency check, whereas the reported Avg. LER counts only externally verified violations of environment rules, task constraints, or tool preconditions: 
+
+LER = 1
+
+N
+
+> N
+
+X
+
+> n=1
+
+I
+
+h
+
+v(n) = 1 
+
+i
+
+, (16) where v(n)=1 when τ (n) terminates in such a vio-lation. We report Avg. LER as the macro-average across benchmarks with external verification. Relative convergence compares each method with Direct through the number of environment interactions required to reach 90% of its own final performance estimate, computed over the last 10% 
+
+of the interaction budget. Values above 1 indicate faster convergence than Direct; for example, 3.7×
+
+means that the threshold is reached using approxi-mately 27% of Direct’s interactions. The reported ratios are macro-averaged across the interactive benchmarks. 
+
+Baselines. We compare against different meth-ods. (1) Prompt-based agents : Direct and Re-Act (Yao et al., 2023b). (2) RL-based frameworks :GRPO (Feng et al., 2025). (3) Skill-learning and memory-augmented RL : SkillRL (Xia et al., 2026), which distils and evolves callable skills from in-teraction trajectories. (4) Text-space skill optimi-sation : GEPA (Agrawal et al., 2026) and Skil-lOpt (Yang et al., 2026), both of which freeze the agent’s weights and iteratively refine an external free-text skill document. For the retrieval setting, we additionally compare against Search-R1 and Search-R2 (Jin et al., 2025; He et al., 2026). 
+
+EVA Configurations. To isolate the impact of our architectural choices, we evaluate different con-figurations that preserve the same quasi-symbolic representational substrate while varying parame-ter adaptation, experience consolidation, and agent orchestration. EVA denotes the full single-agent configuration, adapting both the Perceptor and Actor through the inner loop. EVA-Doc is its frozen-weight counterpart, disabling interaction-time parameter updates and relying on abstractions constructed, retrieved, and consolidated through the Controller’s A BSTRACT and R ETRIEVE ac-tions. EVA-S retains the full single-agent adap-tation scheme but restricts memory consolidation to verified successes, discarding instructive fail-ures. EVA-A adapts only the Actor whilst keeping the Perceptor frozen. Finally, EVA-M is a frozen-weight multi-agent extension in which a Planner and specialised Executors coordinate through a shared procedural memory, Mshared .
+
+Implementation. We implement all experiments in the VeRL framework. The Perceptor, Actor, and Controller use the same base checkpoint with module-specific adapters. In the full E VA configu-ration and its weight-adaptive single-agent variants, the Perceptor and Actor adapters are updated at interaction time with GRPO, whilst the prompt-conditioned Controller adapter is calibrated before interaction through score-function policy-gradient updates and then frozen. E VA-Doc and E VA-M keep all module-specific adapters frozen during in-teraction. The principal comparison in Table 1 uses Qwen-2.5-7B, with additional backbones in Ap-pendix D. For the text-space baselines, we follow the original protocols, using the same backbone for both the target and the optimiser and calibrating the skill document on the training split before in-teraction. Full configuration details are provided in Appendices B and C. All methods use the same backbone checkpoint, task splits, and maximum environment-interaction budget. 
+
+4 Results & Discussion 
+
+4.1 Main Results EVA against prior methods. Table 1 re-ports principal comparison on Qwen-2.5-7B (Ap-pendix D for additional backbones). EVAyields the strongest performance across pro-posed task, achieving 88 .7% on ALFW ORLD and 
+
+78 .2% on ScienceWorld. Specifically, on ALF-World, E VA outperforms ReAct by +30 .0 points Method ALFW ORLD ↑ SCI WORLD ↑ SW-S HIFT ↑ WEB SHOP SCO . ↑ APP W.-TGC ↑ APP W.-SGC ↑ Avg. LER ↓ REL . C ONV . ↑                                                                                                                                          
+
+> Direct 42.6 (-46.1) 62.7 (-15.5) 28.6 (-32.3) 60.4 (-27.8) –––1.0 ×
+> ReAct 58.7 (-30.0) 67.6 (-10.6) 38.4 (-22.5) 71.2 (-17.0) 18.9 9.7 25.0% 1.5 ×
+> GRPO 74.2 (-14.5) 72.8 (-5.4) 47.5 (-13.4) 80.1 (-8.1) 33.4 21.6 15.2% 1.9 ×
+> SkillRL 81.5 (-7.2) 74.3 (-3.9) 50.7 (-10.2) 83.6 (-4.6) 41.5 28.0 12.4% 2.0 ×
+> GEPA 82.8 (-5.9) 75.4 (-2.8) –84.0 (-4.2) ––11.5% 2.2 ×
+> SkillOpt 84.3 (-4.4) 76.0 (-2.2) –84.9 (-3.3) 44.6 30.4 10.8% 2.3 ×
+> EVA-Doc (frozen) 86.5 (-2.2) 77.1 (-1.1) 55.8 (-5.1) 86.7 (-1.5) 47.1 (-4.1) 33.2 (-3.6) 8.4% 2.6 ×
+> EVA-S (success-only) 86.9 (-1.8) 77.4 (-0.8) 57.2 (-3.7) 86.9 (-1.3) 48.3 (-2.9) 34.1 (-2.7) 8.1% 2.9 ×
+> EVA-A (Actor-only adapt.) 87.4 (-1.3) 77.6 (-0.6) 58.1 (-2.8) 87.3 (-0.9) 49.8 (-1.4) 35.3 (-1.5) 7.5% 3.1 ×
+> EVA88.7 78.2 60.9 88.2 51.2 36.8 6.2% 3.7 ×
+> EVA-M (multi-agent) 89.8 (+1.1) 78.6 (+0.4) 62.4 (+1.5) 88.9 (+0.7) 57.8 (+6.6) 43.5 (+6.7) 5.9% 3.8 ×
+
+Table 1: Results on Qwen-2.5-7B using metrics and configurations defined in §3. Brackets are relative to E VA. 
+
+(58 .7% →88 .7% ), the skill-based SkillRL by +7 .2,and the leading text-space method, SkillOpt, by 
+
++4 .4. The Average Logical-Error Rate ( Avg. LER), measuring trajectories that terminate in active-constraint contradictions, drops from the 20 –25% 
+
+range typical of ReAct to just 6.2% under E VA. This indicates that the constraints encoded in Ct
+
+successfully anchor the agent’s reasoning, mitigat-ing the errors that are common over extended hori-zons. In relative convergence, E VA reaches 90% of its final performance estimate with a ratio of 3.7×
+
+against Direct, compared with 2.3× for SkillOpt. 
+
+Anatomy of the framework. To disentangle the contributions of individual design choices, Table 1 reports E VA configurations (component analysis provided in §4.2). By setting the learnable pa-rameters, we can isolate the value of each mecha-nism. The frozen-weight E VA-Doc, which relies on the shared quasi-symbolic memory for adapta-tion, outperforms baselines, achieving 86 .5% on ALFWorld. Its +2 .2 margin over SkillOpt shows that a typed substrate outperforms free-text skills under similar constraints, whilst its −2.2 deficit relative to full E VA isolates the distinct benefit of inner-loop weight adaptation. These margins sug-gest that the representational substrate and the weight adaptation mechanism provide comple-mentary gains ; neither alone is sufficient. EVA-S, which consolidates only verified success trails, performs marginally on static benchmarks but struggles under distribution shifts ( −3.7 on SW-Shift). This confirms that retaining reusable failure-derived constraints is critical for adapt-ing to novel environments . Finally, E VA-A, where only the Actor is adapted, bridges much of the gap but falls short of the full model, suggest-ing that adapting abstraction induction through the Perceptor provides benefits beyond policy optimi-sation. These configurations trace a clear gradient of adaptive capacity, which is most apparent on SW-Shift, where recovery rises monotonically from the frozen E VA-Doc through the restricted variants to the full model ( 55 .8% →57 .2% →58 .1% →60 .9% ). This progression reflects the underlying mecha-nisms: a fixed free-text skill remains unchanged at interaction time, a dynamically re-derived quasi-symbolic memory supports representational adapta-tion, and inner-loop updates provide an additional level of parameter adaptation. Relative conver-gence follows the same gradient ( 2.6 × → 2.9 ×→3.1 × → 3.7×), indicating that the more com-plete configurations also reach their performance threshold with fewer interactions. Finally, the multi-agent E VA-M outperforms the single-agent mode; the advantage is most pronounced under non-stationarity and on Web-Shop, where buying tasks decompose into disjoint, service-specific sub-goals. Here, a Planner can initiate targeted rollbacks on affected sub-goals without voiding the entire trajectory. Conversely, on benchmarks lacking natural decomposition, the gains are marginal; hence, E VA-M serves as an extension for decomposable tasks. 
+
+4.2 Ablation Study 
+
+Figure 2 and Table 2 report the isolated impact of each component. Removing quasi-symbolic ab-stractions produces the largest performance drops (−24 .9 on ALFWorld, −24 .7 on AppWorld). This shows that the structured representation forms the basis of the system; without it, the Controller lacks a typed meta-state to monitor, and episodic mem-ory loses its structural retrieval interface. Dis-abling online adaptation also degrades outcomes (−20 .6, −21 .1). The w/o Online Adaptation vari-ant disables both inner-loop parameter updates and interaction-time abstraction consolidation, whereas EVA-Doc freezes model parameters but retains non-parametric adaptation through abstraction con-struction, retrieval, and document consolidation. Variant ALFW ORLD APP WORLD 
+
+Full E VA 88.7 51.2 
+
+Component removals: 
+
+w/o Controller 74.0 (-14.7) 35.8 (-15.4) 
+
+w/o Memory 76.2 (-12.5) 38.2 (-13.0) 
+
+w/o Quasi-Symbolic Abstractions 63.8 (-24.9) 26.5 (-24.7) 
+
+w/o Online Adaptation 68.1 (-20.6) 30.1 (-21.1) 
+
+w/o Outer Loop 80.9 (-7.8) 44.6 (-6.6) 
+
+w/o Confidence Gating 83.1 (-5.6) 46.8 (-4.4) 
+
+Frozen-weight deployment: 
+
+EVA-Doc (typed doc, frozen) 86.5 (-2.2) 47.1 (-4.1) 
+
+EVA w/ Free-text Skills (frozen) 82.1 (-6.6) 42.3 (-8.9) 
+
+Alternative memory formats: 
+
+EVA w/ Raw Trajectories 58.2 (-30.5) 18.4 (-32.8) 
+
+Actor Only (no abstraction) 58.7 (-30.0) 0.6 (-50.6) 
+
+Table 2: Ablation covering component removals, frozen-weight, and alternative memory formats. ALFW ORLD 
+
+success (%) and AppWorld TGC (%). 
+
+The contrast between E VA-Doc ( 86 .5) and E VA(88 .7) therefore isolates inner-loop weight adapta-tion, while w/o Online Adaptation (68 .1) quantifies the joint contribution of both mechanisms. 50 60 70 80 90 
+
+> Success Rate (%, ALFWorld)
+> Full EVA
+> w/o Controller
+> w/o Memory
+> w/o Quasi-Symb.
+> w/o Online Adapt.
+> w/o Outer Loop
+> w/o Conf. Gating
+> Actor Only
+> (no abstr.)
+> 88.7
+> 74.0
+> 76.2
+> 63.8
+> 68.1
+> 80.9
+> 83.1
+> 58.7
+> Ablation Study (Qwen2.5-7B)
+
+Figure 2: ALFW ORLD success rate per component removal. 
+
+Furthermore, removing the Controller causes a large drop ( −14 .7, −15 .4), indicating that meta-level orchestration adds value beyond the abstrac-tion mechanism alone. Memory is important for cross-episode generalisation ( −12 .5, −13 .0), while undermining the outer loop (−7.8) and con-fidence gating (−5.6) destabilises meta-control and gradient quality, respectively (Figure 8 in Ap-pendix E for a sensitivity analysis of the confidence threshold κc). The w/o Confidence Gating variant replaces ζt with an unweighted update over all seg-ments while keeping the rest of the inner loop intact, and is therefore distinct from the κc=0 endpoint in Figure 8. The Actor-only ablation removes the Controller, abstraction interface, and episodic memory while retaining the same Actor adapter and action format as E VA; it is therefore not identical to the separately implemented ReAct baseline reported in Table 1. Turning to the frozen-weight variants, E VA-Doc maintains the typed substrate but discards the in-ternal loop, achieving 86 .5% on ALFWorld. Re-placing the typed document with an otherwise matched free-text skill representation reduces per-formance to 82 .1% . The 4.4-point discrepancy be-tween these two frozen configurations isolates the intrinsic value of typing the shared artefact, which benefits both the Controller’s meta-state and struc-tural retrieval via sim ψ. The subsequent 2.2-point leap from E VA-Doc to the full E VA model pro-vides an estimate of the contribution of inner-loop weight adaptation under this matched configuration. Finally, relying on raw, unprocessed trajectories yields only 58 .2% , supporting structural distilla-tion over verbatim retention. 
+
+4.3 Analysis 
+
+The modular architecture of E VA supports a multi-agent extension (E VA-M). In this paradigm, a Planner agent dissects tasks into sub-goals— expressed as partial abstractions A(g) 
+
+> t
+
+—and dis-patches them to specialised executor agents op-erating over a shared memory, Mshared . The core Perceptor–Actor–Controller organisation is retained: the Planner functions as a Controller with an expanded meta-action space (incorporating D IS -
+
+> PATCH
+
+), whilst each Executor operates as a frozen EVA instance confined to its designated sub-goal. As shown in Figure 3, deploying E VA-M on Qwen-2.5-7B yields gains on AppWorld ( +6 .6
+
+TGC and +6 .7 SGC), with smaller gains on ALF-WORLD (+1 .1) and WebShop ( +0 .7 average-score points). We argue that this divergence stems from the task topology: AppWorld scenarios need coor-dinating interdependent tasks across heterogeneous services, enabling the Planner to decompose them into service-specific sub-goals with naturally dis-joint constraint subspaces C(i) 
+
+> t
+
+. On the other side, ALFW ORLD tasks are sufficiently resolved via a single-agent process, making the decomposition overhead superfluous. The marked improvement in Scenario Goal Completion (SGC) is salient, since SGC requires the success of all constituent tasks; EVA-M’s Planner can therefore roll back the proce-dural state associated with a failing sub-goal with-out discarding the abstractions associated with un-affected sub-goals. ALFWorld WebShop    
+
+> (Score)
+> WebShop
+> (Succ.)
+> AppWorld
+> (TGC)
+> AppWorld
+> (SGC)
+> 40
+> 60
+> 80
+> 100
+> Performance (%)
+> Single-Agent EVA vs. Multi-Agent EVA-M Qwen2.5-7B
+> SkillOpt (best baseline) EVA (single-agent) EVA-M (multi-agent)
+
+Figure 3: Full single-agent E VA vs. E VA-M. 
+
+Method SINGLE -H OP MULTI -H OP AVG .NQ TQA HotQA 2Wiki Search-R1 39.5 56.0 32.6 29.7 39.5 Search-R2 39.9 65.9 39.0 35.8 45.2 SkillOpt 42.8 67.8 42.0 39.6 48.1 EVA 44.8 69.5 45.7 43.1 50.8 
+
+Table 3: Agentic retrieval (Exact Match, %; Qwen2.5-7B). E VA achieves the best average performance, with the largest margins on the multi-hop datasets. 
+
+Agentic Retrieval. Table 3 assesses E VA in the context of agentic retrieval. E VA achieves the high-est overall average ( 50 .8% ) and the largest margins on the multi-hop datasets. Here, converting lo-calised retrieval failures into reusable abstractions lets the agent avoid redundant search steps. While SkillOpt, which logs corrective rules within a free-text skill, limits the performance gap for single-hop queries, it falters on multi-hop reasoning, where the agent must track evidence across sequential steps. Furthermore, unlike Search-R2, which applies lo-cal corrections to misleading search steps and then discards them, E VA preserves the corrective ab-straction in its memory for future reuse. 
+
+Recovery under distribution shift. Figure 4 re-ports learning curves on SW-Shift, where a domain change is injected at step 500. A frozen E VA-Doc seeded with a generic, non-calibrated docu-ment (E VA-Doc-Cold) starts from a weaker post-shift state and recovers only partially ( ∼49 .5% ), as it cannot re-derive structure consolidated under the original dynamics. The frozen-weight E VA-Doc, whose document is calibrated on the source dynamics, recovers further ( ∼55 .8% ) by extend-ing its shared document at interaction time, yet plateaus below the full model. E VA exploits the two-timescale design most fully: the calibrated meta-policy ϕ∗ registers the change through a drop in ct and rising δt, triggering a phase of heightened ABSTRACT and R OLLBACK ; the Perceptor then re-derives abstractions consistent with the novel dynamics, and E VA recovers to ∼60 .9% within 
+
+∼150 interaction steps. 0 200 400 600 800 1000 
+
+> Interaction Steps
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Success Rate (%)
+> Domain
+> Shift
+> ~150 steps
+> recovery
+> Distribution Shift Recovery (SW-Shift, Qwen2.5-7B)
+> EVA-Doc-Cold (generic doc)
+> EVA-Doc (frozen)
+> EVA (Ours)
+
+Figure 4: Learning curves on SW-Shift. We injected a domain change at step 500. 
+
+5 Related Work 
+
+Reasoning with Abstractions. Step-wise reason-ing via CoT is vulnerable to content bias and hal-lucination (Turpin et al., 2023). Neuro-symbolic approaches couple neural perception with sym-bolic solvers (Freitas et al., 2025), at the cost of a brittle translation boundary. QuaSAR (Ranaldi et al., 2025) proposed quasi-symbolic abstractions for single-problem reasoning, Ranaldi and Pucci (2025) extended the idea to multilingual reasoning. EVA takes this abstraction family further, from single problems to interaction trajectories, and in-troduces a Controller that governs when to abstract. 
+
+Agentic LLMs and Self-Evolution. ReAct (Yao et al., 2023b) interleaves reasoning and acting but lacks persistent memory. ReasoningBank (Ouyang et al., 2026) distils transferable reasoning strate-gies from past experiences, and SkillRL (Xia et al., 2026) extracts and evolves callable skills from tra-jectories through recursive reinforcement learning. Autogenesis (Zhang et al., 2026) introduces a pro-tocol for versioned self-evolution. Our contribution is complementary: we focus on the representation over which memories are expressed—the quasi-symbolic abstraction—and unify abstraction, mem-ory, and meta-control within a single objective. 
+
+Text-Space Skill Optimisation. To adapt frozen agents without weight updates, a recent line treats the natural-language skill document as the trainable object. Yang et al. (2026) convert scored rollouts into bounded add/delete/replace edits on a single skill file and accept an edit only when it improves a held-out score, importing learning-rate, validation, and momentum analogues into text space; Agrawal et al. (2026) evolve prompts through reflective feed-back. These methods optimise a global free-text artefact before interaction, whilst the target model remains frozen. E VA instead induces and consoli-dates interaction-specific quasi-symbolic abstrac-tions as the agent operates. In its frozen-weight con-figurations, adaptation occurs through this shared representational substrate, whereas the full configu-ration additionally updates the Perceptor and Actor. 
+
+Cognitive Architectures and Meta-Control. 
+
+Dupoux et al. (2026) propose a tripartite archi-tecture (System A, B, M) inspired by cogni-tive science, separating observation, action, and meta-control on evolutionary and developmen-tal timescales. EVA operationalises this via the Perceptor–Actor–Controller triad, grounding all three systems in a shared quasi-symbolic substrate. 
+
+Future Work will extend E VA towards real-world tasks in which adaptive reasoning is central. Many consequential settings require agents to oper-ate over incomplete evidence, evolving constraints, and feedback that may invalidate decisions. Ex-amples include clinical-trial eligibility screening, educational planning, scientific assistance, and ad-ministrative workflows where a single mistaken assumption can propagate across several steps. 
+
+Future Objective is to study how quasi-symbolic abstractions can support agents in these settings by making adaptation explicit. In such tasks, an agent should preserve the path that led to a decision, revise that path when new evidence appears, and expose which constraints, experiences, and recov-ery steps shaped its behaviour. This direction con-nects agentic performance with human oversight :adaptive reasoning becomes useful only when peo-ple can inspect how an agent changed course and where it reused prior. We also plan to examine EVA in collaborative scenarios where agents as-sist human. The value of an evolving agent lies in its capacity to reduce cognitive load, surface overlooked constraints, and provide structured al-ternatives while leaving final judgement to the hu-man decision-maker. This would move E VA to-wards a broader research programme on adaptive agents that learn from experience while remaining accountable to the people. 
+
+6 Conclusion 
+
+We introduced E VA ( Ev olving Agents), a frame-work that enables agentic reasoning and evolu-tion by distilling experience into quasi-symbolic abstractions—semi-structured representations that simultaneously serve as a structured summary of the execution trace, an episodic-memory interface, and the source representation from which the Con-troller derives its meta-state. In the full single-agent configuration, a two-timescale learning scheme sep-arates the slow calibration of meta-control priors from the fast adaptation of perception and pol-icy, enabling robust recovery under distributional shift. Across long-horizon tasks, agentic retrieval benchmarks, and controlled distribution-shift set-tings, E VA consistently outperforms state-of-the-art baselines, with the largest gains on tasks that require multi-step constraint tracking, structural memory reuse, and adaptation to non-stationarity. We view E VA as a step towards agents that con-tinue to evolve by dynamically restructuring the representations through which they reason and act. 
+
+Limitations 
+
+Several limitations deserve discussion. First, the execution of the Controller and on-the-fly abstrac-tions generation introduce overhead in the inner loop, and sparse routing mechanisms are a natural direction for reducing latency. Second, the abstrac-tion schema is currently a hand-designed typed schema; scaling to high-setting multimodal inputs will require unsupervised or differentiable struc-ture induction. The signal ct is a likelihood proxy and retrieval relies on typed predicates such that surface-distinct entities match; confidence estima-tors and learned predicate are natural refinements. Third, while quasi-symbolic abstractions are au-ditable, we do not claim they faithfully reflect the model’s internal computation: as with CoT, a cor-rect answer does not guarantee that At captures the underlying inference. Fourth, the multi-agent extension (E VA-M) is evaluated in a preliminary setting; a more thorough study of scaling laws with team size and compositional task structure is left for future work. 
+
+Acknowledgements 
+
+I thank my supervisors, mentors, and collaborators across the University of Edinburgh, the Idiap Re-search Institute and the University of Rome Tor Vergata for feedback that shaped this research line. References 
+
+Lakshya A Agrawal, Shangyin Tan, Dilara Soylu, Noah Ziems, Rishi Khare, Krista Opsahl-Ong, Arnav Singhvi, Herumb Shandilya, Michael J Ryan, Meng Jiang, Christopher Potts, Koushik Sen, Alexandros G. Dimakis, Ion Stoica, Dan Klein, Matei Zaharia, and Omar Khattab. 2026. Gepa: Reflective prompt evolu-tion can outperform reinforcement learning. Preprint ,arXiv:2507.19457. Yiming Du, Wenyu Huang, Danna Zheng, Zhaowei Wang, Sebastien Montella, Mirella Lapata, Kam-Fai Wong, and Jeff Z. Pan. 2025. Rethinking memory in llm based agents: Representations, operations, and emerging topics. Preprint , arXiv:2505.00675. Emmanuel Dupoux, Yann LeCun, and Jitendra Malik. 2026. Why ai systems don’t learn and what to do about it: Lessons on autonomous learning from cog-nitive science. Preprint , arXiv:2603.15381. Lang Feng, Zhenghai Xue, Tingcong Liu, and Bo An. 2025. Group-in-group policy optimization for llm agent training. Preprint , arXiv:2505.10978. André Freitas, Marco Valentino, and Danilo Silva de Carvalho. 2025. Neuro-symbolic natural language processing. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language Process-ing: Tutorial Abstracts , pages 14–15, Suzhou, China. Association for Computational Linguistics. Bowei He, Minda Hu, Zenan Xu, Hongru Wang, Licheng Zong, Yankai Chen, Chen Ma, Xue Liu, Pluto Zhou, and Irwin King. 2026. Search-r2: En-hancing search-integrated reasoning via actor-refiner collaboration. Preprint , arXiv:2602.03647. Xanh Ho, Anh-Khoa Duong Nguyen, Saku Sugawara, and Akiko Aizawa. 2020. Constructing a multi-hop qa dataset for comprehensive evaluation of reasoning steps. Preprint , arXiv:2011.01060. Bowen Jin, Hansi Zeng, Zhenrui Yue, Jinsung Yoon, Sercan Arik, Dong Wang, Hamed Zamani, and Jiawei Han. 2025. Search-r1: Training llms to reason and leverage search engines with reinforcement learning. 
+
+Preprint , arXiv:2503.09516. Mandar Joshi, Eunsol Choi, Daniel Weld, and Luke Zettlemoyer. 2017. TriviaQA: A large scale distantly supervised challenge dataset for reading comprehen-sion. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Vol-ume 1: Long Papers) , pages 1601–1611, Vancouver, Canada. Association for Computational Linguistics. Tom Kwiatkowski, Jennimaria Palomaki, Olivia Red-field, Michael Collins, Ankur Parikh, Chris Alberti, Danielle Epstein, Illia Polosukhin, Jacob Devlin, Ken-ton Lee, Kristina Toutanova, Llion Jones, Matthew Kelcey, Ming-Wei Chang, Andrew M. Dai, Jakob Uszkoreit, Quoc Le, and Slav Petrov. 2019. Natu-ral questions: A benchmark for question answering research. Transactions of the Association for Compu-tational Linguistics , 7:452–466. Siru Ouyang, Jun Yan, I-Hung Hsu, Yanfei Chen, Ke Jiang, Zifeng Wang, Rujun Han, Long T. Le, Samira Daruki, Xiangru Tang, Vishy Tirumalashetty, George Lee, Mahsan Rofouei, Hangfei Lin, Jiawei Han, Chen-Yu Lee, and Tomas Pfister. 2026. Reason-ingbank: Scaling agent self-evolving with reasoning memory. Preprint , arXiv:2509.25140. Changle Qu, Sunhao Dai, Xiaochi Wei, Hengyi Cai, Shuaiqiang Wang, Dawei Yin, Jun Xu, and Ji-rong Wen. 2025. Tool learning with large language mod-els: a survey. Frontiers of Computer Science , 19(8). Yuxiao Qu, Anikait Singh, Yoonho Lee, Amrith Setlur, Ruslan Salakhutdinov, Chelsea Finn, and Aviral Ku-mar. 2026. RLAD: Training LLMs to discover ab-stractions for solving reasoning problems. In The Fourteenth International Conference on Learning Representations .Leonardo Ranaldi and Andre Freitas. 2024. Aligning large and small language models via chain-of-thought reasoning. In Proceedings of the 18th Conference of the European Chapter of the Association for Compu-tational Linguistics (Volume 1: Long Papers) , pages 1812–1827, St. Julian’s, Malta. Association for Com-putational Linguistics. Leonardo Ranaldi and Giulia Pucci. 2025. Multilin-gual reasoning via self-training. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Lin-guistics: Human Language Technologies (Volume 1: Long Papers) , pages 11566–11582, Albuquerque, New Mexico. Association for Computational Linguis-tics. Leonardo Ranaldi, Marco Valentino, and Andre Fre-itas. 2025. Improving chain-of-thought reasoning via quasi-symbolic abstractions. In Proceedings of the 63rd Annual Meeting of the Association for Compu-tational Linguistics (Volume 1: Long Papers) , pages 17222–17240, Vienna, Austria. Association for Com-putational Linguistics. Ranjan Sapkota, Konstantinos I. Roumeliotis, and Manoj Karkee. 2026. Ai agents vs. agentic ai: A conceptual taxonomy, applications and challenges. 
+
+Information Fusion , 126:103599. Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and Matthew Hausknecht. 2021. Alfworld: Aligning text and embodied environments for interactive learning. 
+
+Preprint , arXiv:2010.03768. Harsh Trivedi, Tushar Khot, Mareike Hartmann, Ruskin Manku, Vinty Dong, Edward Li, Shashank Gupta, Ashish Sabharwal, and Niranjan Balasubramanian. 2024. AppWorld: A controllable world of apps and people for benchmarking interactive coding agents. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 16022–16076, Bangkok, Thai-land. Association for Computational Linguistics. Miles Turpin, Julian Michael, Ethan Perez, and Samuel R. Bowman. 2023. Language models don’t always say what they think: Unfaithful ex-planations in chain-of-thought prompting. Preprint ,arXiv:2305.04388. Ruoyao Wang, Peter Jansen, Marc-Alexandre Côté, and Prithviraj Ammanabrolu. 2022. ScienceWorld: Is your agent smarter than a 5th grader? In Empirical Methods in Natural Language Processing (EMNLP) .Junde Wu, Jiayuan Zhu, Yuyuan Liu, Min Xu, and Yueming Jin. 2025. Agentic reasoning: A stream-lined framework for enhancing llm reasoning with agentic tools. Preprint , arXiv:2502.04644. Peng Xia, Jianwen Chen, Hanyang Wang, Jiaqi Liu, Kaide Zeng, Yu Wang, Siwei Han, Yiyang Zhou, Xujiang Zhao, Haifeng Chen, Zeyu Zheng, Cihang Xie, and Huaxiu Yao. 2026. Skillrl: Evolving agents via recursive skill-augmented reinforcement learning. 
+
+Preprint , arXiv:2602.08234. Yifan Yang, Ziyang Gong, Weiquan Huang, Qihao Yang, Ziwei Zhou, Zisu Huang, Yan Li, Xuemei Gao, Qi Dai, Bei Liu, Kai Qiu, Yuqing Yang, Dong-dong Chen, Xue Yang, and Chong Luo. 2026. Skil-lopt: Executive strategy for self-evolving agent skills. 
+
+Preprint , arXiv:2605.23904. Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio, William Cohen, Ruslan Salakhutdinov, and Christo-pher D. Manning. 2018. HotpotQA: A dataset for diverse, explainable multi-hop question answering. In Proceedings of the 2018 Conference on Empiri-cal Methods in Natural Language Processing , pages 2369–2380, Brussels, Belgium. Association for Com-putational Linguistics. Shunyu Yao, Howard Chen, John Yang, and Karthik Narasimhan. 2023a. Webshop: Towards scalable real-world web interaction with grounded language agents. Preprint , arXiv:2207.01206. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023b. ReAct: Synergizing reasoning and acting in language models. In International Conference on Learning Representations (ICLR) .Hongzhuo Yu, Fei Zhu, Guo-Sen Xie, and Ling Shao. 2026. Self-consolidation for self-evolving agents. 
+
+Preprint , arXiv:2602.01966. Kai Zhang, Xiangchao Chen, Bo Liu, Tianci Xue, Zeyi Liao, Zhihan Liu, Xiyao Wang, Yuting Ning, Zhaorun Chen, Xiaohan Fu, Jian Xie, Yuxuan Sun, Boyu Gou, Qi Qi, Zihang Meng, Jianwei Yang, Ning Zhang, Xian Li, Ashish Shah, and 11 others. 2025. Agent learning via early experience. Preprint ,arXiv:2510.08558. Wentao Zhang, Zhe Zhao, Haibin Wen, Yingcheng Wu, Ming Yin, Bo An, and Mengdi Wang. 2026. Auto-genesis: A self-evolving agent protocol. Preprint ,arXiv:2604.15034. Kunlun Zhu, Zijia Liu, Bingxuan Li, Muxin Tian, Yingx-uan Yang, Jiaxun Zhang, Pengrui Han, Qipeng Xie, Fuyang Cui, Weijia Zhang, Xiaoteng Ma, Xiaodong Yu, Gowtham Ramesh, Jialian Wu, Zicheng Liu, Pan Lu, James Zou, and Jiaxuan You. 2025. Where llm agents fail and how they can learn from failures. 
+
+Preprint , arXiv:2509.25370. A Control-State Components 
+
+The Controller reads the control state smt =[ct, δ t, ν t, ℓ t] introduced in §2.2; its components are defined as follows. The sequence-confidence proxy ct (§2.2) is computed in the numerically sta-ble log domain, the equivalent of the geometric mean given in the main text, 
+
+ct = exp 
+
+ 1
+
+NtNtX
+
+> j=1
+
+log pθP
+
+ xt,j | xt,<j , g, o t, τ (k)
+
+> t
+
+ .
+
+(17) The contradiction ratio measures the fraction of active constraints that the latest feedback violates, 
+
+δt = 1max(1 , |C t|)
+
+X
+
+> c∈C t
+
+χ(c, f t), (18) where χ(c, f t) = 1 when the latest environment or verifier feedback ft contradicts an active con-straint c, and 0 otherwise; when explicit feedback is unavailable, χ is obtained through a consistency check. The novelty score is νt = 1 when Mt = ∅, and otherwise 
+
+νt = 1 − max  
+
+> Aj∈M t
+
+sim ψ(At, Aj ). (19) Structural similarity is computed as 
+
+sim ψ(A, A′) = 
+
+P 
+
+> X
+
+wX J(can( X), can( X′)) 
+
+P 
+
+> X
+
+wX
+
+,
+
+(20) where X ∈ {V , T , C, E◦}, J is Jaccard similar-ity, can canonicalises typed predicates, and E◦
+
+excludes confidence and terminal outcome labels. The fixed uniform positive weights are denoted by 
+
+ψ = ( wV , w T , w C , w E ), with J(∅, ∅) = 0 ; two abstractions are thereby credited for jointly instan-tiated fields, whilst a shared empty field contributes no spurious similarity. Finally, ℓt ∈ [0 , 1] is the environment comple-tion signal: the proportion of verified sub-goals when available, or the normalised environment score; when no intermediate signal exists, it is 0
+
+before terminal feedback and equals the terminal outcome at completion. 
+
+B Model Versions 
+
+Table 4 reports the exact model checkpoints used in our experiments. The principal comparison, the ablations, the training-dynamics analyses, and the per-subtask breakdowns all use Qwen-2.5-7B; the per-backbone results additionally use Llama-3-8B and Mistral-7B.     
+
+> Model Checkpoint / Version
+> Qwen-2.5-7B Qwen/Qwen2.5-7B-Instruct
+> Llama-3-8B meta-llama/Meta-Llama-3-8B-Instruct
+> Mistral-v0.3-7B mistralai/Mistral-7B-Instruct-v0.3
+
+Table 4: Model checkpoints used in the experiments (Huggingface). Access verified on 05/2026. 
+
+C Implementation and Hyperparameters 
+
+Table 5 reports the main hyperparameters. The in-ner loop is optimised with GRPO; the outer loop calibrates the Controller parameters ϕ through a score-function policy-gradient estimator over pro-cedurally generated environments, with the post-adaptation reward F as the meta-objective. The Controller is a prompt-conditioned language-model policy that maps the compact control state to one of four meta-actions. It is calibrated before interaction through score-function policy-gradient updates and then held fixed. Structural retrieval through sim ψ
+
+is computed as a weighted Jaccard overlap over the predicate, and variables, transitions, constraints, and outcome signals each contribute to the match. All experiments are run on 4 NVIDIA H200 GPUs. The Perceptor reward combines task, structural-consistency, and novelty signals, RP = Rtask +
+
+αR cons + βR nov , while Controller calibration uses 
+
+F = Rtask − ρR contr , with fixed coefficients α, β,and ρ.The w/o Outer Loop configuration retains the Controller architecture but uses its initial prompt-conditioned policy without score-function meta-calibration. All Perceptor, Actor, memory, and retrieval components remain unchanged. 
+
+Frozen-weight configuration (E VA-Doc). The frozen-weight variant shares the architecture and the abstraction grammar above, and differs only in how adaptation is carried out. The backbone weights are fixed, and the GRPO inner loop is dis-abled and no gradient updates are applied at any point. In place of weight adaptation, the episodic memory of typed abstractions is serialised into a compact, human-readable document prepended to the agent context before each episode. This doc-ument is initialised on the training split prior to interaction and subsequently extended at interac-tion time through the Controller’s non-parametric ABSTRACT and R ETRIEVE actions, and the shared abstractions can be re-derived when the dynamics change. Because the artefact is typed and self-contained, a single document populated by one Parameter Value 
+
+Inner loop (GRPO) 
+
+Learning rate 1 × 10 −6
+
+KL coefficient 0.001 
+
+Clipping range ( ϵ) 0.2
+
+Group size ( G) 8
+
+Rollout temperature (train / eval) 0.9 / 0.0
+
+Confidence gating threshold ( κc) 0.6
+
+Outer loop (meta-calibration) 
+
+Meta-policy estimator score-function Calibration environments 50 
+
+Inner-adaptation steps ( K) 5
+
+Controller 
+
+Implementation prompt-conditioned policy Action space 4 meta-actions Output format single action token 
+
+Episodic memory & retrieval 
+
+Capacity 512 abstractions Consolidation threshold ( λ) 0.6
+
+Recency-decay factor ( γ) 0.95 
+
+Minimum reuse evidence ( m) 3
+
+Retrieved abstractions ( KR) 3
+
+Trajectory window ( k) 8
+
+Structural similarity ( sim ψ ) weighted Jac, uniform 
+
+Table 5: Hyperparameters for E VA training, meta-calibration, and memory management. 
+
+agent can be reused by others without further train-ing, which is the property we exploit when con-structing the shared team procedural memory ex-amined in the main text. Other hyperparameters ( λ,
+
+γ, k, and sim ψ) are identical to the full model, the comparison between E VA-Doc and E VA isolates the contribution of inner-loop weight adaptation. 
+
+Learnable Components. The timescale scheme (§2.4) separates interaction-time adaptation from prior meta-control calibration. The inner timescale comprises the Perceptor and Actor adapters, θP
+
+and θA, which are attached to a shared frozen back-bone and updated via GRPO. The outer timescale the prompt-conditioned Controller adapter ϕ, cali-brated through score-function policy gradient and then held fixed. The projection forming the control state is deterministic, sim ψ uses fixed weighted-Jaccard coefficients, and qη uses the fixed memory-management hyperparameters η = ( γ, m, λ ). The schema is hand-designed, whilst Bind is imple-mented via prompted grounding. 
+
+D Per-Backbone Results 
+
+Table 1 reports the principal comparison on Qwen-2.5-7B. To improve the conclusions, Tables 7 and 8 present the same comparison on Llama-3-8B and Mistral-v0.3-7B under an identical protocol. E VA                                 
+
+> Component Param. Timescale Update / Signal
+> Perceptor adapter θPinner (fast) GRPO combined reward + gate ζt
+> Actor adapter θAinner (fast) GRPO task reward Controller adapter ϕouter (slow) policy gradient Projection –fixed deterministic Structural retrieval ψfixed weighted Jaccard Utility rule η= ( γ, m, λ )fixed count and recency
+> Bind –non-parametric prompted grounding Schema (V,T,C,E)–fixed hand-designed
+
+Table 6: Learnable Components of E VA. 
+
+achieves the best performances, the frozen-weight EVA-Doc remains the strongest method that ap-plies no weight updates and trails the full model by a small and consistent margin, and the widest sepa-rations again appear on SW-Shift, where a skill con-solidated before interaction cannot be re-derived after the mid-stream domain change. The absolute scores on Llama-3-8B are uniformly lower, which is consistent with its weaker base reasoning capac-ity, yet the relative gains of E VA over the text-space and skill-based baselines are of comparable magni-tude, indicating that the contribution of the typed substrate does not depend on the strength of the underlying backbone. 
+
+Method ALF ↑ SCI W ↑ SHIFT ↑ WEB SHOP ↑
+
+Direct 31.0 44.8 18.2 48.3 ReAct 45.8 53.8 24.9 60.1 GRPO 61.3 58.7 35.4 68.4 GEPA 70.4 61.8 39.1 71.9 SkillOpt 71.2 62.8 39.8 72.6 EVA-Doc (frozen) 74.1 63.6 48.7 74.5 
+
+EVA (ours) 76.4 64.5 54.3 76.2 
+
+Table 7: Results on Llama-3-8B (success rate, %). 
+
+Method ALF ↑ SCI W ↑ SHIFT ↑ WEB SHOP ↑
+
+Direct 40.1 63.5 30.4 58.7 ReAct 55.3 70.5 39.8 69.8 GRPO 72.6 76.4 49.1 78.6 SkillRL 79.4 78.9 52.3 82.1 SkillOpt 82.1 80.4 51.2 83.4 EVA-Doc (frozen) 84.3 81.2 57.6 85.0 
+
+EVA (ours) 86.5 82.0 62.9 86.7 
+
+Table 8: Results on Mistral-v0.3-7B (success rate, %). 
+
+E Additional Training Analysis 
+
+Controller behaviour over training. Figure 5 tracks the distribution of Controller meta-actions over the interaction. During the early stages of an episode (steps 0–100), the Controller often is-sues A BSTRACT (∼35% ) and R ETRIEVE (∼25% ), reflecting the need to build and recall structural rep-resentations before the agent can act effectively. As experience accumulates and the episodic memory supplies reusable patterns, A CT becomes dominant (∼70% by step 400), indicating that the agent has internalised sufficient structure to operate directly from its active abstraction. The R OLLBACK ac-tion remains comparatively infrequent ( ∼5–8% )and rises only when the agent encounters configu-rations that contradict the current abstraction. This trajectory reflects a gradual shift from world mod-elling to policy execution: as memory supplies more compatible abstractions, the fixed Controller receives more reliable control states and selects ACT more frequently. 0 100 200 300 400 500 
+
+> Interaction Steps
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Meta-Action Proportion (%)  Controller Meta-Actions (ALFWorld, Qwen2.5-7B)
+> Act
+> Abstract
+> Retrieve
+> Rollback
+
+Figure 5: Controller meta-action distribution over inter-action steps (ALFWorld). 
+
+Training dynamics on ALFWorld. Figure 6 presents the training curves on ALFW ORLD for GRPO, SkillRL, the frozen-weight E VA-Doc, and the full model. The same two-phase pattern ob-served recurs here. The methods improve at a simi-lar rate whilst episodic memory is still sparse, with EVA-Doc tracking the full model closely through-out this phase. A divergence then emerges as the ac-cumulated abstractions compound, and E VA pulls clear of the baselines once the Controller shifts from frequent abstraction construction towards di-rect A CT decisions supported by the increasingly mature memory. The frozen-weight E VA-Doc con-tinues to improve with document accumulation but plateaus below the full model once its shared docu-ment saturates, making visible the headroom that inner-loop weight adaptation contributes. 
+
+Episodic memory dynamics. Figure 7 and Ta-ble 9 characterise the episodic memory over 50 evaluation episodes. The utility score qη of suc-cessful abstractions grows from ∼0.47 to ∼0.80 ,reflecting the accumulation of reliable patterns that 0 10 20 30 40 50 60 70 80 
+
+> Training Step
+> 20
+> 40
+> 60
+> 80
+> Success Rate (%)
+> Training Dynamics on ALFWorld (Qwen2.5-7B)
+> GRPO
+> EVA-Doc
+> EVA
+
+Figure 6: Training dynamics on ALFW ORLD (success rate, Qwen-2.5-7B) for GRPO, the frozen-weight E VA-Doc, and full E VA. E VA diverges from the baselines once the episodic memory accumulates reusable abstrac-tions, whilst E VA-Doc plateaus once its shared docu-ment saturates. 
+
+are retrieved frequently and lead to successful out-comes. The reported averages include reused en-tries with 0 < r j < m , which remain protected from pruning. Failure-derived abstractions that support recovery acquire positive utility through successful defensive reuse. Those that fail to ac-cumulate positive reuse evidence are pruned once eligible, whilst previously useful but stale entries decay through the recency factor γ∆tj , producing an average pruning of 28 .7 obsolete entries. The structural retrieval mechanism achieves a 74 .2% 
+
+hit rate, defined as the proportion of retrievals for which at least one of the top-three matches is task-relevant, against 53 .1% for cosine similarity over mean-pooled embeddings. This 21 .1-point gap con-firms the value of typed predicate matching through 
+
+sim ψ. The controlled growth from qη-based prun-ing contrasts with append-only skill banks (Xia et al., 2026), which accumulate every procedure without quality filtering, and allows E VA to main-tain a compact, high-quality memory form training.                                     
+
+> Metric Value
+> Abstractions stored 163.4 ±14.2 – Successful trajectories 98.1 ±9.6 (60.0%) – Instructive failures 65.3 ±10.8 (40.0%) Elig. abs. pruned ( rj≥m, q η< λ )28.7 ±6.3 Avg. retrievals per episode 4.8 ±1.3 Structural retrieval hit rate (top-3) 74.2% vs. embedding cosine baseline 53.1% Avg. |V t|(variables) 7.8 ±2.3 Avg. |T t|(transitions) 5.2 ±1.6 Avg. |C t|(constraints) 3.8 ±1.4
+
+Table 9: Episodic memory statistics at the end of evalu-ation (ALFW ORLD , Qwen-2.5-7B, 50 episodes). 10 20 30 40 50      
+
+> Episode
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Utility  q
+> Memory Dynamics (ALFWorld, Qwen2.5-7B)
+> q(successes) q(failures) |t|
+> 0
+> 50
+> 100
+> 150
+> 200
+> 250
+> Memory Size  | t|
+
+Figure 7: Memory utility and growth over episodes on ALFW ORLD . Successful abstractions and useful failure-derived constraints accumulate positive utility, whilst unsupported or stale entries fall below λ and are pruned. 
+
+Confidence gating sensitivity. Figure 8 reports the sensitivity of E VA to the confidence gating threshold κc that determines which trajectory seg-ments receive gradient updates. Performance peaks at κc=0 .6 on both ALFW ORLD (88 .7% )and AppWorld ( 51 .2% TGC). Below this thresh-old, unreliable abstractions propagate noisy gra-dients that destabilise the Perceptor; above it, too many segments are suppressed, and the inner loop is starved of training signal. The curve is rea-sonably flat across [0 .5, 0.7] , which suggests the threshold is not overly sensitive, although the ex-tremes degrade performance substantially ( κc=0 .0:
+
+−10 .7 on ALFWorld; κc=0 .9: −13 .8), confirming that confidence gating plays a meaningful role in training stability. These results suggest that the sequence-likelihood proxy provides a useful gating signal, although it is not a calibrated estimate of structural correctness. 0.0 0.2 0.4 0.6 0.8   
+
+> Confidence Threshold c
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80
+> 90
+> Performance (%)
+> c= 0.6
+> (selected)
+> Effect of Confidence Gating Threshold (Qwen2.5-7B)
+> ALFWorld
+> AppWorld (TGC)
+
+Figure 8: Performance as a function of the confidence gating threshold κc.
+
+Cross-model transfer. Quasi-symbolic abstrac-tions encode reasoning patterns at a semantic level independent of the inducing model’s token-level bi-ases. Figure 9 evaluates whether the episodic mem-ory induced by one backbone (Llama-3-8B) can be reused by a different backbone (Qwen-2.5-7B) without fine-tuning. Across all three benchmarks, the transfer condition approaches the self-induced upper bound, with a residual gap of at most 2.4
+
+points on S CIENCE WORLD , 3.2 on WebShop, and 
+
+4.5 on SW-Shift. The narrowness is notable on SW-Shift, where the transferred abstractions must support adaptation to an environment that the induc-ing model never experienced. The result provides initial evidence that the transferred abstractions re-main useful across model families, although the comparison does not isolate memory provenance from every aspect of the receiver configuration. This portability underlies the frozen-weight E VA-Doc configuration, in which the serialised docu-ment is populated by one agent and consumed by others, and provides the empirical foundation for the shared team procedural memory discussed in the main text. ScienceWorld WebShop SW-Shift    
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Success Rate (%)
+> 62.7 60.4
+> 28.6
+> 75.8
+> 85.0
+> 56.4
+> 78.2
+> 88.2
+> 60.9
+> Cross-Model Transfer (Llama-3 Qwen-2.5)
+> No memory (Qwen)
+> Transferred memory (Llama-3 Qwen-2.5)
+> Full self-induced EVA
+
+Figure 9: Cross-model transfer across benchmarks. An episodic memory induced by Llama-3-8B is applied to Qwen-2.5-7B without tuning. 
+
+Abstraction quality during meta-control calibra-tion. Figure 10 tracks abstraction quality during the prior meta-control calibration phase. The ver-tical line at step ∼80 marks the first scheduled outer-loop update of the Controller. After cali-bration is completed, the resulting Controller is frozen throughout interaction-time adaptation and evaluation. The structural retrieval hit rate (left) and the contradiction rate in the induced abstrac-tions (right) evolve as follows. At initialisation, the hit rate is low ( ∼38% ), because the earliest ab-stractions are induced from a few trajectories and lack the structural diversity required for reliable matching. Following the first scheduled outer-loop update, the contradiction rate drops sharply from 
+
+∼14% to ∼10% within a single interval, whilst the hit rate accelerates. By step 300, the memory reaches a 74% hit rate and a ∼6% contradiction rate, matching the aggregate statistics in Table 9. The crossing pattern illustrates how qη-based prun-ing and outer-loop calibration transform an initially noisy set of candidate abstractions into a reliable procedural store. 0 50 100 150 200 250 300  
+
+> Meta-Calibration Step
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80
+> Retrieval Hit Rate (%)
+> 1st revision
+> Abstraction Quality During Controller Calibration (ALFWorld, Qwen2.5-7B)
+> Retrieval Hit Rate (left) Contradiction Rate (right)
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> 35
+> Contradiction Rate (%)
+
+Figure 10: Abstraction quality during prior Controller calibration on ALFW ORLD .
+
+F Prompt 
+
+Perceptor. The Perceptor maps the interaction context into At = ( Vt, Tt, Ct, Et).Perceptor System Prompt 
+
+Summarise the current interaction, keeping symbolic elements and natural language side by side. GOAL: {task_goal} TRAJECTORY: {trajectory_window} OBSERVATION: {observation} Return exactly four labelled fields. 
+
+V: relevant entities, tools, roles, or states. 
+
+T : observed transitions and candidate next transi-tions supported by the current goal, observation, and active constraints. 
+
+C: preconditions, constraints, and actions to avoid. 
+
+E: progress and outcome signals. Formalise only the relevant predicates and variables, keeping the symbolic form minimal and combined with natural language. Include only information sup-ported by the interaction. Return: V:, T:, C:, E:. 
+
+Controller. The Controller reads smt =[ct, δ t, ν t, ℓ t] and selects one meta-action. Controller System Prompt 
+
+SYSTEM: Select one meta-action from the current control state. CONTROL STATE: confidence ct={conf}; contradic-tion ratio δt={delta}; novelty νt={novelty}; progress 
+
+ℓt={progress}. All values lie in [0 , 1] .ACT: proceed under the current abstraction. ABSTRACT: re-induce the abstraction over an ex-tended trajectory window. RETRIEVE: query memory for structurally compati-ble experience. ROLLBACK: restore the last consistent internal ab-straction and reasoning context. Answer with one token: ACT, ABSTRACT, RETRIEVE, or ROLLBACK. 
+
+Binding (Prior Instantiation). The Binding module grounds retrieved abstractions in the cur-rent observation. Binding System Prompt 
+
+Ground the retrieved abstractions in the current observation, keeping symbolic predicates and natural language together. ACTIVE ABSTRACTION: {active_abstraction} RETRIEVED ABSTRACTIONS: {re-trieved_abstractions} OUTCOME LABELS: {outcome_labels} OBSERVATION: {observation} Map compatible roles, states, and constraints onto entities in the observation, keeping symbolic predicates and natural language together. Retain reusable transitions from successful abstractions. Convert only verifier-attributed or rollback-attributed failing transitions into constraints on actions to avoid; do not treat every transition in an unsuccessful trajectory as a failure cause. Discard incompatible mappings. Return the grounded abstraction eAt, or NONE when no compatible mapping is available. 
+
+Binding validation. The Binding output is parsed against the same typed schema used by the Perceptor. Mappings that reference absent entities, violate active constraints, or fail schema validation are discarded. If no mapping survives validation, 
+
+Bind returns NONE and the Actor receives only the active abstraction At.
+
+Actor (Policy Execution). The Actor generates the next environment action from the active and grounded abstractions. Actor System Prompt 
+
+Generate one goal-directed environment action. GOAL: {task_goal} OBSERVATION: {observation} ACTIVE ABSTRACTION: {active_abstraction} GROUNDED ABSTRACTION: {grounded_abstraction} Follow the active preconditions and constraints. Do not execute transitions marked as actions to avoid. Output exactly one environment action or tool call. EVA on WebShop Task 
+
+1. Task and Product Evidence 
+
+> Product image provided with the dataset record.
+
+Search goal: Find a product matching the query “grocery cookies” .
+
+Selected product: Walkers Shortbread Saltire Shortbread Rounds Tin, Scot-tish Cookies, Biscuits, Gift Box, 120 g. 
+
+Category: Grocery & Gourmet Food → Breads & Bakery → Cookies →
+
+Shortbread. 
+
+Price: $18.95. 
+
+Product identifier: B00EY177C0. 
+
+Available options: None. The item does not require a size, flavour, colour, or quantity-option selection. 
+
+2. Interaction and Task Resolution 
+
+Initial observation. The agent receives the product-search goal and observes the WebShop search interface. 
+
+Perceptor. The Perceptor identifies the central requirement as a product-category match: the target must be a grocery item classified as cookies. It also records that no explicit price limit or product option has been specified. 
+
+Controller decision. The Controller allows the Actor to search for the requested category. After a candidate is retrieved, it requires inspection of the product page before purchase, preventing selection based on the search-result title alone. 
+
+Actor trajectory: 
+
+1. search[grocery cookies] 
+
+2. Inspect the returned candidates. 3. click[Walkers Shortbread Saltire Shortbread Rounds Tin] 
+
+4. Verify that the product belongs to the cookies and shortbread categories, costs $18.95, and requires no option selection. 5. click[Buy Now] 
+
+Resolution. The selected item satisfies the reconstructed goal because it is a grocery product explicitly categorised as cookies and shortbread. No unresolved option or conflicting product attribute remains before purchase. 
+
+3. Abstraction Stored in Memory 
+
+Abstraction type: Success-derived product-selection procedure. 
+
+Goal pattern: Find and purchase a product that matches a requested commercial category. 
+
+Reusable procedure: 
+
+1. Formulate a search query from the requested category. 2. inspect the returned product candidates; 3. open the most relevant product page; 4. verify the title, category, price, and available options; 5. purchase only after all explicit requirements have been checked. 
+
+Constraints: 
+
+• The selected item must match the requested product category. • Category membership must be verified on the product page. • Any required product option must be selected before purchase. • A product must not be purchased when an explicit requirement remains unverified. 
+
+Outcome: The product is selected successfully and the abstraction is stored with a S UCCESS provenance label. 
+
+Possible reuse. For a later request such as “find grocery crackers” , E VA can retrieve this abstraction, replace the target category and product candidate, and preserve the general search–inspect–verify–purchase procedure. 
+
+Table 10: E VA on a WebShop task and the abstraction it stores. The catalogue query serves as the goal; the stored memory keeps a reusable search–verify–purchase procedure without product-specific wording.

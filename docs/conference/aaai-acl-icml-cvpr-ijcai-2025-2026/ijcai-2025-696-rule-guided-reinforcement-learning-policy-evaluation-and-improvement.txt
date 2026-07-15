@@ -1,0 +1,458 @@
+Title: Rule-Guided Reinforcement Learning Policy Evaluation and Improvement
+
+URL Source: https://www.ijcai.org/proceedings/2025/0696.pdf
+
+Published Time: Thu, 18 Sep 2025 13:48:25 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Rule-Guided Reinforcement Learning Policy Evaluation and Improvement 
+
+# Martin Tappler 1 , Ignacio D. Lopez-Miguel 1 , Sebastian Tschiatschek 2 and Ezio Bartocci 11TU Wien 
+
+> 2
+
+# University of Vienna 
+
+# {martin.tappler, ignacio.lopez, ezio.bartocci }@tuwien.ac.at, sebastian.tschiatschek@univie.ac.at 
+
+# Abstract 
+
+We consider the challenging problem of using domain knowledge to improve deep reinforce-ment learning policies. To this end, we propose LEGIBLE , a novel approach, following a multi-step process, which starts by mining rules from a deep RL policy, constituting a partially symbolic repre-sentation. These rules describe which decisions the RL policy makes and which it avoids making. In the second step, we generalize the mined rules us-ing domain knowledge expressed as metamorphic relations. We adapt these relations from software testing to RL to specify expected changes of actions in response to changes in observations. The third step is evaluating generalized rules to determine which generalizations improve performance when enforced. These improvements show weaknesses in the policy, where it has not learned the general rules and thus can be improved by rule guidance. LEGIBLE supported by metamorphic relations pro-vides a principled way of expressing and enforcing domain knowledge about RL environments. We show the efficacy of our approach by demonstrat-ing that it effectively finds weaknesses, accompa-nied by explanations of these weaknesses, in eleven RL environments and by showcasing that guiding policy execution with rules improves performance w.r.t. gained reward. 
+
+# 1 Introduction 
+
+Deep reinforcement learning (RL) has shown impressive feats. Starting from deep Q-learning [Mnih et al. , 2015], where a single network architecture successfully played dozens of Atari games, deep RL has moved on to more complex domains and achieved super-human performance in games, like Go [Silver et al. , 2016] and chess [Silver et al. ,2018], and it mastered StarCraft [Oriol Vinyals et al., 2019]. Despite the impressive success in winning strategy games, de-ploying deep RL agents faces challenges in other domains. First, the decision-making of RL agents needs to be more ac-curate, making it hard to trust their decisions. Second, suc-cessful applications are often not the result of RL alone. A thorough analysis of an agent’s behavior may help un-derstand its ”reasoning” – e.g., chess masters found that Al-phaZero highly values king mobility [Nielsen, 2019]. Ex-plainable AI (XAI) methods strive to alleviate the analysis of policies by providing human-understandable explanations of an RL agent’s decision. Relating to the second point, Alp-haZero combines RL with Monte Carlo tree search (MCTS) to better evaluate situations. Thus, it considers the application domain, as MCTS works well for decision-making in board games [Chaslot et al. , 2008]. 
+
+Contributions. We propose poLicy Evaluation GuIded By ruLEs (L EGIBLE ), a rule-based framework to create expla-nations of an RL policy’s decisions and to evaluate and im-prove the RL policy under consideration, supported by do-main knowledge. LEGIBLE comprises three main methods that build upon each other. 1. Mining Rules: We first mine rules that partially represent the policy. These rules are split into positive, denoting action choices, and negative rules, de-noting action avoidance in particular situations. They enable human comprehension of a policy’s decisions and symbolic reasoning and manipulation. 2. Generalizing Rules: We propose an approach to generalize mined rules to other situa-tions through domain knowledge about symmetries and rela-tions known about the environments. Borrowing the concept from software testing, we formalize the generalization via metamorphic relations [Chen et al. , 2018]. 3. Rule-Guided Execution: Finally, we propose to guide the execution of a policy in the RL environment with generalized rules, i.e., enforce the decisions prescribed by rules, which serves two purposes. 3.1. Evaluation: Rule-guided execution helps to identify weaknesses in the policy. If we find that enforcing generalized rules corresponding to a certain rule r improves the RL agent’s performance, we can deduce that the original rule r is likely adequate. However, the policy has not learned to decide adequately in related situations, i.e., we identify a weakness in the policy’s generalization. Additionally, the generalized rules explain the cause of the weakness. 3.2. Pol-icy Improvement: Finally, guiding policy execution with the composition of generalized rules, which the evaluation deemed useful, creates a new policy that improves upon the original policy. We demonstrate these aspects of L EGIBLE 
+
+in experiments with policies trained in six PAC-Man RL en-vironments [DeNero and Klein, 2010] and five environments from Farama’s highway-env [Leurent, 2018]. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 6254
+
+Related Work. Our work is related to explainable RL (XRL), runtime enforcement, and evaluation of RL poli-cies. [Milani et al. , 2024] provide an excellent survey on XRL including a taxonomy and evaluation criteria. Learn-ing rules falls into the most popular taxonomic category of 
+
+feature importance and the subcategory Convert Policy to an Interpretable Format . Although symbolic rules as an inter-pretable format are not popular yet, decision trees which are related to rules are often used [Bewley and Lawry, 2021; Guo and Wei, 2022; Bastani et al. , 2018; Milani et al. ,2022]. Several neuro-symbolic approaches have been pro-posed for RL, where neural networks encode symbolic rela-tions and logical rules. Examples include neural logic ma-chines [Dong et al. , 2019] and neural logic RL [Jiang and Luo, 2019], and relational approaches [Delfosse et al. , 2023; Zambaldi et al. , 2018] that enable the extraction of symbolic information and rules from learned policies. In contrast to these works, we consider standard architectures used in deep RL and extract partial rule-based representations of learned policies. Moreover, we demonstrate the application of rules beyond explanations for evaluation and runtime enforcement. There are two main strands of work in RL policy evalu-ation: off-policy evaluation (OPE) and testing of RL poli-cies. OPE [Uehara et al. , 2022; Chandak et al. , 2021; Jiang and Li, 2016] estimates the expected performance of a new policy using existing data from a previously learned policy. Since we generate new data, our approach to evalu-ation is closer to RL testing [Tappler et al. , 2022; Tappler et al. , 2024b; Tappler et al. , 2024a; Zolfagharian et al. , 2023; Li et al. , 2023; Biagiola and Tonella, 2024], which creates challenging situations to test policies in them. These ap-proaches apply software testing concepts, like search-based testing, to RL. To our knowledge, we are the first to ap-ply metamorphic testing in RL, which is popular for test-ing other machine-learning models [Zhang et al. , 2022; Xie et al. , 2011; Guo et al. , 2020] due to its applicabil-ity when absolute correctness criteria are not available. To test policies, we perform rule-guided execution of policies, which can be considered a type of runtime enforcement [Fal-cone, 2010]. In RL, runtime enforcement has gained pop-ularity in the form of shielding [Alshiekh et al. , 2018; Odriozola-Olalde et al. , 2023], which enforces pre-specified properties like safety. In contrast, we enforce generalizations of learned rules to evaluate these generalizations. 
+
+# 2 Preliminaries 
+
+2.1 Reinforcement Learning 
+
+An RL agent learns a decision-making policy for a task by trial and error. At each step, the agent observes the environ-ment’s state and performs an action, triggering a stochastic state transition. It then receives feedback in the form of a nu-merical value, called reward, telling it how well it is doing, and the new state of the environment. During training, the agent learns how to maximize the cumulative reward it gets. Let ∆( S) denote a probability distribution over a set S.Formally, an agent interacts with a Markov decision process (MDP) M = ⟨S , s 0, A, P, R⟩ consisting of a set of states S,an initial state s0 ∈ S , a set of actions A, a probabilistic tran-sition function P : S × A → ∆( S), and a reward function 
+
+R : S × A × S → ∆( R). The agent’s behavior is character-ized by a policy π : S → ∆( A), defining a distribution over actions to take in given states. Executing a policy π within an environment modeled by an MDP M yields traces of the form 
+
+s0, a 0, r 1, s 1, . . . , a n−1, r n, s n with ri ∼ R (si−1, a i−1, s i),
+
+P(si, a i)( si+1 ) > 0, and π(si)( ai) > 0. Such a finite execu-tion is also called an episode. The agent’s goal is to learn a policy that maximizes the discounted cumulative reward 
+
+R = E(P∞ 
+
+> i=0
+
+γiri+1 ) for a discount factor γ ∈ [0 , 1) .To handle large state spaces, RL algorithms often employ neural networks as function approximators, e.g., for state-action value functions [Mnih et al. , 2015]. Since we mostly focus on extracting symbolic knowledge from policies in this paper, we do not detail the specifics of RL algorithms. 
+
+State-Action Value Function. Q-learning [Watkins and Dayan, 1992] and its deep variants [Mnih et al. , 2015; van Hasselt et al. , 2016] are based on the notion of Q-function, or state-action value function. This function is de-fined as Qπ (s, a ) = E[P∞ 
+
+> i=0
+
+γiri+1 |s0 = s, a 0 = a], i.e., it is the expected return after executing a in state s and then fol-lowing policy π. We focus mainly on Q-learning agents and use the Q-function to identify actions that an agent avoids in a given situation, i.e., actions with low Q-values. 
+
+2.2 Explainable & Interpretable AI 
+
+Explainable AI (XAI) methods create human-understandable explanations of individual decisions or predictions of mod-els that are otherwise not interpretable, like neural networks, while interpretability techniques commonly extract useful in-formation, like interpretable surrogate models, from non-interpretable models [Molnar, 2022]. To enable human com-prehension, explanations commonly focus on the most rel-evant factors leading to a decision, like the most important input features. This working principle makes XAI techniques good candidates for creating abstractions for symbolic AI. We use a model-agnostic XAI technique for explaining individ-ual predictions, called L IME [Ribeiro et al. , 2016], and we use rules as (partial) surrogate models of RL policies. 
+
+LIME . Treating the choice of action a through a policy π
+
+in state s as a classification task, L IME can learn a local in-terpretable surrogate model around s. It samples new data points around s and queries π to learn the surrogate model, which explains what features of s lead to the choice of a and provides weights describing the strength of influence. As we consider states that are vectors containing information about the environment, we use L IME for tabular data. In this case, it samples new values in the neighborhood of numerical fea-tures and values from a training set for categorical features. We use the Python implementation of L IME [Marco Tulio Ribeiro et al., 2021], which provides an explanation for pre-dicting every available class, i.e., for choosing every available action. Several alternatives to L IME exist, like SHAP [Lund-berg and Lee, 2017], but we have chosen L IME as it is rea-sonably fast and showed promising results in experiments. Since it is model-agnostic and works for image and textual data, L IME enables us to easily adapt to changing represen-tations of π and to handle additional types of features. In-terpretability & Rules. RL interpretability is approached Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 6255
+
+1. Learn Rules 2. Generalize Rules 3. Guide Agent with Rules 
+
+interact Traces create Feature Importance -ac(north) :- wall-north(true). -ac(north) :- ghost-dir(north),ghost-dist(low). 
+
+Rules detect 
+
+learn 
+
+> R1.1:-ac(north) :- wall-north(true). R1.2:-ac(south) :-wall-south(true). R1.3:-ac(west) :- wall-west(true). ...
+
+Generalized Rules generalize via MRs 
+
+Runtime Monitor use as 
+
+interact guide 
+
+> sources: RL Agent: generated using ChatGPT, World Map: https://pixabay.com/de/vectors/afrika-asien-erde-europa-globus-1299545/
+
+Figure 1: Overview of the proposed approach 
+
+in different ways, e.g., post-hoc interpretability for a DRL policy π may be achieved by learning a decision tree pol-icy from π through imitation learning [Bastani et al. , 2018]. We learn rule-based representations of policies, which, like decision trees, enable manual comprehension and symbolic reasoning [Apt´ e and Weiss, 1997]. The rules are of the form 
+
+a ← c1, . . . , c n, specifying to take action a if conditions c1 to 
+
+cn hold. We have chosen rules, as they conveniently enable learning partial representation of a policy. For rule learning, we use the algorithm RIPPER [Cohen, 1995], where we treat the selection of actions as a classification task from states to actions. To clearly distinguish between reinforcement learn-ing and rule learning, we refer to the latter as rule mining. 
+
+2.3 Metamorphic Testing 
+
+Metamorphic testing (MT) [Chen et al. , 2018] is a technique for generating test cases and deciding on test verdicts. It is based on metamorphic relations (MRs), which define a rela-tion between a sequence of a program’s inputs and the cor-responding outputs. MRs express the output changes in re-sponse to input changes. Consider, e.g., a program imple-menting the factorial, an MR could be defined as ⟨(n, n +1) , (r, r · (n + 1)) ⟩, where the first pair represents two inputs and the second pair represents two outputs denoting that if 
+
+n! = r then (n + 1)! = r · (n + 1) should hold. Note that MRs do not specify correctness criteria in absolute terms but as relations. This makes MT a popular choice for deciding on test verdicts in machine learning [Zhang et al. , 2022], e.g., in image recognition [Dwarakanath et al. , 2018]. While it is hardly possible to completely characterize a cat, MRs can ex-press properties like if an image shows a cat, then a rotated version of that image still shows a cat . In this paper, we adapt MRs from programs to RL agents, by forming relations over states (inputs to the agent) and actions (outputs of the agent) to express domain knowledge. Unlike in MT, we do not make assumptions about the correctness of specific chosen actions. 
+
+# 3 LEGIBLE 
+
+This section presents an overview of poLicy Evaluation GuIded By ruLEs (L EGIBLE ), our rule-based framework for policy evaluation and improvement, comprising the three main steps depicted in Fig. 1. Step 1 learns symbolic rules that (partially) capture the decision-making of a given deep RL policy. Rules are Horn clauses, where the head specifies an action and the body defines states in which the rule should be applied. We distinguish positive rules, for situations where the policy chooses a certain action, and negative rules describ-ing situations where it avoids a certain action. Rule mining applies two types of criteria: (1) the rules should reflect what features are important to the decisions of the RL policy, and (2) the rules should be accurate and cover as many situations as possible, where we favor accuracy. Hence, mined rules explain which decisions are important and occur often. Step 2 generalizes rules to new situations that are related to the originally covered situations through user-specified relations. For this purpose, we use metamorphic relations (MRs) [Chen et al. , 2018] from software testing, which usu-ally specify how program outputs should change in response to input changes. Likewise, we use them to specify how de-cisions should change in response to a change in the state. MRs generally need to be created manually and they reflect some domain knowledge about the environment, like symme-try constraints, i.e., through Step 2, we provide a method to introduce symbolic domain knowledge into RL. Finally, in Step 3 we apply the generalized rules during ex-ecutions of the RL policy under consideration. Actions pre-scribed by rules generalized from positive rules are enforced while actions of negative generalized rules are blocked. In this way, we determine which rules generalize to improved behavior in the RL environment. Conversely, such improve-ments reveal weaknesses in the RL policy since they show that the policy makes useful decisions in some specific situ-ations but it does not generalize these decisions to all related situations. Hence, Step 3 provides a way to evaluate RL poli-cies and a basis for policy improvements by enforcing sets of generalized rules that influence behavior positively. 
+
+Setting. For the remainder of this paper, let π be the greedy policy of a Q-learning-based agent and Q : S × A → R be its Q-function. A state s is a vector in Rn, where n is the number of features, fi for i ∈ [1 ..n ] denotes the ith feature, and f si
+
+denotes its value in s. To enable rule learning, we consider environments with a discrete action space and discretize the state space by defining intervals for every feature separately. To simplify the presentation, we write f si = k to denote f si ∈
+
+[li,k , u i,k ] where [li,k , u i,k ] is the kth interval for feature i.
+
+Running Example. Figure 2 shows a small PAC-Man envi-ronment from [DeNero and Klein, 2010], which serves as a running example. The agent can move in the four cardinal directions or do nothing at every time step. Its goal is to eat all pellets (small dots). Colliding with ghosts terminates an episode unless they are vincible, which happens for a fixed amount of time after the agent eats a capsule (large dot). The observable states include information on the location of walls, Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+6256 Figure 2: Small PAC-Man environment 
+
+the distance to ghosts, capsules, and pellets, the direction to-wards these objects, and other data. For efficient learning, we use a one-hot encoding for categorical features, e.g., features 
+
+9 to 12 describe the direction toward the closest pellet, where 
+
+f s 
+
+> 9
+
+= 1 means that the closest pellet is north. The agent receives a reward of 10 for eating a pellet, 200 
+
+for eating a ghost (collision when vincible), 500 for complet-ing the level, −500 for colliding with an invincible ghost, and 
+
+−1 every time step to encourage fast completion. 
+
+# 4 Step 1: Rule Mining 
+
+To create training data for rule mining, we execute the agent in its environment for nrule episodes to sample traces, i.e., state-action-reward sequences. From these traces, we collect all observed state-action pairs (s, a ) ∈ S × A in a multiset E
+
+to which we refer as experiences. We treat rule mining as a classification problem from states to actions based on training data E, where we aim to learn rules that (1) represent what is important to the agent’s decisions and that (2) are accurate and have high coverage. In the following, we detail the form of rules we consider and how we learn them. 
+
+Rules. A rule ρ is of the form: 
+
+ρ = ⊗action (a) ← ^
+
+> i∈I
+
+fi = vi, where (1) 
+
+⊗ ∈ { +, −} is the rule polarity, and I ⊆ [1 ..n ] is a set of (feature) indices. We refer to the conjunction of conditions as the rule body, denoted body (ρ), and to the action consequent as the rule head. Given a state s which satisfies V 
+
+> i∈I
+
+vi = f si ,we say that ρ triggers in s, denoted s |= ρ. If ⊗ = −, ρ is a negative rule, denoting action a is avoided if s |= ρ. Apositive rule with ⊗ = + denotes that a should be taken. 
+
+Feature Importance. To determine which features are im-portant to the policy’s decision, we select nf eat experiences from E and apply L IME to generate explanations for the de-cisions of π. The explanations quantify the importance of a feature fi to perform or not perform an action a. For each fi,we compute the sum of importance values from the nf eat ex-planations, which we denote by imp (⊗, a, f i), representing the importance of feature fi to take or avoid a.
+
+Mining Rules. We apply the rule learning algorithm RIPPER [Cohen, 1995] for every combination of action and rule polarity individually. This approach enables more effec-tive mining of negative rules compared to posing rule mining as a multi-class classification problem for all actions. Hence, we select two datasets from E for every action-polarity com-bination, which rules shall distinguish: the inclusion dataset 
+
+inc (a, ⊗) containing positive examples and the exclusion dataset exc (a, ⊗). To account for feature importance, we adapt R IPPER ’s rule growing. Instead of solely targeting coverage by optimizing FOIL’s information gain during rule 
+
+North 
+
+fr 
+
+> s2
+> s1
+
+East 
+
+# ( () ), ,       
+
+> Figure 3: State-action pairs related by fr =⟨0,2,62 ,64 ,=⟩.
+
+growing, we maximize the product of FOIL’s information gain and feature importance imp (⊗, a, f i).The inclusion dataset inc (a, +) for mining positive rules contains all (s, a ) from E, i.e., experience matching action 
+
+a, and the exclusion dataset contains all (s, a ′) from E s.t. 
+
+a′̸ = a. To mine negative rules, we add all (s, a ′) where 
+
+a′ = arg min a Q(s, a ) in inc (a, +) and we add all (s, a ) to 
+
+exc (a, −). Following the rule mining through R IPPER , we filter rules by imposing bounds on minimal accuracy and cov-erage. We evaluate the accuracy of a rule by checking if it agrees with the experiences from a validation set. Coverage refers to the ratio of times that a rule triggers, which is a com-mon optimization criterion of rule learning algorithms. 
+
+Running Example. In the PAC-Man environment, we learn rules, such as ρ1 = −action (0) ← f62 = 0 and ρ2 =+action (0) ← f9 = 1 ∧ f50 = 1 ∧ f62 = 1 ∧ f65 = 1 .Both predicate on action 0, i.e., going north. Rule ρ1 says that PAC-Man avoids trying to go north if there is a wall, as 
+
+f62 = 0 means that going north is not possible. The second rule ρ2 says that the agent learned to go north if there is a pel-let in the north direction ( f9 = 1 ), Ghost 2 is west ( f50 = 1 ), and there is no wall to the north ( f62 = 1 ) and west ( f65 = 1) .
+
+# 5 Step 2: Rule Generalization 
+
+The rules provide insights into decisions that the policy learned to be beneficial. The intuition behind rule generaliza-tion is that often there are symmetries in the environment and the agent may have learned how to act in one situation, but not in corresponding symmetrical situations. More generally, situations are often related through relations that can be ex-pressed symbolically. Borrowing the concept from software testing, we refer to these symbolic relations as metamorphic relations (MRs). We define MRs for RL based on feature re-lations that relate actions and individual features of states. 
+
+Definition 1. A feature relation fr is a tuple ⟨a, a ′, i, j, R⟩ 
+
+with R ⊆ R × R describing a relation between features i and 
+
+j in state-action pairs. Two state-action pairs (s1, a 1) and 
+
+(s2, a 2) are feature-related by fr denoted (s1, a 1) fr (s2, a 2)
+
+iff a1 = a∧a2 = a′ ∧(f s1 
+
+> i
+
+, f s2 
+
+> j
+
+) ∈ R . A metamorphic relation 
+
+mr for RL is a set of feature relations defined on the same actions a and a′. Given sa 1 = ( s1, a 1) and sa 2 = ( s2, a 2),we define sa 1 mr sa 2 iff sa 1 fr sa 2 for all fr ∈ mr , i.e., an MR relates multiple pairs of features of state-action pairs. 
+
+Running Example. Figure 3 shows two PAC-Man state-action pairs related by ⟨0, 2, 62 , 64 , =⟩, where = simply de-notes the equality relation. On the left, PAC-Man goes north action with action 0 and there is no wall to the north, repre-sented by f s1 
+
+> 62
+
+= 1 . On the right, PAC-Man goes east with action 2 and there is no wall to the east f s2 
+
+> 64
+
+= 1 , i.e., we have 
+
+f s1 
+
+> 62
+
+= f s2 
+
+> 64
+
+satisfying the relation from fr .Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 6257
+
+Algorithm 1 Policy evaluation guided by Rules                                                                       
+
+> Input: Q-function Q, set of gen. rules G, # eval. episodes n
+> Output: Average Cumulative Reward 1: Rews ← ⟨⟩
+> 2: for i←1to ndo
+> 3: s←RESET (), rew ←0
+> 4: while snot terminal do
+> 5: Gt← { (action (r), polarity (r)) |r∈G, s |=r}
+> 6: if |{ (a, +) ∈Gt}| = 1 then
+> 7: act ←a
+> 8: else
+> 9: q←Q(s, ·)
+> 10: q(s, a )← −∞ for (a, −)∈Gt
+> 11: act ←arg max aq(s, a )
+> 12: s, r ←STEP (s, act ),rew ←rew +r
+> 13: APPEND (Rews, rew )
+> 14: return mean (Rews ),stderr (Rews )
+
+We define MRs based on feature relations to enable con-venient, compositional definitions and extend them to rules as follows. Let fr = ⟨a, a ′, j, k, R⟩ , ρ1 = ⊗1action (a1) ←V 
+
+> i∈I1
+
+fi = vi1, and ρ2 = ⊗2action (a2) ← V 
+
+> i∈I2
+
+fi = vi2:
+
+ρ1 fr ρ2 iff ⊗1 = ⊗2, a1 = a, a2 = a′, and either fj =
+
+x ∈ body (ρ1) and fk = y ∈ body (ρ2) such that (x, y ) ∈ R 
+
+or j / ∈ I1 and k / ∈ I2. Rule bodies must either include facts satisfying the relation R, or they should not predicate on the respective features. Analogously to states, we extend MRs to rules denoted by ρ1 mr ρ2. Through sets of MRs M , we automatically generalize each positive and negative rule ρj to a set of positive or negative rules given by the fixed point of 
+
+Mgen (ρj ) = {ρj } ∪ S{Mgen (ρ) | ρj mr ρ, mr ∈ M }.
+
+Running Example. We illustrate rule generalization with rule ρ1 = −action (0) ← f62 = 0 and feature relation 
+
+fr = ⟨0, 2, 62 , 64 , =⟩ from above. An MR mr = {fr } in-cluding only fr describes a 90-degree clockwise rotation of the action and the only relevant feature from north to east. Action 0 and 2 describe going north and east, respectively. Features 62 and 64 indicate the absence of a wall to the north and east, respectively, e.g., f64 = 0 means that there is a wall to the east. Hence, if ρ2 = −action (2) ← f64 =0 then ρ1 mr ρ2, because ρ1 fr ρ2, which holds because 
+
+polarity (ρ1) = polarity (ρ2), head (ρ1) = 0 , head (ρ2) = 2, and f62 = 0 ∈ body (ρ1), f64 = 0 ∈ body (ρ2) with 0 = 0 .The rule ρ2 can be automatically generated and states to not go east if there is a wall. Enforcing it may improve perfor-mance if the agent has not learned to generalize from ρ1 to 
+
+ρ2, because trying to go into a wall results in a reward of −1
+
+as the agent stays in its location in such a case. 
+
+# 6 Step 3: Guiding Agents with Rules 
+
+To evaluate π, we propose to first execute π without rule guid-ance and then guide π with each rule set Mgen (ρj ) separately for a set M of MRs. By comparing the gained cumulative reward, we determine which generalized rules improve per-formance and thus reveal weaknesses of π.Algorithm 1 monitors the execution of π for n episodes and enforces rules if they trigger. It assumes that the environment provides R ESET and S TEP operations, which are commonly part of the interface to RL environments, like the Gymnasium API [Towers et al. , 2024]. After resetting the environment to start an episode, in every step, Line 5 checks which rules trig-ger. If a single positive rule triggers (Line 6), we enforce it. Otherwise – there is no positive rule or a conflict between positive rules – we disable all actions of negative rules in Line 10 by setting their Q-values to negative infinity. After that, we choose the action with the highest Q-value or a ran-dom action if all actions have been disabled. Furthermore, we could add additional randomness to the action choices. Finally, Algorithm 1 returns the average cumulative reward and the corresponding standard error. While generalization does not change rule polarity, Algorithm 1 supports combin-ing rules generalized from rules with different polarity. 
+
+# 7 Experiments 
+
+This section presents experiments on the application of learned and generalized rules. First, we show how gener-alized rules help detect weaknesses in RL policies through rule-guided execution and how rules can explain the identi-fied weaknesses. After that, we demonstrate the RL policy improvement through rule-guided execution. 
+
+Setup and Environment. All experiments are based on RL policies trained in six PAC-Man levels [DeNero and Klein, 2010] and five highway-env [Leurent, 2018] en-vironments using stable-baselines3 [Raffin et al. , 2021]. The PAC-Man levels differ in size (small, medium, and original) and the presence of capsules. We trained DQN [Mnih et al. ,2015] policies for 2.5 · 10 6 steps in the small and medium PAC-Man environments with 69 -dimensional states and for 
+
+5 · 10 6 steps in the original-sized environments with 117 -dimensional states. In highway-env , we trained DQN policies for 5 · 10 5 steps to navigate in driving scenarios, like merging onto a highway. We configured highway-env to create observations relative to the ego vehicle, comprising 7
+
+properties of the ten closest vehicles, like their relative po-sitions. Every training run is repeated five times and the resulting policies provide the basis for the experiments be-low. Code and data from the experiments are available at https://doi.org/10.6084/m9.figshare.28569017. We mine rules for all environments using the same setup, except for the discretization of states. In the PAC-Man en-vironments, we use the decile discretization provided by LIME [Marco Tulio Ribeiro et al., 2021], which discretizes each numerical feature into intervals corresponding to deciles calculated from the data. Categorical features, like cardi-nal directions to the closest food, are left unchanged. The 
+
+highway-env environments do not include categorical fea-tures and there we normalize and discretize each feature into ten intervals. For both types of environments, we sample 
+
+nrule = 600 episodes to generate experiences for rule mining and impose a minimal accuracy of 0.9 and a minimal cover-age of 0.01 on rules, discarding all other rules. For the remainder of this section, let π denote a trained policy, R be a set of rules learned from π, and M be a set of MRs. The MRs for PAC-Man encode 90-degree clock-wise turns from every cardinal direction, i.e., from every rule, we generate four rules, including the original rule. The Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)                             
+
+> 6258 Experiment Detected Weaknesses # Evaluations RT RR MT (Ours) small 0.00 0.01 0.13 105 .4
+> small-nc 0.01 0.03 0.11 85 .0
+> medium 0.01 0.04 0.08 117 .6
+> medium-nc 0.01 0.00 0.09 109 .6
+> original 0.00 0.00 0.16 121 .6
+> original-nc 0.02 0.03 0.14 108 .8
+> Table 1: Detected weaknesses in six PAC-Man levels.
+
+highway-env MRs generalize rules to other vehicles oc-curring in observations, i.e., from a rule with conditions on the first vehicle, we generate rules conditioned on the other vehicles. Furthermore, the MRs encode symmetry con-straints, e.g. generalizing rules for changing to the left lane to rules for changing to the right lane and vice versa. 
+
+7.1 Identifying Weaknesses 
+
+With the first set of experiments, we approach the research question RQ1: Does rule-guided execution effectively reveal weaknesses in a trained policy? We consider policy weak-nesses as decisions where enforcing a rule improves perfor-mance, i.e., rule-guided execution detects decisions that could be improved. As a benchmark for performance, we compare against the average cumulative reward cr π gained by π with-out rule guidance. To identify weaknesses in π, we propose to generalize each rule r ∈ R to Rg = Mgen (r) individu-ally and guide the execution of π with Rg using Algorithm 1. We perform n = 100 evaluation episodes in highway-env 
+
+and n = 250 evaluation episodes in the PAC-Man environ-ments. Rg reveals a weakness if the cumulative rewards from rule-guided execution are significantly larger than those of unguided execution, which we determine using a Welch test [Welch, 1947] and a p-value threshold of 0.05 .
+
+Baselines. We are the first to propose MT for RL, therefore we compare MT to two random baselines. The first base-line, random testing (RT) , blocks or enforces randomly cho-sen actions during policy execution in k percent of the states. We randomly assign each of the k policy changes to approx-imately one percent of the state space, such that if we visit a state twice the same change happens. In the experiments, we performed 100 RT evaluations where we only blocked ac-tions and 100 evaluations where only enforced actions. We set k = 3 since we found that low values are more effective at detecting weaknesses. Each evaluation compares against the average cumulative reward cr π from unguided execution. Additionally, we use another random baseline, which we call random rules (RR). For RR, we randomly generate rule sets instead of generating them via MRs and execute Algo-rithm 1, i.e., RR serves as an ablation study to study the impact of MRs. The random generation uses information ex-tracted from mined rules by creating rules with the same dis-tribution of rule lengths and rule polarities, and by using the feature values found in the mined rules. Additionally, rule sets created for RR are of similar size as the rule sets created using MRs. Hence, the random rules benefit from informa-tion extracted from policies, but not from domain knowledge. 
+
+Results. Tables 1 and 2 show evaluation results for the                           
+
+> Experiment Detected Weaknesses # Evaluations RT RR MT (Ours) highway 0.02 0.14 0.05 90 .8
+> highway-fast 0.07 0.20 0.12 119 .6
+> merge 0.09 0.24 0.16 109 .6
+> intersection 0.06 0.00 0.12 20 .8
+> roundabout 0.01 0.06 0.11 33 .6
+> Table 2: Detected weaknesses in highway-env environments.
+
+five base policies trained in each environment. For each RT, RR, and rule-guided execution supported by MRs, denoted as metamorphic testing (MT), the tables show the mean ra-tio of evaluations that detected weaknesses from five repe-titions. The tables additionally show the number of evalu-ations for RR and MT (for RT they are fixed to two times 
+
+100 ), i.e., the number of generalized rule sets Rg . We can see that on average 5 to 24 percent of the MT evaluations reveal weaknesses. This is consistently higher than RT, es-pecially in PAC-Man environments, where RT rarely reveals weaknesses. In contrast, RR reveals more weaknesses than MT in three cases where it substantially lees weaknesses in the other eight environments. We can answer RQ1 posi-tively, as rule-guided execution consistently revealed weak-nesses in the examined policies, both through RR and MT. We can further deduce that domain knowledge helps since MT performed better overall. In the cases, where RR per-formed better than MT, either our MRs may not optimally represent relations that hold in the environment or the pol-icy under test generalizes well, but includes other issues that RR detects. MT further improves upon RR as it facilitates explanations, as the rules within a rule set are related. If a rule set Rg reveals weakness, we know that the cause is linked to the original rule from which Rg was generated and to the MRs used for generation. Beyond that, the good performance of RR suggests that search-based approaches, which are popular in RL testing [Zolfagharian et al. , 2023; Tappler et al. , 2022], might be viable for rule generation. 
+
+Explaining Weaknesses. We illustrate explaining policy weaknesses with two cases from the PAC-Man levels small 
+
+and original with capsules. In both cases, the generalization of the following simple rules increases performance: 
+
+−action (0) ← f9 = 0 ∧ f62 = 0 (small) 
+
+−action (0) ← f9 = 0 ∧ f110 = 0 (original) The feature indices differ among the environments, but both rules can be interpreted as ” don’t go north if there is no food and there is a wall to the north ”. Generalizations to other di-rections are safe to apply, yet the policies have not picked up on them, thus enforcing them improves performance. How-ever, we found that the policies have learned stronger versions of these rules, e.g., in the environment original , we learned related rules with additional constraints: −action (1) ←
+
+f2 = 0 ∧ f9 = 0 ∧ f10 = 0 ∧ f11 = 1 ∧ f88 = 0 ∧ f111 = 0 
+
+and −action (3) ← f5 = 0 ∧ f10 = 1 ∧ f12 = 0 ∧ f113 = 0 .Hence, rule-guided execution points to situations where the policy learned suboptimal decisions. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 6259
+
+Algorithm 2 Greedy rule selection for policy improvement.                                                            
+
+> 1: cr max ←mean cumulative reward of π
+> 2: RT ← ∅
+> 3: for ρ∈Rdo
+> 4: if Alg. 1 with G←Mgen (ρ) = Rgreveals weakness then
+> 5: RT ′←RT ∪Rg
+> 6: cr, stderr ←Algorithm 1 with G←RT ′
+> 7: if cr > cr max then
+> 8: RT ←RT ′,cr max ←cr
+> Experiment Base Rule-Guided (Ours) Ext. Training RS small 1023 .6
+> ±43 .7
+> 1268 .9
+> ±20 .5
+> 1018 .4
+> ±14 .04.6
+> small-nc 450 .6
+> ±36 .5
+> 635 .7
+> ±16 .8
+> 447 .9
+> ±11 .64.4
+> medium 1339 .6
+> ±49 .0
+> 1601 .1
+> ±22 .0
+> 1371 .4
+> ±14 .94.4
+> medium-nc 840 .9
+> ±38 .6
+> 1050 .2
+> ±16 .9
+> 789 .4
+> ±12 .43.8
+> original 1590 .5
+> ±51 .5
+> 2013 .6
+> ±28 .8
+> 1552 .4
+> ±16 .34.2
+> original-nc 784 .8
+> ±48 .3
+> 1194 .8
+> ±28 .1
+> 796 .4
+> ±15 .03.4
+> Table 3: Average cumulative reward and standard error for non-guided and rule-guided execution of PAC-Man.
+
+7.2 Policy Improvements 
+
+The remaining experiments focus on policy improvement through rule-guided execution, where we tackle Research Question RQ2: Can guidance with compositions of rule sets improve RL policies? For this purpose, we assume to have al-ready evaluated π with all generated sets of rules Rg individ-ually. To improve π, we propose to compose rule sets (RS) that reveal weaknesses without overconstraining the policy. Below, we present experiments, where we first greedily se-lected rule compositions RT through Algorithm 2. Table 3 and Table 4 show the mean cumulative reward of non-rule-guided execution and execution guided by RT us-ing Algorithm 1, again averaged over five repetitions. The tables also show the corresponding standard error of the es-timate and how many rule sets have been composed to cre-ate RT . We performed the non-rule-guided execution with the base policies from which we mined rules and with poli-cies trained twice as long, e.g., policies for highway-env 
+
+were trained for 10 6 steps. We can see that rule-guided execu-tion always improved the base reward substantially, except in the intersection environment, where the improvement is only marginal on average. In other cases, we see larger improve-ments, e.g., 274 percent in the highway-fast environment. We can further see that extended training did not improve the re-ward in many environments (PAC-Man) and only slightly in others ( highway-env ). In all cases, rule-guided execution yields larger improvements, thus it provides value that cannot be gained from more training. Moreover, the greedy selec-tion of rules always composed multiple rule sets to create RT 
+
+to improve the policy under consideration. Hence, we can answer RQ2 positively.                 
+
+> Experiment Base Rule-Guided (Ours) Ext. Training RS highway 41 .7
+> ±3.3
+> 110 .4
+> ±9.7
+> 68 .9
+> ±5.15.4
+> highway-fast 48 .1
+> ±4.5
+> 193 .8
+> ±14 .1
+> 74 .3
+> ±5.23.6
+> merge 23 .8
+> ±0.3
+> 28 .7
+> ±0.1
+> 25 .6
+> ±0.32.8
+> intersection 11 .5
+> ±0.7
+> 12 .7
+> ±0.5
+> 11 .7
+> ±0.52.0
+> roundabout 361 .0
+> ±45 .4
+> 777 .2
+> ±21 .4
+> 499 .0
+> ±32 .94.6
+> Table 4: Average cumulative reward and standard error for non-guided and rule-guided execution of policies in highway-env .
+
+# 8 Conclusion 
+
+We propose L EGIBLE , a rule-based framework for evaluat-ing, explaining, and improving RL policies. After learning rules from the most important policy decisions, we use high-level domain knowledge to generalize learned rules to other related situations. For this purpose, we leverage MRs [Chen 
+
+et al. , 2018] to express relations like symmetries that hold in the considered environment. By executing policies guided by generalized rules, we identify weaknesses, where a policy learned to behave adequately in a particular situation, but not in related situations. That is, we find cases where RL poli-cies fail to generalize. In these cases, the generalized rules and applied MRs explain the found weaknesses. LEGIBLE 
+
+provides a basis for policy improvement, by enforcing sets of generalized rules, which were found to improve perfor-mance. In experiments with deep RL policies trained in six PAC-Man environments [DeNero and Klein, 2010] and in five 
+
+highway-env [Leurent, 2018] environments, L EGIBLE re-vealed weaknesses in all policies, which are explained by the learned and generalized rules. Rule-guided execution im-proved the average cumulative reward by up to 273% .LEGIBLE enables the integration of domain knowledge into RL policies and our evaluation approach is the first meta-morphic testing (MT) approach for RL. In contrast to exist-ing work on RL testing [Tappler et al. , 2022; Zolfagharian et al. , 2023; Li et al. , 2023; Biagiola and Tonella, 2024], which brings the agent into challenging environment states, we take an agent-centric view, evaluating changes in the agent’s de-cisions. By generalizing decisions learned from a policy, we ensure that generalized decisions are learnable. In future work, we will investigate how to integrate other types of domain knowledge, e.g., by expressing temporal dependencies via restraining bolts [Giacomo et al. , 2020]. As our work is complementary to existing RL testing ap-proaches, we will combine MT with approaches that focus on the environment, like search-based testing [Tappler et al. ,2022; Zolfagharian et al. , 2023; Biagiola and Tonella, 2024]. Finally, we will work on a seamless integration of generalized rules into RL policies. Specifically, we are exploring how to integrate improvements resulting from rules into DRL poli-cies, without needing to enforce them explicitly. To this end, we consider transfer learning [Torrey and Shavlik, 2010] and imitation learning as a basis [Hussein et al. , 2017]. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 6260
+
+# Acknowledgments 
+
+The project leading to this application has received funding from the European Union’s Horizon 2020 research and in-novation programme under grant agreement No 101034440. This work has further been funded by the Vienna Sci-ence and Technology Fund (WWTF) [10.47379/ICT22-023], [10.47379/ICT19018], [10.47379/ICT20058]. 
+
+# References 
+
+[Alshiekh et al. , 2018] Mohammed Alshiekh, Roderick Bloem, R¨ udiger Ehlers, Bettina K¨ onighofer, Scott Niekum, and Ufuk Topcu. Safe reinforcement learning via shielding. In AAAI , pages 2669–2678. AAAI Press, 2018. [Apt´ e and Weiss, 1997] Chidanand Apt´ e and Sholom M. Weiss. Data mining with decision trees and decision rules. 
+
+Future Gener. Comput. Syst. , 13(2-3):197–210, 1997. [Bastani et al. , 2018] Osbert Bastani, Yewen Pu, and Ar-mando Solar-Lezama. Verifiable reinforcement learning via policy extraction. In NeurIPS , pages 2499–2509, 2018. [Bewley and Lawry, 2021] Tom Bewley and Jonathan Lawry. Tripletree: A versatile interpretable representation of black box agents and their environments. In AAAI ,pages 11415–11422. AAAI Press, 2021. [Biagiola and Tonella, 2024] Matteo Biagiola and Paolo Tonella. Testing of deep reinforcement learning agents with surrogate models. ACM Trans. Softw. Eng. Methodol. ,33(3):73:1–73:33, 2024. [Chandak et al. , 2021] Yash Chandak, Scott Niekum, Bruno C. da Silva, Erik G. Learned-Miller, Emma Brunskill, and Philip S. Thomas. Universal off-policy evaluation. In NeurIPS , pages 27475–27490, 2021. [Chaslot et al. , 2008] Guillaume Chaslot, Sander Bakkes, Istvan Szita, and Pieter Spronck. Monte-carlo tree search: A new framework for game AI. In AIIDE . The AAAI Press, 2008. [Chen et al. , 2018] Tsong Yueh Chen, Fei-Ching Kuo, Huai Liu, Pak-Lok Poon, Dave Towey, T. H. Tse, and Zhi Quan Zhou. Metamorphic testing: A review of challenges and opportunities. ACM Comput. Surv. , 51(1):4:1–4:27, 2018. [Cohen, 1995] William W. Cohen. Fast effective rule induc-tion. In ICML , pages 115–123. Morgan Kaufmann, 1995. [Delfosse et al. , 2023] Quentin Delfosse, Hikaru Shindo, Devendra Singh Dhami, and Kristian Kersting. In-terpretable and explainable logical policies via neurally guided symbolic abstraction. In NeurIPS , 2023. [DeNero and Klein, 2010] John DeNero and Dan Klein. Teaching introductory artificial intelligence with Pac-Man. 
+
+Proceedings of the AAAI Conference on Artificial Intelli-gence , 24(3):1885–1889, July 2010. [Dong et al. , 2019] Honghua Dong, Jiayuan Mao, Tian Lin, Chong Wang, Lihong Li, and Denny Zhou. Neural logic machines. In ICLR . OpenReview.net, 2019. [Dwarakanath et al. , 2018] Anurag Dwarakanath, Manish Ahuja, Samarth Sikand, Raghotham M. Rao, R. P. Ja-gadeesh Chandra Bose, Neville Dubash, and Sanjay Pod-der. Identifying implementation bugs in machine learning based image classifiers using metamorphic testing. In IS-STA , pages 118–128. ACM, 2018. [Falcone, 2010] Yli` es Falcone. You should better enforce than verify. In RV , volume 6418 of LNCS , pages 89–105. Springer, 2010. [Giacomo et al. , 2020] Giuseppe De Giacomo, Luca Iocchi, Marco Favorito, and Fabio Patrizi. Restraining bolts for reinforcement learning agents. In AAAI , pages 13659– 13662. AAAI Press, 2020. [Guo and Wei, 2022] Wei Guo and Peng Wei. Explainable deep reinforcement learning for aircraft separation assur-ance. In DASC , pages 1–10, 2022. [Guo et al. , 2020] Qianyu Guo, Xiaofei Xie, Yi Li, Xiaoyu Zhang, Yang Liu, Xiaohong Li, and Chao Shen. Audee: Automated testing for deep learning frameworks. In ASE ,pages 486–498. IEEE, 2020. [Hussein et al. , 2017] Ahmed Hussein, Mohamed Medhat Gaber, Eyad Elyan, and Chrisina Jayne. Imitation learn-ing: A survey of learning methods. ACM Comput. Surv. ,50(2):21:1–21:35, 2017. [Jiang and Li, 2016] Nan Jiang and Lihong Li. Doubly ro-bust off-policy value evaluation for reinforcement learn-ing. In ICML , volume 48 of JMLR Workshop and Confer-ence Proceedings , pages 652–661. JMLR.org, 2016. [Jiang and Luo, 2019] Zhengyao Jiang and Shan Luo. Neu-ral logic reinforcement learning. In ICML , volume 97 of 
+
+Proceedings of Machine Learning Research , pages 3110– 3119. PMLR, 2019. [Leurent, 2018] Edouard Leurent. An environment for au-tonomous driving decision-making. https://github.com/ eleurent/highway-env, 2018. [Li et al. , 2023] Zhuo Li, Xiongfei Wu, Derui Zhu, Mingfei Cheng, Siyuan Chen, Fuyuan Zhang, Xiaofei Xie, Lei Ma, and Jianjun Zhao. Generative model-based testing on decision-making policies. In ASE , pages 243–254. IEEE, 2023. [Lundberg and Lee, 2017] Scott M. Lundberg and Su-In Lee. A unified approach to interpreting model predictions. In NeurIPS , pages 4765–4774, 2017. [Marco Tulio Ribeiro et al., 2021] Marco Tulio Ribeiro et al. Python implementation of LIME, 2021. Available at GitHub: https://github.com/marcotcr/lime. [Milani et al. , 2022] Stephanie Milani, Zhicheng Zhang, Nicholay Topin, Zheyuan Ryan Shi, Charles A. Kamhoua, Evangelos E. Papalexakis, and Fei Fang. MAVIPER: learning decision tree policies for interpretable multi-agent reinforcement learning. In ECML PKDD , volume 13716 of LNCS , pages 251–266. Springer, 2022. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 6261
+
+[Milani et al. , 2024] Stephanie Milani, Nicholay Topin, Manuela Veloso, and Fei Fang. Explainable reinforcement learning: A survey and comparative review. ACM Comput. Surv. , 56(7):168:1–168:36, 2024. [Mnih et al. , 2015] Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei A. Rusu, Joel Veness, Marc G. Belle-mare, Alex Graves, Martin A. Riedmiller, Andreas Fid-jeland, Georg Ostrovski, Stig Petersen, Charles Beattie, Amir Sadik, Ioannis Antonoglou, Helen King, Dharshan Kumaran, Daan Wierstra, Shane Legg, and Demis Has-sabis. Human-level control through deep reinforcement learning. Nat. , 518(7540):529–533, 2015. [Molnar, 2022] Christoph Molnar. Interpretable Machine Learning . 2 edition, 2022. [Nielsen, 2019] Peter Heine Nielsen. The exciting im-pact of a game changer: When Magnus met AlphaZero, 2019. Appeared in New in Chess and published online at https://www.newinchess.com/media/wysiwyg/product pdf/872.pdf. [Odriozola-Olalde et al. , 2023] Haritz Odriozola-Olalde, Maider Zamalloa, and Nestor Arana-Arexolaleiba. Shielded reinforcement learning: A review of reactive methods for safe learning. In SII , pages 1–8. IEEE, 2023. [Oriol Vinyals et al., 2019] Oriol Vinyals et al. Grandmaster level in StarCraft II using multi-agent reinforcement learn-ing. Nat. , 575(7782):350–354, 2019. [Raffin et al. , 2021] Antonin Raffin, Ashley Hill, Adam Gleave, Anssi Kanervisto, Maximilian Ernestus, and Noah Dormann. Stable-baselines3: Reliable reinforcement learning implementations. Journal of Machine Learning Research , 22(268):1–8, 2021. [Ribeiro et al. , 2016] Marco T´ ulio Ribeiro, Sameer Singh, and Carlos Guestrin. ”Why should I trust you?”: Explain-ing the predictions of any classifier. In SIGKDD , pages 1135–1144. ACM, 2016. [Silver et al. , 2016] David Silver, Aja Huang, Chris J. Mad-dison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Ve-davyas Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy P. Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, and Demis Hassabis. Mas-tering the game of Go with deep neural networks and tree search. Nat. , 529(7587):484–489, 2016. [Silver et al. , 2018] David Silver, Thomas Hubert, Julian Schrittwieser, Ioannis Antonoglou, Matthew Lai, Arthur Guez, Marc Lanctot, Laurent Sifre, Dharshan Kumaran, Thore Graepel, Timothy Lillicrap, Karen Simonyan, and Demis Hassabis. A general reinforcement learning algo-rithm that masters chess, shogi, and Go through self-play. 
+
+Science , 362(6419):1140–1144, 2018. [Tappler et al. , 2022] Martin Tappler, Filip Cano C´ ordoba, Bernhard K. Aichernig, and Bettina K¨ onighofer. Search-based testing of reinforcement learning. In IJCAI , pages 503–510. ijcai.org, 2022. [Tappler et al. , 2024a] Martin Tappler, Edi Muskardin, Bern-hard K. Aichernig, and Bettina K¨ onighofer. Learning en-vironment models with continuous stochastic dynamics -with an application to deep RL testing. In IEEE Con-ference on Software Testing, Verification and Validation, ICST 2024 , pages 197–208. IEEE, 2024. [Tappler et al. , 2024b] Martin Tappler, Andrea Pferscher, Bernhard K. Aichernig, and Bettina K¨ onighofer. Learning and repair of deep reinforcement learning policies from fuzz-testing data. In ICSE , pages 6:1–6:13. ACM, 2024. [Torrey and Shavlik, 2010] Lisa Torrey and Jude Shavlik. Transfer learning. In Handbook of Research on Machine Learning Applications and Trends: Algorithms, Methods, and Techniques , pages 242–264. IGI Global, 2010. [Towers et al. , 2024] Mark Towers, Ariel Kwiatkowski, Jor-dan Terry, John U. Balis, Gianluca De Cola, Tristan Deleu, Manuel Goul˜ ao, Andreas Kallinteris, Markus Krimmel, Arjun KG, Rodrigo Perez-Vicente, Andrea Pierr´ e, Sander Schulhoff, Jun Jet Tai, Hannah Tan, and Omar G. Younis. Gymnasium: A standard interface for reinforcement learn-ing environments, 2024. [Uehara et al. , 2022] Masatoshi Uehara, Chengchun Shi, and Nathan Kallus. A review of off-policy evaluation in reinforcement learning. CoRR , abs/2212.06355, 2022. [van Hasselt et al. , 2016] Hado van Hasselt, Arthur Guez, and David Silver. Deep reinforcement learning with dou-ble Q-learning. In AAAI , pages 2094–2100. AAAI Press, 2016. [Watkins and Dayan, 1992] Christopher J. C. H. Watkins and Peter Dayan. Technical note Q-learning. Mach. Learn. ,8:279–292, 1992. [Welch, 1947] B. L. Welch. The generalization of ‘student’s’ problem when several different population variances are involved. Biometrika , 34(1/2):28–35, 1947. [Xie et al. , 2011] Xiaoyuan Xie, Joshua Wing Kei Ho, Chris-tian Murphy, Gail E. Kaiser, Baowen Xu, and Tsong Yueh Chen. Testing and validating machine learning classifiers by metamorphic testing. J. Syst. Softw. , 84(4):544–558, 2011. [Zambaldi et al. , 2018] Vin´ ıcius Flores Zambaldi, David Ra-poso, Adam Santoro, Victor Bapst, Yujia Li, Igor Babuschkin, Karl Tuyls, David P. Reichert, Timothy P. Lillicrap, Edward Lockhart, Murray Shanahan, Victoria Langston, Razvan Pascanu, Matthew M. Botvinick, Oriol Vinyals, and Peter W. Battaglia. Relational deep reinforce-ment learning. CoRR , abs/1806.01830, 2018. [Zhang et al. , 2022] Jie M. Zhang, Mark Harman, Lei Ma, and Yang Liu. Machine learning testing: Survey, land-scapes and horizons. IEEE Trans. Software Eng. , 48(2):1– 36, 2022. [Zolfagharian et al. , 2023] Amirhossein Zolfaghar-ian, Manel Abdellatif, Lionel C. Briand, Mojtaba Bagherzadeh, and Ramesh S. A search-based testing approach for deep reinforcement learning agents. IEEE Trans. Software Eng. , 49(7):3715–3735, 2023. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)

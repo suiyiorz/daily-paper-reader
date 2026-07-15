@@ -1,0 +1,579 @@
+Title: Self-Consistent Model-based Adaptation for Visual Reinforcement Learning
+
+URL Source: https://www.ijcai.org/proceedings/2025/0800.pdf
+
+Published Time: Thu, 18 Sep 2025 14:21:59 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Self-Consistent Model-based Adaptation for Visual Reinforcement Learning 
+
+## Xinning Zhou , Chengyang Ying , Yao Feng , Hang Su ∗ and Jun Zhu ∗
+
+## Department of Computer Science & Technology, Institute for AI, BNRist Center, Tsinghua-Bosch Joint ML Center, THBI Lab, Tsinghua University zxn21@mails.tsinghua.edu.cn, dcszj@tsinghua.edu.cn 
+
+## Abstract 
+
+Visual reinforcement learning agents typically face serious performance declines in real-world applica-tions caused by visual distractions. Existing meth-ods rely on fine-tuning the policy’s representations with hand-crafted augmentations. In this work, we propose Self-Consistent Model-based Adapta-tion (SCMA), a novel method that fosters robust adaptation without modifying the policy. By trans-ferring cluttered observations to clean ones with a denoising model, SCMA can mitigate distractions for various policies as a plug-and-play enhance-ment. To optimize the denoising model in an unsu-pervised manner, we derive an unsupervised distri-bution matching objective with a theoretical anal-ysis of its optimality. We further present a prac-tical algorithm to optimize the objective by esti-mating the distribution of clean observations with a pre-trained world model. Extensive experiments on multiple visual generalization benchmarks and real robot data demonstrate that SCMA effectively boosts performance across various distractions and exhibits better sample efficiency. 
+
+## 1 Introduction 
+
+Visual reinforcement learning (VRL) aims to complete com-plex tasks with high-dimensional observations, which has achieved remarkable results in various domains [Hafner et al. , 2019a; Brohan et al. , 2023; Li et al. , 2024]. Since VRL agents are typically trained on clean observations with min-imal distractions, they struggle to handle cluttered observa-tions when deployed in real-world environments with unex-pected visual distractions, such as changes in textures or com-plex backgrounds [Hansen et al. , 2020; Fu et al. , 2021]. The discrepancy between clean and cluttered observations results in a serious performance gap. The key to closing the performance gap is to make the pol-icy invariant to distractions. Most existing methods aim to mitigate distractions by learning robust representations. In particular, one line of work is to align the policy’s represen-tation between the clean and cluttered observations. Due to 
+
+> ∗Corresponding author.
+
+the lack of paired data, prevailing methods use hand-crafted functions to create augmentations similar to cluttered obser-vations [Hansen and Wang, 2021; Bertoin et al. , 2022]. The effectiveness of such methods is typically limited in settings without prior knowledge of potential distractions. Another line of work addresses the problem through adaptation, which boosts deployment performance by fine-tuning the policy’s representation with self-supervised objectives. However, ex-isting adaptation-based methods often lead to narrow empir-ical increases [Hansen et al. , 2020] or are effective only for a specific type of distractions [Yang et al. , 2024]. Moreover, the practical application of VRL often requires different poli-cies to ensure robustness against the same types of distrac-tions [Devo et al. , 2020]. For instance, domestic robots for different tasks all face the challenge imposed by residential backgrounds with similar distractions. Since policies trained for different tasks have distinct representations, current meth-ods need to fine-tune them separately as the modification made to one policy’s representations is not directly applicable to another policy. To address the above issues, we propose Self-Consistent 
+
+Model-based Adaptation (SCMA), a novel method that fos-ters robust adaptation for various policies as a plug-and-play enhancement. Instead of fine-tuning policies, SCMA uti-lizes a denoising model to mitigate distractions by transfer-ring cluttered observations to clean ones. Therefore, the de-noising model is policy-agnostic and can be seamlessly com-bined with any policy to boost performance under distrac-tions without modifying its parameters. We further design an unsupervised distribution matching objective to optimize the denoising model in the absence of paired data. Theo-retically, we show that the solution set of the unsupervised objective strictly contains the optimal solution in the super-vised setting. The proposed objective regularizes the out-puts of the denoising model to follow the distribution of ob-servations in clean environments, which we choose to esti-mate with a pre-trained world model [Hafner et al. , 2019b; Hafner et al. , 2023]. We practically evaluate the effectiveness of SCMA with the commonly adopted DMControlGB [Hansen et al. , 2020; Hansen and Wang, 2021], DMControlView [Yang et al. ,2024], and RL-ViGen [Yuan et al. , 2024], where the agent needs to complete continuous control tasks in environments with visual distractions. Extensive results show that SCMA Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 7191
+
+significantly narrows the performance gap caused by vari-ous types of distractions, including natural video background, moving camera view, and occlusion. Also, we verify the ef-fectiveness of SCMA with real-world robot data, showing its future potential in real-world deployment. In summary, the main contributions of this paper are: • We address the challenge of visual distractions by trans-ferring observations and derive an unsupervised distri-bution matching objective with theoretical analysis. • We propose self-consistent model-based adaptation (SCMA), a novel method that promotes robust adapta-tion for different policies in a plug-and-play manner. • Extensive experiments show that SCMA significantly closes the performance gap caused by various types of distractions. We also demonstrate the effectiveness of SCMA with real-world robot data. 
+
+## 2 Related Work 
+
+2.1 Visual Generalization in RL 
+
+The ability to generalize across environments with unknown distractions is a long-standing challenge for the practical ap-plication of reinforcement learning (RL) agents [Chaplot et al. , 2020; Tomar et al. , 2021; Liu et al. , 2023]. Task-induced methods address the problem by learning structured represen-tations that separate task-relevant features from confounding factors [Fu et al. , 2021; Pan et al. , 2022; Wang et al. , 2022]. Augmentation-based methods regularize the representation between augmented images and clean equivalents [Hansen and Wang, 2021; Ha et al. , 2023], but they require prior knowledge of the test-time variations to manually design aug-mentations. Adaptation-based methods [Hansen et al. , 2020; Yang et al. , 2024] do not assume the distractions and fine-tune the agent’s representation through self-supervised objectives. However, existing adaptation-based methods tend to lead to narrow empirical improvement [Hansen et al. , 2020] or are limited to a specific type of visual distractions [Yang et al. ,2024]. Several studies aim to tackle this issue with founda-tion models [Nair et al. , 2022; Shah et al. , 2023], but they still struggle with computational budget and inference time. 
+
+2.2 Unsupervised Domain Transfer 
+
+Unsupervised Domain Transfer aims to map data collected from the source domain to a related target domain without ex-plicit supervision signals [Wang et al. , 2021]. The topic has been explored in various research areas, such as style trans-fer [Zhu et al. , 2017; Zhao et al. , 2022], pose transfer [Li 
+
+et al. , 2023], language translation [Lachaux et al. , 2020; Artetxe et al. , 2017] and so on. However, one key difference between our setting and theirs is that we can interact with the environments to collect data rather than relying on pre-collected static datasets. Therefore, we can obtain a certain level of control over the distribution of collected data by se-lecting specific action sequences, which makes it possible for us to achieve the desired transfer from cluttered observations to clean ones with unsupervised distribution matching [Cao 
+
+et al. , 2018; Baktashmotlagh et al. , 2016].    
+
+> Figure 1: The graphical model of a NPOMDP, where otand ont
+> denote the clean and cluttered observation respectively.
+
+## 3 Methodology 
+
+We first present our problem formulation and the supervised objective LO in Sec. 3.1. Then we introduce an unsupervised distribution matching surrogate LKL and analyze the connec-tion between LKL and LO in Sec. 3.2. Finally, we transform 
+
+LKL into several optimizable adaptation losses in Sec. 3.3, along with practical enhancements in Sec. 3.4. 
+
+3.1 Problem Formulation 
+
+We formalize visual RL with distractions as a Noisy Partially-Observed Markov Decision Process (NPOMDP) Mn =
+
+⟨S , O, A, T , R, γ, ρ 0, f n⟩. In a NPOMDP, S is the hidden state space, O is the discrete observation space, A denotes the action space, T : S × A 7 → ∆( S) defines the transition probability distribution over the next state, R : S × A 7 → R
+
+is the reward function, γ is the discount factor, and ρ0 is the initial state distribution. Here fn : O 7 → O is a noise function that maps a clean observation ot to its cluttered version ont =
+
+fn(ot). Following the common settings [Hansen et al. , 2020; Bertoin et al. , 2022], we assume that fn is injective so that the distractions do not corrupt the original information. The graphical model of NPOMDP is provided in Fig. 1. Given the action sequence a1: T , the conditional joint dis-tribution describing the environment’s latent dynamics is de-fined as: 
+
+p(o1: T , o n 
+
+> 1: T
+
+, r 1: T |a1: T ) := 
+
+Z TY
+
+> t=1
+
+p(ont |ot)p(ot|s≤t, a <t )p(rt|s≤t, a <t )p(st|s<t , a <t )d s1: T .
+
+(1) We denote p(ont |ot) = δ(ont − fn(ot)) as the noising distri-bution of fn, which is a Dirac distribution with δ(·) being the Dirac delta function [Dirac, 1981]. Leveraging the Bayes’ rule, the posterior distribution p(ot|ont ) can also be derived from Eq. 1, which we denote as the posterior denoising dis-tribution of fn.The performance of policies pre-trained with clean obser-vations often degenerates when handling cluttered observa-tions [Hansen et al. , 2020; Bertoin et al. , 2022]. To fill the performance gap, a natural way is to transfer cluttered obser-vations to their corresponding clean ones by estimating the posterior denoising distribution p(ot|ont ). In the supervised setting, we can estimate p(ot|ont ) with a learnable distribu-tion q(ot|ont ) by minimizing the following objective: 
+
+LO := −Ep(o1: T ,o n   
+
+> 1: T|a1: T)
+
+log q(o1: T |on 
+
+> 1: T
+
+)= −Ep(o1: T ,o n  
+
+> 1: T|a1: T)
+
+X
+
+> t
+
+log q(ot|ont ).Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 7192
+
+Figure 2: An overview of Self-Consistent Model-based Adaptation (SCMA) . SCMA adapts the agent to distracting environments by transferring cluttered observations to clean ones with the denoising model mde . Leveraging a pre-trained world model, mde can be efficiently optimized with self-consistent reconstruction, noisy reconstruction, and reward prediction loss. 
+
+We further show that p(ot|ont ) is a Dirac distribution when 
+
+fn is injective. Therefore, we adopt a denoising model mde 
+
+and choose q(ot|ont ) = δ(ot − mde (ont )) in practice. More details can be found in Appendix A.1. 
+
+3.2 Mitigating Visual Distractions with Unsupervised Distribution Matching 
+
+The direct optimization of LO requires collecting paired ob-servations (ot, o nt ). Since we can only collect observations from clean environments (i.e. p(o1: T |a1: T )) and distracting environments (i.e. p(on 
+
+> 1: T
+
+|a1: T )) separately, the absence of paired data imposes severe challenges. Inspired by unsu-pervised distribution matching [Baktashmotlagh et al. , 2016; Cao et al. , 2018], we propose to minimize the KL-divergence between the action-conditioned distribution of the clean and transferred observations, which leads to the following unsu-pervised surrogate LKL (see Appendix A.2 for details): 
+
+LKL := D KL 
+
+
+
+p(on 
+
+> 1: T
+
+|a1: T )q(o1: T |on 
+
+> 1: T
+
+)
+
+p(o1: T |a1: T )q(on 
+
+> 1: T
+
+|o1: T )
+
+
+
+,
+
+where q(o1: T |on 
+
+> 1: T
+
+) = Q 
+
+> t
+
+q(ot|ont ) and q(on 
+
+> 1: T
+
+|o1: T ) =Q 
+
+> t
+
+q(ont |ot) are learnable denoising and noisy distribution re-spectively. To analyze the connection between LKL and LO , we first introduce the concept of homogeneous noise functions , which are theoretically indistinguishable in the unsupervised setting and defined below (Details are deferred to Appendix A.2): 
+
+Definition 1. For noise functions fni , we denote oni 
+
+> t
+
+=
+
+fni (ot) as its cluttered observation. Given the distribution of clean observation p(o1: T |a1: T ), we call the noise functions 
+
+fn1 and fn2 to be homogeneous under p(o1: T |a1: T ) if their cluttered observations have the same distribution, i.e.: 
+
+fn1 ≡p fn2 ⇔ p(on1 
+
+> 1: T
+
+|a1: T ) = p(on2 
+
+> 1: T
+
+|a1: T ),
+
+where p(oni 
+
+> 1: T
+
+|a1: T ) = P
+
+> o1: T
+
+p(o1: T |a1: T )p(oni 
+
+> 1: T
+
+|o1: T ).
+
+We define Hpfn = {fni |fni ≡p fn}, which includes all homo-geneous noise functions of fn under p(o1: T |a1: T ).
+
+Then we show that the solution set of LKL equals the set of posterior denoising distributions of noise functions in Hpfn .Since fn is clearly in Hpfn , the solution set of LKL contains 
+
+p(ot|ont ), which is the optimal solution to LO .
+
+Theorem 1 (Proof in Appendix A.3) . Given p(o1: T |a1: T )
+
+and p(on 
+
+> 1: T
+
+|a1: T ), let Q denote the solution set of LKL :
+
+Q := arg min  
+
+> q(ot|ont)
+
+min  
+
+> q(ont|ot)
+
+LKL .
+
+It follows that Q equals the set of posterior denoising distri-butions of noise functions in Hpfn :
+
+Q =
+
+n
+
+p(ot|oni 
+
+> t
+
+)|fni ∈ H pfn
+
+o
+
+. (2) Generally speaking, since homogeneous noise functions are theoretically indistinguishable in the unsupervised setting, we can only assure that mde learns to transfer cluttered ob-servations back to clean ones according to a noise function in 
+
+Hpfn . In Appendix A.3, we further reveal the relationship be-tween the number of homogeneous noise functions and prop-erties of p(o1: T |a1: T ). We also discuss possible ways to re-duce the number of homogeneous noise functions in Sec. 3.4 so that Q only contains p(ot|ont ).To simplify the computation, we show in Appendix A.2 that LKL leads to the following objective, where C is a con-stant: 
+
+LKL = Ep(on  
+
+> 1: T|a1: T)
+
+h
+
+DKL 
+
+ q(o1: T |on 
+
+> 1: T
+
+)∥p(o1: T |a1: T )
+
+− Eq(o1: T |on 
+
+> 1: T)
+
+[log q(on 
+
+> 1: T
+
+|o1: T )] 
+
+i
+
++ C
+
+= Ep(on  
+
+> 1: T|a1: T)
+
+Eq(o1: T |on 
+
+> 1: T)
+
+h
+
+− log p(o1: T |a1: T )
+
+− log q(on 
+
+> 1: T
+
+|o1: T )
+
+i
+
++ C. 
+
+(3) Intuitively, the first term regularizes the transferred obser-vations to follow the clean environments’ latent dynamics 
+
+p(o1: T |a1: T ). The second term ensures that the transferred observations remain relevant to the cluttered observations and thus preserve necessary information. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+7193 3.3 Adaptation with Pre-trained World Models 
+
+Based on the above analyses, we now present the Self-Consistent Model-based Adaptation (SCMA) method, a prac-tical adaptation algorithm that mitigates distractions by opti-mizing the denoising model with Eq. 3. Specifically, Eq. 3 involves calculating the action-conditioned distribution p(o1: T |a1: T ), which we esti-mate with a pre-trained world model [Hafner et al. ,2019b; Hafner et al. , 2023]. Given a clean trajectory 
+
+τ = {o1, a 1, · · · , o T , a T }, the world model estimates 
+
+log p(o1: T |a1: T ) with log pwm (o1: T |a1: T ) by maximizing the following evidence lower bound (ELBO): 
+
+log pwm (o1: T |a1: T ) = log 
+
+Z
+
+pwm (o1: T , s 1: T |a1: T )d s1: T
+
+≥
+
+> T
+
+X
+
+> t=1
+
+Eqwm (s1: T |a1: T ,o 1: T )[log pwm (ot|s≤t, a <t )
+
+| {z } 
+
+> Jto
+
+− DKL (qwm (st|s<t , a <t , o t)∥pwm (st|s<t , a <t )
+
+| {z } 
+
+> Jtkl
+
+)] .
+
+(4) In the above objective, the KL-divergence objective J tkl 
+
+enables the model’s generation ability by minimizing the dis-tance between the prior and posterior distribution. The re-construction objective J to enforces the model to capture the visual essence of the task by predicting the subsequent obser-vations, which facilitates the later adaptation. 
+
+Self-consistent Model-based Adaptation. Before adapta-tion, we first pre-train the policy and world model in clean environments. Then we deploy the pre-trained policy and our denoising model into the distracting environment to collect trajectory {on 
+
+> 1
+
+, a 1, · · · , o nT , a T }, where actions are sampled as at ∼ π(·| mde (ont )) . By estimating p(o1: T |a1: T ) with the pre-trained world model, optimizing Eq. 3 leads to the fol-lowing self-consistent reconstruction loss Ltsc and noisy re-construction loss Ltn. It should be noted that the policy and world model are both frozen during adaptation. We choose to drop a similar KL-loss term as in Eq. 4 because we em-pirically find it to have a negative impact on adaptation by harming the reconstruction results, consistent with previous works [Higgins et al. , 2017; Chen et al. , 2018]. The detailed derivation is provided in Appendix A.4. 
+
+Ltsc = −Eq(o1: T |on 
+
+> 1: T)
+
+Eqwm (s1: T |a1: T ,o 1: T )[log pwm (ot|s≤t, a <t )] ,
+
+Ltn = −Eq(o1: T |on 
+
+> 1: T)
+
+[log q(ont |ot)] .
+
+Ltsc encourages the denoising model to transfer cluttered observations to clean ones so that the transferred observa-tions will conform to the prediction of the world model. Ltn
+
+prevents the denoising model from ignoring the cluttered ob-servations and thus outputting clean yet irrelevant observa-tions. In practice, we implement q(ont |ot) = δ(ont − mn(ot)) 
+
+with a noisy model mn, and q(o1: T |on 
+
+> 1: T
+
+) = Q 
+
+> t
+
+q(ot|ont ) = Q 
+
+> t
+
+δ(ot − mde (ont )) with a denoising model mde .
+
+3.4 Boosting Adaptation by Reducing Homogeneous Noise Functions 
+
+As discussed in Theorem 1, the solution set of LKL equals the set of posterior denoising distributions of noise functions in Hpfn . To promote the adaptation, we propose two practical techniques to help the denoising distribution q(ot|ont ) con-verge to the target posterior denoising distribution p(ot|ont )
+
+by reducing the number of homogeneous noise functions. 
+
+Leverage Rewards. If reward signals are available in dis-tracting environments, they can naturally boost adaptation by reducing the number of homogeneous noise functions. Loosely speaking, noise functions with the same p(on 
+
+> 1: T
+
+|a1: T )
+
+but different p(on 
+
+> 1: T
+
+, r 1: T |a1: T ) are no longer homogeneous if rewards are available. A detailed explanation is provided in Appendix A.3. The derivation in Sec. 3.2 can be simply ex-tended to include rewards by redefining LKL as below (details in Appendix A.4): 
+
+LKL :=D KL 
+
+
+
+p(on 
+
+> 1: T
+
+, r 1: T |a1: T )q(o1: T |on 
+
+> 1: T
+
+)
+
+p(o1: T , r 1: T |a1: T )q(on 
+
+> 1: T
+
+|o1: T )
+
+
+
+,
+
+which leads to the reward prediction loss: 
+
+Ltrew = −Eq(o1: T |on 
+
+> 1: T)
+
+Eqwm (s1: T |a1: T ,o 1: T )[log pwm (rt|s≤t, a <t )] .
+
+Ltrew encourages the transferred observations to contain sufficient information of rewards and ignore reward-irrelevant distractions. The final adaptation loss of SCMA is: 
+
+Lt 
+
+> SCMA
+
+= Ltsc + Ltn + Ltrew . (5) 
+
+Limit the Hypothesis Set of the Denoising Model. For specific types of distractions, we can further encode some inductive bias in the denoising model architecture. There-fore, we can prevent q(ot|ont ) from converging to the pos-terior denoising distributions of certain homogeneous noise functions by limiting the hypothesis set. For example, we can implement the denoising model as a mask model mmask :
+
+Rh×w×c 7 → [0 , 1] h×w×c to handle background distractions. However, to verify the generality of SCMA, we refrain from assuming the type of distractions and implement the denois-ing model as a generic image-to-image network by default. Detailed implementations are provided in Appendix C.2. In summary, we propose an adaptation framework with a two-stage pipeline: 1) pre-training the policy and world model in clean environments to master skills and capture the environments’ latent dynamics p(o1: T |a1: T ). 2) adapting the policy to visually distracting environments by optimizing 
+
+q(ot|ont ) with Eq. 5 to transfer cluttered trajectories to clean ones. The pipeline is illustrated with Fig. 2, with further train-ing details provided in Appendix C. 
+
+## 4 Experiment 
+
+In this section, we evaluate the capability of SCMA by ad-dressing the following questions: • Can SCMA fill the performance gap caused by various types of distractions? • Can SCMA generalize across various tasks or policies from different algorithms? • How does each loss component contribute to the results? Can SCMA still handle distractions without rewards? • Can SCMA converge faster compared to other adaptation-based methods or directly training from scratch in visually distracting environments? Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+7194 video hard SCMA SCMA (w/o r) MoVie PAD SVEA Dr. G SGQN TIA TPC DreamerPro ball in cup-catch 809 ±114 215 ±60 41 ±20 130 ±47 498 ±147 635 ±26 782 ±57 329 ±466 220 ±207 378 ±231 
+
+cartpole-swingup 773 ±51 145 ±40 83 ±2 123 ±21 401 ±38 545 ±23 544 ±43 98 ±22 219 ±19 365 ±48 
+
+finger-spin 948 ±5 769 ±182 2±0 96 ±11 307 ±24 - 822 ±24 146 ±93 315 ±40 427 ±299 
+
+walker-stand 953 ±4 328 ±30 127 ±23 336 ±22 747 ±43 - 851 ±24 117 ±9 840 ±98 941 ±14 
+
+walker-walk 722 ±89 129 ±19 39 ±13 108 ±33 385 ±63 782 ±37 739 ±21 84 ±55 402 ±57 617 ±159 
+
+(a) video hard moving view SCMA MoVie PAD SGQN ball in cup-catch 745 ±121 951 ±10 750 ±32 857 ±64 
+
+cartpole-swingup 708 ±76 167 ±25 561 ±86 788 ±65 
+
+finger-spin 952 ±10 896 ±21 603 ±28 702 ±56 
+
+walker-stand 977 ±16 712 ±11 955 ±15 961 ±2
+
+walker-walk 922 ±55 810 ±7 645 ±21 769 ±36 
+
+(b) moving view color hard SCMA MoVie PAD SGQN SVEA ball in cup-catch 817 ±64 67 ±41 563 ±50 881 ±61 961 ±7
+
+cartpole-swingup 809 ±15 102 ±14 630 ±63 773 ±80 837 ±23 
+
+finger-spin 965 ±2 652 ±10 803 ±72 847 ±80 977 ±5
+
+walker-stand 984 ±11 121 ±14 797 ±46 867 ±81 942 ±26 
+
+walker-walk 954 ±7 38 ±3 468 ±74 828 ±84 760 ±145 
+
+(c) color hard occlusion SCMA MoVie PAD SGQN ball in cup-catch 899 ±41 33 ±18 145 ±6 642 ±74 
+
+cartpole-swingup 779 ±10 120 ±32 142 ±9 127 ±18 
+
+finger-spin 920 ±1 1±0 15 ±9 117 ±22 
+
+walker-stand 976 ±17 124 ±21 305 ±16 376 ±87 
+
+walker-walk 902 ±51 52 ±15 94 ±24 118 ±34 
+
+(d) occlusion 
+
+RL-ViGen SCMA SGQN SRM SVEA CURL Door (easy) 416 ±26 391 ±95 337 ±110 268 ±136 6±5
+
+Door (extreme) 380 ±30 160 ±122 31 ±18 62 ±56 2±1
+
+Lift (easy) 19 ±5 31 ±17 69 ±32 43 ±18 0±0
+
+Lift (extreme) 15 ±9 7±7 0±0 8±5 0±0
+
+TwoArm (easy) 340 ±27 349 ±23 419 ±45 414 ±58 150 ±20 
+
+TwoArm (extreme) 227 ±24 257 ±31 161 ±27 155 ±18 147 ±15 
+
+(e) Table-top Manipulation tasks in RL-ViGen. Table 1: Performance (mean ± std) in visually distracting environments. We report the performance of SCMA and baseline methods in DMControl and RL-ViGen across various distracting settings. The best algorithm is bold for every task. 
+
+4.1 Experiment Setup 
+
+Environments. To measure the effectiveness of SCMA, we follow the settings from the commonly adopted DM-ControlGB [Hansen and Wang, 2021; Hansen et al. , 2021; Bertoin et al. , 2022], DMControlView [Yang et al. , 2024], and RL-ViGen [Yuan et al. , 2024]. The agent is asked to per-form continuous control tasks in visually distracting environ-ments, including video distracting background ( video hard ), moving camera views ( moving view ), and randomized col-ors ( color hard ). We also evaluate the agent’s performance in a more challenging occlusion setting by randomly mask-ing 1/4 of each observation. We provide a visualization of every distracting environment in Fig. 6 in the Appendix. Un-less otherwise stated, the result of each task is evaluated over 
+
+3 seeds and we report the average performance of the policy in the last episode. 
+
+Baselines. We compare SCMA to the state-of-the-art adaptation-based baselines: PAD [Hansen et al. , 2020], MoVie [Yang et al. , 2024]. We also include comparison with other kinds of methods, including augmentation-based meth-ods: SVEA [Hansen et al. , 2021], SGQN [Bertoin et al. ,2022], Dr. G [Ha et al. , 2023]; and task-induced methods: TIA [Fu et al. , 2021], TPC [Nguyen et al. , 2021], Dreamer-Pro [Deng et al. , 2022]. Following the official design [Hansen and Wang, 2021], the augmentation-based methods use ran-dom overlay with images from Place365 [Zhou et al. , 2017]. Task-induced methods directly learn the structured represen-tations in distracting environments. Adaptation-based meth-ods will first be pre-trained in the clean environments for 
+
+1M timesteps and then adapt to the distracting environments for 0.1M timesteps ( 0.4M for video hard and 0.5M for RL-ViGen). By default, SCMA adapts a pre-trained Dreamer pol-icy [Hafner et al. , 2019a] to distracting environments. More details can be found in Appendix C.1. 
+
+4.2 Adaptability to Visual Distractions 
+
+We first evaluate the adaptation ability of SCMA by mea-suring its performance in the challenging visual generaliza-tion benchmarks. Before adapting to the visually distracting environments, we first pre-train the policy and world model in the clean training environment (see Fig. 6a in the Ap-pendix). Then we adapt the agent to visually distracting envi-ronments leveraging the pre-trained world model. The experi-ment results in Table 1 show that SCMA significantly reduces the performance gap caused by distractions and achieves ap-pealing performance compared to augmentation-based meth-ods. While remaining competitive in the color hard setting, SCMA outperforms the best baseline method in most tasks in other 3 settings. Moreover, SCMA obtains the best per-formance in all tasks in the occlusion setting, which is a common scenario for real-world robot controls. To verify the idea of boosting adaptation by reducing the hypothesis set (Sec. 3.4), we implement the denoising model with spe-cific architectures and conduct experiments in the table-top Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+7195 Figure 3: Visualization of the raw observations and the denoising model’s outputs in various distracting environments.                    
+
+> occlusion SGQN SGQN +SCMA
+> ball in cup -catch 642 ±74 775 ±151
+> cartpole -swingup 127 ±18 337 ±51
+> finger -spin 117 ±22 133 ±19
+> walker -stand 376 ±87 884 ±63
+> walker -walk 118 ±34 465 ±101
+> Averaged 276.0 518.8 (88.0% ↑)
+> Table 2: Performance (mean ±std) in occlusion environment. The results show that the denoising model can boost SGQN’s perfor-mance in a plug-and-play manner.
+
+manipulation tasks with distracting settings from RL-ViGen. Further details are included in Appendix C.2. Following pre-vious work [Yuan et al. , 2024], we report the scores under the 
+
+eval easy and eval extreme settings in Table 1e. The results show that SCMA achieves the best performance in half of the scenarios and remains comparable to other methods in the re-maining ones. We believe one way to further improve the performance is to incorporate stronger world models [Ding et al. , 2024], which we leave to future works. We visualize how mde transfers cluttered observations to clean ones in Fig. 3, where it effectively mitigates various types of distractions and restores the task-relevant objects cor-rectly. The qualitative results also indicate that our method can effectively handle distractions not only for large embod-iments like walker -walk , but also for challenging small em-bodiments such as ball in cup -catch and cartpole -swingup ,which task-induced methods often fail to manage. 
+
+4.3 Versatility of the Denoising Model 
+
+We conduct experiments to measure the versatility of the de-noising model from two aspects: 1) can the denoising model generalize across tasks with the same robot? 2) is the denois-ing model applicable to policies from different algorithms? To answer the above questions, we first cross-evaluate the capability of the denoising model between walker -walk and 
+
+walker -stand in the video hard environment. Specifically, we take the denoising model adapted to one task and directly evaluate its performance in another task. The results in Ta-ble 4 in the Appendix indicate that the achieved denoising model is not restricted to a specific task and exhibits appeal-ing zero-shot generalization capability. To verify that the de-noising model is agnostic to policies, we first optimize the de-noising model with trajectories collected by a Dreamer pol-icy. Then we combine the obtained denoising model with an SGQN policy in a plug-and-play manner and measure the performance in the occlusion setting. While SGQN reaches appealing results in other settings, it performs poorly under occlusions. However, Table 2 demonstrates that incorpo-rating the denoising model can improve the performance of SGQN by 88% . Therefore, SCMA can serve as a convenient component to promote performance under certain distractions without modifying the policy. However, there is a disparity between the performance of SGQN policy with SCMA and Dreamer policy with SCMA, which we attribute to the policy encoder. As the Dreamer policy’s encoder leverages the long-term representation extracted by the world model, it is less susceptible to small mistakes made by the denoising model. 
+
+4.4 Adaptation Without Rewards 
+
+While SCMA utilizes both visual and reward signals for the best adaptation results, the ability to adapt without rewards is also important. To address this issue, we conduct experiments in the video hard environments to investigate how different loss components affect the final adaptation results. To better understand the impact of different losses, we sep-arately removed the 3 loss components from SCMA dur-ing adaptation, namely self-consistent reconstruction loss 
+
+Ltsc , reward prediction loss Ltrew , and noisy reconstruction loss Ltn. From the ablation results in Fig. 15 in the Ap-pendix, we can see that removing the self-consistent recon-struction loss leads to the most significant decrease, indi-cating that the proposed Ltsc plays a crucial role in adap-tation. Another finding is that the reward loss can pro-mote better adaptation by encouraging the denoising model to focus on some miniature yet critical features, such as the ball in ball in cup -catch and the pole in cartpole -balance .While Ltrew contributes considerably to the final adaptation results, Fig. 8 in the Appendix demonstrates that SCMA with-out rewards still achieves the highest average performance among all adaptation-based methods. The noisy reconstruc-tion loss mainly aims to preserve the connection between the cluttered and transferred observations. Intuitively, removing 
+
+Ltn from Eq. 3 will cause a mode-seeking problem [Cheng, 1995], where the denoising model will prefer the mode of 
+
+log p(o1: T |a1: T ) and thus transfer cluttered observations to Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)          
+
+> 7196 Figure 4: Performance curves of different algorithms in the
+> video hard environment, where SCMA exhibits better final perfor-mance and sample efficiency.
+
+clean yet irrelevant observations. 
+
+4.5 Sample Efficiency in Visually Distracting Environments 
+
+Accomplishing tasks with as few cluttered observations as possible is practically important to deploy the agent in dis-tracting environments. Compared with other adaptation-based methods or training from scratch with task-induced methods [Fu et al. , 2021; Deng et al. , 2022], the perfor-mance curves in Fig. 4 show that SCMA can achieve higher performance with much fewer downstream cluttered sam-ples. Although we adapt the policy in video hard with 
+
+0.4M steps, SCMA can achieve competitive performance with much fewer steps. We provide the wall clock time and adaptation steps for SCMA to reach 90% of the final perfor-mance in Table 5 in the Appendix to show that SCMA obtains compelling results with only 10% of total adaptation time-steps for most tasks. 
+
+4.6 Real-world Robot Data 
+
+With the rapid development of generative models, their po-tential to enhance real-world robotic controls has attracted significant attention. Recent works leverage video models to create future observations based on current environment observation and extract executable action sequences with in-verse dynamics models (IDM) [Du et al. , 2023; Ko et al. ,2023]. However, the generated observations might still con-tain distractions if the input environment observation is clut-tered, which imposes challenges to the IDM in making accu-rate action predictions. We show that SCMA can help IDM better predict the actions when handling cluttered observa-tions. More details are included in Appendix C.3. We manually collect real-world robot data with a Mobile ALOHA robot by performing an apple-grasping task with teleoperation. The IDM is trained with data collected in the normal setting and evaluated on data collected in 3 distracting settings: 1) fruit bg : various fruits are placed in the back-ground. 2) color bg : the scene is disrupted by a blue light. 3) 
+
+varying light : the lighting is intentionally changed. We pro-vide the quantitative results in Table 6 in the Appendix and  
+
+> Figure 5: Visualization of the raw observations and denoising model’s outputs on real-world robot data.
+
+visualization in Fig. 5. The results show that SCMA effec-tively mitigates real-world distractions and thus has important implications for the practical deployment of robots. 
+
+## 5 Conclusion and Discussion 
+
+The ability to generalize across environments with various distractions is a long-standing goal in visual RL. In this work, we formalize the challenge as an unsupervised transferring problem and propose a novel method called self-consistent model-based adaptation (SCMA). SCMA adopts a policy-agnostic denoising model to mitigate distractions by transfer-ring cluttered observations into clean ones. To optimize the denoising model in the absence of paired data, we propose an unsupervised distribution matching objective that regular-izes the outputs of the denoising model to follow the distribu-tion of clean observations, which can be estimated with a pre-trained world model. Experiments in challenging visual gen-eralization benchmarks show that SCMA effectively reduces the performance gap caused by distractions and can boost the performance of various policies in a plug-and-play manner. Moreover, we validate the effectiveness of SCMA with real-world robot data, where SCMA effectively mitigates distrac-tions and promotes better action predictions. SCMA proposes a general model-based objective for adap-tation under distractions, and we wish to further promote this direction by highlighting some limitations and future im-provements. SCMA pre-trains world models to estimate the action-conditioned distribution of clean observations. Includ-ing stronger world models like diffusion models [Wang et al. ,2023] may be a promising way to further promote the per-formance with complex robots or real-world tasks. Another potential improvement is to explore other types of signals that are invariant between clean and distracting environments, e.g., 3D structures of robots [Driess et al. , 2022] or natural language descriptions of tasks [Sumers et al. , 2023]. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 7197
+
+## Acknowledgments 
+
+This work was supported by NSFC Projects (Nos. 92248303, 92370124, 62350080, 62276149, 62061136001, 92270001), BNRist (BNR2022RC01006), Tsinghua Institute for Guo Qiang, and the High Performance Computing Center, Ts-inghua University. J. Zhu was also supported by the XPlorer Prize. Xinning Zhou and Chengyang Ying contributed equally to this work. 
+
+## References 
+
+[Artetxe et al. , 2017] Mikel Artetxe, Gorka Labaka, Eneko Agirre, and Kyunghyun Cho. Unsupervised neural ma-chine translation. arXiv preprint arXiv:1710.11041 , 2017. [Baktashmotlagh et al. , 2016] Mahsa Baktashmotlagh, Mehrtash Har, Mathieu Salzmann, et al. Distribution-matching embedding for visual domain adaptation. 
+
+Journal of Machine Learning Research , 17(108):1–30, 2016. [Bertoin et al. , 2022] David Bertoin, Adil Zouitine, Mehdi Zouitine, and Emmanuel Rachelson. Look where you look! saliency-guided q-networks for generalization in vi-sual reinforcement learning. In Neural Information Pro-cessing Systems , 2022. [Brohan et al. , 2023] Anthony Brohan, Yevgen Chebotar, Chelsea Finn, Karol Hausman, Alexander Herzog, Daniel Ho, Julian Ibarz, Alex Irpan, Eric Jang, Ryan Julian, et al. Do as i can, not as i say: Grounding language in robotic af-fordances. In Conference on Robot Learning , pages 287– 318. PMLR, 2023. [Cao et al. , 2018] Yue Cao, Mingsheng Long, and Jianmin Wang. Unsupervised domain adaptation with distribution matching machines. In Proceedings of the AAAI confer-ence on artificial intelligence , volume 32, 2018. [Caron et al. , 2020] Mathilde Caron, Ishan Misra, Julien Mairal, Priya Goyal, Piotr Bojanowski, and Armand Joulin. Unsupervised learning of visual features by con-trasting cluster assignments. Advances in Neural Informa-tion Processing Systems , 33:9912–9924, 2020. [Chaplot et al. , 2020] Devendra Singh Chaplot, Dhi-raj Prakashchand Gandhi, Abhinav Gupta, and Russ R Salakhutdinov. Object goal navigation using goal-oriented semantic exploration. Advances in Neural Information Processing Systems , 33, 2020. [Chen et al. , 2018] Ricky TQ Chen, Xuechen Li, Roger B Grosse, and David K Duvenaud. Isolating sources of dis-entanglement in variational autoencoders. Advances in neural information processing systems , 31, 2018. [Cheng, 1995] Yizong Cheng. Mean shift, mode seeking, and clustering. IEEE transactions on pattern analysis and machine intelligence , 17(8):790–799, 1995. [Deng et al. , 2022] Fei Deng, Ingook Jang, and Sungjin Ahn. Dreamerpro: Reconstruction-free model-based reinforce-ment learning with prototypical representations. In Inter-national Conference on Machine Learning , pages 4956– 4975. PMLR, 2022. [Devo et al. , 2020] Alessandro Devo, Giacomo Mezzetti, Gabriele Costante, Mario L Fravolini, and Paolo Valigi. Towards generalization in target-driven visual navigation by using deep reinforcement learning. IEEE Transactions on Robotics , 36(5):1546–1561, 2020. [Ding et al. , 2024] Zihan Ding, Amy Zhang, Yuandong Tian, and Qinqing Zheng. Diffusion world model: Future mod-eling beyond step-by-step rollout for offline reinforcement learning, 2024. [Dirac, 1981] Paul Adrien Maurice Dirac. The principles of quantum mechanics . Number 27. Oxford university press, 1981. [Driess et al. , 2022] Danny Driess, Ingmar Schubert, Pete Florence, Yunzhu Li, and Marc Toussaint. Reinforcement learning with neural radiance fields. Advances in Neural Information Processing Systems , 35:16931–16945, 2022. [Du et al. , 2023] Yilun Du, Mengjiao Yang, Bo Dai, Hanjun Dai, Ofir Nachum, Joshua B. Tenenbaum, Dale Schuur-mans, and P. Abbeel. Learning universal policies via text-guided video generation. ArXiv , abs/2302.00111, 2023. [Fu et al. , 2021] Xiang Fu, Ge Yang, Pulkit Agrawal, and Tommi Jaakkola. Learning task informed abstractions. In International Conference on Machine Learning , pages 3480–3491. PMLR, 2021. [Ha et al. , 2023] Jeongsoo Ha, Kyungsoo Kim, and Yusung Kim. Dream to generalize: zero-shot model-based rein-forcement learning for unseen visual distractions. In Pro-ceedings of the AAAI Conference on Artificial Intelligence ,volume 37, pages 7802–7810, 2023. [Hafner et al. , 2019a] Danijar Hafner, Timothy Lillicrap, Jimmy Ba, and Mohammad Norouzi. Dream to control: Learning behaviors by latent imagination. arXiv preprint arXiv:1912.01603 , 2019. [Hafner et al. , 2019b] Danijar Hafner, Timothy Lillicrap, Ian Fischer, Ruben Villegas, David Ha, Honglak Lee, and James Davidson. Learning latent dynamics for planning from pixels. In International conference on machine learn-ing , pages 2555–2565. PMLR, 2019. [Hafner et al. , 2023] Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, and Timothy Lillicrap. Mastering di-verse domains through world models. arXiv preprint arXiv:2301.04104 , 2023. [Hansen and Wang, 2021] Nicklas Hansen and Xiaolong Wang. Generalization in reinforcement learning by soft data augmentation. In 2021 IEEE International Confer-ence on Robotics and Automation (ICRA) , pages 13611– 13617. IEEE, 2021. [Hansen et al. , 2020] Nicklas Hansen, Yu Sun, P. Abbeel, Alexei A. Efros, Lerrel Pinto, and Xiaolong Wang. Self-supervised policy adaptation during deployment. ArXiv ,abs/2007.04309, 2020. [Hansen et al. , 2021] Nicklas Hansen, Hao Su, and Xiaolong Wang. Stabilizing deep q-learning with convnets and vi-sion transformers under data augmentation. 2021. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 7198
+
+[Higgins et al. , 2017] Irina Higgins, Loic Matthey, Arka Pal, Christopher P Burgess, Xavier Glorot, Matthew M Botvinick, Shakir Mohamed, and Alexander Lerchner. beta-vae: Learning basic visual concepts with a con-strained variational framework. ICLR (Poster) , 3, 2017. [Jaderberg et al. , 2015] Max Jaderberg, Karen Simonyan, Andrew Zisserman, et al. Spatial transformer networks. 
+
+Advances in neural information processing systems , 28, 2015. [Ko et al. , 2023] Po-Chen Ko, Jiayuan Mao, Yilun Du, Shao-Hua Sun, and Josh Tenenbaum. Learning to act from ac-tionless videos through dense correspondences. ArXiv ,abs/2310.08576, 2023. [Lachaux et al. , 2020] Marie-Anne Lachaux, Baptiste Roziere, Lowik Chanussot, and Guillaume Lample. Unsupervised translation of programming languages. 
+
+arXiv preprint arXiv:2006.03511 , 2020. [Li et al. , 2023] Tianyu Li, Hyunyoung Jung, Matthew Gombolay, Yong Kwon Cho, and Sehoon Ha. Cross-loco: Human motion driven control of legged robots via guided unsupervised reinforcement learning. ArXiv ,abs/2309.17046, 2023. [Li et al. , 2024] Qifeng Li, Xiaosong Jia, Shaobo Wang, and Junchi Yan. Think2drive: Efficient reinforcement learn-ing by thinking in latent world model for quasi-realistic autonomous driving (in carla-v2). 2024. [Liu et al. , 2023] Xin Liu, Yaran Chen, Haoran Li, Boyu Li, and Dongbin Zhao. Cross-domain random pre-training with prototypes for reinforcement learning. arXiv preprint arXiv:2302.05614 , 2023. [Nair et al. , 2022] Suraj Nair, Aravind Rajeswaran, Vikash Kumar, Chelsea Finn, and Abhinav Gupta. R3m: A uni-versal visual representation for robot manipulation. arXiv preprint arXiv:2203.12601 , 2022. [Nguyen et al. , 2021] Tung D Nguyen, Rui Shu, Tuan Pham, Hung Bui, and Stefano Ermon. Temporal predictive cod-ing for model-based planning in latent space. In Inter-national Conference on Machine Learning , pages 8130– 8139. PMLR, 2021. [Pan et al. , 2022] Minting Pan, Xiangming Zhu, Yunbo Wang, and Xiaokang Yang. Isolating and leveraging con-trollable and noncontrollable visual dynamics in world models. arXiv preprint arXiv:2205.13817 , 2022. [Shah et al. , 2023] Dhruv Shah, Ajay Sridhar, Arjun Bhorkar, Noriaki Hirose, and Sergey Levine. Gnm: Ageneral navigation model to drive any robot. In 2023 IEEE International Conference on Robotics and Automation (ICRA) , pages 7226–7233. IEEE, 2023. [Sumers et al. , 2023] Theodore R. Sumers, Kenneth Marino, Arun Ahuja, Rob Fergus, and Ishita Dasgupta. Distill-ing internet-scale vision-language models into embodied agents. ArXiv , abs/2301.12507, 2023. [Tassa et al. , 2018] Yuval Tassa, Yotam Doron, Alistair Muldal, Tom Erez, Yazhe Li, Diego de Las Casas, David Budden, Abbas Abdolmaleki, Josh Merel, Andrew Lefrancq, et al. Deepmind control suite. arXiv preprint arXiv:1801.00690 , 2018. [Tomar et al. , 2021] Manan Tomar, Utkarsh A Mishra, Amy Zhang, and Matthew E Taylor. Learning representations for pixel-based control: What matters and why? arXiv preprint arXiv:2111.07775 , 2021. [Wang et al. , 2021] Feng Wang, Lianmeng Jiao, and Quan Pan. A survey on unsupervised transfer clustering. In 2021 40th Chinese Control Conference (CCC) , pages 7361– 7365. IEEE, 2021. [Wang et al. , 2022] Tongzhou Wang, Simon Du, Antonio Torralba, Phillip Isola, Amy Zhang, and Yuandong Tian. Denoised mdps: Learning world models better than the world itself. In International Conference on Machine Learning , pages 22591–22612. PMLR, 2022. [Wang et al. , 2023] Xiaofeng Wang, Zheng Zhu, Guan Huang, Xinze Chen, and Jiwen Lu. Drivedreamer: To-wards real-world-driven world models for autonomous driving. arXiv preprint arXiv:2309.09777 , 2023. [Yang et al. , 2024] Sizhe Yang, Yanjie Ze, and Huazhe Xu. Movie: Visual model-based policy adaptation for view generalization. Advances in Neural Information Process-ing Systems , 36, 2024. [Yuan et al. , 2022] Zhecheng Yuan, Zhengrong Xue, Bo Yuan, Xueqian Wang, Yi Wu, Yang Gao, and Huazhe Xu. Pre-trained image encoder for generalizable visual reinforcement learning. Advances in Neural Information Processing Systems , 35:13022–13037, 2022. [Yuan et al. , 2024] Zhecheng Yuan, Sizhe Yang, Pu Hua, Can Chang, Kaizhe Hu, and Huazhe Xu. Rl-vigen: A re-inforcement learning benchmark for visual generalization. 
+
+Advances in Neural Information Processing Systems , 36, 2024. [Zhao et al. , 2022] Min Zhao, Fan Bao, Chongxuan Li, and Jun Zhu. Egsde: Unpaired image-to-image translation via energy-guided stochastic differential equations. ArXiv ,abs/2207.06635, 2022. [Zhou et al. , 2017] Bolei Zhou, Agata Lapedriza, Aditya Khosla, Aude Oliva, and Antonio Torralba. Places: A10 million image database for scene recognition. IEEE transactions on pattern analysis and machine intelligence ,40(6):1452–1464, 2017. [Zhu et al. , 2017] Jun-Yan Zhu, Taesung Park, Phillip Isola, and Alexei A. Efros. Unpaired image-to-image translation using cycle-consistent adversarial networks. 2017 IEEE International Conference on Computer Vision (ICCV) ,pages 2242–2251, 2017. [Zhu et al. , 2020] Yuke Zhu, Josiah Wong, Ajay Mandlekar, Roberto Mart´ ın-Mart´ ın, Abhishek Joshi, Soroush Nasiri-any, and Yifeng Zhu. robosuite: A modular simula-tion framework and benchmark for robot learning. arXiv preprint arXiv:2009.12293 , 2020. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)

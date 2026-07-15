@@ -1,0 +1,614 @@
+Title: S-EPOA: Overcoming the Indistinguishability of Segments with Skill-Driven Preference-Based Reinforcement Learning
+
+URL Source: https://www.ijcai.org/proceedings/2025/0664.pdf
+
+Published Time: Thu, 18 Sep 2025 13:39:51 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# S-EPOA: Overcoming the Indistinguishability of Segments with Skill-Driven Preference-Based Reinforcement Learning 
+
+## Ni Mu 1∗ , Yao Luan 1∗ , Yiqin Yang 2† , Bo Xu 2 and Qing-Shan Jia 1†
+
+> 1
+
+## Beijing Key Laboratory of Embodied Intelligence Systems, Department of Automation, Tsinghua University  
+
+> 2
+
+## The Key Laboratory of Cognition and Decision Intelligence for Complex Systems, Institute of Automation, Chinese Academy of Sciences 
+
+## {mn23, luany23 }@mails.tsinghua.edu.cn, yiqin.yang@ia.ac.cn, jiaqs@tsinghua.edu.cn 
+
+## Abstract 
+
+Preference-based reinforcement learning (PbRL) stands out by utilizing human preferences as a di-rect reward signal, eliminating the need for intri-cate reward engineering. However, despite its po-tential, traditional PbRL methods are often con-strained by the indistinguishability of segments, which impedes the learning process. In this pa-per, we introduce Skill-Enhanced Preference Op-timization Algorithm (S-EPOA), which addresses the segment indistinguishability issue by integrat-ing skill mechanisms into the preference learning framework. Specifically, we first conduct the un-supervised pretraining to learn useful skills. Then, we propose a novel query selection mechanism to balance the information gain and distinguishabil-ity over the learned skill space. Experimental re-sults on a range of tasks, including robotic manip-ulation and locomotion, demonstrate that S-EPOA significantly outperforms conventional PbRL meth-ods in terms of both robustness and learning effi-ciency. The results highlight the effectiveness of skill-driven learning in overcoming the challenges posed by segment indistinguishability. 
+
+## 1 Introduction 
+
+Reinforcement Learning (RL) has made significant progress across a variety of fields, including gameplay [Mnih et al. ,2013; Silver et al. , 2016], robotics [Chen et al. , 2022] and au-tonomous systems [Bellemare et al. , 2020; Mu et al. , 2024; Luan et al. , 2025]. Yet, the success of RL often relies on the careful construction of reward functions, a process that can be both labor-intensive and costly. To solve this issue, Preference-based Reinforcement Learning (PbRL) emerges as a compelling alternative [Christiano et al. , 2017; Lee et al. , 2021b]. PbRL uses human-provided preferences among various agent behaviors to serve as the reward signal, thereby eliminating the need for hand-crafted reward functions. Existing PbRL methods [Lee et al. , 2021b; Park et al. ,2022a; Shin et al. , 2023; Kim et al. , 2023] focus on enhanc-ing feedback efficiency, by maximizing the expected return with minimal feedback queries. However, these methods rely on high-quality or even ideal expert feedback, overlooking an important issue in preference labeling: indistinguishability of segments . For example, asking humans to specify prefer-ences between two similar trajectories can be challenging, as it is difficult for human observers to discern which is superior. Consequently, the resulting preference labels are often incor-rect, further degrading the performance of the algorithm [Lee 
+
+et al. , 2021a]. Therefore, the segment indistinguishability is-sue limits the broader applicability of PbRL. In the field of unsupervised reinforcement learning, information-theoretic methods have been shown to discover useful and diverse skills, without the need for rewards [Ey-senbach et al. , 2019; Hansen et al. , 2019]. In contrast to the unlabeled agent behaviors in PbRL, these discovered skills possess a higher degree of distinguishability, allowing hu-mans to easily express preferences between different skills. However, the skill-driven approach has not been fully ex-plored in PbRL, and how to apply the discovered skills to preference learning remains unclear. This naturally leads to the following question: 
+
+How can we integrate the skill mechanism with PbRL to overcome the indistinguishability of segments? 
+
+In this work, we aim to provide an effective solution to the important and practical issue in PbRL: indistinguishability of segments, by incorporating the skill mechanism. First, we conduct skill-based unsupervised pretraining to learn useful and diverse skills. Next, we introduce a novel query selection mechanism in the learned skill space, which effectively bal-ances the information gain with the distinguishability of the query. We name our method as Skill-Enhanced Preference 
+
+Optimization Algorithm (S-EPOA). Our experiments demon-strate the necessity of the above two techniques, showing that S-EPOA significantly outperforms conventional PbRL meth-ods in terms of both robustness and learning efficiency. In summary, our contributions are threefold: • First, we highlight the critical issue of segment indis-tinguishability, validate its practical significance through human experiments, and theoretically analyze the limi-tations of current mainstream query selection methods, such as disagreement. • Second, we propose S-EPOA, a skill-driven reward learning framework, which selects queries in a highly Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)             
+
+> 5967 Skill -based
+> query selection
+> Non -ideal
+> teacher
+> Existing
+> query selection
+> 𝑧 1,𝑧 2,𝑧 3
+> Buffer with
+> different skills
+> Skills
+> Phase 1: Unsupervised
+> skill -based pretraining Phase 2: Preference -based online training
+> 𝜋 ⋅𝑧 3)
+> 𝜋 ⋅𝑧 2)
+> 𝜋 ⋅𝑧 1)𝜋 ⋅𝑧 )
+
+Figure 1: The framework of S-EPOA. In the pretraining phase, we learn diverse skills based on unsupervised skill discovery methods. In the online training phase, we leverage a novel skill-based query selection method to generate distinguishable queries for non-ideal teachers. 
+
+distinguishable skill space to address the segment indis-tinguishability issue. • Lastly, we conduct extensive experiments to show that S-EPOA significantly outperforms conventional PbRL methods under non-ideal feedback conditions. The re-sults indicate that by introducing the skill mechanism, we can effectively mitigate the segment indistinguisha-bility issue, thereby broadening the application of PbRL. 
+
+## 2 Preliminaries 
+
+Reinforcement Learning. A Markov Decision Problem (MDP) could be characterized by the tuple (S, A, P, r, γ ),where S is the state space, A is the action space, P :
+
+S × A → ∆( S) is the transition function, r : S × A → R
+
+is the reward function, and γ ∈ [0 , 1) is the discount fac-tor balancing instant and future rewards. A policy π inter-acts with the environment by sampling action a from dis-tribution π(s, a ) when observing state s. The goal of RL agent is to learn a policy π : S → ∆( A), which max-imizes the expectation of a discounted cumulative reward: 
+
+L(π) = Eμ0,π [P∞ 
+
+> t=0
+
+γtr(st, a t)] .For any policy π, the corresponding state-action value function is Qπ (s, a ) = E[P∞ 
+
+> k=0
+
+γkrt+k|St = s, A t = a, π ].The state value function is V π (s) = E[P∞ 
+
+> k=0
+
+γkrt+k|St =
+
+s, π ]. It follows from the Bellman equation that V π (s) = P 
+
+> a∈A
+
+π(a|s)Qπ (s, a ).
+
+Preference-based Reinforcement Learning. In PbRL, the reward function r is replaced by human-provided preferences over segment pairs, denoted as σ0, σ 1. A segment σ is a con-tinuous sequence in a fixed length H of states and actions, i.e. 
+
+{sk, a k, . . . , s k+H−1, a k+H−1}. Preferences are expressed as one-hot labels y ∈ { (0 , 1) , (1 , 0) }, indicating the preferred segment. All preference triples (σ0, σ 1, y ) are stored in the dataset D. The algorithm first estimates a reward function 
+
+ˆrψ : S × A → R, parameterized by ψ, using provided pref-erences, This learned reward function ˆrψ is then used to train the policy with standard RL algorithms. To construct ˆrψ , we employ the Bradley-Terry model [Bradley and Terry, 1952; Christiano et al. , 2017] as follows: 
+
+Pψ [σ1 ≻ σ0] = exp P 
+
+> t
+
+ˆrψ (s1 
+
+> t
+
+, a 1 
+
+> t
+
+)
+
+P 
+
+> i∈{ 0,1}
+
+exp P 
+
+> t
+
+ˆrψ (sit, a it) . (1) where σ1 ≻ σ0 indicates the human prefer σ1 than σ0. ˆrψ can be trained by minimizing the cross-entropy loss: 
+
+Lreward (ψ) = − E
+
+> (σ0,σ 1,y )∼D
+
+h
+
+y(0) log Pψ [σ0 ≻ σ1]+ y(1) log Pψ [σ1 ≻ σ0]
+
+i
+
+.
+
+(2) 
+
+## 3 Indistinguishability of Segments 
+
+In an ideal PbRL scenario, human labelers can give the true preference between two distinct behaviors. In practice, how-ever, humans often have to label similar trajectories, which can lead to mistakes. These errors could reduce the preci-sion of the trained reward function, and consequently degrade the performance. We name this labeling issue as the Indis-tinguishability of Segments . The issue significantly limits the broad application of PbRL, particularly in safety control fields [Fulton and Platzer, 2018] where the precision of the reward function is strictly required. 
+
+Human experiments. To validate this issue, we con-duct human experiments, where human labelers provide pref-erences between segments with various return differences. Then, we calculate the match ratio between human labels and ground truth. Specifically, the human labelers watch a video rendering each segment and select the one that better achieves the objective based on the instruction. For example, the in-struction given to human teachers in the Cheetah_run task is to run as fast as possible. The results in Figure 2 shows that as the return differences decrease, the match rate between human-labeled and ground truth preferences diminishes, indi-cating an increase in labeling errors. This confirms the practi-cal significance of the indistinguishability issue. Please refer to Appendix C for experimental details. Furthermore, the segment indistinguishability issue can be particularly severe when the query selection method priori-tizes “informative” queries. A representative example is the Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5968 Cheetah_run Walker_run Quadruped_walk Quadruped_run   
+
+> 0
+> 25
+> 50
+> 75
+> 100
+> Match Ratio (%)
+> Return Difference (RD) = 500 RD = 100 RD = 10
+
+Figure 2: Human-labeled preferences match ratio with ground truth. As the return differences decrease, labeling errors increase. 
+
+Algorithm 1 S-EPOA Framework 
+
+Require: frequency of feedback K, number of queries M
+
+per feedback session, total feedback number Ntotal 
+
+1: Initialize π(a|s, z ) ← UNSUPERVISED PRETRAIN 
+
+2: for each iteration do 
+
+3: if iteration % K == 0 and total feedback < N total 
+
+then 
+
+4: Update trajectory estimator Rθ (z) based on Eq. 6 
+
+5: for m in 1 · · · M do 
+
+6: (σ0, σ 1) ∼ QUERY SELECTION 
+
+7: Query the teacher for preference label y
+
+8: Store preference D ← D ∪ { (σ0, σ 1, y )}
+
+9: end for 
+
+10: Update the reward model ˆrψ using D
+
+11: Relabel replay buffer B using ˆrψ
+
+12: end if 
+
+13: if the current episode ends then 
+
+14: Update ztask based on Eq. 9 
+
+15: end if 
+
+16: Obtain action at ∼ π(a|st, z task ) and next state st+1 
+
+17: Store transitions B ← B ∪ { (st, a t, s t+1 , ˆrψ (st, a t)}
+
+18: Sample transitions (s, a, s ′, ˆrψ ) from B
+
+19: Minimize Lcritic and Lactor with ˆrψ
+
+20: end for 
+
+disagreement mechanism in PEBBLE [Lee et al. , 2021b], which selects queries based on the highest variance in pre-dictions from an ensemble of reward models. To illustrate why this occurs, we conduct the following theoretical analy-sis. As shown in Proposition 1, the disagreement mechanism tends to select queries with similar return values, resulting in segments with similar and often indistinguishable behaviors. 
+
+Proposition 1. Let {ˆri} be an ensemble of i.i.d. reward es-timators, and (σ1, σ 2) be a segment pair with ground-truth cumulative discounted reward r1 ≥ r2. Suppose ˆri estimates the cumulative discounted reward of σj as ˆrij ∼ N (rj , c ) (c
+
+is a constant), and induces preference 
+
+ˆPi[σ1 ≻ σ2] = exp ˆ ri
+
+> 1
+
+exp ˆ ri 
+
+> 1
+
++ exp ˆ ri
+
+> 2
+
+= sigmoid(ˆ ri 
+
+> 1
+
+− ˆri
+
+> 2
+
+). (3) 
+
+Then the disagreement of induced preference across {ˆri},i.e. Var[ ˆP [σ1 ≻ σ2]] , approximately and monotonically in-creases as the dissimilarity of segment pair ∆ = r1 − r2
+
+decreases. 
+
+## 4 Skill-Driven PbRL 
+
+To address the issue of segment indistinguishability, we hope to choose segments with different behaviors. Skill discovery methods can discover diverse skills, which align with this re-quirement. In this section, we propose the Skill-Enhanced Preference Optimization Algorithm (S-EPOA), which lever-ages skill discovery techniques to enhance PbRL’s reward learning by selecting distinguishable queries. S-EPOA can be integrated with any skill discovery method, by introducing the following two key components: • Skill-based unsupervised pretraining, where the agent explores the environment and learns useful skills with-out supervision (see Section 4.1). • Skill-based query selection, which can select more dis-tinguishable queries based on the learned skill space (see Section 4.2). We show the overall framework of S-EPOA in Figure 1 and Algorithm 1. 
+
+4.1 Skill-based Unsupervised Pretraining 
+
+Previous unsupervised pretraining methods [Lee et al. ,2021b; Park et al. , 2022a] aim to help the agent explore the state space by maximizing the state entropy H(s). However, these methods often fail to produce clearly distinguishable behaviors, as the learned policies primarily focus on explo-ration, rather than diversity. As a result, the queries may be difficult for human teachers to distinguish. Skill-based unsu-pervised pretraining addresses this issue by guiding the agent to discover diverse skills, resulting in more distinct behav-iors, and enabling the selection of distinguishable queries in the early training process. In skill discovery, the policy is in the form of π(a|s, z ),where z ∈ Z denotes the skill and Z represents the skill space. To ensure that the policies generated by each skill have distinct behaviors, we aim to maximize the mutual informa-tion between the policy’s behavior and its skill. For tractabil-ity, we optimize a variational lower bound, as shown in Eq. 4, where p is the underlying distribution, and qϕ is learned via maximum likelihood on data sampled from p.
+
+I(s; z) = Es,z ∼p(s,z )[log p(s|z)] − Es∼p(s)[log p(s)] 
+
+≥ Es,z ∼p(s,z )[log qϕ(s|z)] − Es∼p(s)[log p(s)] (4) Skill discovery methods use intrinsic rewards to encourage agents to explore different behaviors. A typical form of the intrinsic reward is shown in Eq. 5: 
+
+rint = log qϕ(s|z) − log p(s). (5) In this way, after pre-training in this stage, we obtained a pol-icy in the form of π(a|s, z ). By selecting different skills z,we can generate segments with diverse behaviors. 
+
+4.2 Skill-based Query Selection 
+
+In this subsection, we focus on selecting distinguishable queries to enhance reward learning. To achieve this, the two segments being compared should come from different skills with distinct behaviors and performances. We introduce a trajectory estimator Rθ (z) to estimate the expected return of Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5969 0.00 0.25 0.50 0.75 1.00 ×10 6                                                     
+
+> 0
+> 250
+> 500
+> 750
+> 1000 Episode Return
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000 Episode Return
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000 Episode Return
+> 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6
+> 0
+> 250
+> 500
+> 750
+> 1000
+> SAC with task reward (oracle) S-EPOA RIME SURF PEBBLE RUNE
+
+(a) Cheetah_run (c) Quadruped_walk (d) Quadruped_run (b) Walker_run 
+
+> ε = 0.2 ε = 0.3  ε = 0.1
+
+Figure 3: Learning curves on locomotion tasks from DMControl, where each row corresponds to a different error rate ϵ, and each column represents a specific task. SAC serves as an oracle, using the ground-truth reward unavailable in PbRL settings. The solid line and shaded regions respectively represent the mean and standard deviation of episode return, across 5 seeds. 
+
+trajectories generated by skill z, which helps us identify skills with significant performance differences. The training objec-tive of Rθ (z) is: 
+
+min Lest (θ) = Ez
+
+
+
+Rθ (z) − Eτ ∼π(·|· ,z )
+
+X
+
+> (s,a )∈τ
+
+ˆrψ (s, a )
+
+2
+
+,
+
+(6) where τ is the trajectory generated by z, and ˆrψ is the learned reward model. In practice, we normalize the targets of Rθ (z)
+
+to the range of [0 , 1] for training stability. Based on Rθ (z),we define the skill-based selection criteria I(σ0, σ 1) for query 
+
+(σ0, σ 1) with underlying skills (z0, z 1):
+
+I(σ0, σ 1) = (1 + |Rθ (z0) − Rθ (z1)|)·
+
+(1 + Var (Pψ [σ1 ≻ σ0])) , (7) where Pψ is the probability that reward model prefers σ1 than 
+
+σ0, as defined in Eq. 1. The first term assesses the differ-ence between the skills, while the second term measures the reward model uncertainty, which is commonly used in prior works [Lee et al. , 2021b; Liang et al. , 2022]. For training stability, we normalize both terms to the [0 , 1] range and add 
+
+1 to balance the two values. Thus, we propose the skill-based query selection method: For each query (σ0, σ 1), we calculate the skill-based selection criteria I(σ0, σ 1), and select queries with the highest value. Based on Eq. 7, this approach not only considers the query’s uncertainty to maximize the information gain, but also con-siders the differences between skills, ensuring the segments 
+
+Algorithm 2 QUERY SELECTION 
+
+1: Randomly sample N queries (σ0, σ 1), where σ0, σ 1 are segments generated by skills z0, z 1
+
+2: Calculate the difference |Rθ (z0) − Rθ (z1)|
+
+3: Calculate the uncertainty Var (Pψ [σ0 ≻ σ1]) 
+
+4: Normalize |Rθ (z0) − Rθ (z1)| and Var (Pψ [σ0 ≻ σ1]) 
+
+5: Calculate I(σ0, σ 1) for each query 
+
+6: Select the query with maximum I(σ0, σ 1)
+
+have clearly distinguishable skill explanations. The specific method is illustrated in Algorithm 2. 
+
+4.3 Implementation Details 
+
+To convert the unsupervised pretraining policy π(a|s, z ) in Section 4.1 to PbRL’s policy π(a|s) in Section 4.2, we at-tempt to obtain the skill nearest to the current task, i.e., per-forms the best under the current estimated reward function. This skill is denoted as ztask . Intuitively, ztask can be derived by solving the optimization problem in Eq. 8: 
+
+ztask = arg max  
+
+> z
+
+Eμ0,π (at|st,z )
+
+" ∞X
+
+> t=0
+
+γt ˆr(st, a t)
+
+#
+
+(8) Using the learned trajectory estimator Rθ (z), we sample Nz
+
+skills zi from Z uniformly, and approximate ztask with 
+
+ˆztask = arg max 
+
+> zi
+
+{Rθ (zi)}Nz
+
+> i=1
+
+. (9) Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5970 0.000 0.375 0.750 1.125 1.500 Timesteps ×10 6                    
+
+> 0
+> 25
+> 50
+> 75
+> 100 Episode Return
+> 0.000 0.375 0.750 1.125 1.500 Timesteps ×10 6
+> 0
+> 25
+> 50
+> 75
+> 100
+> 0.000 0.375 0.750 1.125 1.500 Timesteps ×10 6
+> 0
+> 25
+> 50
+> 75
+> 100
+> SAC with task reward (oracle) S-EPOA RIME SURF PEBBLE RUNE
+> (a) Door_open (b) Button_press (c) Drawer_open
+> ε = 0.2
+
+Figure 4: Learning curves on locomotion tasks from Metaworld, with error rate ϵ = 0 .2, across 5 seeds. 
+
+Based on the above discussion, we obtain the overall pro-cess of S-EPOA, as shown in Algorithm 1. Firstly, we ini-tialize the policy with skill-based unsupervised pretraining. Then, for each feedback session, we update the trajectory es-timator as in Eq. 6, and select queries based on the skill-based selection criteria in Eq. 7. The PbRL reward model ˆrψ is trained using the selected queries based on Eq. 2. Finally, we train the critic and actor using the learned reward function ˆrψ .Besides the two key components in Section 4.1 and 4.2, we also adopt the semi-supervised data augmentation technique for reward learning [Park et al. , 2022a]. To elaborate, we ran-domly sub-sample several shorter pairs of (ˆ σ0, ˆσ1) from the queried segments (σ0, σ 1, y ), and use these (ˆ σ0, ˆσ1, y ) to op-timize the cross-entropy loss in Eq. 2. Moreover, we sample a batch of unlabeled segments (σ0, σ 1), generate the artificial labels ˆy, if Pψ [σ0 ≻ σ1] or Pψ [σ1 ≻ σ0] reaches a predefined confidence threshold. 
+
+## 5 Experiments 
+
+We design our experiments to answer the following ques-tions: Q1: How does S-EPOA compare to other state-of-the-art methods under non-ideal teachers? Q2: Can S-EPOA select queries with higher distinguishability? Q3: Can S-EPOA be integrated with various skill discovery methods? 
+
+Q4: What is the contribution of each of the proposed tech-niques in S-EPOA? 
+
+5.1 Setup 
+
+Domains. We evaluate S-EPOA on several complex robotic manipulation and locomotion tasks from DMCon-trol [Tassa et al. , 2018] and Metaworld [Yu et al. , 2020]. Specifically, We choose 4 complex tasks in DMCon-trol: Cheetah_run , Walker_run , Quadruped_walk ,
+
+Quadruped_run , and 3 complex tasks in Metaworld: 
+
+Door_open , Button_press , Window_open . The de-tails of experimental tasks are shown in Appendix B.1. 
+
+Baselines and Implementation. We compare S-EPOA with several state-of-the-art methods, including PEB-BLE [Lee et al. , 2021b], SURF [Park et al. , 2022a], RUNE [Liang et al. , 2022], and RIME [Cheng et al. , 2024], a robust PbRL method. We also train SAC with ground truth rewards as a performance upper bound. For PEBBLE, SURF, and RUNE, we employ the disagreement query selec-tion, which performs the best among all the query selection methods. In our experiment, we use APS [Liu and Abbeel, 2021a] for unsupervised skill discovery. The impact of skill discovery methods is discussed in the ablation study. More implementation details are provided in Appendix B.2 and D. 
+
+Noisy scripted teacher imitating humans. Following prior works [Lee et al. , 2021b; Liang et al. , 2022], we use a scripted teacher for systematic evaluation, which provides preferences between segments based on the sum of ground-truth rewards. To better mimic human decision-making un-certainty, we introduce a noisy scripted teacher. When the performance difference between two policies is marginal, hu-mans often struggle to distinguish between them, as Section 3 shows. To imitate this, we implement an error mechanism: if the ground truth returns of two trajectories are nearly iden-tical, we randomly assign a preference label of 0 or 1. The core idea is to evaluate policy performance by comparing the overall returns of entire trajectories, which aligns with how humans assess policies based on their overall effectiveness. Specifically, for a query (σ0, σ 1) with underlying trajectories 
+
+(τ0, τ 1) and ground truth reward function rgt , if 
+
+X
+
+> (s,a )∈τ0
+
+rgt (s, a ) − X
+
+> (s,a )∈τ1
+
+rgt (s, a ) < ϵ · Ravg , (10) a random label is assigned. Here, Ravg is the average return of the most recent ten trajectories. We refer to ϵ ∈ (0 , 1) as the error rate. For fairness, we constrain that the two segments in a query come from different trajectories. It is important to note that our noisy teacher differs from the “mistake” teacher in B-Pref [Lee et al. , 2021a], which randomly flips correct la-bels. Our teacher only introduces errors in too-close queries. 
+
+5.2 Results on Benchmark Tasks 
+
+Locomotion tasks in DMControl. Figure 3 shows the learning curves of S-EPOA and baselines on the four DM-Control tasks with error rates ϵ ∈ { 0.1, 0.2, 0.3}. S-EPOA outperforms baselines in most environments and remains ro-bust under non-ideal conditions, while other PbRL methods are unstable and even fail. 
+
+Robotic manipulation tasks in Metaworld. Figure 4 shows the learning curves for S-EPOA and baselines on the three Metaworld tasks with ϵ = 0 .2. These results further demonstrate that S-EPOA improves robustness against non-ideal feedback across diverse tasks. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5971 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6
+
+> 0
+> 150
+> 300
+> 450
+> 600 Episode Return Pretrain: O, Query selection: O Pretrain: O, Query selection: X Pretrain: X, Query selection: O Pretrain: X, Query selection: X
+
+(a) 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6 
+
+> 0
+> 250
+> 500
+> 750
+> 1000 Episode Return S-EPOA (ε=0) SURF (ε=0) RUNE (ε=0) RIME (ε=0) PEBBLE (ε=0)
+
+(b) 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6 
+
+> 0
+> 150
+> 300
+> 450
+> 600 Episode Return S-EPOA (APS) S-EPOA (DIAYN) S-EPOA (CIC) SURF
+
+(c) 0.00 0.25 0.50 0.75 1.00 Timesteps ×10 6 
+
+> 0
+> 150
+> 300
+> 450
+> 600 Episode Return
+> S-EPOA SURF S-EPOA (without SURF) PEBBLE
+
+(d) Figure 5: Ablation studies on the Quadruped_run task. (a) Contribution of each technique in S-EPOA, under ϵ = 0 .3. (b) Demonstration of enhanced learning efficiency of S-EPOA under the ideal scripted teacher with error rate ϵ = 0 . (c) The learning curve of S-EPOA and baselines, with and without data augmentation under ϵ = 0 .3. (d) Integrating S-EPOA with other skill discovery methods, under ϵ = 0 .3.Cheetah_run Walker_run Quadruped_walk Quadruped_run    
+
+> 0
+> 25
+> 50
+> 75
+> 100
+> Match Ratio (%)
+> S-EPOA SURF PEBBLE RUNE
+
+Figure 6: Human-labeled preferences match ratio with ground truth. Queries selected by S-EPOA are more distinguishable than others. 
+
+Enhanced query distinguishability. To evaluate that S-EPOA selects more distinguishable queries, we compare the ratios of queries that can be distinguished by the noisy teacher, for both S-EPOA and disagreement query selection methods. As shown in Table 1, S-EPOA achieves higher dis-tinguishability ratios across all environments, demonstrating its effectiveness in selecting easily differentiable queries. To further assess the distinguishability of queries, we conduct human experiments. We compare S-EPOA with three state-of-the-art PbRL methods in DMControl tasks, where labelers provide 20 preference labels for each run, across 3 random seeds. As shown in Figure 6, humans find the queries selected by S-EPOA easier to distinguish. Please refer to Appendix C for experimental details. 
+
+Query visualizations. We visualize the segment pairs se-lected by both S-EPOA and the disagreement mechanism. As shown in Figure 7, the pair chosen by the disagreement mechanism has similar behaviors, while the pair selected by S-EPOA clearly differs, with σ1 being preferred. These re-sults confirm that S-EPOA can select more distinguishable queries, enhancing both the labeling accuracy of noisy teach-ers and the quality of human preference labeling. 
+
+5.3 Ablation Study 
+
+Component analysis. To evaluate the effect of each tech-nique in S-EPOA individually, we incrementally apply skill-based unsupervised pretraining and skill-based query selec-tion to our backbone algorithm. Figure 5(a) shows the learn-Disagreement Skill-based 
+
+Cheetah_run 0.3270 0.4839 
+
+Walker_run 0.2448 0.4648 
+
+Quadruped_walk 0.3570 0.3800 
+
+Quadruped_run 0.2545 0.2856 
+
+Table 1: Ratios of queries that can be distinguished by the noisy scripted teacher for both skill-based and disagreement query selec-tion methods, with ϵ = 0 .3.
+
+# of Queries S-EPOA SURF 500 444.25 ± 38.94 403.85 ± 116.18 1000 464.36 ± 37.04 438.29 ± 95.56 2000 506.57 ± 19.24 488.33 ± 21.78 10000 568.86 ± 197.01 468.49 ± 22.92 
+
+Table 2: Performance of S-EPOA and SURF using different num-bers of queries, under ϵ = 0 .3.
+
+ing curves on the Quadruped_run task with error rate 
+
+ϵ = 0.3. First, skill-based unsupervised pretraining sig-nificantly boosts performance, for both skill-based (red vs. green) and disagreement-based query selection (orange vs. blue). This improvement is because the pretrained policy generates diverse behaviors, which leads to a better reward function. Additionally, skill-based query selection enhances results (red vs. orange), as it selects more distinguishable queries, enabling the agent to obtain more accurate labels. In summary, both components of S-EPOA are effective, and their combination is crucial to the method’s success. 
+
+Enhanced learning efficiency under the ideal teacher. 
+
+Under the ideal scripted teacher ( ϵ = 0 ), S-EPOA can also significantly enhance learning efficiency. As shown in Fig-ure 5(b), S-EPOA converges faster and achieves better final performance. This advantage results from selecting skills with high distinguishability, highlighting the robustness and effectiveness of our approach. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5972 Query selected by disagreement method 
+
+σ0
+
+σ1
+
+> ቐ(a) Query selected by skill -based method (ours)
+
+σ0
+
+σ1                    
+
+> ቐ(b) Figure 7: Visualization of segment pairs selected by (a) disagreement mechanism and (b) skill-based mechanism, under the
+> Quadruped_run task, with error rate ϵ= 0 .3.
+
+Integrate S-EPOA with other skill discovery methods. 
+
+To show that S-EPOA is integratable with various skill learn-ing methods, we replace APS with DIAYN [Eysenbach et al. , 2019] and CIC [Laskin et al. , 2022], which are typical and commonly used skill discovery methods. The details of these methods are shown in Appendix D. As is shown in Fig-ure 5(c), the performance is consistent and similar across all skill discovery methods, which demonstrates that S-EPOA is compatible with various skill discovery methods. 
+
+Enhanced query efficiency. We compare the performance of S-EPOA and SURF using different numbers of queries. As is shown in Table 2, S-EPOA outperforms SURF consistently, even if only 500 queries are provided, which demonstrates the ability of S-EPOA to make better use of the limited queries. 
+
+Effect of data augmentation in S-EPOA. We conduct an ablation study to evaluate the impact of data augmentation in S-EPOA. Figure 5(d) shows that without data augmentation, both S-EPOA and the baselines (PEBBLE as the backbone) show similar performance deficiencies. This highlights the importance of data augmentation for achieving optimal per-formance, while it is not the sole factor in our method’s suc-cess and does not undermine the innovation of our approach. 
+
+## 6 Related Work 
+
+Preference-based reinforcement learning. PbRL enables humans (or supervisors in other forms, like script teachers) to guide the RL agent toward desired behaviors by provid-ing preferences on segment pairs, where the feedback effi-ciency is a primary concern [Lee et al. , 2021b; Park et al. ,2022a]. Prior works improve the feedback efficiency from various perspectives. Some works focus on the query se-lection scheme, trying to improve the information quality of queries [Ibarz et al. , 2018; Biyik et al. , 2020; Hejna III and Sadigh, 2023]. Some works integrate unsupervised pre-training to avoid the waste on initial nonsense queries [Lee 
+
+et al. , 2021b]. Some works augment queries from humans to better utilize limited human feedback [Park et al. , 2022a; Liu et al. , 2023]. These methods depend on reliable feedback. However, humans could make mistakes, especially when the segment pair for comparison is slightly different, which re-stricts and even harms the performance in practice [Lee et al. ,2021a; Cheng et al. , 2024]. 
+
+Unsupervised pretraining for RL. Unsupervised pretrain-ing has been well studied in RL [Xie et al. , 2022], where un-labeled data (i.e., transitions without task-specific rewards) are used to learn a policy or set of policies that effectively ex-plore the state space through intrinsic rewards. The method to calculate the intrinsic reward varies in different unsuper-vised pretraining works, including uncertainty measures like prediction errors [Pathak et al. , 2017; Pathak et al. , 2019; Burda et al. , 2019], state entropy [Hazan et al. , 2019; Liu and Abbeel, 2021b], pseudo-counts [Bellemare et al. , 2016; Ostrovski et al. , 2017] and empowerment measures like mu-tual information [Eysenbach et al. , 2019; Sharma et al. , 2020; Liu and Abbeel, 2021a; Park et al. , 2022b; Park et al. , 2023]. The learned policy could serve as a strong initialization for downstream tasks, enhancing the sample efficiency in multi-task and few-shot RL. 
+
+Unsupervised skill discovery methods. Unsupervised skill discovery methods are a subset of unsupervised pretrain-ing methods, which use empowerment measures as the intrin-sic reward, trying to discover a set of distinguishable primi-tives. Mutual information I(s, z ) is a common choice for the empowerment measure, where s is a state, and z is a latent variable indicating the skill. Some studies consider the re-verse form I(s, z ) = H(z)−H(z|s) [Eysenbach et al. , 2019; Park et al. , 2022b], which train a parameterized skill discrim-inator q(z|s) together with the policy. On the other hand, the forward form I(s, z ) = H(s) − H(s|z) [Sharma et al. , 2020; Liu and Abbeel, 2021a; Laskin et al. , 2022] can be integrated with model-based RL and state entropy-based unsupervised pretraining algorithms. Additionally, some studies design the skill latent space for unique properties by parameterizing the distribution q(z|s) or q(s|z). VISR [Hansen et al. , 2019] and APS [Liu and Abbeel, 2021a] let the latent z be the succes-sor feature to enable fast task inference. LSD [Park et al. ,2022b] and METRA [Park et al. , 2023] bind the distance in state space and latent space to force a significant travel dis-tance in a trajectory, thereby capturing dynamic skills. 
+
+## 7 Conclusion 
+
+This paper presents S-EPOA, a robust and efficient PbRL al-gorithm designed to address the segment indistinguishability issue. By leveraging skill mechanisms, S-EPOA learns di-verse behaviors through unsupervised learning and generates distinguishable queries through skill-based query selection. Experiments show that S-EPOA outperforms PbRL baselines in robustness and efficiency, with ablation studies confirm-ing the effectiveness of skill-based query selection. In future work, we aim to extend S-EPOA to broader applications. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5973
+
+## Acknowledgments 
+
+This work is supported by the NSFC (No. 62125304, 62192751, and 62073182), the Beijing Natural Science Foun-dation (L233005), BNRist project (BNR2024TD03003), the 111 International Collaboration Project (B25027) and the Strategic Priority Research Program of the Chinese Academy of Sciences (No.XDA27040200). 
+
+## Contribution Statement 
+
+> ∗
+
+N. Mu and Y. Luan contributed equally. 
+
+> †
+
+Y. Yang and Q-S. Jia are corresponding authors. 
+
+## References 
+
+[Barreto et al. , 2017] Andr´ e Barreto, Will Dabney, R´ emi Munos, Jonathan J Hunt, Tom Schaul, Hado P van Has-selt, and David Silver. Successor features for transfer in reinforcement learning. Advances in neural information processing systems , 30, 2017. [Bellemare et al. , 2016] Marc Bellemare, Sriram Srinivasan, Georg Ostrovski, Tom Schaul, David Saxton, and Remi Munos. Unifying count-based exploration and intrinsic motivation. Advances in neural information processing systems , 29, 2016. [Bellemare et al. , 2020] Marc G Bellemare, Salvatore Can-dido, Pablo Samuel Castro, Jun Gong, Marlos C Machado, Subhodeep Moitra, Sameera S Ponda, and Ziyu Wang. Au-tonomous navigation of stratospheric balloons using rein-forcement learning. Nature , 588(7836):77–82, 2020. [Biyik et al. , 2020] Erdem Biyik, Nicolas Huynh, Mykel Kochenderfer, and Dorsa Sadigh. Active preference-based gaussian process regression for reward learning. In 
+
+Robotics: Science and Systems , 2020. [Bradley and Terry, 1952] Ralph Allan Bradley and Milton E Terry. Rank analysis of incomplete block designs: I. the method of paired comparisons. Biometrika , 39(3/4):324– 345, 1952. [Burda et al. , 2019] Yuri Burda, Harrison Edwards, Amos Storkey, and Oleg Klimov. Exploration by random net-work distillation. In Seventh International Conference on Learning Representations , pages 1–17, 2019. [Chen et al. , 2022] Yuanpei Chen, Tianhao Wu, Shengjie Wang, Xidong Feng, Jiechuan Jiang, Zongqing Lu, Stephen McAleer, Hao Dong, Song-Chun Zhu, and Yaodong Yang. Towards human-level bimanual dexter-ous manipulation with reinforcement learning. Advances in Neural Information Processing Systems , 35:5150–5163, 2022. [Cheng et al. , 2024] Jie Cheng, Gang Xiong, Xingyuan Dai, Qinghai Miao, Yisheng Lv, and Fei-Yue Wang. Rime: Ro-bust preference-based reinforcement learning with noisy preferences. arXiv preprint arXiv:2402.17257 , 2024. [Christiano et al. , 2017] Paul F Christiano, Jan Leike, Tom Brown, Miljan Martic, Shane Legg, and Dario Amodei. Deep reinforcement learning from human preferences. 
+
+Advances in neural information processing systems , 30, 2017. [Eysenbach et al. , 2019] Benjamin Eysenbach, Julian Ibarz, Abhishek Gupta, and Sergey Levine. Diversity is all you need: Learning skills without a reward function. In 7th International Conference on Learning Representations, ICLR 2019 , 2019. [Fulton and Platzer, 2018] Nathan Fulton and Andr´ e Platzer. Safe reinforcement learning via formal methods: Toward safe control through proof and learning. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 32, 2018. [Hansen et al. , 2019] Steven Hansen, Will Dabney, An-dre Barreto, Tom Van de Wiele, David Warde-Farley, and Volodymyr Mnih. Fast task inference with vari-ational intrinsic successor features. arXiv preprint arXiv:1906.05030 , 2019. [Hazan et al. , 2019] Elad Hazan, Sham Kakade, Karan Singh, and Abby Van Soest. Provably efficient maximum entropy exploration. In International Conference on Ma-chine Learning , pages 2681–2691. PMLR, 2019. [Hejna III and Sadigh, 2023] Donald Joseph Hejna III and Dorsa Sadigh. Few-shot preference learning for human-in-the-loop rl. In Conference on Robot Learning , pages 2014–2025. PMLR, 2023. [Huber, 2020] Marco F Huber. Bayesian perceptron: To-wards fully bayesian neural networks. In 2020 59th IEEE Conference on Decision and Control (CDC) , pages 3179– 3186. IEEE, 2020. [Ibarz et al. , 2018] Borja Ibarz, Jan Leike, Tobias Pohlen, Geoffrey Irving, Shane Legg, and Dario Amodei. Reward learning from human preferences and demonstrations in atari. Advances in neural information processing systems ,31, 2018. [Kim et al. , 2023] Changyeon Kim, Jongjin Park, Jinwoo Shin, Honglak Lee, Pieter Abbeel, and Kimin Lee. Pref-erence transformer: Modeling human preferences using transformers for rl. arXiv preprint arXiv:2303.00957 ,2023. [Kristiadi et al. , 2020] Agustinus Kristiadi, Matthias Hein, and Philipp Hennig. Being bayesian, even just a bit, fixes overconfidence in relu networks. In International con-ference on machine learning , pages 5436–5446. PMLR, 2020. [Laskin et al. , 2021] Michael Laskin, Denis Yarats, Hao Liu, Kimin Lee, Albert Zhan, Kevin Lu, Catherine Cang, Lerrel Pinto, and Pieter Abbeel. Urlb: Unsuper-vised reinforcement learning benchmark. arXiv preprint arXiv:2110.15191 , 2021. [Laskin et al. , 2022] Michael Laskin, Hao Liu, Xue Bin Peng, Denis Yarats, Aravind Rajeswaran, and Pieter Abbeel. Unsupervised reinforcement learning with con-trastive intrinsic control. Advances in Neural Information Processing Systems , 35:34478–34491, 2022. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5974
+
+[Lee et al. , 2021a] Kimin Lee, Laura Smith, Anca Dra-gan, and Pieter Abbeel. B-pref: Benchmarking preference-based reinforcement learning. arXiv preprint arXiv:2111.03026 , 2021. [Lee et al. , 2021b] Kimin Lee, Laura M Smith, and Pieter Abbeel. Pebble: Feedback-efficient interactive reinforce-ment learning via relabeling experience and unsupervised pre-training. In International Conference on Machine Learning , pages 6152–6163. PMLR, 2021. [Liang et al. , 2022] Xinran Liang, Katherine Shu, Kimin Lee, and Pieter Abbeel. Reward uncertainty for explo-ration in preference-based reinforcement learning. arXiv preprint arXiv:2205.12401 , 2022. [Liu and Abbeel, 2021a] Hao Liu and Pieter Abbeel. Aps: Active pretraining with successor features. In Interna-tional Conference on Machine Learning , pages 6736– 6747. PMLR, 2021. [Liu and Abbeel, 2021b] Hao Liu and Pieter Abbeel. Be-havior from the void: Unsupervised active pre-training. 
+
+Advances in Neural Information Processing Systems ,34:18459–18473, 2021. [Liu et al. , 2023] Yi Liu, Gaurav Datta, Ellen Novoseller, and Daniel S Brown. Efficient preference-based reinforce-ment learning using learned dynamics models. In 2023 IEEE International Conference on Robotics and Automa-tion (ICRA) , pages 2921–2928. IEEE, 2023. [Luan et al. , 2025] Yao Luan, Qing-Shan Jia, Yi Xing, Zhiyu Li, and Tengfei Wang. An efficient real-time railway con-tainer yard management method based on partial decou-pling. IEEE Transactions on Automation Science and En-gineering , 22:14183–14200, 2025. [Mnih et al. , 2013] Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis Antonoglou, Daan Wierstra, and Martin Riedmiller. Playing atari with deep reinforcement learning. arXiv preprint arXiv:1312.5602 ,2013. [Mu et al. , 2024] Ni Mu, Xiao Hu, Qing-Shan Jia, Xu Zhu, and Xiao He. Large-scale data center cooling control via sample-efficient reinforcement learning. In 2024 IEEE 20th International Conference on Automation Science and Engineering (CASE) , pages 2780–2785. IEEE, 2024. [Ostrovski et al. , 2017] Georg Ostrovski, Marc G Bellemare, A¨ aron Oord, and R´ emi Munos. Count-based exploration with neural density models. In International conference on machine learning , pages 2721–2730. PMLR, 2017. [Park et al. , 2022a] Jongjin Park, Younggyo Seo, Jinwoo Shin, Honglak Lee, Pieter Abbeel, and Kimin Lee. Surf: Semi-supervised reward learning with data augmenta-tion for feedback-efficient preference-based reinforcement learning. arXiv preprint arXiv:2203.10050 , 2022. [Park et al. , 2022b] Seohong Park, Jongwook Choi, Jaekyeom Kim, Honglak Lee, and Gunhee Kim. Lipschitz-constrained unsupervised skill discovery. In 
+
+International Conference on Learning Representations ,2022. [Park et al. , 2023] Seohong Park, Oleh Rybkin, and Sergey Levine. Metra: Scalable unsupervised rl with metric-aware abstraction. arXiv preprint arXiv:2310.08887 ,2023. [Pathak et al. , 2017] Deepak Pathak, Pulkit Agrawal, Alexei A Efros, and Trevor Darrell. Curiosity-driven exploration by self-supervised prediction. In International conference on machine learning , pages 2778–2787. PMLR, 2017. [Pathak et al. , 2019] Deepak Pathak, Dhiraj Gandhi, and Ab-hinav Gupta. Self-supervised exploration via disagree-ment. In International conference on machine learning ,pages 5062–5071. PMLR, 2019. [Sharma et al. , 2020] Archit Sharma, Shixiang Gu, Sergey Levine, Vikash Kumar, and Karol Hausman. Dynamics-aware unsupervised discovery of skills. In International Conference on Learning Representations , 2020. [Shin et al. , 2023] Daniel Shin, Anca D Dragan, and Daniel S Brown. Benchmarks and algorithms for of-fline preference-based reward learning. arXiv preprint arXiv:2301.01392 , 2023. [Silver et al. , 2016] David Silver, Aja Huang, Chris J Maddi-son, Arthur Guez, Laurent Sifre, George Van Den Driess-che, Julian Schrittwieser, Ioannis Antonoglou, Veda Pan-neershelvam, Marc Lanctot, et al. Mastering the game of go with deep neural networks and tree search. nature ,529(7587):484–489, 2016. [Singh et al. , 2003] Harshinder Singh, Neeraj Misra, Vladimir Hnizdo, Adam Fedorowicz, and Eugene Dem-chuk. Nearest neighbor estimates of entropy. American journal of mathematical and management sciences ,23(3-4):301–321, 2003. [Tassa et al. , 2018] Yuval Tassa, Yotam Doron, Alistair Muldal, Tom Erez, Yazhe Li, Diego de Las Casas, David Budden, Abbas Abdolmaleki, Josh Merel, Andrew Lefrancq, et al. Deepmind control suite. arXiv preprint arXiv:1801.00690 , 2018. [Xie et al. , 2022] Zhihui Xie, Zichuan Lin, Junyou Li, Shuai Li, and Deheng Ye. Pretraining in deep reinforcement learning: A survey. arXiv preprint arXiv:2211.03959 ,2022. [Yu et al. , 2020] Tianhe Yu, Deirdre Quillen, Zhanpeng He, Ryan Julian, Karol Hausman, Chelsea Finn, and Sergey Levine. Meta-world: A benchmark and evaluation for multi-task and meta reinforcement learning. In Confer-ence on robot learning , pages 1094–1100. PMLR, 2020. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)

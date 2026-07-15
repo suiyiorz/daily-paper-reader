@@ -1,0 +1,500 @@
+Title: Incentivizing Safer Actions in Policy Optimization for Constrained Reinforcement Learning
+
+URL Source: https://www.ijcai.org/proceedings/2025/0592.pdf
+
+Published Time: Thu, 18 Sep 2025 13:23:54 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Incentivizing Safer Actions in Policy Optimization for Constrained Reinforcement Learning 
+
+# Somnath Hazra 1 , Pallab Dasgupta 2 and Soumyajit Dey 11Indian Institute of Technology Kharagpur, India 
+
+> 2
+
+# Synopsys, USA somnathhazra@kgpian.iitkgp.ac.in, pallabd@synopsys.com, soumya@cse.iitkgp.ac.in 
+
+# Abstract 
+
+Constrained Reinforcement Learning (RL) aims to maximize the return while adhering to predefined constraint limits, which represent domain-specific safety requirements. In continuous control set-tings, where learning agents govern system actions, balancing the trade-off between reward maximiza-tion and constraint satisfaction remains a signifi-cant challenge. Policy optimization methods of-ten exhibit instability near constraint boundaries, resulting in suboptimal training performance. To address this issue, we introduce a novel approach that integrates an adaptive incentive mechanism in addition to the reward structure to stay within the constraint bound before approaching the constraint boundary. Building on this insight, we propose In-crementally Penalized Proximal Policy Optimiza-tion (IP3O), a practical algorithm that enforces a progressively increasing penalty to stabilize train-ing dynamics. Through empirical evaluation on benchmark environments, we demonstrate the effi-cacy of IP3O compared to the performance of state-of-the-art Safe RL algorithms. Furthermore, we provide theoretical guarantees by deriving a bound on the worst-case error of the optimality achieved by our algorithm. 
+
+# 1 Introduction 
+
+Constraint satisfaction represents a critical challenge in Re-inforcement Learning (RL), particularly due to its signifi-cant implications in real-world applications such as robotics [Levine et al. , 2016; Ono et al. , 2015], autonomous driving [Fisac et al. , 2018; Kiran et al. , 2021; Fernandez-Llorca and G´ omez, 2023], healthcare [Yu et al. , 2021], finance [McNa-mara, 2016], etc. These tasks involve learning a policy to ad-dress sequential decision-making problems to maximize re-turn under predefined safety constraints and accounting for uncertainties in the environment. Such requirements are com-monly formulated using the Constrained Markov Decision Process (CMDP) framework [Altman, 2021], which extends Code and Supplementary Material available here: https://github.com/somnathhazra/IP3O. the conventional Markov Decision Process (MDP) to accom-modate safety-critical considerations. Consequently, the ap-plicability of traditional RL methods becomes limited in these settings, necessitating the development of new approaches to address constraint satisfaction effectively. Traditional RL algorithms focus solely on maximizing the return [Schulman et al. , 2017]. To satisfy the cost budget, the safe RL methods typically incorporate an additional term into the loss function. However, since the cost component is not inherently optimized, the imposed penalty significantly dic-tates the resulting policy’s behavior; it should be rewarding enough as far as the cost constraint limits are respected. For instance, Constrained Policy Optimization (CPO) [Achiam 
+
+et al. , 2017] uses a second-order expansion term to approx-imate the cost but suffers from high computational over-head and suboptimal performance due to approximation er-rors. Primal-dual methods transform the constrained prob-lem into an unconstrained dual via Lagrangian multipliers [Tessler et al. , 2018; Ding et al. , 2020; Yu et al. , 2019; Dai et al. , 2023], yet these approaches are prone to con-straint violations and oscillatory behavior in practical sce-narios [Stooke et al. , 2020]. Projection-based methods ap-ply a secondary optimization to project unsafe actions into a feasible region [Zhang et al. , 2020; Yang et al. , 2020; Yang et al. , 2022]; however, these methods are computation-ally expensive and can underperform in certain environments [Dai et al. , 2023]. In contrast, penalty function approaches directly encode the constraints in the primal space itself. By introducing a penalty term into the loss function based on the con-straint cost, these methods establish a penalty barrier to reg-ulate policy behavior [Liu et al. , 2020; Zhang et al. , 2022; Zhang et al. , 2023]. The choice of barrier function is critical, as it determines the trade-off between performance and con-straint satisfaction [Zhang et al. , 2023]. Despite their effec-tiveness, most existing approaches impose penalties only af-ter a constraint violation occurs, offering no proactive incen-tive for the policy to remain within predefined safety limits. This strategy often compromises the stability of training and constraint satisfaction. To address this limitation, we propose a novel approach that transforms the cost function into a pos-itive incentive within the safe region and gradually converts it into a penalty as the safety boundary is breached. The design ensures a more dynamic adherence to constraints, leading to Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5318
+
+more stable and efficient optimization. 
+
+> Figure 1: Illustration of a risky trajectory and a conservation trajec-tory under unknown environmental dynamics.
+
+To illustrate our hypothesis, consider a robot tasked with reaching the rock, i.e. the goal, located on the opposite side of a pond while avoiding falling into the water (Figure 1). The shortest path, marked in red, is the most efficient but also the riskiest due to environmental uncertainties. While on-policy algorithms in RL can mitigate such risks [Sutton and Barto, 2018], given the cost function, the reward func-tion alone may fail to discourage unsafe actions effectively in a CMDP. Introducing an incentive derived from the cost function encourages safer behavior. However, excessive in-centives for avoiding risk can result in overly conservative policies that fail to achieve the goal, as indicated by the blue path in the figure. To address this trade-off, we propose In-crementally Penalized Proximal Policy Optimization (IP3O), which incorporates an adaptive penalty mechanism to balance safety and performance under general model-free settings. The primary contributions are summarized as follows: • We design a novel penalty function to adaptively incen-tivize safe actions based on the cost function, ensuring that safety constraints are satisfied without compromis-ing return optimization. • We propose the Incrementally Penalized Proximal Pol-icy Optimization (IP3O) algorithm, which integrates the penalty barrier function to achieve efficient learning of safe policies. Additionally, we provide theoretical guar-antees by deriving a worst-case performance bound for the algorithm. • We conduct extensive empirical evaluations of IP3O against multiple state-of-the-art approaches in safe RL across benchmark environments, demonstrating its su-perior performance in balancing safety and return. These contributions collectively address key challenges in constrained RL by bridging the gap between safety and per-formance in real-world scenarios. We next present the rele-vant background in the Preliminaries section. 
+
+# 2 Preliminaries 
+
+RL problems are modeled using a Markov Decision Pro-cess (MDP), defined by the tuple ⟨S , A, R, P, ρ, γ ⟩, where 
+
+S denotes the state space, A denotes the action space, R :
+
+S × A → R is the reward function, P : S × A × S → [0 , 1] 
+
+is transition probability function, ρ : S → [0 , 1] is the ini-tial state distribution, and γ ∈ (0 , 1) is the discount factor for calculating the return. In model-free settings, P is un-known. The objective is to find a policy π : S → ∆( A)
+
+that maximizes the expected discounted return: JR(π) = 
+
+Eτ ∼π [P∞ 
+
+> t=0
+
+γtR(st, a t)] , where τ is the trajectory. The util-ity of a state s is measured using the value function: V π 
+
+> R
+
+(s) = 
+
+Eτ ∼π [P∞ 
+
+> t=0
+
+γtR(st, a t)|s0 = s]; and that after taking ac-tion a at state s is given by the state-action value function: 
+
+Qπ
+
+> R
+
+(s, a ) = Eτ ∼π [P∞ 
+
+> t=0
+
+γtR(st, a t)|s0 = s, a 0 = a]. The advantage of taking action a at s is given by the advantage function: Aπ
+
+> R
+
+(s, a ) = Qπ
+
+> R
+
+(s, a ) − V π 
+
+> R
+
+(s).The Constrained MDP (CMDP) introduces the cost func-tion, C : S × A → R, and is represented using the tuple 
+
+⟨S , A, R, C, P, ρ, γ ⟩. The allowable policy set ΠC ⊂ Π is restricted such that the expected cumulative discounted cost satisfies JC (π) ≤ d, where d is the constraint threshold. The value functions, V π 
+
+> C
+
+, Q π 
+
+> C
+
+, A π 
+
+> C
+
+are similarly defined as in MDPs using C. Thus, constrained RL aims to find a policy 
+
+π ∈ ΠC , where: 
+
+arg max  
+
+> π
+
+JR(π) s.t. JC (π) ≤ d (1) A more general consideration is where C represents a set of 
+
+m constraints. In those cases, the objective is to find a policy where arg max π JR(π) s.t. JCi (π) ≤ di. In the rest of the text we assume the multi-constraint formulation to describe our approach. 
+
+# 3 Related Works 
+
+Constrained RL in model-free settings remains a challenging problem due to the difficulty in converging to near-optimal solutions under high-dimensional approximations and envi-ronmental uncertainties. Recent research has introduced var-ious approaches to address these challenges, focusing on ef-fective constraint handling during policy optimization. The constrained RL objective is often built as a dual prob-lem using Lagrangian relaxation [Chow et al. , 2018], convert-ing episodic constraints into an unconstrained dual objective. RCPO [Tessler et al. , 2018] penalizes policy updates based on constraint violations with a Lagrangian multiplier. How-ever, dual optimization adds oscillatory behavior, mitigated in CPPOPID [Stooke et al. , 2020] with a PID controller, or using an Augmented Lagrangian in APPO [Dai et al. , 2023]. While sometimes effective, these methods are very sensitive to Lagrangian parameters, limiting their applicability. On-policy RL algorithms, that update the existing policy within a trust region, have been extensively used in con-strained RL to safely update the existing policy. Algorithms such as TRPO [Schulman, 2015] enforce trust-region up-dates through divergence constraints, while PPO [Schulman 
+
+et al. , 2017] simplifies this using gradient clipping. Build-ing on TRPO, CPO [Achiam et al. , 2017] integrates second-order approximation of constraints; but suffers from the com-putational overhead of Fisher Information Matrix inversion. Methods such as PCPO [Yang et al. , 2020] and CUP [Yang 
+
+et al. , 2022] adopts two-phase optimization: policies are up-dated and then projected back into the feasible space. FO-COPS [Zhang et al. , 2020] introduces a non-parametric stage for feasible policy generation, followed by parametric projec-tion. However, these projection-based approaches often fail to guarantee optimality, highlighting a critical limitation. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5319
+
+Penalty barrier methods impose a penalty based on the con-straint violation, restricting optimization within predefined barriers. IPO [Liu et al. , 2020] uses a logarithmic penalty function; whereas P3O [Zhang et al. , 2022] employs a ReLU-based penalty. Yet, these methods activate penalties only after constraints are breached, leading to an non-smooth transition in learning dynamics. The reward function may not incen-tivize a safe action. As described in the next section, our work builds on this line of research by introducing a smooth tran-sition from incentives to penalties, facilitating stable policy learning while ensuring efficient adherence to constraints. 
+
+# 4 Methodology 
+
+Policy optimization in reinforcement learning improves a pol-icy iteratively by balancing exploration and exploitation of the current policy’s knowledge. The performance differ-ence between two policies is given by the following equation [Kakade and Langford, 2002]: 
+
+JR(π′) − J R(π) = 11 − γ Es∼dπ′
+
+> a∼π′
+
+[Aπ
+
+> R
+
+(s, a )] (2) where dπ (s) = (1 − γ) P∞ 
+
+> t=0
+
+γtP (st = s|π) is the dis-counted state distribution under policy π. Extending this to cost functions C, the constrained optimization objective (1) can be reformulated as follows: 
+
+πk+1 = arg max  
+
+> π
+
+Es∼dπ
+
+> a∼π
+
+[Aπk 
+
+> R
+
+(s, a )] 
+
+s.t. JCi (πk) + 11 − γ Es∼dπ
+
+> a∼π
+
+Aπk 
+
+> Ci
+
+(s, a ) ≤ di
+
+(3) where πk is the current policy. Given the continuous state space, we use a parametric policy as π(θk) = πk. To approx-imate Aπk 
+
+> R
+
+and Aπk 
+
+> Ci
+
+using samples from the previous policy, 
+
+πk, the importance sampling ratio is used: r(θ) = π(θ)  
+
+> π(θk)
+
+. This modifies the optimization problem as follows. 
+
+πk+1 = arg max  
+
+> π
+
+Es∼dπk
+
+> a∼πk
+
+[r(θ)Aπk 
+
+> R
+
+(s, a )] 
+
+s.t. 11 − γ Es∼dπk
+
+> a∼πk
+
+r(θ)Aπk 
+
+> Ci
+
+(s, a ) + JCi (πk) ≤ di
+
+(4) To stabilize the policy update within a trust region, the ra-tio r(θ) is clipped within (1 − ϵ, 1 + ϵ), where ϵ is the clip-ping threshold. In penalty function approaches, constraint vi-olations are penalized through barrier functions added to the reward maximization objective. Existing works [Liu et al. ,2020; Zhang et al. , 2022; Gao et al. , 2024] introduce penalties only after constraints are violated, leading to abrupt learning transitions and suboptimal policies due to risk-averse updates. Our approach addresses these limitations by introducing an Incrementally Penalized Proximal Policy Optimization (IP3O) algorithm. The key features of our approach are: • Incentivizing safe behavior: When constraints are satis-fied, an incentive is encoded in the penalty barrier func-tion to guide the policy toward constraint satisfaction without abrupt penalties. • Gradual transition to penalties: For unsafe trajectories, a smooth transition to penalization is incorporated, mit-igating sudden changes in the learning dynamics. This formulation ensures stable policy updates, enabling a smoother interplay between reward optimization and con-straint satisfaction. In this section, we describe the IP3O al-gorithm in detail, including its implementation and theoreti-cal guarantees. 
+
+4.1 Penalty Function Design 
+
+Penalty functions, such as Leaky ReLU, allow negative ac-tivation for values below zero, incentivizing constraint satis-faction. However, this has a major drawback; their inability to reduce the slope in the negative region leads to excessive incentives for remaining deeply within the constraint region, which may overshadow rewards and result in overly conser-vative policies that fail to reach the goal (illustrated by the blue path in Figure 1). To address this issue, we propose using the Exponential Linear Unit (ELU) function [Clevert, 2015] as the penalty function. ELU meets two key requirements: • smoothly tran-sitions from incentivizing constraint satisfaction to penaliz-ing violations, ensuring stable policy updates. • mitigates the risk of overly conservative policies by nullifying excessive in-centives within the constraint region. It is defined using the following function. ELU (x, α ) = 
+
+x if x ≥ 0
+
+α(exp( x) − 1) otherwise (5) Here, α determines the stagnation point ( −α); i.e., if α = 1 
+
+the function gradually reduces to −1 for negative values of 
+
+x and then stabilizes. So higher values promote safety by favoring constraint satisfaction. Despite its advantages, the ELU function introduces gradient discontinuity at x = 0
+
+when α̸ = 1 [Barron, 2017]. To overcome this limitation, we employ the Continuously Differentiable ELU (CELU) func-tion that proposes a modification for negative values of x as: CELU (x, α ) = α(exp( x/α ) − 1) , if x < 0. CELU main-tains the properties of ELU while ensuring gradient continu-ity, making it more suitable for policy optimization. A com-parison among the activation functions and their gradients are shown in Figure 2. 
+
+> Figure 2: Comaprison of activation functions and their gradients.
+
+4.2 Practical Implementation 
+
+We integrate the proposed CELU-based penalty function into the cost critic, combining it with the reward critic to guide policy updates. These critics provide gradient signals for optimizing the policy network, as shown in Figure 3. The loss function for the reward is derived from Equation 4 as: LR(πk) = Es∼dπk
+
+> a∼πk
+
+[−r′(θ)Aπk 
+
+> R
+
+(s, a )] ,Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5320
+
+Figure 3: The overall algorithm describing the loss function for training the policy network, with the sources of loss. 
+
+where r′(θ) = min( r(θ), clip (r(θ), 1 − ϵ, 1 + ϵ)) . Sim-ilarly the loss due to the cost constraint is derived as: 
+
+LCi (πk) = 11−γ Es∼dπk
+
+> a∼πk
+
+[r′′ (θ)Aπk 
+
+> Ci
+
+(s, a )] + ( JCi (πk) − di),where r′′ (θ) = max( r(θ), clip (r(θ), 1 − ϵ, 1 + ϵ)) . The com-bined loss function is stated as follows. 
+
+L(πk) = LR(πk) + η
+
+> m
+
+X
+
+> i=1
+
+CELU (LCi (πk)) (6) where η > 0 is the penalty factor. This formulation en-sures a smooth transition from incentivizing constraint satis-faction to penalizing unsafe behaviors. Since the CELU func-tion uses an exponential term, the gradient of the loss arising from CELU never reaches 0. To ensure no policy updates ow-ing to residual gradients we can use a small positive number 
+
+h < α , such that max( CELU (LCi (πk)) , −α(1 − h)) instead of directly using the CELU function in Equation 6. However in practical applications, we did not require this. To ensure equivalence between the solutions of the proposed loss func-tion (6) and the constrained optimization objective (4), we es-tablish the following theorem. This result guarantees that the proposed approach preserves the optimality of the original problem while promoting stable and robust policy updates. Hyper-parameter settings, including η and α are detailed in the Supplementary Material. 
+
+Theorem 1. Given a sequence of policies {πk} obtained by minimizing L(πk) and considering Slater’s condition for strong duality, let λ∗ be the Lagrange multiplier for the opti-mal solution of (4). If η satisfies η ≥ || λ∗|| ∞, the limit π∗ of 
+
+{πk} is also a solution to (4). Proof. Provided in the Supplementary Material. The value evaluation approximation using the current pol-icy πk, instead of the currently evaluating policy, π, as done in the original problem; introduces a bias [Jiang and Li, 2016]. Moreover the approximation of the loss due to the cost func-tion used may induce a penalty on the optimal reward result-ing from the optimization of the original problem in Equation 4. Using the following theorem we establish the worst-case error bound for these approximations. 
+
+Theorem 2. If the loss function L(πk) is optimized instead of the original problem (4), the upper bound on the error is given by the following. 
+
+√2δγε π
+
+> R
+
+1 − γ + η
+
+> m
+
+X
+
+> i=1
+
+" √2δγε π
+
+> Ci
+
+1 − γ + |α log( h)|
+
+#
+
+(7) 
+
+where επ 
+
+> R
+
+= max s |Ea∼π [Aπk 
+
+> R
+
+(s, a )] |, επ 
+
+> Ci
+
+=max s |Ea∼π [Aπk 
+
+> Ci
+
+(s, a )] |, and δ = Es∼dπk [DKL (π|| πk)[ s]] .Proof. Provided in the Supplementary Material. In Algorithm 1 below we outline the pseudocode for policy updation using our penalty function. 
+
+Algorithm 1 Policy optimization using IP3O 
+
+Input: Initial policy π0, initial value function V π0 
+
+> R
+
+, initial cost value function/s V π0
+
+> Ci
+
+1: for k = 0 , ..., K − 1 do 
+
+2: Sample training batch Dk = {τ1, ..., τ N } consisting of 
+
+N trajectories using πk
+
+3: Compute V πk 
+
+> R
+
+, V πk 
+
+> Ci
+
+for trajectories in Dk
+
+4: # Advantage calculation 
+
+5: Compute Aπk 
+
+> R
+
+(s, a ) = Qπk 
+
+> R
+
+(s, a ) − V πk 
+
+> R
+
+(s)
+
+6: Compute Aπk 
+
+> Ci
+
+(s, a ) = Qπk 
+
+> Ci
+
+(s, a ) − V πk 
+
+> Ci
+
+(s)
+
+7: Update: V πk 
+
+> R
+
+(s), V πk 
+
+> Ci
+
+(s) → V πk+1  
+
+> R
+
+(s), V πk+1  
+
+> Ci
+
+(s)
+
+8: # Policy update 
+
+9: for t = 0 , ..., T − 1 do 
+
+10: Compute LR(πk) = Es∼dπk
+
+> a∼πk
+
+[−r′(θ)Aπk 
+
+> R
+
+(s, a )] 
+
+11: Compute LCi (πk) = 
+
+> 11−γ
+
+Es∼dπk
+
+> a∼πk
+
+[r′′ (θ)Aπk 
+
+> Ci
+
+(s, a )] + (JCi (πk) − di)
+
+12: Compute L(πk) using Equation 6 
+
+13: π = πk + ω · ∇L (πk)
+
+14: # Trust region criterion (Gradient clipping) 
+
+15: if Es∼dπk [DKL (π|| πk)[ s]] /∈ [δ−, δ +] then 
+
+16: break 
+
+17: end if 
+
+18: end for 
+
+19: Update πk → πk+1 
+
+20: end for Return: Trained policy πK
+
+The output of the algorithm is the final policy. Here ω is the learning rate. For simplicity we have shown trust region updates using the KL divergence criterion, but in practice we use the PPO updates through gradient clipping [Schulman et al. , 2017]. In the next section we present the empirical details to demonstrate the efficacy of our approach on some bench-mark environments in safe RL. 
+
+# 5 Experiments 
+
+In this section, we present the evaluation results of our pro-posed algorithm on benchmark safe RL environments and compare its performance with state-of-the-art approaches. For benchmarking, we consider the following methods. • First order methods such as CUP [Yang et al. , 2022] and FOCOPS [Zhang et al. , 2020]. • Lagrangian methods such as CPPOPID [Stooke et al. ,2020], and PPO [Schulman et al. , 2017] with a La-grangian multiplier. • Second order methods such as CPO [Achiam et al. ,2017], and PCPO [Yang et al. , 2020]. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5321 Figure 4: Comparison with the baselines using the MuJoCo safety velocity scenarios. Our method is marked as IP3O (blue). The dashed line indicates the cost constraint limit. 
+
+• Penalty function methods such as IPO [Liu et al. , 2020], and P3O [Zhang et al. , 2022]. All the above algorithms use an on-policy buffer for learning. Additionally, we include a comparison with the vanilla PPO algorithm [Schulman et al. , 2017] as a baseline. All base-line implementations are adapted from the OmniSafe reposi-tory [Ji et al. , 2024]. The evaluations were conducted across three widely-used environments: MuJoCo Safety Velocity [Ji et al. , 2023], Safety Gymnasium [Ray et al. , 2019], and Bullet Safety Gymnasium [Gronauer, 2022]. These environ-ments provide diverse challenges that test the agent’s abil-ity to maximize cumulative rewards while adhering to pre-defined safety constraints, as formulated in Equation 1. We also evaluate our approach on multi-agent environments, us-ing the MetaDrive simulator [Li et al. , 2022], which are de-tailed later. Our approach allows tuning of the safety level via the hyper-parameter α, which is analyzed further in the Ablation Studies section. 
+
+5.1 MuJoCo Safety Velocity 
+
+The Safety Velocity environments simulate autonomous robots using MuJoCo physics simulator. The objective is to control the agent to run as fast as possible while ensuring compliance with the velocity constraints of the robot. We evaluate our approach on the Ant, Half-Cheetah, Humanoid, and Swimmer robots. Each environment has varying episode lengths. For these experiments, we set the constraint limit to 25 and use α = 0 .5. Detailed environment descriptions are provided in the Supplementary Material. As shown in Figure 4, IP3O obtains better returns while maintaining strict compliance with the velocity constraints compared to state-of-the-art algorithms. Algorithms such as FOCOPS and PCPO shows better returns compared to IP3O for the Ant and HalfCheetah environments, but struggle to find a feasible policy. Other penalty based algorithms, such as IPO and P3O demonstrate sub-optimal returns owing to sharp gradient change near the constraint boundary. This demon-strates that our approach balances safety and performance ef-fectively in dynamic control tasks. 
+
+5.2 Safety Gymnasium 
+
+Safety Gymnasium environments present the challenge of navigating the agent towards goal state using RL policy in continuous state-space environments. The agent needs to avoid unsafe states such as pre-defined hazardous regions, or avoiding interactions with certain unsafe moving objects; while navigating. Generally the hazards and goals are de-tected using lidar signals returned by the environments at each step, that are part of the observation space for the agents. The rewards can be maximized by going towards the goal states, while going away from them incurs negative rewards. We evaluate our method in the Goal and Button tasks, where each episode runs for 1,000 time-steps. For these experiments, the constraint limit is 25, and we set α = 0 .1.Figure 5 shows that our algorithm consistently outperforms baseline methods in adhering to safety constraints within the policy space ΠC while achieving competitive or higher cumu-lative rewards. This highlights the robustness of our approach in navigation tasks with complex safety requirements. Algo-rithms such as PCPO and IPO obtains better returns but fail to find a safety compliant policy. Owing to lower value for α,the learnt policy frequently shows constraint violations, but obtains much better rewards, especially in the Goal tasks. 
+
+5.3 Bullet Safety Gymnasium 
+
+The Bullet Safety Gymnasium environments consist of situa-tions similar to Safety Gymnasium, and feature tasks such as circular movement near boundaries or gathering objects, us-ing robots like Ball and Car, while staying within constraint barriers. Observation spaces include sensor data for nearby obstacles and task-specific information, such as distances to goals. These environments test safety-critical behaviors in constrained settings. For our evaluations, we set α = 1 .0 and a constraint limit of 25 across all scenarios. Detailed descrip-tions of the tasks are available in the Supplementary Material. From the results in Figure 6, it is evident that IP3O achieves the best compliance with safety constraints among other methods; except in the CarReach environment, the pol-icy demonstrates negligible constraint violation. However, Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5322
+
+Figure 5: Comparison with the baselines using the Safety Gymnasium scenarios. Our method is marked as IP3O (blue). The dashed line indicates the cost constraint limit. 
+
+Figure 6: Comparison with the baselines using the Bullet Safety Gymnasium scenarios. Our method is marked as IP3O (blue). The dashed line indicates the cost constraint limit. 
+
+this slightly reduces reward maximization, demonstrating that our algorithm prioritizes constraint satisfaction when neces-sary. Most of the algorithms struggle to find a consistently safe policy owing to oscillations in the loss function near the constraint boundary. The constraint violations for all the above scenarios are summarized in Figure 7. From the figure it can be seen that IP3O has the lowest cost violations overall, compared to the baselines for the MuJoCo velocity and Bullet Safety Gym en-vironments; and marginally above the best performance in Safety Gym, since α = 0 .1.
+
+Figure 7: Summary of constraint violations across all environments. 
+
+Figure 8: Evaluation results on the MetaDrive simulator 
+
+5.4 Multi-Agent Scenarios 
+
+The safety objective solved here is very relevant in the multi-agent automotive domain that consist of innate safety aspects. Our proposed approach is extendable to multi-agent scenar-ios. To demonstrate this, we evaluate it on cooperative driv-ing tasks within the MetaDrive simulator [Li et al. , 2022], a lightweight and realistic platform designed for multi-agent decentralized reward settings. To train the policy using a co-operative feedback, the value error was estimated using the Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+5323 summation of the decentralized rewards. MetaDrive provides challenging environments for controlling multiple vehicles in predefined driving scenarios, where agents must cooperate to maximize rewards by avoiding safety violations such as crashes or going off-road. Additional environment details are provided in the Supplementary Material. Training spanned 2000 episodes, using an on-policy re-play buffer. We benchmarked our approach against multi-agent versions of PPO, namely MAPPO [Yu et al. , 2022] and MAP3O [Zhang et al. , 2022]. Each trained policy was evalu-ated over 10 episodes per evaluation step. As shown in Figure 8, our algorithm, marked as MAIP3O (Multi-Agent IP3O), achieves comparable performance to baseline algorithms in terms of collective reward across all agents (vehicles). We focus on reward maximization as the primary objective, with safety integrated to facilitate reward optimization. In the following sub-section we discuss the effect of some of our hyper-parameters on the outcome with respect to return and constraint satisfaction. 
+
+5.5 Ablation Studies 
+
+We conduct ablation studies to evaluate the effect of hyper-parameters on the performance of our approach, focusing on two key parameters: the α hyper-parameter, and the cost limit 
+
+d. These experiments are carried out across different envi-ronments to provide a comprehensive understanding of how variations in these hyper-parameters impact performance.   
+
+> Figure 9: Ablation experiments using αon the Half-Cheetah and the Humanoid environments.
+
+The effect of α is studied in the Half-Cheetah and Hu-manoid tasks from the MuJoCo Safety Velocity benchmark. For these experiments, the cost limit d is fixed at 25. As shown in Figure 9, setting α = 0 .5 achieves optimal con-straint satisfaction while maintaining a reasonable reward. Reducing α to 0.1, although resulting in higher rewards, leads to frequent constraint violations, as shown in Figure 9. On the other hand, increasing α beyond 0.5 does not significantly im-prove constraint satisfaction in environments where reward and constraints are intrinsically tied to velocity. In scenar-ios with tight safety constraints, prioritizing constraint satis-faction with higher α values is beneficial. However, in less safety-critical tasks, relaxing the safety weight may allow for better reward maximization.    
+
+> Figure 10: Ablation experiments using the cost limit dhyper-parameter on the PointGoal1 and the CarGoal1 environments.
+
+In addition, we also analyze the robustness of IP3O across varying cost limit levels d in the PointGoal1 and CarGoal1 en-vironments from the Safety Gymnasium benchmark, to better highlight the effect of cost limit on the policy learning. The results, presented in Figure 10, demonstrate that our approach effectively learns constraint satisfying policies, π ∈ ΠC , for a range of d values while maximizing rewards. This highlights the flexibility of our method in adapting to diverse safety re-quirements. Overall, these results underline the importance of careful tuning of hyper-parameters to achieve the desired balance between safety and reward. 
+
+# 6 Conclusion 
+
+In this paper, we introduced Incrementally Penalized Proxi-mal Policy Optimization (IP3O), a novel policy optimization algorithm designed to solve safe RL tasks for combining con-straint satisfaction with reward maximization. IP3O demon-strates adaptability to diverse safety requirements. Our exper-iments demonstrated the efficacy of IP3O across benchmark environments in safe RL, such as MuJoCo Safety Velocity, Safety Gymnasium, and Bullet Safety Gymnasium. The re-sults highlight its superior ability to balance safety and re-ward compared to state-of-the-art approaches. Additionally, the algorithm’s scalability to multi-agent settings, as shown in MetaDrive scenarios, shows its potential for real-world ap-plications like autonomous driving and robotics. IP3O can be tailored to different safety-critical tasks as shown in the ablation studies that validate the impact of key hyper-parameters such as α and constraint limits. These findings demonstrate the algorithm’s practicality for safe RL tasks. In conclusion, IP3O provides a framework for advanc-ing safe RL research through practical applications and theo-retical guarantees. Future work could explore its scalability to larger multi-agent systems and further analyze its theoretical properties under varying safety thresholds. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5324
+
+# Acknowledgements 
+
+The authors acknowledge partial support from AI4CPS IIT Kharagpur grant no TRP3RDTR001 for this work. 
+
+# References 
+
+[Achiam et al. , 2017] Joshua Achiam, David Held, Aviv Tamar, and Pieter Abbeel. Constrained policy optimiza-tion. In International Conference on Machine Learning ,pages 22–31. PMLR, 2017. [Altman, 2021] Eitan Altman. Constrained Markov decision processes . Routledge, 2021. [Barron, 2017] Jonathan T Barron. Continuously dif-ferentiable exponential linear units. arXiv preprint arXiv:1704.07483 , 2017. [Chow et al. , 2018] Yinlam Chow, Mohammad Ghavamzadeh, Lucas Janson, and Marco Pavone. Risk-constrained reinforcement learning with percentile risk criteria. Journal of Machine Learning Research ,18(167):1–51, 2018. [Clevert, 2015] Djork-Arn´ e Clevert. Fast and accurate deep network learning by exponential linear units (elus). arXiv preprint arXiv:1511.07289 , 2015. [Dai et al. , 2023] Juntao Dai, Jiaming Ji, Long Yang, Qian Zheng, and Gang Pan. Augmented proximal policy op-timization for safe reinforcement learning. In Proceed-ings of the AAAI Conference on Artificial Intelligence , vol-ume 37, pages 7288–7295, 2023. [Ding et al. , 2020] Dongsheng Ding, Kaiqing Zhang, Tamer Basar, and Mihailo Jovanovic. Natural policy gradient primal-dual method for constrained markov decision pro-cesses. Advances in Neural Information Processing Sys-tems , 33:8378–8390, 2020. [Fernandez-Llorca and G´ omez, 2023] David Fernandez-Llorca and Emilia G´ omez. Trustworthy artificial intelligence requirements in the autonomous driving domain. Computer , 56(2):29–39, 2023. [Fisac et al. , 2018] Jaime F Fisac, Anayo K Akametalu, Melanie N Zeilinger, Shahab Kaynama, Jeremy Gillula, and Claire J Tomlin. A general safety framework for learning-based control in uncertain robotic systems. IEEE Transactions on Automatic Control , 64(7):2737–2752, 2018. [Gao et al. , 2024] Shiqing Gao, Jiaxin Ding, Luoyi Fu, Xin-bing Wang, and Chenghu Zhou. Exterior penalty pol-icy optimization with penalty metric network under con-straints. In Proceedings of the Thirty-Third Interna-tional Joint Conference on Artificial Intelligence, IJCAI-24 , 2024. [Gronauer, 2022] Sven Gronauer. Bullet-safety-gym: Aframework for constrained reinforcement learning. 2022. [Ji et al. , 2023] Jiaming Ji, Borong Zhang, Jiayi Zhou, Xue-hai Pan, Weidong Huang, Ruiyang Sun, Yiran Geng, Yi-fan Zhong, Josef Dai, and Yaodong Yang. Safety gymna-sium: A unified safe reinforcement learning benchmark. In Thirty-seventh Conference on Neural Information Pro-cessing Systems Datasets and Benchmarks Track , 2023. [Ji et al. , 2024] Jiaming Ji, Jiayi Zhou, Borong Zhang, Jun-tao Dai, Xuehai Pan, Ruiyang Sun, Weidong Huang, Yi-ran Geng, Mickel Liu, and Yaodong Yang. Omnisafe: An infrastructure for accelerating safe reinforcement learn-ing research. Journal of Machine Learning Research ,25(285):1–6, 2024. [Jiang and Li, 2016] Nan Jiang and Lihong Li. Doubly ro-bust off-policy value evaluation for reinforcement learn-ing. In International Conference on Machine Learning ,pages 652–661. PMLR, 2016. [Kakade and Langford, 2002] Sham Kakade and John Lang-ford. Approximately optimal approximate reinforcement learning. In Proceedings of the Nineteenth International Conference on Machine Learning , pages 267–274, 2002. [Kiran et al. , 2021] B Ravi Kiran, Ibrahim Sobh, Victor Tal-paert, Patrick Mannion, Ahmad A Al Sallab, Senthil Yoga-mani, and Patrick P´ erez. Deep reinforcement learning for autonomous driving: A survey. IEEE Transactions on In-telligent Transportation Systems , 23(6):4909–4926, 2021. [Levine et al. , 2016] Sergey Levine, Chelsea Finn, Trevor Darrell, and Pieter Abbeel. End-to-end training of deep visuomotor policies. Journal of Machine Learning Re-search , 17(39):1–40, 2016. [Li et al. , 2022] Quanyi Li, Zhenghao Peng, Lan Feng, Qi-hang Zhang, Zhenghai Xue, and Bolei Zhou. Metadrive: Composing diverse driving scenarios for generalizable re-inforcement learning. IEEE Transactions on Pattern Anal-ysis and Machine Intelligence , 45(3):3461–3475, 2022. [Liu et al. , 2020] Yongshuai Liu, Jiaxin Ding, and Xin Liu. Ipo: Interior-point policy optimization under constraints. In Proceedings of the AAAI Conference on Artificial Intel-ligence , volume 34, pages 4940–4947, 2020. [McNamara, 2016] Steven McNamara. The law and ethics of high-frequency trading. Minn. JL Sci. & Tech. , 17:71, 2016. [Ono et al. , 2015] Masahiro Ono, Marco Pavone, Yoshiaki Kuwata, and J Balaram. Chance-constrained dynamic pro-gramming with application to risk-aware robotic space ex-ploration. Autonomous Robots , 39:555–571, 2015. [Ray et al. , 2019] Alex Ray, Joshua Achiam, and Dario Amodei. Benchmarking safe exploration in deep rein-forcement learning. arXiv preprint arXiv:1910.01708 ,7(1):2, 2019. [Schulman et al. , 2017] John Schulman, Filip Wolski, Pra-fulla Dhariwal, Alec Radford, and Oleg Klimov. Prox-imal policy optimization algorithms. arXiv preprint arXiv:1707.06347 , 2017. [Schulman, 2015] John Schulman. Trust region policy opti-mization. arXiv preprint arXiv:1502.05477 , 2015. [Stooke et al. , 2020] Adam Stooke, Joshua Achiam, and Pieter Abbeel. Responsive safety in reinforcement learn-ing by pid lagrangian methods. In International Con-Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25) 
+
+> 5325
+
+ference on Machine Learning , pages 9133–9143. PMLR, 2020. [Sutton and Barto, 2018] Richard S Sutton and Andrew G Barto. Reinforcement learning: An introduction . MIT press, 2018. [Tessler et al. , 2018] Chen Tessler, Daniel J Mankowitz, and Shie Mannor. Reward constrained policy optimization. 
+
+International Conference on Learning Representations ,2018. [Yang et al. , 2020] Tsung-Yen Yang, Justinian Rosca, Karthik Narasimhan, and Peter J Ramadge. Projection-based constrained policy optimization. International Conference on Learning Representations , 2020. [Yang et al. , 2022] Long Yang, Jiaming Ji, Juntao Dai, Lin-rui Zhang, Binbin Zhou, Pengfei Li, Yaodong Yang, and Gang Pan. Constrained update projection approach to safe policy optimization. Advances in Neural Information Pro-cessing Systems , 35:9111–9124, 2022. [Yu et al. , 2019] Ming Yu, Zhuoran Yang, Mladen Kolar, and Zhaoran Wang. Convergent policy optimization for safe reinforcement learning. Advances in Neural Information Processing Systems , 32, 2019. [Yu et al. , 2021] Chao Yu, Jiming Liu, Shamim Nemati, and Guosheng Yin. Reinforcement learning in healthcare: A survey. ACM Computing Surveys (CSUR) , 55(1):1–36, 2021. [Yu et al. , 2022] Chao Yu, Akash Velu, Eugene Vinitsky, Ji-axuan Gao, Yu Wang, Alexandre Bayen, and Yi Wu. The surprising effectiveness of ppo in cooperative multi-agent games. Advances in neural information processing sys-tems , 35:24611–24624, 2022. [Zhang et al. , 2020] Yiming Zhang, Quan Vuong, and Keith Ross. First order constrained optimization in policy space. Advances in Neural Information Processing Sys-tems , 33:15338–15349, 2020. [Zhang et al. , 2022] Linrui Zhang, Li Shen, Long Yang, Shixiang Chen, Bo Yuan, Xueqian Wang, and Dacheng Tao. Penalized proximal policy optimization for safe rein-forcement learning. In International Joint Conference on Artificial Intelligence , 2022. [Zhang et al. , 2023] Linrui Zhang, Qin Zhang, Li Shen, Bo Yuan, Xueqian Wang, and Dacheng Tao. Evaluating model-free reinforcement learning toward safety-critical tasks. In Proceedings of the AAAI Conference on Artifi-cial Intelligence , volume 37, pages 15313–15321, 2023. Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence (IJCAI-25)
