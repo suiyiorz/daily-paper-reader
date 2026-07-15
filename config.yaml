@@ -25,3 +25,60 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: ad
+      description: 帮我查找自动驾驶、机器人、居身智能相关论文
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: autonomous driving
+          keyword_cn: 自动驾驶
+          query: autonomous driving systems perception planning control
+        - keyword: robotics
+          keyword_cn: 机器人
+          query: robotics manipulation locomotion human-robot interaction
+        - keyword: embodied intelligence
+          keyword_cn: 具身智能
+          query: embodied intelligence agents in physical environments
+        - keyword: self-driving vehicles
+          keyword_cn: 自动驾驶车辆
+          query: self-driving vehicles sensor fusion decision making
+        - keyword: robot perception
+          keyword_cn: 机器人感知
+          query: robot perception visual and tactile sensing
+        - keyword: intelligent control
+          keyword_cn: 智能控制
+          query: intelligent control reinforcement learning for robots
+      intent_queries:
+        - query: autonomous driving and robotics integration for embodied intelligence
+          query_cn: 自动驾驶与机器人融合的具身智能
+          enabled: true
+          source: manual
+          note: ''
+        - query: reinforcement learning for robotic manipulation and autonomous navigation
+          query_cn: 用于机器人操作和自主导航的强化学习
+          enabled: true
+          source: manual
+          note: ''
+        - query: embodied AI agents in real world scenarios
+          query_cn: 真实世界场景中的具身AI智能体
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-07-15T04:07:17.748Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
