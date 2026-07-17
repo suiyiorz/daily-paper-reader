@@ -1,0 +1,1300 @@
+Title: SEAMLiS: Visibility-Aware Safety for Perception-Limited Multi-Robot Exploration
+
+URL Source: https://arxiv.org/pdf/2607.09959v1
+
+Published Time: Tue, 14 Jul 2026 00:14:38 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+> 1
+
+# SEAMLiS : Visibility-Aware Safety for Perception-Limited Multi-Robot Exploration 
+
+Taekyung Kim 1, Rahul H Kumar 1, Aswin D. Menon 2, Tzu-Hsiang Lin 3, Dimitra Panagou 1,2
+
+Abstract —Autonomous exploration in unknown environments is typically driven by informative frontiers, viewpoints, or trajec-tories, while local safety controllers avoid obstacles represented in the current map. Under finite sensing range and limited field of view, this separation can be unsafe: an exploration stack may plan optimistically through unobserved space and steer the sensor toward information gain rather than along the direction of motion, causing hidden obstacles to be detected too late for bounded-actuation avoidance. This paper presents SEAMLiS 
+
+(Safe Exploration for Autonomous Multi-Robot Systems Under Limited Sensing), a modular execution-layer safety framework for decentralized multi-robot exploration. SEAMLiS preserves the upstream exploration stack, including the goal allocator and local planner, and enforces safety at the execution layer through perception-aware attitude and positional filters. A gatekeeper -based attitude filter switches between a visibility-promoting yaw policy and a velocity-tracking backup policy to preserve visibility of the critical known-free/unknown boundary with sufficient braking margin. A Control Barrier Function (CBF)-based positional filter then avoids known obstacles, newly de-tected obstacles, and other robots. We provide sufficient collision-avoidance conditions and validate the framework in randomized simulation, Isaac Sim, and Crazyflie hardware experiments. Results show collision-free exploration across tested single- and multi-robot settings while retaining much of the efficiency of visibility-promoting yaw control. [Code] [Project Page] 1 [Video] 
+
+I. INTRODUCTION Exploration and mapping of unknown environments are fundamental capabilities for autonomous robots operating in unstructured workspaces. The objective is to incrementally construct a map while navigating safely, typically through a hierarchical autonomy stack consisting of localization and mapping, global exploration-goal selection, local planning, and feedback control. A seminal work [1] introduced frontiers , de-fined as boundaries between known-free and unknown regions, and established frontier-driven exploration as a canonical paradigm. Since then, extensive literature has sought to reduce exploration time by improving frontier selection and viewpoint planning, including heuristic frontier-selection methods [2]– [4], next-best-view strategies [5], and learning-assisted and learning-based approaches [6]–[11]. Multi-robot exploration can further improve coverage speed by distributing the mapping task across multiple platforms. Practical deployments, however, often face severe commu-nication constraints: sharing full occupancy grids or dense 
+
+> 1
+
+Department of Robotics, 2Department of Aerospace Engineering, 
+
+> 3
+
+Department of Mechanical Engineering, University of Michigan, Ann Arbor, MI, 48109, USA {taekyung, rahulhk, admenon, szlin, dpanagou }@umich.edu 
+
+> 1
+
+Project page: https://www.taekyung.me/seamlis 
+
+Fig. 1: Motivating failure example for perception-limited robot exploration. A robot exploring an unknown environment steers its finite-FoV sensor toward information-rich regions, while its translational motion approaches an unseen obstacle. Because the direction of motion is not kept sufficiently visible, the hidden obstacle may be detected only after the remaining stopping distance has become insufficient, leading to a collision. 
+
+maps can be bandwidth-intensive and brittle under packet loss. Consequently, many multi-robot systems are designed to be 
+
+decentralized , where robots share only limited information such as poses, topological summaries, or selected frontier candidates rather than complete maps [12], [13]. In this setting, a robot may be assigned a goal that lies on the boundary of, or even outside, its locally sensed region. The robot must then navigate through partially known space while relying on onboard sensing with finite range and limited field of view (FoV). A critical, yet often under-emphasized, issue is that efficiency-oriented exploration stacks can be unsafe under limited sensing. A common optimistic modeling choice is to treat unobserved space as collision-free for planning and control [14]–[16]. This assumption is useful for maintaining exploration progress, but it becomes problematic when (i) the robot has a restricted FoV and finite sensing range, and (ii) the robot’s yaw, or sensor heading, is controlled to maximize information gain rather than to observe the direction of motion. In holonomic platforms, or quadrotor-like models with decoupled yaw, a visibility-promoting yaw policy can induce sideways motion : the robot translates along a direction that is not covered by its current FoV. Hidden obstacles along the direction of travel may then be detected only when the remaining stopping distance is insufficient. This failure mode can persist even when a local safety-critical controller, such as a Control Barrier Function (CBF)-based Quadratic Program (QP), is used for obstacle avoidance, because the safety filter may become infeasible once an obstacle is detected too late under bounded actuation [17]. Fig. 1 illustrates this motivating arXiv:2607.09959v1 [cs.RO] 10 Jul 2026 2                      
+
+> Fig. 2: SEAMLiS integration in a decentralized exploration stack for Rrobots. For robot i, the planning module assigns an exploration goal pgoal
+> i(t)from local or communicated frontier information Ffr (t) = {F fr
+> 1(t), . . . , Ffr
+> R(t)}and generates a waypoint path Pi(t). The perception module updates the local map, including the accumulated known-free set Bi(t), the local obstacle set Oi(t), and the frontier set Ffr
+> i(t).SEAMLiS is placed at the execution layer: the attitude controller uses gatekeeper to filter a nominal visibility-promoting yaw command with a velocity-tracking backup policy, while the positional controller enforces CBF constraints for known obstacles, newly detected obstacles, and neighboring robots. The resulting control input is applied to the robot dynamics, and sensing and localization close the feedback loop.
+
+failure mode. This paper addresses this gap by developing SEAMLiS 
+
+(Safe Exploration for Autonomous Multi-Robot Systems Un-der Li mited Sensing), a modular safety layer for decentralized multi-robot exploration. Rather than replacing the upstream goal assignment or planning modules, SEAMLiS operates at the execution layer . It is designed to be plug-and-play with respect to both the global goal allocator and the local planner; any algorithm that outputs per-robot goals, including frontier-based methods [1], decentralized optimization-based methods, or learning-based exploration policies, can be used. The key idea is to ensure that each robot observes the critical boundary between its known-free region and the unknown region early enough to preserve the feasibility of collision avoidance under bounded acceleration. This perspective is aligned with recent analyses of perception-limited safety, which show that safety guarantees can fail when planners or controllers are agnostic to FoV and sensing-range constraints [17], [18]. The resulting modular architecture is illustrated in Fig. 2. Accordingly, the central question in this paper is not how to choose the most informative frontier, viewpoint, or trajectory, but how to make an arbitrary upstream exploration stack safe when sensing is finite-range and FoV-limited, and when sensor heading is decoupled from translational motion. The main contributions of this paper are:  
+
+> •
+
+We formalize decentralized multi-robot exploration under limited sensing and identify a safety gap overlooked by efficiency-oriented exploration stacks: optimistic planning combined with visibility-maximizing yaw control can delay hidden-obstacle detection until safe avoidance is infeasible.  
+
+> •
+
+We propose SEAMLiS , a modular execution-layer safety framework that augments arbitrary, possibly asyn-chronous, multi-robot goal assignment and planning modules. This design preserves the scalability and ef-ficiency of existing decentralized exploration pipelines while adding perception-aware safety enforcement under limited communication.  
+
+> •
+
+We design a visibility-aware attitude safety filter using a gatekeeper -style mechanism [19]. The filter per-mits nominal information-greedy yaw when certified safe and switches to a velocity-tracking backup policy when needed, ensuring that motion-relevant unknown bound-aries remain observable with sufficient braking margin.  
+
+> •
+
+We integrate the attitude safety filter with a CBF-based positional controller for known obstacles, newly detected obstacles, and neighboring robots. We provide sufficient conditions under which the combined controller guar-antees collision avoidance for all time despite initially unknown obstacles.  
+
+> •
+
+We validate SEAMLiS in randomized simulation, Isaac Sim, and two-Crazyflie hardware experiments, showing that it eliminates the hidden-obstacle collisions observed in baseline attitude policies while retaining much of the efficiency of visibility-promoting exploration. II. RELATED WORK Autonomous exploration has been studied from several complementary perspectives, including frontier and next-best-view (NBV) planning, optimization-based multi-robot coordi-nation, learning-based exploration, and safety-aware naviga-tion under limited perception. The distinction most relevant to this work is not only how exploration goals are generated, but also whether the method is decentralized, whether finite range 3
+
+and limited field of view are explicitly modeled, and whether formal safety guarantees are provided. Table I summarizes representative methods along these axes. 
+
+A. Frontier, Next-Best-View, and Hierarchical Exploration 
+
+Frontier-based exploration remains a standard abstraction for autonomous mapping, where the robot repeatedly selects goals on the boundary between known-free and unknown space [1]. Subsequent work has improved exploration effi-ciency by refining frontier scoring, next-best-view selection, and trajectory generation. Receding-horizon next-best-view methods sample candidate viewpoints or branches and se-lect paths with high expected information gain [20], while sampling-based informative path planning optimizes longer-horizon information gain and can maintain a global candidate tree online [21]. Recent exploration systems further improve scalability through incremental frontier structures, hierarchical local–global planning, next-best-trajectory optimization, and unknown-region-guided trajectory generation [2], [5], [22]– [24]. These methods are effective for reducing exploration time, but safety is typically enforced only with respect to the currently known map or by a downstream local planner. Consequently, they do not by themselves address the case in which finite range, limited FoV, and optimistic planning allow a robot to move toward hidden obstacles that are detected too late. 
+
+B. Optimization-Based and Decentralized Multi-Robot Explo-ration 
+
+Multi-robot exploration can reduce mapping time by dis-tributing sensing and planning across the team. CoScan [25] coordinates multiple robots for dense scene reconstruction by extracting task views, assigning them through an Optimal Mass Transport (OMT)-based objective, and computing per-robot scanning paths; however, the original system relies on centralized reconstruction and planning. Decentralized active information acquisition instead formulates multi-robot sensing as distributed information gathering under graph-structured communication [12], [26]. For aerial robots, RACER [13] introduced a fully decentralized multi-UAV exploration system that uses online space decomposition, limited asynchronous communication, workload balancing, and hierarchical plan-ning. Recent distributed multi-robot exploration systems extend this direction to large-scale and unstructured environments. For example, the multi-robot exploration planner in [27] maintains local and global exploration graphs that are synchro-nized among robots within communication range, enabling distributed exploration in subterranean and Mars-like envi-ronments. Heterogeneous exploration systems further exploit complementary platform capabilities. AAGE uses an aerial robot to provide a bird’s-eye-view prior for ground-robot exploration [28], while recent heterogeneous planners explic-itly account for different traversal, sensing, and observation capabilities during task allocation and path planning [29], [30]. These systems improve coverage efficiency and adaptability in realistic environments, but their collision avoidance remains primarily planner-level or empirical rather than a formal finite-FoV hidden-obstacle safety guarantee. Learning-assisted assignment has also been used for multi-robot active mapping; NeuralCoMapping formulates robot-frontier assignment as a neural bipartite graph matching prob-lem to improve efficiency and map completeness [31]. These methods address coordination and exploration efficiency, but they generally do not provide formal collision-avoidance guar-antees for initially unknown obstacles under bounded actuation and limited FoV. SEAMLiS is therefore complementary: it can sit below such goal-allocation and planning modules as an execution-layer safety mechanism. 
+
+C. Learning-Based Exploration 
+
+Learning-based exploration methods exploit learned spatial representations, priors, or policies to improve efficiency in visually rich environments. Active Neural SLAM uses a mod-ular hierarchy with learned SLAM, learned global and local policies, and analytical planning to avoid the sample com-plexity of purely end-to-end exploration [7]. Related single-agent neural mapping and navigation methods learn object-goal potentials, model-based spatial priors, or large-scale exploration policies [9]–[11]. Multi-agent extensions learn cooperative policies from visual or map observations. MAANS extends Active Neural SLAM to cooperative visual exploration through a transformer-based multi-agent spatial planner [32], while Active Neural Topological Mapping for Multi-Agent Exploration constructs compact topological graphs and uses a hierarchical graph neural planner for goal selection [33]. More recent learning-based multi-robot exploration methods fur-ther study decentralized communication, density-based fron-tier selection, constrained-FoV viewpoint decisions, multi-task pretraining, and hybrid learning-planning architectures [34]– [37]. Although these approaches can improve exploration ef-ficiency, scalability, and generalization, their safety properties are usually empirical and depend on the simulator, training distribution, or a separate collision checker. They do not certify recursive feasibility of collision avoidance when hidden obstacles become visible only after the remaining braking distance is insufficient. 
+
+D. Safety-Aware Navigation under Limited Perception 
+
+A separate line of work studies safety under limited sens-ing, occlusion, and visibility constraints. Safety-aware per-ception methods use CBF-based reasoning to choose sensor orientations or viewpoints that reduce collision risk [16]. Visibility-aware planning combines sampling-based planning with barrier-style constraints to account for limited sensing in unknown environments [17]. Occlusion-aware MPC reasons about unseen dynamic obstacles through reachable sets and in-corporates occlusion-induced risk into real-time planning [18]. These methods show that perception constraints are not merely sensing details but can directly determine whether a safety controller remains feasible. However, they are primarily devel-oped for single-robot navigation or occlusion-aware planning rather than decentralized multi-robot exploration with arbitrary upstream goal assignment. In contrast, SEAMLiS targets the 4
+
+TABLE I: Comparison with representative exploration and perception-limited safety methods. Here, “Limited Sensing” indicates that the method explicitly models finite sensing range, limited field of view (FoV), or constrained egocentric observations; it does not by itself imply a formal safety guarantee under such sensing limits. Abbreviations: Dec. = decentralized execution; △ = partial or setting-dependent. The symbol † indicates that the safety guarantee is provided outside the decentralized multi-robot exploration setting.                                                                                             
+
+> Method Setting Dec. Limited Sensing Safety Guarantee Main Idea Gap to Ours
+> Frontier-based exploration [1] Single △✗✗Frontier goals Known-map safety only NBV / informative path planning [20], [21] Single N/A △✗Information gain Known-map safety only Hierarchical frontier / NBV planners [2], [5], [22]–[24] Single N/A △✗Frontier / NBV hierarchy No FoV guarantee CoScan [25] Multi ✗△✗OMT-based task assignment No hidden-obstacle guarantee Decentralized active information acquisition [12], [26] Multi ✓△✗Distributed information Estimation-focused RACER [13] Multi ✓△✗Space decomposition No hidden-obstacle guarantee Graph-based multi-robot exploration [27] Multi ✓△✗Local-global graphs Planner-level safety Heterogeneous multi-robot exploration [28]–[30] Hetero. Multi △△✗Capability-aware planning Empirical safety NeuralCoMapping [31] Multi ✗✓✗Graph matching No safety layer Neural mapping/navigation [7], [9]–[11] Single N/A ✓✗Learned exploration Empirical safety Neural multi-agent exploration [32], [33] Multi △✓✗Neural maps / graphs Empirical safety Decentralized RL exploration [34], [35] Multi ✓✓✗Learned policies Empirical safety Perception-aware safe navigation [16]–[18] Single N/A ✓✓†Visibility / occlusion safety Not multi-robot exploration
+> Ours: SEAMLiS Multi ✓✓✓gatekeeper + CBF Execution-layer safety
+
+execution layer of multi-robot exploration: the attitude filter maintains visibility of the critical known-free/unknown bound-ary, while the positional CBF/HOCBF filter handles known obstacles, newly detected hidden obstacles, and inter-agent separation. III. PRELIMINARIES 
+
+A. Notation 
+
+Let R denote the set of real numbers. For a vector a ∈ Rn,
+
+∥a∥ denotes the Euclidean norm. For angles, wrap( ·) denotes wrapping onto (−π, π ]. For a set A ⊂ Rd, ∂A denotes its boundary and A denotes its closure, i.e., A := A ∪ ∂A.
+
+B. Robot Dynamics with Decoupled Yaw 
+
+We consider R robots indexed by i ∈ { 1, . . . , R }. Each robot is modeled by a double integrator in position and a single integrator in yaw, which is a standard simplified model for quadrotor translational motion with decoupled heading control: 
+
+˙pi = vi, ˙vi = ai, ˙θi = ωi, (1) where pi ∈ R2 is position, vi ∈ R2 is velocity, θi ∈ R is yaw, and the control inputs are acceleration ai ∈ R2 and yaw-rate 
+
+ωi ∈ R. We assume bounded actuation: 
+
+∥vi∥ ≤ vmax , ∥ai∥ ≤ amax , |ωi| ≤ ωmax . (2) The worst-case braking distance is defined as 
+
+dbr := v2max 
+
+2amax 
+
+, (3) which upper-bounds the distance required to stop from any admissible speed under maximum deceleration. 
+
+C. Limited Sensing Model 
+
+Each robot carries a perception sensor with finite sensing range lrange and limited horizontal FoV θfov ∈ (0 , 2π]. At time 
+
+t, robot i senses the footprint 
+
+Fi(t) := 
+
+n
+
+p ∈ W | ∥ p − pi(t)∥ ≤ lrange ,
+
+wrap  ∠(p − pi(t)) − θi(t) ≤ θfov 
+
+2 ,
+
+LoS( pi(t), p) = 1 
+
+o
+
+,
+
+(4) where W ⊂ R2 denotes the bounded workspace and ∠(·)
+
+returns the polar angle of a nonzero vector in R2. The line-of-sight indicator LoS( p, q) equals 1 if the line segment connecting p and q is not occluded by an obstacle, and equals 
+
+0 otherwise. IV. PROBLEM FORMULATION 
+
+A. Environment, Map Representation, and Frontiers 
+
+Let the true static obstacle set be O⋆ ⊂ W , and let the true free space be S := W \ O ⋆. We decompose O⋆ into the initially known obstacle set O0 and the initially unknown, or hidden, obstacle set H:
+
+O⋆ = O0 ∪ H , O0 ∩ H = ∅. (5) Each robot i maintains a local map, such as an occupancy grid or Euclidean signed distance map, constructed from its onboard sensor stream. 
+
+Assumption 1 (State estimation and local perception) . Each robot has access to its own pose and velocity estimates, and the estimation and local mapping errors are bounded by the conservative margins used in the safety constraints. Within the sensed footprint Fi(t), occupied and free regions are classified correctly up to these margins. Such conservative margins can be supplied by certifiably-correct mapping pipelines that deflate reported free space under odometry drift [38]. Under Assumption 1, the local map of robot i partitions 
+
+W into a known-free region Bi(t), a known-occupied region 5
+
+Oi(t), and an unknown region Ui(t). We model the known-free region as the accumulated sensed footprint excluding occupied cells: 
+
+Bi(t) := 
+
+ [ 
+
+> τ∈[t0,t ]
+
+Fi(τ )
+
+ \ O i(t), (6) and the known obstacle set as 
+
+Oi(t) := O0 ∪ ˆOi(t), (7) where ˆOi(t) denotes the subset of hidden obstacles in H that have been detected by robot i up to time t. The unknown region is then 
+
+Ui(t) := W \ 
+
+
+
+Bi(t) ∪ O i(t)
+
+
+
+. (8) 
+
+Definition 1 (Frontier [1]) . A frontier point for robot i at time 
+
+t is a boundary point of the known-free region that is adjacent to the unknown region. The frontier set is defined as 
+
+Ffr  
+
+> i
+
+(t) := ∂Bi(t) ∩ U i(t). (9) 
+
+B. Decentralized Multi-Robot Exploration Stack 
+
+We adopt the following decentralized exploration setting. 
+
+Assumption 2 (Decentralized coordination) . The robot team operates without a central controller. Each robot i determines its own control input ui = ( ai, ω i) using its local state and local map, together with limited information shared asyn-chronously by neighboring robots, such as poses, velocities estimated from pose histories, and selected frontier candidates. The decentralized exploration stack consists of the following modules. 
+
+(i) Goal assignment. A possibly asynchronous multi-robot goal allocation module assigns each robot a goal pgoal  
+
+> i
+
+(t) ∈ W ,typically chosen on or near a frontier: 
+
+pgoal  
+
+> i
+
+(t) ∈ F fr (t), (10) where Ffr (t) is a set of frontier candidates collected from local and communicated information. We treat the goal allocator as a black box; examples include frontier-based exploration [1], decentralized adaptations of CoScan-style task-assignment ob-jectives [25], or learning-based exploration policies. 
+
+(ii) Local path planning. Given pgoal  
+
+> i
+
+(t) and the local map, a planner computes a waypoint path Pi(t). To maintain progress under incomplete maps, especially when goals origi-nate from other robots, it is common to plan optimistically by treating unknown cells as traversable [14], [15] or by assigning them a finite cost penalty [16]. In our implementation, we use A* for simplicity, but SEAMLiS does not depend on a specific planner. 
+
+(iii) Local control. A positional controller tracks Pi(t),while an attitude controller outputs ωi to regulate the sensor heading and improve sensing efficiency. 
+
+C. Safety and Exploration Objective 
+
+The exploration objective is to map the workspace by driving the union of known-free regions to cover the true free space: 
+
+∃ Tf < ∞ :
+
+> R
+
+[
+
+> i=1
+
+Bi(Tf ) = S. (11) Simultaneously, we require safety for all time: 
+
+∀t ≥ t0, ∀i : Robot( pi(t)) ∩ O ⋆ = ∅, (12a) 
+
+∀t ≥ t0, ∀i̸ = ℓ : Robot( pi(t)) ∩ Robot( pℓ(t)) = ∅, (12b) where Robot( p) is modeled as a disk of radius rrob centered at p. We aim to reduce the total exploration time while sat-isfying (12). Since direct time-optimal exploration is difficult to encode at the controller level, we use a local visibility-promoting attitude objective that increases information gain per unit motion. The key difficulty is that (12) cannot be certified solely from 
+
+Bi(t) and Oi(t) under limited sensing: unknown obstacles in 
+
+H may lie in Ui(t) and become detectable only when they enter Fi(t). Therefore, safety depends on timely detection : ob-stacles must be sensed early enough that the positional safety controller remains feasible under the actuation bounds (2). This motivates two execution-layer safety mechanisms. First, a positional safety filter must guarantee avoidance of obstacles and robots that are already represented in the local information state. Second, an attitude safety filter must ensure that the boundary between known-free and unknown space is observed early enough to make future obstacle avoidance feasible. We next introduce the two safety-filter mechanisms underlying 
+
+SEAMLiS and then describe how they are instantiated in the proposed framework. V. SAFETY-FILTER MECHANISMS This section summarizes the two safety-filter mechanisms used by SEAMLiS . The first is a CBF/HOCBF-based filter, which minimally modifies a nominal control input so that the closed-loop system remains inside a controlled-invariant set defined by the already known safety constraints. The second is a gatekeeper algorithm, which decides whether a nominal policy can be executed for a certified duration before switching to a backup policy. These tools are introduced here at an abstract level; their SEAMLiS -specific instantiations are given in Sec. VI. 
+
+A. CBF-Based Safety Filtering 
+
+Consider a continuous-time control-affine system 
+
+˙x = f (x) + g(x)u, (13) where x ∈ X ⊂ Rn is the state, u ∈ U ⊂ Rm is the control input, and U denotes the admissible input set. The vector fields 
+
+f : X → Rn and g : X → Rn×m are assumed to be locally Lipschitz. Let the desired safe set be the zero-superlevel set 
+
+C := {x ∈ X | h(x) ≥ 0}, (14) where h : X → R is continuously differentiable. 6
+
+Definition 2 (CBF [39]) . The function h is a CBF for (13) on 
+
+C if there exists an extended class-K∞ function α such that 
+
+sup 
+
+> u∈U
+
+[Lf h(x) + Lg h(x)u] ≥ − α(h(x)) , ∀x ∈ C , (15) 
+
+where Lf h and Lg h denote the Lie derivatives of h along f
+
+and g, respectively. 
+
+The corresponding set of CBF-admissible inputs is 
+
+Kcbf (x) := {u ∈ U | Lf h(x) + Lg h(x)u ≥ − α(h(x)) } .
+
+Theorem 1 ( [39]) . Suppose that h is a CBF for C and that the feedback controller u(x) is locally Lipschitz on X and satisfies 
+
+u(x) ∈ Kcbf (x) for all x ∈ C . If x(t0) ∈ C , then C is forward invariant for the closed-loop system (13) ; equivalently, x(t) ∈C for all t ≥ t0.
+
+For safety functions with relative degree greater than one, the control input does not appear in the first derivative of h.We therefore use high-order CBFs (HOCBFs) [40]. Let h have relative degree r with respect to (13). Define 
+
+ψ0(x) := h(x),ψq (x) := ˙ψq−1(x) + αq (ψq−1(x)) , q = 1 , . . . , r − 1,ψr (x, u) := Lf ψr−1(x) + Lg ψr−1(x)u + αr (ψr−1(x)) ,
+
+where α1, . . . , α r are class-K functions. For q = 1 , . . . , r ,define the intermediate safe sets 
+
+Cq := {x ∈ X | ψq−1(x) ≥ 0}. (17) 
+
+Definition 3 (HOCBF [40]) . The function h is a HOCBF of relative degree r for (13) if there exist class-K functions 
+
+α1, . . . , α r such that 
+
+sup 
+
+> u∈U
+
+ψr (x, u) ≥ 0, ∀x ∈
+
+> r
+
+\
+
+> q=1
+
+Cq . (18) 
+
+The associated set of HOCBF-admissible inputs is 
+
+Khocbf (x) := {u ∈ U | ψr (x, u) ≥ 0} . (19) 
+
+Theorem 2 ( [40]) . Suppose that h is a HOCBF of relative degree r and that the feedback controller u(x) is locally Lipschitz and satisfies u(x) ∈ Khocbf (x) for all x ∈ ∩ rq=1 Cq .If x(t0) ∈ Trq=1 Cq , then ∩rq=1 Cq is forward invariant for the closed-loop system (13) .
+
+In Sec. VI-E, the distance-based collision-avoidance con-straints have relative degree two with respect to the accelera-tion input. For such constraints, we use the standard second-order HOCBF form with linear class-K functions α0, α 1 > 0:
+
+ψ(x, u) := ¨h(x, u) + α1 ˙h(x) + α0h(x) ≥ 0. (20) This yields the obstacle and inter-agent constraints ψobs  
+
+> ij
+
+and 
+
+ψag  
+
+> iℓ
+
+used by the positional safety filter. 
+
+B. gatekeeper Algorithm 
+
+We next introduce a recent backup-based safety filter: 
+
+gatekeeper [19], [41]. Let C ⊆ X be a safe set and let 
+
+S0 ⊆ C be a terminal controlled-invariant set. Let πnom : X → U denote a task-oriented nominal policy, and let πb : X → U 
+
+denote a backup policy. For any locally Lipschitz feedback policy π : X → U ,let φπt (x0) denote the state at time t ≥ 0 of the closed-loop system ˙x = f (x) + g(x)π(x) initialized at x(0) = x0.
+
+Definition 4 (Recoverable set [42]) . Let S0 ⊆ C ⊆ X , let π :
+
+X → U be a feedback policy, and let T > 0. The recoverable set of S0 under π over horizon T is 
+
+Rπ (T ; S0) := x0 ∈ C φπt (x0) ∈ C , ∀t ∈ [0 , T ],φπT (x0) ∈ S 0 . (21) 
+
+Definition 5 (Backup policy [42]) . Let S0 ⊆ C ⊆ X and let 
+
+TB > 0. A feedback policy πb : X → U is a backup policy for 
+
+S0 if S0 is forward invariant under πb and the recoverable set 
+
+Rπb (TB ; S0) contains a neighborhood of S0.
+
+Thus, the backup policy keeps the system inside S0 once it reaches S0, and it can drive nearby states into S0 within the recovery horizon TB without leaving C.Let ∆t > 0 be the control-update interval of the digital safety monitor, and let tk := t0 + k∆t, k ∈ Z≥0. At each update time, the monitor evaluates whether the nominal policy can be executed for a switching time TS ≥ 0 before handing control to the backup policy. 
+
+Definition 6 (Candidate trajectory [19], [42]) . Given the current state xk = x(tk) and a switching time TS ≥ 0, the candidate trajectory is 
+
+χcan (τ ; xk, T S ) := 
+
+(φπnom  
+
+> τ
+
+(xk), τ ∈ [0 , T S ],φπb 
+
+> τ−TS
+
+ φπnom  
+
+> TS
+
+(xk) , τ ∈ [TS , T S + TB ].
+
+(22) The candidate trajectory first follows the nominal policy for duration TS , and then follows the backup policy for duration 
+
+TB .
+
+Definition 7 (Validity indicator) . For fixed TB > 0, the candidate trajectory is valid if it remains in C over the full candidate horizon and reaches S0 at the terminal time:                         
+
+> Valid( xk;TS, T B) :=
+> 
+> 1,χcan (τ;xk, T S)∈ C ,∀τ∈[0 , T S+TB],χcan (TS+TB;xk, T S)∈ S 0,
+> 0,otherwise .
+> (23)
+
+When TB is fixed, we write Valid( xk; TS ) for notational simplicity. 
+
+Let TH > 0 be the search horizon for the nominal segment. The gatekeeper algorithm computes 
+
+T ⋆S (xk) := sup {TS ∈ [0 , T H ] | Valid( xk; TS ) = 1 } . (24) The applied policy is then 
+
+πGK (xk) = 
+
+(
+
+πnom (xk), T ⋆S (xk) > 0,πb(xk), T ⋆S (xk) = 0 . (25) In implementation, the search in (24) is performed over a finite grid TH = {0, ∆t, 2∆ t, . . . , T H }. In Sec. VI-D, we construct 7                         
+
+> Fig. 3: Illustration of the perception-limited safety issue and the proposed
+> SEAMLiS algorithm. The visibility-agnostic execution in (a) follows a nom-inal visibility-promoting yaw command ωnom
+> 1for robot 1 that maximizes the incremental sensed area ∆A1, but the critical point pc
+> 1on the boundary between the robot 1’s local known-free region B1(tk)and the unknown region
+> U1(tk)can remain outside the FoV, i.e., hvis
+> 1(·)<0. In this case, an obstacle near the critical point may be detected after the available stopping distance is insufficient. In (b), SEAMLiS uses the gatekeeper filter to switch from the nominal yaw command to the backup velocity-tracking yaw command ωb
+> 1
+> whenever needed, keeping hvis
+> 1(·)≥0while still allowing nominal visibility maximization when it is certified safe.
+
+the attitude safety filter using a visibility-promoting yaw policy as the nominal policy and a velocity-tracking yaw policy as the backup policy. VI. SEAML IS: SAFETY FILTERS FOR DECENTRALIZED EXPLORATION 
+
+A. Overview 
+
+SEAMLiS integrates the two safety-filter mechanisms intro-duced in Sec. V into the execution layer of a decentralized ex-ploration stack. The upstream goal assignment and local path-planning modules are treated as interchangeable components. As shown in Fig. 2, robot i receives a waypoint path Pi(t)
+
+from the local planner, maintains the local map components 
+
+Bi(t) and Oi(t) from onboard sensing, and applies two safety filters: i) a gatekeeper -based attitude filter , which maintains sufficient visibility of the critical boundary between known-free and unknown space; and ii) a CBF-based positional filter , which avoids known ob-stacles, newly detected obstacles, and neighboring robots. The attitude filter acts on the yaw-rate input ωi and decides whether the robot can safely execute a nominal visibility-promoting yaw policy or must switch to a conservative velocity-tracking backup policy. The positional filter acts on the acceleration input ai and enforces high-order CBF constraints for collision avoidance. Figure 3 illustrates the perception-limited failure mode addressed by the proposed execution-layer safety filters and the corresponding visibility-aware correction. 
+
+B. Nominal Local Policies 1) Nominal positional tracking: Let anom  
+
+> i
+
+(t) denote the nominal acceleration command generated by an arbitrary local path-tracking controller for the waypoint path Pi(t). The proposed safety layer does not depend on the specific tracking controller; it only requires the nominal command to be filtered through the admissible acceleration set defined in Sec. VI-E. 
+
+2) Nominal visibility-promoting attitude policy: The nom-inal yaw policy πvis  
+
+> θ
+
+greedily maximizes the incremental sensed area of previously unobserved space. At each control step, robot i enumerates a finite set of candidate headings 
+
+Θ := {θ(k)}Kk=1 . For each candidate heading, it estimates 
+
+∆A(k) 
+
+> i
+
+(t) := Area 
+
+
+
+Fi(t; θ(k)) \  Bi(t) ∪ O i(t)
+
+, (26) and selects 
+
+θ⋆i (t) ∈ arg max 
+
+> θ(k)∈Θ
+
+∆A(k) 
+
+> i
+
+(t). (27) The resulting nominal yaw-rate command is 
+
+ωnom  
+
+> i
+
+(t) = sat ωmax 
+
+ kθ wrap  θ⋆i (t) − θi(t) , (28) where kθ > 0 and sat ωmax (·) saturates to [−ωmax , ω max ].The nominal policy improves exploration efficiency by steering the finite-FoV sensor toward information-rich regions. However, it may rotate the sensor away from the direction of motion. Under finite sensing range and limited FoV, this can delay the detection of hidden obstacles along the upcoming trajectory. Therefore, SEAMLiS does not directly apply (28); instead, it uses the attitude safety filter in Sec. VI-D. 
+
+C. Visibility-Safety Set for the Attitude Filter 
+
+For analysis, we represent the planner output Pi(t) as a con-tinuous curve. Fix time t, and let γi : [0 , L i(t)] → W denote an arc-length parameterization of the current planned path of length Li(t), for example the piecewise-linear interpolation of the waypoint sequence Pi(t), with γi(0) = pi(t).
+
+Definition 8 (Critical point) . The critical point pc 
+
+> i
+
+(t) is the first intersection of the planned path with the boundary of the known-free region: 
+
+pc 
+
+> i
+
+(t) := γi(sc 
+
+> i
+
+(t)) , sc 
+
+> i
+
+(t) := inf {s ≥ 0 | γi(s) ∈ ∂Bi(t)} .
+
+(29) 
+
+If the planned path does not intersect ∂Bi(t) over the look-ahead horizon, we set sc 
+
+> i
+
+(t) = + ∞.
+
+The critical point identifies the location beyond which the robot begins to rely on the optimistic unknown-is-free planning assumption. To preserve safety under bounded deceleration, the robot must observe this boundary before the remaining path distance becomes smaller than the required braking distance. Let 
+
+dc 
+
+> i
+
+(t) := sc 
+
+> i
+
+(t) (30) denote the path distance to the critical point. When dc 
+
+> i
+
+(t) <
+
++∞, define the critical-point direction angle 
+
+βc 
+
+> i
+
+(t) := ∠(pc 
+
+> i
+
+(t) − pi(t)) . (31) The angular violation outside the FoV is 
+
+∆θc 
+
+> i
+
+(t) := max 
+
+
+
+0, wrap  βc 
+
+> i
+
+(t) − θi(t) − θfov 
+
+2
+
+
+
+. (32) Under the yaw-rate bound |ωi| ≤ ωmax , the fastest admissible rotation that brings the critical point into the FoV requires 
+
+∆θc 
+
+> i
+
+(t)/ω max seconds. This recovery time is achieved when the yaw controller rotates the sensor toward the direction of 8
+
+the critical point at the maximum admissible rate. During this recovery interval, the robot can translate by at most 
+
+vmax ∆θc 
+
+> i
+
+(t)/ω max .
+
+Definition 9 (Visibility constraint function) . For dc 
+
+> i
+
+(t) < +∞,define 
+
+hvis  
+
+> i
+
+(t) := dc 
+
+> i
+
+(t) − dbr − vmax 
+
+ωmax 
+
+∆θc 
+
+> i
+
+(t). (33) 
+
+The state is visibility-safe if hvis  
+
+> i
+
+(t) ≥ 0. If dc 
+
+> i
+
+(t) = + ∞, the visibility constraint is inactive and we set hvis  
+
+> i
+
+(t) = + ∞.
+
+The condition hvis  
+
+> i
+
+(t) ≥ 0 means that the robot has enough remaining path distance to rotate the critical point into the FoV while still retaining one worst-case braking distance. The braking-distance term dbr is analogous to the recoverability margin in backup-based safety filters [42]: after a hidden obstacle is detected, the positional safety filter must still have enough distance to stop or execute an avoidance maneuver. A less conservative implementation can replace dbr by the instantaneous braking distance ∥vi(t)∥2/(2 amax ).For the attitude safety filter, it is useful to view the visibility margin in (33) as a function of the robot state, parameterized by the local path and the known-free set used by the monitor. Let xi := [ p⊤ 
+
+> i
+
+, v⊤ 
+
+> i
+
+, θ i]⊤. We write hvis  
+
+> i
+
+(xi; Pi(t), Bi(t)) for the value of (33) obtained by computing the critical point along Pi(t) with respect to ∂Bi(t) and evaluating the resulting distance and angular terms at state xi. With the same con-vention, dc 
+
+> i
+
+(xi; Pi(t), Bi(t)) and ∆θc 
+
+> i
+
+(xi; Pi(t), Bi(t)) denote the corresponding critical-point distance and angular violation outside the FoV. The visibility-safe set for robot i is then defined as 
+
+Cvis  
+
+> i
+
+(t) := xi ∈ X | hvis  
+
+> i
+
+(xi; Pi(t), Bi(t)) ≥ 0 . (34) We also define the terminal visibility set 
+
+Svis 
+
+> 0,i
+
+(t) := 
+
+n
+
+xi ∈ C vis  
+
+> i
+
+(t) dc 
+
+> i
+
+(xi; Pi(t), Bi(t)) = + ∞
+
+or ∆θc 
+
+> i
+
+(xi; Pi(t), Bi(t)) = 0 
+
+o
+
+.
+
+Thus, Svis 
+
+> 0,i
+
+(t) consists of visibility-safe states in which either no known-free/unknown boundary appears along the current look-ahead path, or the critical point is already inside the FoV. 
+
+D. gatekeeper -Based Attitude Safety Filter 
+
+For robot i, the safe set, terminal set, and policies in Sec. V-B are chosen as 
+
+C = Cvis  
+
+> i
+
+(tk), S0 = Svis 
+
+> 0,i
+
+(tk), πnom = πvis  
+
+> θ
+
+, πb = πb 
+
+> θ
+
+,
+
+where the sets are evaluated using the local path Pi(tk) and known-free set Bi(tk) available at the current update time tk.The control input is the yaw rate ωi. The nominal policy πvis 
+
+> θ
+
+is the visibility-promoting yaw policy defined in (28), and the backup policy πb 
+
+> θ
+
+is the velocity-tracking yaw policy defined below. The attitude filter therefore preserves the visibility constraint hvis  
+
+> i
+
+≥ 0 while allowing the nominal visibility-promoting yaw command whenever its future execution is certified safe. 
+
+1) Backup velocity-tracking attitude policy: The backup yaw policy aligns the sensor with the instantaneous direction of translation. Define 
+
+θvel  
+
+> i
+
+(t) := 
+
+(
+
+∠(vi(t)) , ∥vi(t)∥ > v min ,θi(t), otherwise , (35) where vmin > 0 is a small velocity threshold. The backup yaw-rate command is 
+
+ωb 
+
+> i
+
+(t) := sat ωmax 
+
+ kb wrap  θvel  
+
+> i
+
+(t) − θi(t) , (36) with kb > 0. This policy prioritizes motion-aligned sensing near unknown space and serves as the backup policy πb 
+
+> θ
+
+.For the safety analysis, kb is chosen large enough that the backup command saturates whenever the velocity direction lies outside the FoV: 
+
+kb ≥ 2ωmax 
+
+θfov 
+
+. (37) Thus, whenever the direction of motion is outside the FoV, the backup policy rotates the sensor toward that direction at the maximum admissible yaw rate ωmax . This is the yaw-rate bound used in the visibility margin in (33). We also choose the backup horizon to cover the worst-case angular recovery time: 
+
+TB ≥ max 0, π − θfov 
+
+> 2
+
+ωmax 
+
+. (38) With these choices, the immediate-backup candidate TS = 0 is valid from any visibility-safe update state. Indeed, if xi(tk) ∈Cvis  
+
+> i
+
+(tk), then hvis  
+
+> i
+
+(xi(tk); Pi(tk), Bi(tk)) ≥ 0 already reserves both the worst-case distance traveled while rotating the critical point into the FoV and the braking distance dbr . Therefore, executing the backup yaw policy immediately keeps the can-didate rollout inside Cvis  
+
+> i
+
+(tk) and reaches Svis 
+
+> 0,i
+
+(tk) within the backup horizon. 
+
+2) Candidate yaw rollout and validity: Let tk be the current update time. During the attitude-filter prediction, the local path and known-free set are fixed at their current values, Pi(tk)
+
+and Bi(tk). For a switching time TS ∈ [0 , T H ] and a backup horizon TB > 0, let 
+
+ˆxi(τ ; TS ) := [ ˆ pi(τ )⊤, ˆvi(τ )⊤, ˆθi(τ ; TS )] ⊤
+
+denote the predicted state used by the attitude monitor at prediction time τ ∈ [0 , T S + TB ]. The translational component 
+
+( ˆ pi, ˆvi) is propagated conservatively along the current planned path Pi(tk) with speed bounded by vmax . The predicted yaw evolves according to 
+
+˙ˆθi(τ ; TS ) = ωcan  
+
+> i
+
+(τ ; TS ), ˆθi(0; TS ) = θi(tk), (39) where the candidate yaw-rate policy is                              
+
+> ωcan
+> i(τ;TS) =
+> (πvis
+> θ
+>  ˆxi(τ;TS); Pi(tk),Bi(tk),Oi(tk),τ∈[0 , T S),πb
+> θ
+>  ˆxi(τ;TS),τ∈[TS, T S+TB].
+> (40)
+
+Here πvis  
+
+> θ
+
+is the nominal visibility-promoting yaw policy in (28), and πb 
+
+> θ
+
+is the backup velocity-tracking yaw policy in (36). 9
+
+Using the state-based visibility margin defined in Sec. VI-C, the predicted visibility margin is 
+
+ˆhvis  
+
+> i
+
+(τ ; TS ) := hvis 
+
+> i
+
+  ˆxi(τ ; TS ); Pi(tk), Bi(tk). (41) The SEAMLiS -specific validity indicator is then                          
+
+> Valid vis
+> i(tk;TS) :=
+> 
+> 1,ˆhvis
+> i(τ;TS)≥0,∀τ∈[0 , T S+TB],
+> ˆxi(TS+TB;TS)∈ S vis
+> 0,i (tk),
+> 0,otherwise .
+> (42)
+
+Equivalently, a candidate yaw rollout is valid if it remains in the visibility-safe set Cvis  
+
+> i
+
+(tk) over the full candidate horizon and reaches the terminal visibility set Svis 
+
+> 0,i
+
+(tk) after the backup segment. The filter searches over the discrete set 
+
+TH = {0, ∆t, 2∆ t, . . . , T H }
+
+and computes 
+
+T ⋆S,i (tk) := max 
+
+n
+
+TS ∈ T H Valid vis  
+
+> i
+
+(tk; TS ) = 1 
+
+o
+
+. (43) Here, T ⋆S,i (tk) is the robot-i specialization of the general 
+
+gatekeeper switching time T ⋆S (xk) in (24), evaluated at the current state xi(tk) with the local planning and mapping quantities Pi(tk), Bi(tk), and Oi(tk) held fixed during the candidate-rollout evaluation. The candidate TS = 0 corresponds to immediately applying the backup yaw policy. By the backup-policy construction above, this immediate-backup candidate is valid whenever the current state is visibility-safe and the backup horizon satisfies (38). Therefore, the search set in (43) is nonempty for visibility-safe update states. Thus, TS = 0 is a certified backup candidate, not an artificial fallback. The applied yaw-rate command is 
+
+ωi(tk) = 
+
+(
+
+ωnom  
+
+> i
+
+(tk), T ⋆S,i (tk) > 0,ωb 
+
+> i
+
+(tk), T ⋆S,i (tk) = 0 . (44) Thus, the nominal visibility-promoting yaw policy is used whenever there exists a positive certified duration before the backup policy must be invoked. If no positive nominal duration is certified, the filter immediately applies the velocity-tracking backup yaw. 
+
+E. CBF-Based Positional Safety Filter 
+
+We construct the positional safety filter by applying the CBF formulation in Sec. V-A for the positional subsystem 
+
+˙pi = vi, ˙vi = ai,
+
+with positional state xp 
+
+> i
+
+:= [ p⊤ 
+
+> i
+
+, v⊤ 
+
+> i
+
+]⊤ and control input ai.The nominal input is the path-tracking command anom  
+
+> i
+
+(t), and the CBF filter modifies this command only as needed to satisfy obstacle-avoidance and inter-agent separation constraints. 
+
+Algorithm 1: gatekeeper Attitude Filter for Robot 
+
+i                                                                 
+
+> Input: Current state (pi,vi, θ i); planned path Pi; known-free set
+> Bi; known obstacle set Oi; horizons TH, T B
+> Output: Committed yaw-rate ωi
+> Compute pc
+> iand dc
+> iusing Definition 8
+> if dc
+> i= + ∞then return ωnom
+> i
+> end
+> Compute ∆θc
+> iusing (32) and hvis
+> iusing (33)
+> T⋆S,i ←0
+> for TS=TH, T H−∆t, . . . , 0do
+> Construct ωcan
+> i(·;TS)using (40) Predict ˆhvis
+> i(·;TS)and evaluate (42)
+> if Valid vis
+> i(tk;TS) = 1 then
+> T⋆S,i ←TS
+> break end end if T⋆S,i >0then return ωnom
+> i// Nominal visibility-promoting yaw
+> end else return ωb
+> i// Backup velocity-tracking yaw
+> end
+
+a) Obstacle avoidance constraints: For each obstacle j
+
+known to robot i at time t, including newly detected obstacles, define the inflated safety radius 
+
+rsafe := rrob + robs + ϵ, 
+
+where robs is the obstacle-radius approximation and ϵ > 0
+
+accounts for mapping and tracking uncertainty. Let pobs  
+
+> j
+
+be the obstacle center. Define 
+
+hobs  
+
+> ij
+
+(xp 
+
+> i
+
+) := ∥pi − pobs  
+
+> j
+
+∥2 − r2
+
+> safe
+
+. (45) Under (1), hobs  
+
+> ij
+
+has relative degree two with respect to ai.Applying the second-order HOCBF form in (20) gives 
+
+ψobs  
+
+> ij
+
+(xp 
+
+> i
+
+, ai) := 2( pi − pobs  
+
+> j
+
+)⊤ai + 2 ∥vi∥2
+
++ 2 α1(pi − pobs  
+
+> j
+
+)⊤vi + α0hobs  
+
+> ij
+
+(xp 
+
+> i
+
+) ≥ 0, (46) where α0, α 1 > 0.
+
+b) Inter-agent collision avoidance constraints: For each neighboring robot ℓ̸ = i in the communication neighborhood 
+
+Ni(t), define 
+
+rag := 2 rrob + ϵag ,
+
+where ϵag > 0 accounts for state-estimation and communica-tion uncertainty. Define 
+
+hag  
+
+> iℓ
+
+(xp 
+
+> i
+
+, xp
+
+> ℓ
+
+) := ∥pi − pℓ∥2 − r2
+
+> ag
+
+. (47) Let ∆piℓ := pi − pℓ and ∆viℓ := vi − vℓ. We use a decen-tralized pairwise HOCBF allocation [43], obtained from the same second-order HOCBF condition with the responsibility split across the two agents: 
+
+ψag  
+
+> iℓ
+
+(xp 
+
+> i
+
+, xp
+
+> ℓ
+
+, ai) := 2∆ p⊤
+
+> iℓ
+
+ai + ∥∆viℓ ∥2
+
++ α1∆p⊤
+
+> iℓ
+
+∆viℓ + α0
+
+2 hag  
+
+> iℓ
+
+(xp 
+
+> i
+
+, xp
+
+> ℓ
+
+) ≥ 0. (48) When both agents enforce their allocated constraints, the sum of the two inequalities recovers the standard relative-degree-two pairwise HOCBF condition for inter-agent separation. 10 
+
+c) Admissible acceleration set: Let Ji(t) denote the in-dex set of obstacles currently known to robot i. The admissible acceleration set is 
+
+Kcbf  
+
+> i
+
+(t) := 
+
+n
+
+ai ∈ R2 ∥ai∥ ≤ amax ,ψobs  
+
+> ij
+
+(xp 
+
+> i
+
+, ai) ≥ 0, ∀j ∈ J i(t),ψag  
+
+> iℓ
+
+(xp 
+
+> i
+
+, xp
+
+> ℓ
+
+, ai) ≥ 0, ∀ℓ ∈ N i(t)
+
+o
+
+.
+
+A CBF Quadratic Program (QP) implementation is 
+
+ai(t) ∈ arg min  
+
+> a∈Kcbf
+> i(t)
+
+∥a − anom  
+
+> i
+
+(t)∥2. (49) Alternatively, the continuous-time HOCBF constraints can be converted into discrete-time constraints under a zero-order-hold assumption on the control input and then imposed within an MPC-CBF formulation [44]. 
+
+F. Safety Guarantees 
+
+We now state sufficient conditions under which the com-bined attitude and positional filters guarantee collision avoid-ance under limited sensing. The attitude filter does not require the existence of a positive certified nominal execution time. If no TS > 0 is certified, the immediate-backup candidate 
+
+TS = 0 is valid by construction, and the filter applies the velocity-tracking backup yaw policy. 
+
+Assumption 3 (Sensing range) . The sensing range satisfies 
+
+lrange ≥ rsafe + dbr . (50) 
+
+Lemma 1 (Feasibility from timely detection) . Consider robot 
+
+i under (1) –(2) . If an obstacle is detected at time t with clearance 
+
+∥pi(t) − pobs ∥ ≥ rsafe + dbr ,
+
+then there exists an admissible acceleration input ai(·) that prevents collision with that obstacle for all future time. Proof. Apply maximum braking, 
+
+ai(τ ) = −amax 
+
+vi(τ )
+
+∥vi(τ )∥
+
+whenever ∥vi(τ )∥ > 0, and set ai = 0 once the robot stops. This input satisfies ∥ai∥ ≤ amax and stops the robot within distance at most ∥vi(t)∥2/(2 amax ) ≤ dbr . Therefore, an initial clearance of at least rsafe + dbr ensures that the braking trajectory cannot enter the inflated obstacle disk of radius rsafe .
+
+Lemma 2 (Critical-point visibility implies timely detection) .
+
+Suppose Assumption 3 holds and robot i satisfies hvis  
+
+> i
+
+(t) ≥ 0
+
+for all t. Then any hidden obstacle in H that intersects the robot’s immediate future swept path beyond the known-free boundary is detected before the robot reaches a state from which collision avoidance would require more than the worst-case braking distance. Proof. By Definition 8, pc 
+
+> i
+
+(t) is the first point along the planned path where the robot exits the known-free region. The condition hvis  
+
+> i
+
+(t) ≥ 0 guarantees that the robot has enough path distance to rotate this boundary point into the FoV while still retaining distance dbr . Since lrange ≥ rsafe + dbr , any obstacle intersecting the future swept path at or immediately beyond this boundary is sensed with at least the clearance required by Lemma 1. 
+
+Theorem 3 (Collision avoidance under limited sensing) . Un-der Assumptions 1 and 3, suppose each robot is initialized in the visibility-safe set, i.e., xi(t0) ∈ C vis  
+
+> i
+
+(t0), and executes the attitude filter in Alg. 1 with the backup yaw policy satisfying 
+
+(37) and the backup horizon satisfying (38) . Suppose also that the positional CBF filter in Sec. VI-E is applied, that 
+
+Ji(t) is updated whenever robot i detects a previously hidden obstacle, and that Kcbf  
+
+> i
+
+(t) is nonempty for all t ≥ t0. Then the robots avoid collisions with initially known obstacles, previously unknown obstacles, and other robots for all time. Proof. For initially known obstacles and neighboring robots, the positional controller selects ai(t) ∈ Kcbf  
+
+> i
+
+(t). Therefore, the obstacle and inter-agent safe sets defined by (45) and (47) are forward invariant by the HOCBF condition in Thm. 2. For previously unknown obstacles, the attitude filter main-tains hvis  
+
+> i
+
+(t) ≥ 0. At any visibility-safe update state, the candidate TS = 0 is valid by the backup-policy construction above. Hence, the gatekeeper search set is nonempty. If a positive switching time is certified, the filter applies the nominal yaw command for the current control interval; otherwise, it applies the backup yaw command. In both cases, the selected yaw command is the first segment of a valid candidate rollout, and therefore the predicted state remains in Cvis  
+
+> i
+
+. Since the robots are initialized in Cvis  
+
+> i
+
+, induction over the attitude-filter update times gives hvis  
+
+> i
+
+(t) ≥ 0 for all t ≥ t0.By Lemma 2, any hidden obstacle on the immediate future swept path is detected with sufficient clearance. By Lemma 1, there then exists an admissible acceleration input that avoids collision. Once the obstacle is detected, it is inserted into 
+
+Ji(t), and the corresponding CBF constraint (46) is enforced by the positional safety filter. Repeating this argument at each detection event proves collision avoidance for all time. 
+
+Remark 1. The safety argument depends on local sensing, bounded dynamics, recursive feasibility of the attitude safety filter, and nonemptiness of the positional CBF-admissible set. It does not depend on the specific upstream goal assignment or path-planning algorithm. Therefore, SEAMLiS can be com-bined with frontier-based methods [1], decentralized adapta-tions of optimization-based task-assignment objectives such as CoScan [25], or learning-based exploration policies [7], [34], including asynchronous decentralized systems that do not share full occupancy maps. VII. SIMULATION RESULTS 
+
+A. Experimental Setup 
+
+We evaluate SEAMLiS in simulation on decentralized ex-ploration and mapping tasks under limited sensing, using the robot dynamics (1) and sensing model (4). We consider teams of R ∈ { 1, 2, 3} robots. Unless otherwise stated, the sensing and actuation limits are fixed to θfov = 70 ◦, lrange = 4 .5 m, 
+
+vmax = 1 .5 m/s, amax = 2 .0 m/s 2, and rrob = 0 .15 m. All 11 
+
+controllers and planners run in discrete time with sampling time ∆t = 0 .1 s. 
+
+a) Randomized environments with known and unknown obstacles: Each trial instantiates a random environment by sampling the initially known obstacle set O0 and the initially unknown obstacle set H. The number of known obstacles is sampled uniformly from [10 , 15] , and the number of hidden obstacles is sampled uniformly from [5 , 25] . Obstacle loca-tions and radii are sampled randomly. In addition to circular obstacles, we include rectangular obstacles represented by superellipsoids in O0. All methods are evaluated on the same base workspace, occupancy-grid resolution, obstacle samples, and initial robot states within each trial. 
+
+b) Fully decentralized and asynchronous execution: Akey aspect of the evaluation is that there is no centralized computation or decision making. Each robot runs the full exploration stack onboard and independently: i) Goal assignment. We test two decentralized goal-assignment modules: (a) frontier-based exploration [1] and (b) a decentralized CoScan-inspired allocator based on CoScan’s OMT-style task-assignment objective [25], [31]. The latter is not the original centralized CoScan algorithm. Instead, each robot performs goal assignment locally using its own map and asynchronously received frontier/task candidates. Nearby robots exchange only selected frontier/task information and poses; they do not exchange full occupancy grids, distance fields, obstacle lists, planned paths, or control inputs. Each robot replans on its own local timer, and one robot’s local assignment computation does not overwrite or update the goals selected by neighboring robots. ii) Communication. Robots share only their current poses and frontier information. They do not exchange occu-pancy grids, distance fields, obstacle lists, planned paths, or control inputs. Messages are sent and received asyn-chronously, and each robot replans using its own local timer and the latest received messages. iii) Local path planning. If an assigned frontier lies be-yond the sensing range, the robot computes a waypoint path using A* [45]. Collision-free planning is defined with respect to the robot’s currently known obstacle set 
+
+Oi(t); unknown space Ui(t) is treated optimistically as traversable. iv) Local control. Each robot tracks the planned path using the positional safety controller together with one of the attitude-control configurations described below. 
+
+c) Controllers: The positional controller is common to all methods. We use a Model Predictive Control (MPC)-CBF controller [46] to track the current waypoint or goal while enforcing CBF constraints for known obstacles, newly detected obstacles, and inter-agent avoidance. The MPC cost is tuned to reach goals efficiently in free space, while the CBF parameters are tuned to avoid collisions smoothly once obstacles are detected with sufficient clearance. 
+
+d) Attitude-control baselines: We compare four attitude configurations: i) Constant yaw-rate. The robot executes a constant yaw-rate command ωi = ωconst .                                                                                                                  
+
+> TABLE II: Decentralized multi-robot exploration benchmark under limited sensing, averaged over 100 trials per setting. We report (a) Success: success rate, higher is better; (b) Collision: collision rate, lower is better; (c) Violation: mean number of unknown-region overlap violations per robot, lower is better; and (d) Time: exploration time over successful trials only, lower is better. D-CoScan denotes our decentralized CoScan-inspired allocator, which retains CoScan’s OMT-style assignment objective but uses local asynchronous information sharing.
+> RAtt. Policy Success ↑Collision ↓Violation ↓Time [s] ↓
+> Frontier -based exploration [1] 1Constant 0.36 0.00 0.31 155.70 VP 1.00 0.00 2.27 108.63
+> Vel. Track. 0.00 0.00 0.00 N/A
+> SEAMLiS 1.00 0.00 0.00 140.15 2Constant 0.00 1.00 6.00 N/A VP 0.53 0.47 2.83 58.50
+> Vel. Track. 0.00 0.00 0.00 N/A
+> SEAMLiS 1.00 0.00 1.97 59.55 3Constant 0.00 1.00 2.33 N/A VP 0.00 1.00 2.33 N/A Vel. Track. 0.00 0.00 0.00 N/A
+> SEAMLiS 1.00 0.00 4.33 48.50 D-CoScan inspired by [25] 1Constant 0.69 0.31 64.76 143.51 VP 1.00 0.00 0.33 103.23 Vel. Track. 0.00 0.00 0.00 N/A
+> SEAMLiS 1.00 0.00 0.36 109.40
+> 2Constant 0.00 0.37 54.10 N/A VP 0.63 0.37 1.81 51.00 Vel. Track. 0.00 0.00 0.00 N/A
+> SEAMLiS 1.00 0.00 2.19 50.88
+> 3Constant 0.00 1.00 16.49 N/A VP 0.59 0.41 3.51 38.10
+> Vel. Track. 0.00 0.00 0.00 N/A
+> SEAMLiS 1.00 0.00 2.15 43.08
+
+ii) Visibility-promoting (VP). The robot always executes the nominal visibility-promoting policy πvis  
+
+> θ
+
+.iii) Velocity tracking. The robot always executes the backup velocity-tracking yaw policy in (36). iv) SEAMLiS . The robot uses the attitude gatekeeper 
+
+filter in Alg. 1, with πvis  
+
+> θ
+
+as the nominal policy and velocity tracking as the backup policy. All gatekeeper hyperparameters are fixed across trials. 
+
+e) Metrics: Each configuration is evaluated over 100 
+
+randomized trials. We set the evaluation timeout to 160 s ,
+
+80 s , and 60 s for R = 1 , R = 2 , and R = 3 , respectively. We report: (i) success rate , the fraction of trials in which the robot team reaches 98% free-space coverage before the timeout without collision; (ii) collision rate , the fraction of trials that terminate due to collision; (iii) mean number of unknown-region overlap violations per robot , where a violation is counted whenever Robot( pi(t)) ∩ U i(t)̸ = ∅; and (iv) exploration time , averaged over successful trials only. Success and collision rates do not necessarily sum to one because some trials time out without collision. 
+
+f) Implementation and compute: All simulations are im-plemented in Python and run on an Apple MacBook with an M4 CPU. The exploration environment is a 24 m × 18 m 
+
+workspace, and success is declared when the accumulated sensed free-space area reaches 98% of the true free space with-out collision. Frontier extraction and coverage computation use geometric set operations on the accumulated FoV footprints. 12                
+
+> Fig. 4: Representative time progressions of SEAMLiS for one-, two-, and three-robot exploration. Rows (a)-(c) correspond to R= 1 ,R= 2 , and R= 3 ,respectively, and the columns within each row show successive time instants. This example uses the decentralized CoScan-inspired allocator described in Sec. VII-A. The gray obstacles denote the initially known obstacle set O0. The light orange obstacles denote the initially unknown obstacle set Hthat has not yet been detected, while the darker orange obstacles denote obstacles that have been detected by at least one robot. Although this visualization shows when an obstacle has been detected, the detected obstacle information is not shared across agents during execution, so each robot maintains its own local detected set. The colored curves show robot trajectories, the dashed sectors show finite-FoV sensing footprints Fi(t), and the shaded regions show accumulated known-free regions Bi(t). The yellow points denote frontier points, and the green points denote the set of A* waypoints along the current local plan. The snapshots illustrate that SEAMLiS continues to expand coverage while maintaining motion-relevant visibility near unknown regions.
+
+Local paths are planned with A* over each robot’s current map, treating known obstacles as occupied and unknown cells optimistically as collision free. The positional controller is shared across all attitude poli-cies. We use a finite-horizon MPC-CBF controller with hori-zon 10 steps and linear class-K functions α0 = α1 = 0 .55 ,enforcing CBF constraints for the nearby known obstacles, locally detected hidden obstacles, and neighboring robots modeled with their communicated pose and estimated ve-locity. Hidden obstacles are inserted only into the detecting robot’s local constraint set; obstacle lists or occupancy grids are not shared across robots. For SEAMLiS , the attitude 
+
+gatekeeper uses the visibility-promoting yaw policy as the nominal controller and velocity-tracking yaw as the backup controller, with nominal horizon 1.3 s, backup horizon 1.2 s, and horizon decrement 0.05 s. Batch trials are deterministic from a master random seed and are parallelized across inde-pendent CPU workers. The code and experiment scripts are available online. 2
+
+> 2Public repository: https://github.com/tkkim-robot/seamlis
+
+B. Results 
+
+Table II summarizes the results for both goal assignment modules, across R ∈ {1, 2, 3} robots and the four atti-tude policies. Figure 4 shows representative snapshots of 
+
+SEAMLiS executions in the one-, two-, and three-robot set-tings. These snapshots visualize robot trajectories, finite-FoV sensing footprints, frontier points, local A* waypoints, accu-mulated known-free regions, and hidden-obstacle detections over time. Representative baseline failure cases are shown in Fig. 5, which provides qualitative evidence for the collision trends reported in Table II. 
+
+Safety: Across all tested team sizes and both goal-assignment modules, SEAMLiS succeeds in all reported trials with zero collisions. In contrast, the constant yaw-rate and VP baselines exhibit collisions in several multi-robot settings; for example, constant yaw-rate reaches a collision rate of 1.00 for frontier-based exploration with R = 2 , 3 and for the CoScan-inspired allocator with R = 3 , while VP reaches collision rates of 0.47 and 1.00 for frontier-based exploration with R = 2 and 
+
+R = 3 , respectively. The velocity-tracking baseline is also collision-free in all reported settings, but it never completes 13      
+
+> Fig. 5: Representative failure cases of baseline attitude policies under limited sensing. These qualitative failure snapshots use θfov =50 ◦, while the quantitative benchmark in Table II uses the default setting θfov = 70 ◦. In each row, the left panel shows the exploration workspace shortly before collision, and the right panel shows a zoomed-in snapshot at collision. Gray obstacles are initially known obstacles. Light orange obstacles are hidden obstacles that have not yet been detected. When a hidden obstacle is detected, it is visualized using the color of the robot that detected it; dark orange indicates hidden obstacles detected by all robots. These colors are used only for visualization, and detected obstacle information is not shared as a full map during execution. (a) Under the visibility-promoting (VP) policy with one robot, the robot prioritizes information gain and collides with a hidden obstacle that is not observed early enough to preserve a feasible avoidance maneuver. (b) Under constant yaw-rate in a two-robot setting, the green robot moves toward a region where the blue robot has more local information and collides with an obstacle detected by the blue robot but absent from the green robot’s local map. These cases illustrate that, without full-map sharing, perception-limited failures become more pronounced in decentralized exploration.
+
+the exploration task within the robot-count-dependent timeout. These results show that motion-aligned sensing alone is safe but overly conservative, whereas SEAMLiS combines collision avoidance with timely exploration completion. The representative failures in Fig. 5 show two mechanisms behind these collisions. In Fig. 5(a), the VP policy rotates the sensor toward information-rich regions rather than maintaining sufficient visibility along the direction of motion, and the robot collides with a hidden obstacle after insufficient look-ahead. In Fig. 5(b), the green robot moves into a region where the blue robot has already detected an obstacle; however, because the robots do not share full occupancy maps or obstacle lists, the obstacle is absent from the green robot’s local CBF constraint set. This illustrates why limited sensing and limited information sharing jointly make perception-limited safety failures more prominent in decentralized exploration. Figure 6 further illustrates the mechanism behind these safety outcomes by directly plotting the visibility mar-gin hvis  
+
+> i
+
+(t) in a representative two-robot rollout. With the SEAMLiS ’ gatekeeper , both robots remain in the visibility-safe region hvis  
+
+> i
+
+≥ 0, whereas the VP and constant yaw-rate policies repeatedly produce negative margins. These negative intervals indicate loss of the certified visibility mar-gin near the known-free/unknown boundary, explaining why hidden obstacles can be detected too late for the positional CBF controller to avoid collision. 
+
+Unknown-region overlap violations: The unknown-region overlap violation metric measures empirical exposure to lo-cally unknown space before it has been sufficiently ob-served. The velocity-tracking baseline yields zero unknown-region overlap violations because it keeps the sensor aligned with the direction of motion, but this conservative behavior reduces information gain and prevents timely completion. The constant yaw-rate and VP baselines can explore effi-ciently in some settings, but their unknown-region overlap violations and collision rates indicate repeated exposure to hidden obstacles. SEAMLiS keeps the unknown-region over-lap violation count low while completing all reported trials without collisions, which supports the intended behavior of the attitude gatekeeper : nominal visibility maximization is used when certified safe, and motion-aligned backup sensing is invoked near critical unknown boundaries. The remaining nonzero counts arise from discrete simulation updates and the simplified sensed-map representation used for computational efficiency in simulation. The visualization in Fig. 5(b) further emphasizes that a hidden obstacle detected by one robot is not necessarily available to another robot unless it has also been locally sensed. 
+
+Exploration efficiency: SEAMLiS retains much of the ef-ficiency of the VP policy while eliminating the observed collisions. In single-robot cases, VP can be slightly faster because it never switches away from information-greedy yaw. In multi-robot cases, SEAMLiS remains comparable to VP in exploration time and is substantially more reliable, since the safety filter prevents late obstacle detections that would otherwise lead to collision. Compared with velocity tracking, 
+
+SEAMLiS avoids the overly conservative behavior that pre-vents timely completion. 
+
+C. Isaac Sim Validation 
+
+Representative Isaac Sim [47] rollouts are shown in Fig. 7. We ran Isaac Sim experiments for the same one-, two-, and three-robot settings as in the randomized benchmark, using the same task setup and controller hyperparameters. The examples in Fig. 7 correspond to the three-robot frontier-based setting. In the visualization, initially unknown obstacles are ren-dered in light orange. Local obstacle detections are indicated by robot-colored regions on each cylindrical obstacle: when robot i detects an obstacle, its corresponding region is recol-ored using robot i’s color. This visualization is consistent with the decentralized setting, since detected obstacle information is not shared across robots. The figure highlights the distinct behaviors of the compared methods. In Fig. 7(a), the constant yaw-rate baseline causes the red robot to collide with an obstacle even after detection, showing that the obstacle was not detected early enough to preserve a feasible avoidance maneuver. In Fig. 7(b), the visibility-promoting baseline causes the red robot to collide with an unknown obstacle that had not yet been detected. In contrast, Fig. 7(c) shows that SEAMLiS safely completes 14                
+
+> Fig. 6: Visibility-margin evolution in a representative two-robot benchmark trial. Rows (a)-(c) use the same randomized environment and initial states, but with different attitude policies: (a) the SEAMLiS gatekeeper , (b) visibility-promoting (VP), and (c) constant yaw-rate. The left panels show the final exploration snapshots, using the same visualization convention as Fig. 4. The right panels show the visibility constraint value hvis
+> i(t)for the two robots during the rollout; the dashed black line marks hvis
+> i= 0 . Positive values indicate that the critical known-free/unknown boundary can be brought into the FoV while retaining the braking-distance margin in (33), whereas negative values indicate violation of the visibility-safety condition. Segments plotted at +∞correspond to the inactive case dc
+> i= + ∞, where no critical point appears along the current look-ahead path. The SEAMLiS rollout keeps both robots at nonnegative visibility margin, while VP and constant yaw-rate repeatedly allow hvis
+> i<0; in the VP case, the final snapshot shows collision with an initially unknown obstacle.
+
+the exploration task and builds the map without any safety violation. These Isaac Sim results are consistent with the trends observed in the randomized simulation benchmark and further support the practical effectiveness of the proposed safety filters. VIII. HARDWARE EXPERIMENTS 
+
+A. Experimental Setup 
+
+We further validate the proposed safety layer on two Crazyflie quadrotors in an indoor flight workspace with Vicon localization. The workspace is approximately 3.35 m ×3.50 m ,and both robots fly at a fixed height of z = 1.0 m . The planar motion is controlled using the double-integrator model with decoupled yaw in (1). The robot radius is set to rrob =0.075 m .The environment contains one initially unknown circular obstacle centered at (0 , 0) in the Vicon frame with radius 
+
+0.3 m . To focus the hardware test on decentralized execution and safety-filter behavior, the limited-FoV sensing event is computed geometrically from the Vicon state rather than from an onboard camera. The obstacle is therefore withheld from each robot’s local map until it lies within that robot’s modeled sensing footprint. This setup preserves the key limited-sensing mechanism studied in the paper while allowing baseline col-lisions with a physical obstacle to be observed in a controlled experiment. Each Crazyflie is connected to a laptop through ROS 2 [48], and each robot runs its own exploration and control stack in an independent ROS 2 node. The robots exchange only their states and frontier information; they do not share maps, obstacle lists, planned paths, or control inputs. Thus, all goal assignment, path planning, sensing updates, and safety-filter computations are performed separately for each robot. The global goal assignment uses frontier-based exploration, and A* is used to generate a waypoint path toward the selected frontier on each robot’s local map. The hardware parameters are chosen as a workspace-scaled instantiation of the limited-sensing setting. We use vmax =15  
+
+> Fig. 7: Representative Isaac Sim rollouts for frontier-based exploration with three robots. Initially unknown obstacles are rendered in light orange, and robot-colored obstacle regions indicate local detections by the corresponding robots. (a) Constant yaw-rate: the red robot collides with an obstacle after late detection. (b) Visibility-promoting (VP): the red robot collides with an initially unknown obstacle before detection. (c) SEAMLiS : the team safely explores and builds the map without any safety violation.
+
+1.35 m /s, amax = 1 .5 m /s2, θfov = 70 ◦, and lrange = 0 .25 m .The translational controller is the same MPC-CBF controller used in simulation, with horizon 10 and class-K gains α0 =
+
+α1 = 0 .55 . For SEAMLiS , the attitude gatekeeper uses the visibility-promoting yaw policy as the nominal controller and velocity tracking as the backup controller, with nominal horizon 0.4 s and backup horizon 1.8 s . We compare the constant yaw-rate baseline and SEAMLiS .
+
+B. Results 
+
+Figure 8 shows representative hardware executions for the constant yaw-rate baseline and SEAMLiS . Under constant yaw-rate, one robot collides with the initially unknown ob-stacle. The collision occurs even though the other robot has already locally sensed the obstacle, because obstacle informa-tion is not shared as a full map in the decentralized setting. Consequently, the obstacle is absent from the colliding robot’s local CBF constraint set until that robot detects it with its own limited-FoV sensor model. The constant yaw-rate policy does not ensure that the direction of motion remains sufficiently visible, so the obstacle can be detected too late for the positional safety controller to avoid collision. In contrast, SEAMLiS avoids the obstacle in the same hardware setting. When the robot approaches the bound-ary between known-free and unknown space, the attitude 
+
+gatekeeper filters the nominal yaw command and invokes the velocity-tracking backup policy when needed. This keeps the motion-relevant unknown boundary visible early enough for the MPC-CBF controller to react after detection. The hardware result is consistent with the simulation and Isaac Sim trends: constant yaw-rate can fail under limited sensing and decentralized map information, whereas SEAMLiS preserves sufficient visibility for safe execution. IX. CONCLUSION This paper presented SEAMLiS , a modular execution-layer safety framework for decentralized multi-robot exploration un-der limited sensing. The central idea is to separate exploration efficiency from safety enforcement: upstream goal assignment and planning modules can remain optimistic and information-driven, while SEAMLiS ensures that the robot observes crit-ical unknown boundaries early enough to preserve feasible collision avoidance. The proposed attitude gatekeeper 
+
+switches between visibility-promoting and velocity-tracking yaw policies, and the positional CBF controller avoids known, newly detected, and inter-agent obstacles. Under stated sensing and feasibility conditions, the combined controller guarantees collision avoidance. Simulation results with frontier-based exploration and a decentralized CoScan allocator show that 
+
+SEAMLiS achieves collision-free exploration across all tested team sizes while maintaining exploration times comparable to efficiency-oriented baselines. Hardware experiments with two Crazyflie quadrotors further show the same safety trend in physical flight: the constant yaw-rate baseline collides with an initially unknown obstacle, whereas SEAMLiS avoids the collision by preserving the visibility constraint. REFERENCES [1] B. Yamauchi, “A frontier-based approach for autonomous exploration,” in IEEE International Symposium on Computational Intelligence in Robotics and Automation , 1997, pp. 146–151. [2] A. Dai, S. Papatheodorou, N. Funk, D. Tzoumanikas, and S. Leuteneg-ger, “Fast Frontier-based Information-driven Autonomous Exploration with an MAV,” in IEEE International Conference on Robotics and Automation (ICRA) , 2020, pp. 9570–9576. [3] S. Kim, M. Corah, J. Keller, G. Best, and S. Scherer, “Multi-Robot Multi-Room Exploration with Geometric Cue Extraction and Circular Decomposition,” IEEE Robotics and Automation Letters , vol. 9, no. 2, pp. 1190–1197, 2024. 16 
+
+Fig. 8: Hardware experiments with two Crazyflie quadrotors in a Vicon-tracked workspace. Rows compare (a) the constant yaw-rate baseline and (b) SEAMLiS .For each method, the first three columns show selected top-down video snapshots from the physical flight over time, and the rightmost column shows a post-processed exploration-map snapshot reconstructed from the corresponding ROS 2 bag logs. The circular obstacle at the center is initially unknown to both robots and is inserted into each robot’s local map only after it enters that robot’s modeled finite-FoV. Under constant yaw-rate, one robot collides with the obstacle even though the other robot has already locally detected it. Under SEAMLiS , the attitude gatekeeper maintains motion-relevant visibility, allowing the MPC-CBF controller to avoid the obstacle. [4] Z. Xu, C. Suzuki, X. Zhan, and K. Shimada, “Heuristic-based Incremen-tal Probabilistic Roadmap for Efficient UAV Exploration in Dynamic Environments,” in IEEE International Conference on Robotics and Automation (ICRA) , 2024, pp. 11 832–11 838. [5] B. Lindqvist, A. Patel, K. L¨ ofgren, and G. Nikolakopoulos, “A Tree-Based Next-Best-Trajectory Method for 3-D UAV Exploration,” IEEE Transactions on Robotics , vol. 40, pp. 3496–3513, 2024. [6] J. Hu, H. Niu, J. Carrasco, B. Lennox, and F. Arvin, “Voronoi-Based Multi-Robot Autonomous Exploration in Unknown Environments via Deep Reinforcement Learning,” IEEE Transactions on Vehicular Technology , vol. 69, no. 12, pp. 14 413–14 423, 2020. [7] D. S. Chaplot, D. Gandhi, S. Gupta, A. Gupta, and R. Salakhutdinov, “Learning to Explore using Active Neural SLAM,” in International Conference on Learning Representations (ICLR) , 2020. [8] H. Li, Q. Zhang, and D. Zhao, “Deep Reinforcement Learning-Based Automatic Exploration for Navigation in Unknown Environment,” IEEE Transactions on Neural Networks and Learning Systems , vol. 31, no. 6, pp. 2064–2076, 2020. [9] S. K. Ramakrishnan, D. S. Chaplot, Z. Al-Halah, J. Malik, and K. Grauman, “PONI: Potential Functions for ObjectGoal Navigation With Interaction-Free Learning,” in IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2022, pp. 18 890–18 900. [10] Y. Li, A. Debnath, G. Stein, and J. Kosecka, “Learning-Augmented Model-Based Planning for Visual Exploration,” in IEEE/RSJ Interna-tional Conference on Intelligent Robots and Systems (IROS) , 2023, pp. 5165–5171. [11] Y. Cao, R. Zhao, Y. Wang, B. Xiang, and G. Sartoretti, “Deep Reinforce-ment Learning-Based Large-Scale Robot Exploration,” IEEE Robotics and Automation Letters , vol. 9, no. 5, pp. 4631–4638, 2024. [12] N. Atanasov, J. Le Ny, K. Daniilidis, and G. J. Pappas, “Decentralized active information acquisition: Theory and application to multi-robot SLAM,” in IEEE International Conference on Robotics and Automation (ICRA) , 2015, pp. 4775–4782. [13] B. Zhou, H. Xu, and S. Shen, “RACER: Rapid Collaborative Explo-ration With a Decentralized Multi-UAV System,” IEEE Transactions on Robotics , vol. 39, no. 3, pp. 1816–1835, 2023. [14] F. Gao and S. Shen, “Online quadrotor trajectory generation and au-tonomous navigation on point clouds,” in IEEE International Symposium on Safety, Security, and Rescue Robotics (SSRR) , 2016, pp. 139–146. [15] P. Zhong, B. Chen, S. Lu, X. Meng, and Y. Liang, “Information-Driven Fast Marching Autonomous Exploration With Aerial Robots,” IEEE Robotics and Automation Letters , vol. 7, no. 2, pp. 810–817, 2022. [16] R. M. Bena, C. Zhao, and Q. Nguyen, “Safety-Aware Perception for Autonomous Collision Avoidance in Dynamic Environments,” IEEE Robotics and Automation Letters , vol. 8, no. 12, pp. 7962–7969, 2023. [17] T. Kim and D. Panagou, “Visibility-Aware RRT* for Safety-Critical Navigation of Perception-Limited Robots in Unknown Environments,” 
+
+IEEE Robotics and Automation Letters , vol. 10, no. 5, pp. 4508–4515, 2025. [18] R. Firoozi, A. Mir, G. S. Camps, and M. Schwager, “OA-MPC: Occlusion-Aware MPC for Guaranteed Safe Robot Navigation With Unseen Dynamic Obstacles,” IEEE Transactions on Control Systems Technology , vol. 33, no. 3, pp. 940–951, 2025. [19] D. R. Agrawal, R. Chen, and D. Panagou, “gatekeeper: Online Safety Verification and Control for Nonlinear Systems in Dynamic Environ-ments,” IEEE Transactions on Robotics , vol. 40, pp. 4358–4375, 2024. [20] A. Bircher, M. Kamel, K. Alexis, H. Oleynikova, and R. Siegwart, “Receding Horizon ”Next-Best-View” Planner for 3D Exploration,” in 
+
+IEEE International Conference on Robotics and Automation (ICRA) ,2016, pp. 1462–1468. [21] L. Schmid, M. Pantic, R. Khanna, L. Ott, R. Siegwart, and J. Nieto, “An Efficient Sampling-Based Method for Online Informative Path Planning in Unknown Environments,” IEEE Robotics and Automation Letters ,vol. 5, no. 2, pp. 1500–1507, 2020. [22] B. Zhou, Y. Zhang, X. Chen, and S. Shen, “FUEL: Fast UAV Exploration Using Incremental Frontier Structure and Hierarchical Planning,” IEEE Robotics and Automation Letters , vol. 6, no. 2, pp. 779–786, 2021. [23] C. Cao, H. Zhu, H. Choset, and J. Zhang, “TARE: A Hierarchical Framework for Efficiently Exploring Complex 3D Environments,” in 
+
+Robotics: Science and Systems (RSS) , 2021. [24] X. Liu, M. Lin, S. Li, G. Xu, Z. Wang, H. Wu, and Y. Liu, “FLARE: Fast Large-Scale Autonomous Exploration Guided by Unknown Regions,” 
+
+IEEE Robotics and Automation Letters , vol. 10, no. 11, pp. 12 197– 12 204, 2025. [25] S. Dong, K. Xu, Q. Zhou, A. Tagliasacchi, S. Xin, M. Nießner, and B. Chen, “Multi-robot collaborative dense scene reconstruction,” ACM Transactions on Graphics , vol. 38, no. 4, 2019. [26] M. Tzes, N. Bousias, E. Chatzipantazis, and G. J. Pappas, “Graph Neural Networks for Multi-Robot Active Information Acquisition,” in IEEE International Conference on Robotics and Automation (ICRA) , 2023, pp. 3497–3503. 17 
+
+[27] V. S. Varadharajan and G. Beltrame, “A Multi-Robot Exploration Planner for Space Applications,” IEEE Robotics and Automation Letters , vol. 10, no. 3, pp. 2446–2453, 2025. [28] L. Zheng, M. Wei, R. Mei, K. Xu, J. Huang, and H. Cheng, “AAGE: Air-Assisted Ground Robotic Autonomous Exploration in Large-Scale Unknown Environments,” IEEE Transactions on Robotics , vol. 41, pp. 1918–1937, 2025. [29] L. Yang, Y. Wang, J. Tang, Y. Lv, S. Zhao, C. Cao, and Z. Ren, “HEHA: Hierarchical Planning for Heterogeneous Multi-Robot Exploration of Unknown Environments,” in arXiv preprint arXiv:2510.04161 , 2025. [30] Y. Li, K. Chen, J. Wang, S. Fang, H. Chen, and Y. Liu, “Decentralized Heterogeneous Multi-Robot Collaborative Exploration for Indoor and Outdoor 3D Environments,” in arXiv preprint arXiv:2604.23693 , 2026. [31] K. Ye, S. Dong, Q. Fan, H. Wang, L. Yi, F. Xia, J. Wang, and B. Chen, “Multi-Robot Active Mapping via Neural Bipartite Graph Matching,” in IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2022, pp. 14 839–14 848. [32] C. Yu, X. Yang, J. Gao, H. Yang, Y. Wang, and Y. Wu, “Learning Efficient Multi-Agent Cooperative Visual Exploration,” in European Conference on Computer Vision (ECCV) , 2022, pp. 497–515. [33] X. Yang, Y. Yang, C. Yu, J. Chen, J. Yu, H. Ren, H. Yang, and Y. Wang, “Active Neural Topological Mapping for Multi-Agent Exploration,” 
+
+IEEE Robotics and Automation Letters , vol. 9, no. 1, pp. 303–310, 2024. [34] G. Calzolari, V. Sumathy, C. Kanellakis, and G. Nikolakopoulos, “Rein-forcement Learning Driven Multi-Robot Exploration via Explicit Com-munication and Density-Based Frontier Search,” in IEEE International Conference on Robotics and Automation (ICRA) , 2025, pp. 11 406– 11 412. [35] J. Chiun, S. Zhang, Y. Wang, Y. Cao, and G. Sartoretti, “MARVEL: Multi-Agent Reinforcement Learning for Constrained Field-of-View Multi-Robot Exploration in Large-Scale Environments,” in IEEE In-ternational Conference on Robotics and Automation (ICRA) , 2025, pp. 11 392–11 398. [36] S. Zhu, Y. Zhao, Y. Xu, A. Chen, J. Chen, and J. Xu, “TaskExp: Enhancing Generalization of Multi-Robot Exploration with Multi-Task Pre-Training,” in IEEE International Conference on Robotics and Au-tomation (ICRA) , 2025, pp. 6559–6565. [37] N. Liu, S. Shen, Z. Li, S. Liu, D. Han, S. Lyu, and T. Braunl, “VORL-EXPLORE: A Hybrid Learning Planning Approach to Multi-Robot Exploration in Dynamic Environments,” in arXiv preprint arXiv:2603.07973 , 2026. [38] D. R. Agrawal, T. Kim, R. Govindjee, T. Adeshara, J. Yu, A. Ravikumar, and D. Panagou, “Certifiably-Correct Mapping for Safe Navigation Despite Odometry Drift,” in Robotics: Science and Systems (RSS) , 2025. [39] A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, and P. Tabuada, “Control Barrier Functions: Theory and Applications,” in 
+
+European Control Conference (ECC) , 2019, pp. 3420–3431. [40] W. Xiao and C. Belta, “Control Barrier Functions for Systems with High Relative Degree,” in IEEE Conference on Decision and Control (CDC) ,2019, pp. 474–479. [41] D. Agrawal, R. Chen, and D. Panagou, “gatekeeper: Online Safety Veri-fication and Control for Nonlinear Systems in Dynamic Environments,” in IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 2023, pp. 259–266. [42] T. Kim, A. D. Menon, A. Trivedi, and D. Panagou, “Backup-Based Safety Filters: A Comparative Review of Backup CBF, Model Predictive Shielding, and gatekeeper,” in arXiv preprint arXiv:2604.02401 , 2026. [43] H. Lee and D. Panagou, “Distributed Resilience-Aware Control in Multi-Robot Networks,” in IEEE Conference on Decision and Control (CDC) ,2025, pp. 3868–3875. [44] T. Kim, R. W. Beard, and D. Panagou, “How to Adapt Control Barrier Functions? A Learning-Based Approach with Applications to a VTOL Quadplane,” in IEEE Conference on Decision and Control (CDC) , 2025, pp. 7050–7057. [45] P. E. Hart, N. J. Nilsson, and B. Raphael, “A Formal Basis for the Heuristic Determination of Minimum Cost Paths,” IEEE Transactions on Systems Science and Cybernetics , vol. 4, no. 2, pp. 100–107, 1968. [46] J. Zeng, B. Zhang, and K. Sreenath, “Safety-Critical Model Predictive Control with Discrete-Time Control Barrier Function,” in American Control Conference (ACC) , 2021, pp. 3882–3889. [47] NVIDIA, “NVIDIA isaac sim,” 2026. [Online]. Available: https: //github.com/isaac-sim/IsaacSim [48] S. Macenski, T. Foote, B. Gerkey, C. Lalancette, and W. Woodall, “Robot Operating System 2: Design, architecture, and uses in the wild,” Science Robotics , vol. 7, no. 66, p. eabm6074, 2022.

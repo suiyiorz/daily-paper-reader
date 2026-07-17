@@ -6,110 +6,80 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-16
-- 运行时间：2026-07-16 20:49:04 UTC
+- 最新运行日期：2026-07-17
+- 运行时间：2026-07-17 20:29:14 UTC
 - 运行状态：成功
-- 本次总论文数：30
-- 精读区：19
+- 本次总论文数：20
+- 精读区：9
 - 速读区：11
 
 ### 今日简报（AI）
-今日精读两篇高分论文，聚焦机器人技能泛化与沉浸式社交交互。最值得看的方向：基于上下文的频谱运动基元（SPECTRA）用于技能泛化，以及VR+LLM辅助人形机器人实现社交交互。建议优先精读这两篇9.0分论文，再速读三篇8.0分论文以拓宽视野。
-- 详情：[/202607/16/README](/202607/16/README)
+今日精读两篇9.0高分论文，聚焦具身智能的因果去偏世界模型与4D雷达相机全场景感知。前者通过因果去偏潜在动作模型提升世界模型准确性，后者实现4D雷达-相机联合3D检测与占用预测。建议优先精读这两篇，速读中机器人策略隐空间适应与单次示教学习也值得关注。
+- 详情：[/202607/17/README](/202607/17/README)
 
 ### 精读区论文标签
-1. [SPECTRA: Context-Conditioned Spectral Movement Primitives for Robot Skill Generalization](/202607/16/2607.06978v1-spectra-context-conditioned-spectral-movement-primitives-for-robot-skill-generalization)  
+1. [Causally Debiased Latent Action Model for Embodied Action Conditioned World Models](/202607/17/2607.09185v1-causally-debiased-latent-action-model-for-embodied-action-conditioned-world-models)  
    标签：评分：9.0/10、query:ad
-   evidence：频域模仿学习框架用于机器人操作技能泛化
-2. [Immersive Social Interaction with VR and LLM-Assisted Humanoids](/202607/16/2607.07430v1-immersive-social-interaction-with-vr-and-llm-assisted-humanoids)  
+   evidence：用于具身动作条件世界模型的因果去偏潜动作模型
+2. [4DR360: State Reasoning for Joint 3D Detection and Occupancy Prediction in 4D Radar-Camera Full-Scene Perception](/202607/17/2607.09629v2-4dr360-state-reasoning-for-joint-3d-detection-and-occupancy-prediction-in-4d-radar-camera-full-scene-perception)  
    标签：评分：9.0/10、query:ad
-   evidence：类人机器人沉浸式遥操作框架，包含语音控制运动和VR操作
-3. [SkillPlug: Unsupervised Skill Mining for Few-Shot Adaptation in Robotic Manipulation](/202607/16/2607.08354v1-skillplug-unsupervised-skill-mining-for-few-shot-adaptation-in-robotic-manipulation)  
+   evidence：4D雷达-相机融合用于自动驾驶全场景感知，包括检测和占据预测
+3. [Distributed Agent System: Fault-Tolerant Collaboration Among Embodied Agents](/202607/17/2607.10811v1-distributed-agent-system-fault-tolerant-collaboration-among-embodied-agents)  
    标签：评分：9.0/10、query:ad
-   evidence：无监督技能挖掘用于机器人操作少样本适应
-4. [Robot Trajectron V3: A Probabilistic Shared Control Framework for SE(3) Manipulation](/202607/16/2607.09315v1-robot-trajectron-v3-a-probabilistic-shared-control-framework-for-se3-manipulation)  
+   evidence：具身代理在真实世界场景中的容错协作
+4. [Think When It Matters: Conditional VLM Reasoning for Social Navigation with RL Policies](/202607/17/2607.10991v1-think-when-it-matters-conditional-vlm-reasoning-for-social-navigation-with-rl-policies)  
    标签：评分：9.0/10、query:ad
-   evidence：面向SE(3)操作的人机共享控制
-5. [TAC-LOCO: Unified Whole-Body Control for Quadrupedal TACtile-Informed LOCO-Manipulation](/202607/16/2607.10132v1-tac-loco-unified-whole-body-control-for-quadrupedal-tactile-informed-loco-manipulation)  
+   evidence：社交导航中结合VLM推理与强化学习策略
+5. [A Minimalist Retargeting-Guided Reinforcement Learning Recipe for Dexterous Manipulation](/202607/17/2607.11874v1-a-minimalist-retargeting-guided-reinforcement-learning-recipe-for-dexterous-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：触觉感知用于全身运动-操作
-6. [PrismAD: Decoupled Planning via Semantic Mixture-of-Planners for End-to-End Autonomous Driving](/202607/16/2607.10336v1-prismad-decoupled-planning-via-semantic-mixture-of-planners-for-end-to-end-autonomous-driving)  
+   evidence：基于人类演示重定向的强化学习灵巧操作
+6. [Learning Robust Execution in Robotic Manipulation with Agentic Reinforcement Learning](/202607/17/2607.13818v1-learning-robust-execution-in-robotic-manipulation-with-agentic-reinforcement-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：端到端自动驾驶解耦规划
-7. [ABot-AgentOS: A General Robotic Agent OS with Lifelong Multi-modal Memory](/202607/16/2607.10350v1-abot-agentos-a-general-robotic-agent-os-with-lifelong-multi-modal-memory)  
+   evidence：机器人强化学习
+7. [RxBrain: Embodied Cognition Foundation Model with Joint Language-Visual Reasoning and Imagination](/202607/17/2607.14187v1-rxbrain-embodied-cognition-foundation-model-with-joint-language-visual-reasoning-and-imagination)  
    标签：评分：9.0/10、query:ad
-   evidence：通用机器人智能体操作系统用于具身智能体
-8. [SUREFlow: State-space Uncertainty-aware REsidual Flow Matching for Robust Robot Manipulation](/202607/16/2607.10504v1-sureflow-state-space-uncertainty-aware-residual-flow-matching-for-robust-robot-manipulation)  
+   evidence：具身认知基础模型，结合语言-视觉推理
+8. [MIND-CAVs: Multi-Intelligence Negotiation and Decision System for CAVs based on Intent-Driven Autonomy](/202607/17/2607.14688v1-mind-cavs-multi-intelligence-negotiation-and-decision-system-for-cavs-based-on-intent-driven-autonomy)  
    标签：评分：9.0/10、query:ad
-   evidence：不确定性感知流匹配用于鲁棒机器人操作
-9. [Action Map Policy: Learning 3D Closed-loop Manipulation via Pixel Classification](/202607/16/2607.10706v1-action-map-policy-learning-3d-closed-loop-manipulation-via-pixel-classification)  
+   evidence：联网自动驾驶车辆的多智能体协商决策
+9. [WorkDrive: Roadwork Chain of Causation for Autonomous Driving](/202607/17/2607.14727v1-workdrive-roadwork-chain-of-causation-for-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：提出基于像素分类的3D闭环操作动作图策略
-10. [A Single Diffusion-Policy Controller for Multi-Task Block Pushing with Zero-Shot Sim-to-Real Transfer](/202607/16/2607.10892v1-a-single-diffusion-policy-controller-for-multi-task-block-pushing-with-zero-shot-sim-to-real-transfer)  
-   标签：评分：9.0/10、query:ad
-   evidence：使用强化学习训练扩散策略实现多任务机器人操作及零样本仿真到现实迁移
-11. [From World Action Models to Embodied Brains: A Roadmap for Open-World Physical Intelligence](/202607/16/2607.11689v1-from-world-action-models-to-embodied-brains-a-roadmap-for-open-world-physical-intelligence)  
-   标签：评分：9.0/10、query:ad
-   evidence：世界动作模型实现具身物理智能的路线图
-12. [ReflectVLN: Training Vision-Language Navigation Agents with Reflective Reasoning](/202607/16/2607.12680v1-reflectvln-training-vision-language-navigation-agents-with-reflective-reasoning)  
-   标签：评分：9.0/10、query:ad
-   evidence：视觉语言导航代理的反思推理
-13. [Worlds in One Demo: A Synthetic Data Engine for Learning Open-World Mobile Manipulation](/202607/16/2607.13154v1-worlds-in-one-demo-a-synthetic-data-engine-for-learning-open-world-mobile-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：从单个演示学习开放世界移动操作的合成数据引擎
-14. [Ego-Dynamics-Augmented World Model for Autonomous Driving with Zero-Shot Cross-Chassis Adaptation](/202607/16/2607.13410v1-ego-dynamics-augmented-world-model-for-autonomous-driving-with-zero-shot-cross-chassis-adaptation)  
-   标签：评分：9.0/10、query:ad
-   evidence：基于世界模型的自动驾驶强化学习
-15. [Kepler-Encoder-v0.1: Towards a Multimodal Embedding Model for Robots](/202607/16/2607.13522v1-kepler-encoder-v01-towards-a-multimodal-embedding-model-for-robots)  
-   标签：评分：9.0/10、query:ad
-   evidence：融合视觉、本体感知和力觉的机器人多模态编码器
-16. [Agile perceptive multi-skill locomotion for quadrupedal robots in the wild](/202607/16/2607.13579v1-agile-perceptive-multi-skill-locomotion-for-quadrupedal-robots-in-the-wild)  
-   标签：评分：9.0/10、query:ad
-   evidence：四足机器人运动，结合强化学习和机载感知
-17. [Exploratory, Communicative, and Deployable: Vision-Driven Embodied Agents for Open-World Mobile Manipulation](/202607/16/2607.13653v1-exploratory-communicative-and-deployable-vision-driven-embodied-agents-for-open-world-mobile-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：视觉驱动的具身智能体，面向开放世界移动操作
-18. [S-squared-VLA: Decoupling Semantic and Spatial Streams in Vision-Language-Action Models for Autonomous Driving](/202607/16/2607.13926v1-s-squared-vla-decoupling-semantic-and-spatial-streams-in-vision-language-action-models-for-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：在自动驾驶VLA中解耦语义与空间流
-19. [M$^\text{4}$World: A Multi-view Multimodal Driving World Model for Interactive Object Manipulation and Minute-long Streaming](/202607/16/2607.14005v1-mtext4world-a-multi-view-multimodal-driving-world-model-for-interactive-object-manipulation-and-minute-long-streaming)  
-   标签：评分：9.0/10、query:ad
-   evidence：多视角多模态驾驶世界模型用于自动驾驶仿真
+   evidence：面向施工区域的自动驾驶感知因果推理
 
 ### 速读区论文标签
-1. [RynnWorld-4D: 4D Embodied World Models for Robotic Manipulation](/202607/16/2607.06559v1-rynnworld-4d-4d-embodied-world-models-for-robotic-manipulation)  
+1. [FlowDAgger: Human-in-the-Loop Adaptation of Generative Robot Policies in Latent Space](/202607/17/2607.08877v1-flowdagger-human-in-the-loop-adaptation-of-generative-robot-policies-in-latent-space)  
    标签：评分：8.0/10、query:ad
-   evidence：结合RGB、深度和光流的4D具身世界模型用于机器人操作
-2. [Embodied Human-Robot Interaction via Acoustics: A MARL Approach with AcoustoBots for Spatial Data Physicalization](/202607/16/2607.06563v1-embodied-human-robot-interaction-via-acoustics-a-marl-approach-with-acoustobots-for-spatial-data-physicalization)  
+   evidence：通过潜空间动作反演进行生成式机器人策略的人类交互适应
+2. [SplatCtrl: Perception-Action Coupling via Gaussian Scene Representations and Reactive Robot Control](/202607/17/2607.08948v1-splatctrl-perception-action-coupling-via-gaussian-scene-representations-and-reactive-robot-control)  
    标签：评分：8.0/10、query:ad
-   evidence：使用多智能体强化学习进行人机交互与导航的具身数据物理化
-3. [HumAIN: Human-Aware Implicit Social Robot Navigation](/202607/16/2607.07357v1-humain-human-aware-implicit-social-robot-navigation)  
+   evidence：机器人操作与感知
+3. [One-Shot Multimodal Learning from Demonstration with Force-Constrained Elastic Maps](/202607/17/2607.09515v1-one-shot-multimodal-learning-from-demonstration-with-force-constrained-elastic-maps)  
    标签：评分：8.0/10、query:ad
-   evidence：具有人类意识隐式线索的社交机器人导航
-4. [Multi-Agent Robotic Control with Onboard Vision-Language Models](/202607/16/2607.07403v1-multi-agent-robotic-control-with-onboard-vision-language-models)  
+   evidence：一次性多模态演示学习用于力约束机器人操作
+4. [PAC-ACT: Post-training Actor-Critic for Action Chunking Transformers](/202607/17/2607.09590v1-pac-act-post-training-actor-critic-for-action-chunking-transformers)  
    标签：评分：8.0/10、query:ad
-   evidence：多智能体机器人控制，机载VLM实现操作与移动
-5. [Post-Training in End-to-End Autonomous Driving](/202607/16/2607.08072v1-post-training-in-end-to-end-autonomous-driving)  
+   evidence：基于强化学习的后训练框架用于动作分块Transformer的机器人操作
+5. [Mosaic: Runtime-Efficient Multi-Agent Embodied Planning](/202607/17/2607.09603v1-mosaic-runtime-efficient-multi-agent-embodied-planning)  
    标签：评分：8.0/10、query:ad
-   evidence：端到端自动驾驶模型的后训练范式
-6. [AgenticFocus: Object-Preserving Mixed Reality Synthesis from Human FPV Video for Dexterous Humanoid Learning](/202607/16/2607.08857v1-agenticfocus-object-preserving-mixed-reality-synthesis-from-human-fpv-video-for-dexterous-humanoid-learning)  
-   标签：评分：8.0/10、query:ad
-   evidence：从人类视频生成混合现实数据用于灵巧类人机器人操作的流水线
-7. [GemNav: Discrete-Token Visual Robot Navigation using a Multimodal Large Language Model](/202607/16/2607.06882v1-gemnav-discrete-token-visual-robot-navigation-using-a-multimodal-large-language-model)  
+   evidence：基于语义记忆和整数规划的高效多智能体具身规划
+6. [Learning More from Less: Reinforcement Learning from Hindsight](/202607/17/2607.09042v1-learning-more-from-less-reinforcement-learning-from-hindsight)  
    标签：评分：7.0/10、query:ad
-   evidence：基于多模态大语言模型的视觉机器人导航
-8. [Native Video-Action Pretraining for Generalizable Robot Control](/202607/16/2607.08639v1-native-video-action-pretraining-for-generalizable-robot-control)  
+   evidence：事后重标记强化学习用于VLA后训练，提高操纵任务样本效率
+7. [PhysV2A: Reachability-Gated and Semantic-Mask-Constrained Feasibility Completion for Video-to-Robot Manipulation](/202607/17/2607.09365v1-physv2a-reachability-gated-and-semantic-mask-constrained-feasibility-completion-for-video-to-robot-manipulation)  
    标签：评分：7.0/10、query:ad
-   evidence：面向通用机器人控制的视频-动作基础模型
-9. [Communication-Efficient Digital-Twin Coordination for Heterogeneous LLM Embodied Agents over Computing Power Networks](/202607/16/2607.09330v1-communication-efficient-digital-twin-coordination-for-heterogeneous-llm-embodied-agents-over-computing-power-networks)  
+   evidence：视频到机器人操作的可行性完成框架，可服务于强化学习
+8. [SEAMLiS: Visibility-Aware Safety for Perception-Limited Multi-Robot Exploration](/202607/17/2607.09959v1-seamlis-visibility-aware-safety-for-perception-limited-multi-robot-exploration)  
    标签：评分：7.0/10、query:ad
-   evidence：异构LLM具身智能体在物理环境中的协调框架
-10. [Artificial Foveated Perception for Mitigating Shortcut Learning in Robotic Foundation Models](/202607/16/2607.10655v1-artificial-foveated-perception-for-mitigating-shortcut-learning-in-robotic-foundation-models)  
+   evidence：感知受限多机器人探索的安全框架
+9. [Robotic Contextual Awareness for Human-Robot Collaboration and Environmental Understanding](/202607/17/2607.10372v1-robotic-contextual-awareness-for-human-robot-collaboration-and-environmental-understanding)  
    标签：评分：7.0/10、query:ad
-   evidence：通过注视感知缓解机器人感知中的捷径学习
-11. [Grounded world models in biological organisms and future embodied AI](/202607/16/2607.13560v1-grounded-world-models-in-biological-organisms-and-future-embodied-ai)  
+   evidence：面向人机协作与环境理解的机器人上下文感知
+10. [A Distributionally Robust Multi-agent Reinforcement Learning Framework for Intelligent Intersection Control](/202607/17/2607.09899v1-a-distributionally-robust-multi-agent-reinforcement-learning-framework-for-intelligent-intersection-control)  
    标签：评分：6.0/10、query:ad
-   evidence：受生物学启发的体现AI接地世界模型
+   evidence：多智能体强化学习用于交通信号控制，与智能控制相关
+11. [An offline approach to fNIRS-guided reinforcement learning for robot behavior](/202607/17/2607.14393v1-an-offline-approach-to-fnirs-guided-reinforcement-learning-for-robot-behavior)  
+   标签：评分：6.0/10、query:ad
+   evidence：fNIRS引导的强化学习用于机器人行为
 
 
 <div class="dpr-home-promo-card">
