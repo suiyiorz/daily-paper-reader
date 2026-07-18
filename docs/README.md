@@ -6,80 +6,71 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-17
-- 运行时间：2026-07-17 20:29:14 UTC
+- 最新运行日期：2026-07-18
+- 运行时间：2026-07-18 21:05:13 UTC
 - 运行状态：成功
-- 本次总论文数：20
-- 精读区：9
+- 本次总论文数：17
+- 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-今日精读两篇9.0高分论文，聚焦具身智能的因果去偏世界模型与4D雷达相机全场景感知。前者通过因果去偏潜在动作模型提升世界模型准确性，后者实现4D雷达-相机联合3D检测与占用预测。建议优先精读这两篇，速读中机器人策略隐空间适应与单次示教学习也值得关注。
-- 详情：[/202607/17/README](/202607/17/README)
+今日共推荐17篇论文，精读6篇，速读11篇，重点关注机器人操控与导航领域。最值得精读的是《SegDiff》与《EDAR》，分别以9.0分探索轨迹扩散与动作表征学习；速读中《Robo-ValueRL》《PIER-Flow》及《Navigating the Crowd》均获8.0分，覆盖离线强化学习、实时导航与人机交互。建议优先阅读两篇精读论文，理解分段扩散与场景自适应动作表示的设计思想，再结合速读中的导航方法对比实际应用效果。
+- 详情：[/202607/18/README](/202607/18/README)
 
 ### 精读区论文标签
-1. [Causally Debiased Latent Action Model for Embodied Action Conditioned World Models](/202607/17/2607.09185v1-causally-debiased-latent-action-model-for-embodied-action-conditioned-world-models)  
+1. [SegDiff: Segmented Trajectory Diffusion for Consistent and Adaptive Robot Manipulation](/202607/18/2607.11027v1-segdiff-segmented-trajectory-diffusion-for-consistent-and-adaptive-robot-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：用于具身动作条件世界模型的因果去偏潜动作模型
-2. [4DR360: State Reasoning for Joint 3D Detection and Occupancy Prediction in 4D Radar-Camera Full-Scene Perception](/202607/17/2607.09629v2-4dr360-state-reasoning-for-joint-3d-detection-and-occupancy-prediction-in-4d-radar-camera-full-scene-perception)  
+   evidence：基于扩散的操控策略
+2. [EDAR: Learning Environment-Dependent Action Representations for Robotic Manipulation](/202607/18/2607.11427v1-edar-learning-environment-dependent-action-representations-for-robotic-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：4D雷达-相机融合用于自动驾驶全场景感知，包括检测和占据预测
-3. [Distributed Agent System: Fault-Tolerant Collaboration Among Embodied Agents](/202607/17/2607.10811v1-distributed-agent-system-fault-tolerant-collaboration-among-embodied-agents)  
+   evidence：用于机器人操作的环境相关动作表示
+3. [UESF-Bench: Benchmarking and Probing for Unified Embodied Seeking and Following](/202607/18/2607.13621v1-uesf-bench-benchmarking-and-probing-for-unified-embodied-seeking-and-following)  
    标签：评分：9.0/10、query:ad
-   evidence：具身代理在真实世界场景中的容错协作
-4. [Think When It Matters: Conditional VLM Reasoning for Social Navigation with RL Policies](/202607/17/2607.10991v1-think-when-it-matters-conditional-vlm-reasoning-for-social-navigation-with-rl-policies)  
-   标签：评分：9.0/10、query:ad
-   evidence：社交导航中结合VLM推理与强化学习策略
-5. [A Minimalist Retargeting-Guided Reinforcement Learning Recipe for Dexterous Manipulation](/202607/17/2607.11874v1-a-minimalist-retargeting-guided-reinforcement-learning-recipe-for-dexterous-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：基于人类演示重定向的强化学习灵巧操作
-6. [Learning Robust Execution in Robotic Manipulation with Agentic Reinforcement Learning](/202607/17/2607.13818v1-learning-robust-execution-in-robotic-manipulation-with-agentic-reinforcement-learning)  
-   标签：评分：9.0/10、query:ad
-   evidence：机器人强化学习
-7. [RxBrain: Embodied Cognition Foundation Model with Joint Language-Visual Reasoning and Imagination](/202607/17/2607.14187v1-rxbrain-embodied-cognition-foundation-model-with-joint-language-visual-reasoning-and-imagination)  
-   标签：评分：9.0/10、query:ad
-   evidence：具身认知基础模型，结合语言-视觉推理
-8. [MIND-CAVs: Multi-Intelligence Negotiation and Decision System for CAVs based on Intent-Driven Autonomy](/202607/17/2607.14688v1-mind-cavs-multi-intelligence-negotiation-and-decision-system-for-cavs-based-on-intent-driven-autonomy)  
-   标签：评分：9.0/10、query:ad
-   evidence：联网自动驾驶车辆的多智能体协商决策
-9. [WorkDrive: Roadwork Chain of Causation for Autonomous Driving](/202607/17/2607.14727v1-workdrive-roadwork-chain-of-causation-for-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向施工区域的自动驾驶感知因果推理
+   evidence：具身智能体在物理环境中搜索与跟随人类的基准
+4. [B-spline Policy: Accelerating Manipulation Policies via B-spline Action Representations](/202607/18/2607.09648v1-b-spline-policy-accelerating-manipulation-policies-via-b-spline-action-representations)  
+   标签：评分：8.0/10、query:ad
+   evidence：通过B样条动作表示加速机器人操作策略
+5. [A Comprehensive Survey and Systematic Real-World Evaluation of Embodied Vision-and-Language Navigation](/202607/18/2607.09792v1-a-comprehensive-survey-and-systematic-real-world-evaluation-of-embodied-vision-and-language-navigation)  
+   标签：评分：8.0/10、query:ad
+   evidence：具身视觉与语言导航综述及真实世界评估
+6. [TS-Mask VLA: 2D Temporal-Spatial Masking for Vision-Language-Action Model with Effective Bridging](/202607/18/2607.09818v1-ts-mask-vla-2d-temporal-spatial-masking-for-vision-language-action-model-with-effective-bridging)  
+   标签：评分：8.0/10、query:ad
+   evidence：通过时空掩码的视觉-语言-动作模型进行机器人操作
 
 ### 速读区论文标签
-1. [FlowDAgger: Human-in-the-Loop Adaptation of Generative Robot Policies in Latent Space](/202607/17/2607.08877v1-flowdagger-human-in-the-loop-adaptation-of-generative-robot-policies-in-latent-space)  
+1. [Robo-ValueRL: Reliable Value Estimation for Offline-to-Online Reinforcement Learning](/202607/18/2607.09866v1-robo-valuerl-reliable-value-estimation-for-offline-to-online-reinforcement-learning)  
    标签：评分：8.0/10、query:ad
-   evidence：通过潜空间动作反演进行生成式机器人策略的人类交互适应
-2. [SplatCtrl: Perception-Action Coupling via Gaussian Scene Representations and Reactive Robot Control](/202607/17/2607.08948v1-splatctrl-perception-action-coupling-via-gaussian-scene-representations-and-reactive-robot-control)  
+   evidence：面向机器人操作的离线到在线强化学习值估计
+2. [PIER-Flow: Physics-Informed Efficient Rectified Flow for Real-Time Mobile Robot Navigation](/202607/18/2607.10288v1-pier-flow-physics-informed-efficient-rectified-flow-for-real-time-mobile-robot-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：机器人操作与感知
-3. [One-Shot Multimodal Learning from Demonstration with Force-Constrained Elastic Maps](/202607/17/2607.09515v1-one-shot-multimodal-learning-from-demonstration-with-force-constrained-elastic-maps)  
+   evidence：物理信息引导的移动机器人导航策略
+3. [Navigating the Crowd: Non-linear MPC with Social Forces Dynamics for Human-Aware Robot Navigation](/202607/18/2607.10374v1-navigating-the-crowd-non-linear-mpc-with-social-forces-dynamics-for-human-aware-robot-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：一次性多模态演示学习用于力约束机器人操作
-4. [PAC-ACT: Post-training Actor-Critic for Action Chunking Transformers](/202607/17/2607.09590v1-pac-act-post-training-actor-critic-for-action-chunking-transformers)  
+   evidence：基于社会力模型预测控制的人类感知机器人导航
+4. [BucketKD: A Safety-Aware Bucket-Based Knowledge Distillation Framework for End-to-End Motion Planning](/202607/18/2607.10565v1-bucketkd-a-safety-aware-bucket-based-knowledge-distillation-framework-for-end-to-end-motion-planning)  
    标签：评分：8.0/10、query:ad
-   evidence：基于强化学习的后训练框架用于动作分块Transformer的机器人操作
-5. [Mosaic: Runtime-Efficient Multi-Agent Embodied Planning](/202607/17/2607.09603v1-mosaic-runtime-efficient-multi-agent-embodied-planning)  
+   evidence：自动驾驶端到端运动规划的安全感知知识蒸馏
+5. [SensorPerch: Sense Wherever and Whenever it Matters](/202607/18/2607.10682v1-sensorperch-sense-wherever-and-whenever-it-matters)  
    标签：评分：8.0/10、query:ad
-   evidence：基于语义记忆和整数规划的高效多智能体具身规划
-6. [Learning More from Less: Reinforcement Learning from Hindsight](/202607/17/2607.09042v1-learning-more-from-less-reinforcement-learning-from-hindsight)  
+   evidence：解耦传感器平台实现灵活机器人感知
+6. [Shortcut Trajectory Planning for Efficient Offline Reinforcement Learning](/202607/18/2607.09336v1-shortcut-trajectory-planning-for-efficient-offline-reinforcement-learning)  
    标签：评分：7.0/10、query:ad
-   evidence：事后重标记强化学习用于VLA后训练，提高操纵任务样本效率
-7. [PhysV2A: Reachability-Gated and Semantic-Mask-Constrained Feasibility Completion for Video-to-Robot Manipulation](/202607/17/2607.09365v1-physv2a-reachability-gated-and-semantic-mask-constrained-feasibility-completion-for-video-to-robot-manipulation)  
+   evidence：离线强化学习中的捷径轨迹规划以实现高效推理
+7. [ActiveFly-Bench: Aligning Embodied Question Answering with Vision-Language-Action for Aerial Embodied Perception](/202607/18/2607.10180v1-activefly-bench-aligning-embodied-question-answering-with-vision-language-action-for-aerial-embodied-perception)  
    标签：评分：7.0/10、query:ad
-   evidence：视频到机器人操作的可行性完成框架，可服务于强化学习
-8. [SEAMLiS: Visibility-Aware Safety for Perception-Limited Multi-Robot Exploration](/202607/17/2607.09959v1-seamlis-visibility-aware-safety-for-perception-limited-multi-robot-exploration)  
+   evidence：空中具身感知的基准与智能体
+8. [Source-Lifted Flow Matching for Intervenable Multimodal Imitation](/202607/18/2607.10206v1-source-lifted-flow-matching-for-intervenable-multimodal-imitation)  
    标签：评分：7.0/10、query:ad
-   evidence：感知受限多机器人探索的安全框架
-9. [Robotic Contextual Awareness for Human-Robot Collaboration and Environmental Understanding](/202607/17/2607.10372v1-robotic-contextual-awareness-for-human-robot-collaboration-and-environmental-understanding)  
+   evidence：可干预的多模态模仿学习流匹配策略
+9. [AutoPath: Learning Transferable Goal-Conditioned Stochastic Path Prior for Safe Navigation Without Human Demonstrations](/202607/18/2607.11739v1-autopath-learning-transferable-goal-conditioned-stochastic-path-prior-for-safe-navigation-without-human-demonstrations)  
    标签：评分：7.0/10、query:ad
-   evidence：面向人机协作与环境理解的机器人上下文感知
-10. [A Distributionally Robust Multi-agent Reinforcement Learning Framework for Intelligent Intersection Control](/202607/17/2607.09899v1-a-distributionally-robust-multi-agent-reinforcement-learning-framework-for-intelligent-intersection-control)  
+   evidence：随机路径先验用于安全导航
+10. [Flow-aware Optimal Navigation in Unsteady Flows through Reinforcement Learning](/202607/18/2607.13553v1-flow-aware-optimal-navigation-in-unsteady-flows-through-reinforcement-learning)  
    标签：评分：6.0/10、query:ad
-   evidence：多智能体强化学习用于交通信号控制，与智能控制相关
-11. [An offline approach to fNIRS-guided reinforcement learning for robot behavior](/202607/17/2607.14393v1-an-offline-approach-to-fnirs-guided-reinforcement-learning-for-robot-behavior)  
+   evidence：强化学习用于非稳定流场中的自主导航
+11. [Human-Robot Interaction in GenAI Architectures via the Agent-Client Protocol](/202607/18/2607.14919v1-human-robot-interaction-in-genai-architectures-via-the-agent-client-protocol)  
    标签：评分：6.0/10、query:ad
-   evidence：fNIRS引导的强化学习用于机器人行为
+   evidence：提出Agent-Client协议标准化人机交互层
 
 
 <div class="dpr-home-promo-card">
