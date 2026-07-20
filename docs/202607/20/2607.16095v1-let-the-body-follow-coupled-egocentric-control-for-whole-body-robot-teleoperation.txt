@@ -1,0 +1,413 @@
+Title: Let the Body Follow: Coupled Egocentric Control for Whole-Body Robot Teleoperation
+
+URL Source: https://arxiv.org/pdf/2607.16095v1
+
+Published Time: Mon, 20 Jul 2026 01:18:35 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Let the Body Follow: Coupled Egocentric Control for Whole-Body Robot Teleoperation 
+
+Tsung-Chi Lin 1, Yichen Xie 2, and Chien-Ming Huang 2
+
+Abstract — Whole-body teleoperation requires users to coor-dinate perception, manipulation, posture, and mobility across multiple robot components. This coordination is difficult be-cause users must simultaneously control the robot’s head, arms, torso, and base while maintaining task awareness and avoiding kinematic or environmental constraints. In this pa-per, we propose coupled egocentric control , a body-following teleoperation approach in which the robot’s torso and base automatically respond to the operator’s head and arm motions. Rather than requiring explicit touchpad commands for every torso or base adjustment, the system lets users focus on gaze and hand control: head pitch adjusts torso height, head yaw drives base rotation, end-effector height adjusts torso motion, and end-effector workspace boundaries trigger base translation. We evaluate this approach in a user study on whole-body teleoperation of a TIAGo mobile manipulator for home-care-inspired tasks. Compared with a baseline hybrid interface, coupled egocentric control improves object manip-ulation efficiency, reduces button-based control effort and arm singularities, lowers mental demand and overall workload, and increases ease of use, ease of learning, confidence, and user preference for torso and base control. 
+
+I. I NTRODUCTION 
+
+Mobile manipulators and humanoid robots are increasingly expected to operate in physically situated environments, from industrial settings [1], [2] to home care [3], [4]. These robots can perceive, navigate, reach, manipulate, and reposition their bodies, making them promising platforms for remote assistance in complex real-world tasks. However, these same capabilities also make teleoperation difficult. To operate the whole body of a robot, users must coordinate multiple interdependent components—including the head, arms, torso, and mobile base—while maintaining situational awareness, avoiding obstacles, preventing awkward arm configurations, and completing the task efficiently. As a result, whole-body teleoperation is not simply a problem of providing access to more degrees of freedom; it is a coordination problem in which perception, manipulation, posture, and mobility must be controlled together without overwhelming the user. Existing approaches to whole-body robot teleoperation typically rely on either free-form control [5], [6], which maps the user’s body or device motion to the robot and offers expressive control, or constrained control [7], which restricts motion to predefined commands or axes for greater stability and precision. Free-form interfaces can be intuitive  
+
+> This work was supported by the Malone Center for Engineering in Healthcare at Johns Hopkins University.
+> 1Department of Computer Science, New Jersey Institute of Technology, Newark, NJ, USA.
+
+tsungchi.lin@njit.edu  
+
+> 2Department of Computer Science, Johns Hopkins University, Baltimore, MD, USA.
+
+{yxie78, chienming.huang }@jhu.edu Head Pitch ⇢ Torso Up/Down   
+
+> Head Yaw ⇢ Base Rotation Arm Movement ⇢ Base Movement
+> Arm Up/Down ⇢ Torso Up/Down
+> Perception -Centered Manipulation -Centered
+> Fig. 1: Our proposed coupled egocentric control system lets the robot body follow the operator’s gaze and hands. Head motions support perception-centered control by adjusting torso height and base rotation, while arm motions support manipulation-centered control by adjusting torso height and base translation.
+
+for controlling high-degree-of-freedom components such as the head and arms, but they can be difficult to manage and may require expensive or specialized hardware [8]. Con-strained interfaces, in contrast, are often easier to stabilize for single-axis motion such as torso elevation or base translation, but they can limit the fluid use of the robot’s full body. Hybrid interfaces combine these strengths by using free-form input for perception and manipulation while relying on constrained input for posture and mobility. However, even hybrid interfaces often require users to manually switch attention between control channels, such as moving the arms, adjusting the torso, rotating the base, and repositioning the robot. This manual coordination can increase cognitive workload, disrupt task flow, and reduce efficiency, especially in cluttered or multi-step manipulation tasks [9]. This paper introduces coupled egocentric control for whole-body robot teleoperation (Fig. 1). The central idea is simple: let the body follow the operator’s gaze and hands. Instead of asking users to explicitly command the torso and base whenever the viewpoint or manipulation workspace becomes insufficient, our system treats head and arm motion as signals of the operator’s perceptual and manipulation intent, using them to automate supportive torso and base adjustments while preserving direct user control over the robot’s gaze and hands. Specifically, our approach integrates two forms of body-following control: in perception-centered control , the torso moves up or down when the head tilts beyond predefined thresholds to extend the vertical view-point, and the base rotates when the head pans beyond left or right thresholds to extend the field of view; in manipulation-centered control , the torso moves up or down when an end effector reaches vertical workspace boundaries, and the base arXiv:2607.16095v1 [cs.RO] 17 Jul 2026 moves forward, backward, or sideways when an end effector reaches translational workspace boundaries. By coupling these motions, the system reduces the need for explicit torso/base commands, helps avoid arm overstretching and singularities, and supports continuous transitions between looking, reaching, and repositioning. We evaluate coupled egocentric control on a TIAGo mo-bile manipulator in home-care-inspired tasks, comparing it with a baseline hybrid VR interface in which the robot’s head and dual arms are controlled through an HTC Vive Pro 2 headset and handheld controllers, while the torso and base are controlled through touchpads. The study consisted of two phases: Phase I compared the baseline and coupled egocentric interfaces across three tasks emphasizing base movement, torso adjustment, and base rotation; Phase II examined user preference in a more complex cleaning task involving multiple objects and workspaces. Results show that coupled egocentric control improves object manipula-tion efficiency, reduces button-based control effort and arm singularities, lowers mental demand and overall workload, and increases ease of use, ease of learning, confidence, and preference for torso adjustment and base rotation. The main contributions of this paper are: (C1) Coupled egocentric control for allowing the robot body to follow the operator’s gaze and hands through head– torso/base and arm–torso/base coupling; (C2) VR-based whole-body teleoperation for implementing this control framework with real-time visual feedback, ob-stacle awareness, and collision-avoidance support; and (C3) User study evaluation for demonstrating improved manipulation efficiency, reduced control effort and workload, and stronger user preference in home-care-inspired whole-body teleoperation tasks. II. B ACKGROUND AND RELATED WORK 
+
+A. Whole-Body Teleoperation Interfaces 
+
+Whole-body teleoperation requires users to coordinate multiple robot components, including perception through the head or camera, manipulation through the arms, posture through the torso, and mobility through the base or legs. Existing interfaces generally fall into constrained, free-form, and hybrid control approaches. Constrained control simpli-fies operation by limiting the robot’s degrees of freedom or restricting motion to predefined commands, supporting stable control for tasks such as manipulation [10] or nav-igation [11]. However, this simplicity can limit the robot’s full capabilities in tasks that require coordinated looking, reaching, repositioning, and interaction. In contrast, free-form control allows users to command robot motion through body, hand, or device movements, using wearable sensors [12], exosuits [8], or vision-based tracking [13]. These interfaces can be intuitive for high-DoF components such as the head and arms, but they also require users to manage many control dimensions simultaneously, which can increase cognitive and physical effort. Hybrid control approaches combine the strengths of both paradigms, for example using VR pose tracking for head and arm control while relying on touchpads or discrete inputs for torso and base motion in mobile manipulators [14] and humanoid robots [15]. Yet, even hybrid interfaces often leave the coordination problem to the user: operators must manually switch attention among gaze, arm motion, torso adjustment, and base movement, which can interrupt task flow and increase workload. 
+
+B. Semi-Autonomous Loco-Manipulation 
+
+To reduce this coordination burden, prior work has explored semi-autonomous support for loco-manipulation, where locomotion and manipulation are coordinated to main-tain reachability, visibility, and task progress. Manipulation-centered approaches allow the robot to coordinate reaching and walking around the user’s manipulation input [16], while multi-centered approaches incorporate both arm motion and broader human-body motion for integrated navigation and manipulation [17], [18]. Other systems provide higher-level autonomy for task-specific whole-body motion [19] or opti-mize robot motion around object interaction and transporta-tion [20]. Although these approaches demonstrate the value of shared autonomy, many are designed around specific tasks, objects, or predefined coordination policies. Less attention has been paid to how the operator’s natural egocentric inputs—especially head motion and hand motion—can con-tinuously guide supportive body movements. In whole-body teleoperation, head motion often indicates perceptual intent, such as looking higher, lower, left, or right, while arm motion often indicates manipulation intent, such as extending reach or approaching a target. This paper builds on this observation by introducing coupled egocentric control , a body-following approach that couples head motion with torso elevation and base rotation, and end-effector motion with torso adjustment and base translation. This design allows users to focus on where the robot looks and reaches while the rest of the robot body follows to maintain viewpoint, reachability, and maneuverability. III. W HOLE -B ODY ROBOT TELEOPERATION 
+
+We present a whole-body teleoperation system for aTIAGo OMNI++ mobile manipulator. The system builds on a hybrid VR interface that provides direct control of the robot’s head and arms while using constrained inputs for the torso and base. We first summarize this baseline framework and its visual/safety support, then introduce our proposed 
+
+coupled egocentric control , in which the robot body follows the operator’s gaze and hands by automatically coordinating torso and base motion with head and arm movements. 
+
+A. Hybrid Control Framework 
+
+The baseline interface uses a hybrid control framework that combines free-form pose control with constrained touch-pad control (Fig. 2). The robot’s head and dual arms are con-trolled through the pose of an HTC Vive Pro 2 headset and two handheld controllers, while the torso and mobile base are controlled through the touchpads. This design provides intuitive control for high-DoF perception and manipulation, while preserving stable single-axis commands for torso ele-vation and base motion. For head control, the user’s headset rotation is mapped to the robot’s 2-DoF pan–tilt head. A 30 ◦ downward pitch offset is applied so that the robot’s default gaze aligns with the manipulation workspace, reducing the need for users to maintain a bent-neck posture during prolonged operation. For arm control, each handheld controller specifies the desired Cartesian pose of the corresponding end effector, and TRAC-IK [21] computes the robot arm configuration. Users can pause or activate arm control with the grip button, reset the arm to a home configuration with the menu button, and open or close the gripper with the trigger button. For torso and base control, touchpads provide constrained commands. The right touchpad moves the torso up or down in 0.05 m increments, with limits that prevent collision with the base. The left touchpad controls base translation, including forward, backward, lateral, and diagonal motions, while left/right presses on the right touchpad control base rotation. Algorithm 1 summarizes the baseline control loop. 
+
+B. Visual Feedback and Safety Awareness 
+
+A graphical user interface (GUI) integrated real-time video feedback from an RGB camera built into the TIAGo’s head, overlaying the robot’s operational states and streaming them to the HTC Vive headset via the User Datagram Protocol. In addition to displaying the arm control states ( i.e., showing control, pause, and home statuses), we advanced the display of the robot’s states by providing back and top views of the robot’s mini model, which monitored its arm pose, torso height, base speed, and surrounding obstacles (Fig. 3). 
+
+Visualization of Arm Pose and Torso Elevation: Simplified robot arms with fixed shoulder joints (small blue dots) and real-time elbow (large blue circles) and wrist (large orange circles) joints were added to both the back and top views of the mini robot model to enhance arm pose awareness; monitoring arm pose is crucial in preventing overstretching and awkward configurations during robot operation. Torso height was indicated by the height of the upper part of the Free -Form Control 
+
+> Constrained
+> Control
+> Fig. 2: The baseline hybrid teleoperation interface captures user head and hand movements to control the robot’s head and arms, while touchpads on the handheld controllers control the robot’s torso and base.
+
+Algorithm 1 Baseline Hybrid Whole-Body Teleoperation  
+
+> 1:
+
+Initialize VR devices, robot state, and GUI  
+
+> 2:
+
+while teleoperation is active do  
+
+> 3:
+
+Read headset orientation Rh 
+
+> 4:
+
+Read controller poses xLc , xRc 
+
+> 5:
+
+Command head pan–tilt from Rh with pitch offset  
+
+> 6:
+
+for i ∈ { L, R } do  
+
+> 7:
+
+if arm control i is active then  
+
+> 8:
+
+Map xic to desired pose xiee  
+
+> 9:
+
+qia ← IK( xiee ) 
+
+> 10:
+
+Send qia and gripper command  
+
+> 11:
+
+end if  
+
+> 12:
+
+end for  
+
+> 13:
+
+˙Tz ← right-touchpad up/down command  
+
+> 14:
+
+vb ← left-touchpad translation command  
+
+> 15:
+
+˙ψb ← right-touchpad rotation command  
+
+> 16:
+
+Apply scaling, damping, and safety constraints  
+
+> 17:
+
+Send torso/base commands and update GUI  
+
+> 18:
+
+end while 
+
+robot in the back view, with red arrows showing control inputs and red lines marking the upper and lower boundaries to indicate the limits of adjustable range. 
+
+Visualization of Base Control: The top view of the robot’s mini model displayed the base control inputs, with red arrows indicating translational movement directions and red curved arrows showing rotational directions. We implemented dy-namic scaling of the base speed based on the workspace area. Specifically, when the robot base was near the center of the workspace—an uncluttered, obstacle-free area (purple region)—the base operated in fast mode (colored green) for more efficient navigation; however, when the robot base approached any surroundings, indicating a cluttered area, the base significantly reduced its speed (turning gray) to prevent potential collisions and enhance control precision. 
+
+Visualization of Proximal Obstacles: To provide real-time feedback on the robot’s movements and obstacle awareness, we created a dynamic mini-map in the top view that continu-ously updated to show obstacles within the robot’s workspace (Fig. 3), with a red color change indicating that the robot was too close to a particular obstacle. In addition to displaying the distance to obstacles, we further provided the precise height of nearby tables (yellow lines) and a shelf (yellow shape) in the back view when the robot was near them. This detailed information, combined with the robot’s mini model, allowed for a clearer understanding of the relationship between the robot’s arms and surrounding objects, significantly improving collision avoidance and object interaction. 
+
+C. Collision Avoidance and Motion Damping 
+
+In addition to an alert indicating a nearby obstacle ( i.e., 
+
+the obstacles in the top view), we implemented a damping feature: When the robot’s base approached an obstacle, the movement in that direction was gradually reduced to zero, preventing further motion toward the obstacle while allowing movement in all other directions. During object Fig. 3: The advanced GUI integrates a video stream, arm control states, and both back and top views of the robot’s mini model, displaying the robot’s arm pose, torso height, and surrounding obstacles. Red arrows indicate control inputs, with red lines for the torso’s vertical limits. The base is colored green or gray to signify “fast” or “slow” mode depending on whether the center of the base is within or outside the purple area, respectively. 
+
+manipulation, the system monitored the robot’s elbows and end effectors to ensure they did not come too close to obstacles ( i.e., walls, tables, or shelves) and took action to prevent collisions (Fig. 5); specifically, when an elbow was near an obstacle, the corresponding elbow joint in both the back and top views of the GUI turned red, and arm control was paused. For end effector collision avoidance, if the arm movement was insufficient to avoid an obstacle ( i.e., the end effector was lower than a table or shelf, or above a table but moving downward), motion in the direction toward the obstacle was reduced to zero, preventing further movement toward it while allowing motion in all other directions; related movements that would result in the same collision risk were also deactivated ( i.e., the base could not move forward when the end effector was lower than the table, or the torso could not lower itself when the end effector was above and close to the table) and the GUI alerted the user to the risk by turning the robot’s wrist joints and torso links red in both the back and top views. 
+
+D. Coupled Egocentric Control 
+
+Although the hybrid interface provides direct access to the robot’s whole body, it still requires users to manually coordinate head, arms, torso, and base. This coordination can interrupt the flow of teleoperation: users may need to stop reaching to adjust torso height, stop looking to rotate the base, or issue repeated touchpad commands to keep the robot close to the workspace. To reduce this coordination burden, we propose coupled egocentric control : a body-following 
+
+> Fig. 4: The GUI displays the heights of nearby tables (yellow lines) and the shelf (yellow shape) in the back view when the robot is close to them, enhancing collision avoidance and object interaction.
+> Fig. 5: The arm collision avoidance system monitors the robot’s elbows and end effectors. The GUI provides alerts while the system takes action ( i.e.,
+> pausing arm control or deactivating certain motions) to prevent collisions.
+
+strategy in which head and arm motions remain under direct user control, while the torso and base automatically follow these motions to support perception and manipulation. Let θt and θp denote the robot head tilt and pan angles after headset-to-head mapping, and let piee = [ xiee , y iee , z iee ]⊤
+
+denote the position of end effector i ∈ { L, R } in the robot base frame. The controller generates three supportive body commands: torso velocity ˙Tz , base translational velocity 
+
+vb = [vx, v y ]⊤, and base rotational velocity ˙ψb. These commands are produced by two coupled policies: perception-centered coupling driven by head motion and manipulation-centered coupling driven by end-effector motion. We define a threshold function 
+
+Γ( s; τ, u ) = 
+
+
+
+u, s > τ, 
+
+−u, s < −τ, 
+
+0, otherwise ,
+
+(1) where s is the input signal, τ is the activation threshold, and 
+
+u is the output velocity. 
+
+Perception-Centered Coupling: Head motion provides an egocentric signal of where the operator wants to look. When the head tilts near its upper or lower range, the torso moves to extend the vertical viewpoint; when the head pans near its left or right range, the base rotates to extend the horizontal field of view. The head-driven torso and base rotation commands are: 
+
+˙T hz = Γ( θt; λθ θmax  
+
+> t
+
+, v T ), (2) 
+
+˙ψb = Γ( θp; λθ θmax  
+
+> p
+
+, α M ωb), (3) where vT is the torso speed, ωb is the maximum base rotational speed, λθ = 0 .5 is the activation threshold ratio, and αM is a speed-scaling factor determined by the current base mode ( i.e., fast in open space and slow near obstacles). 
+
+Manipulation-Centered Coupling: End-effector motion provides an egocentric signal of where the operator wants the robot to reach. When an end effector approaches the vertical boundary of the manipulation workspace, the torso moves to extend reach; when it approaches the horizontal boundary, the base translates to keep the arm within a maneuverable region. For each active arm i, the arm-driven torso command is: 
+
+˙T a,i z =
+
+
+
++vT , ziee > z max  
+
+> ee
+
+,
+
+−vT , ziee < z min  
+
+> ee
+
+,
+
+0, otherwise .
+
+(4) The arm-driven base translation command is: 
+
+vib =
+
+
+
+[+ vx, 0] ⊤, xiee > x max  
+
+> ee
+
+,
+
+[−vx, 0] ⊤, xiee < x min  
+
+> ee
+
+,
+
+[0 , +vy ]⊤, yiee > y max  
+
+> ee
+
+,
+
+[0 , −vy ]⊤, yiee < y min  
+
+> ee
+
+,
+
+[0 , 0] ⊤, otherwise .
+
+(5) 
+
+where [xmin  
+
+> ee
+
+, x max  
+
+> ee
+
+], [ymin  
+
+> ee
+
+, y max  
+
+> ee
+
+], and [zmin  
+
+> ee
+
+, z max  
+
+> ee
+
+] define the manipulation-centered control region. These boundaries are displayed as light blue dotted lines in the GUI (Fig. 6). In our implementation, positive and negative values of vx and 
+
+vy correspond to the robot’s forward/backward and left/right base motions according to the TIAGo base-frame convention. The final torso command combines perception-centered and manipulation-centered coupling with saturation: 
+
+˙Tz = sat [−vT ,v T ] ˙T hz + X
+
+> i∈A
+
+˙T a,i z
+
+!
+
+, (6) where A is the set of active arms. For base translation, the robot moves in only one direction at a time to maintain predictable behavior. If multiple boundaries are activated, the command is selected using the priority order backward, sideways, and forward. This priority helps the robot first move away from overextended arm configurations before making lateral or forward adjustments. The final base translation command is selected from the active arm-driven candidates: 
+
+vb = Π ρ
+
+  vib | i ∈ A , vib̸ = 0  , (7) where Πρ(·) selects one nonzero command according to the priority order ρ: backward, sideways, and forward. Together, these coupling rules allow the user to continue controlling the robot’s gaze and hands while the robot body follows to preserve viewpoint, reachability, and maneuver-ability. Compared with the baseline hybrid interface, coupled egocentric control reduces the need for explicit touchpad commands and supports smoother transitions between look-ing, reaching, and repositioning. To summarize the difference between the baseline hybrid interface and our coupled egocentric controller, Table Icompares the control mappings for each robot component. The key distinction is that the baseline requires explicit touchpad commands for torso and base motion, whereas coupled egocentric control allows these supporting body motions to follow the operator’s gaze and hands. Torso Adjustment  Base Movement                 
+
+> Fig. 6: Manipulation-centered coupling in coupled egocentric control. Torso adjustment and base translation are triggered when the robot’s end effector reaches predefined workspace boundaries. TABLE I: Baseline and coupled egocentric control mappings.
+> Component Baseline Coupled Egocentric Control
+> Head Headset pose Direct control; head pitch/yaw also drives torso height and base rotation. Arms Controller pose Direct control; end-effector mo-tion also drives torso height and base translation. Torso Right touchpad Follows head pitch or end-effector height. Base rotation Right touchpad Follows head yaw. Base translation Left touchpad Follows end-effector workspace boundaries.
+
+IV. U SER STUDY 
+
+We conducted a human participant study to evaluate whether coupled egocentric control improves the efficiency, usability, and perceived workload of whole-body robot tele-operation. The study compared our proposed interface with the baseline hybrid interface and examined both task perfor-mance and user preference in home-care-inspired manipula-tion scenarios. 
+
+Participants: We recruited 12 participants (5 male, 7 female) from a local university campus, aged 19 to 39 ( M = 27.92, SD 
+
+= 5.74). All participants had previously completed a study using the same baseline hybrid interface for coordinated whole-body teleoperation. In that prior study, they under-went systematic, curriculum-based training covering basic manipulation skills ( i.e., unimanual and bimanual manip-ulation of solid and deformable objects) and coordinated whole-body control ( i.e., head–arm, torso–arm, base–arm, and head–torso–base–arm coordination). Participants there-fore had high familiarity with the baseline interface ( M =4.33, SD = 0.75) on a five-point scale, where 5 indicated high familiarity. This prior experience provided a conservative comparison for evaluating whether coupled egocentric con-trol offers benefits beyond a well-practiced manual baseline. The study lasted 90 minutes, and each participant received $15 for their time. 
+
+Home-Care-Inspired Tasks: We designed a set of struc-tured evaluation tasks to isolate specific whole-body control demands in Phase I and a composite task to assess interface preference in a realistic home-care-inspired scenario in Phase II (Fig. 7). All object locations and target regions were fixed across participants. In Phase I , participants performed three short tasks using both the baseline and coupled egocentric interfaces. Each task was designed to emphasize a dominant control demand while minimizing the need for other body motions. First, in the collecting task (base-dominant ), a bottle was placed on the far-left side of a table. Participants moved the robot base laterally to reach the object and placed it into a bin located at the front center of the workspace. Torso motion was optional but not required, making base translation the primary control demand. Second, in the organizing task 
+
+(torso-dominant ), participants moved a bottle from a lower shelf to an upper shelf directly above it, with minimal base displacement. This task primarily required torso extension and vertical reach adjustment, isolating torso control preci-sion. Third, in the transferring task (rotation-dominant ), participants picked up a spray bottle from a table, rotated the robot approximately 90 ◦ in place, and placed the object into a basket located in an adjacent workspace. This task emphasized in-place base rotation. In Phase II , participants performed a cleaning task as a composite whole-body teleoperation scenario. The task involved heterogeneous objects, including rigid bottles and a deformable cloth, and multiple workspaces, including tables of different heights, a multi-level shelf, and a wall-mounted organizer. Participants sequentially collected objects, relo-cated them across workspaces, and organized them into designated target locations. During this task, participants were allowed to switch freely between the baseline and coupled egocentric interfaces at any time. Task completion was defined as placing all objects in their corresponding target locations. 
+
+Experimental Procedure: After providing informed con-sent, participants received an explanation of both the baseline hybrid interface and the coupled egocentric interface. They then completed up to 20 minutes of hands-on practice with a training task that required moving a bottle between two tables of different heights. After training, participants completed two phases. In Phase I, they performed the three simple tasks with both interfaces, resulting in six trials in total (2 interfaces × 3 tasks); both task order and interface order were randomized. In Phase II, participants completed the complex cleaning task with no restrictions on sub-task order or arm usage, and could choose between the baseline and coupled egocentric control modes for torso and base operation. After each phase, participants completed the NASA-TLX and a questionnaire about usability and preference. 
+
+Measures and Analyses: In Phase I, we measured task com-pletion time and object manipulation time to evaluate effi-ciency. Object manipulation time was defined as the duration from when the end effector entered a 0.3 m region around the target to the completion of the corresponding grasping or placing action. To evaluate control effort, we measured the number of controller button presses and the frequency with which the robot arms approached joint limits or singular configurations. In Phase II, we recorded task completion time and the duration of coupled egocentric control use. Collecting  
+
+> Base Movement
+> Organizing
+> Torso Adjustment
+> Transferring
+> Base Rotation
+> Cleaning
+> Phase I Phase II
+
+Fig. 7: Home-care-inspired tasks used in the study. Phase I included isolated control tasks emphasizing base translation, torso adjustment, and base rotation. Phase II used a composite cleaning task to examine interface utilization and preference in a more realistic scenario. p < .05  p < .05 p < .01  p < .01  p < .01                             
+
+> 0
+> 50
+> 100
+> 150
+> 200
+> 250
+> BEBEBE
+> Collecting Organizing Transferring
+> Completion Time (seconds )
+> 0
+> 50
+> 100
+> BEBEBEBEBEBE
+> Grasping Placing Grasping Placing Grasping Placing
+> Collecting Organizing Transferring
+> Object Manipulation Time (seconds )
+> p < .05 p < .01
+
+Fig. 8: Comparison of task time and object manipulation time across the three home-care-inspired tasks between the baseline (B) and coupled egocentric (E) interfaces. 
+
+Subjective measures included NASA-TLX workload, ease of use, ease of learning, confidence, and control preference. We analyzed variance using an F-test and selected either Student’s t-test or Welch’s t-test depending on variance equality. We also used a mixed regression model to examine the relationship between coupled egocentric control use and both cleaning task time and NASA-TLX scores. Overall NASA-TLX score was computed using weighted subscales: mental demand = 5, physical demand = 1, temporal demand = 0, performance = 3, effort = 4, and frustration = 2. V. R ESULTS , D ISCUSSION , AND IMPLICATIONS 
+
+A. Phase I: Baseline vs. Coupled Egocentric Control 
+
+As shown in Fig. 8, left, coupled egocentric control re-sulted in comparable task completion times for the collecting and transferring tasks, with no significant difference from the baseline, while significantly reducing completion time for the organizing task ( p < . 05 ). This suggests that body-following control was particularly beneficial when the task required frequent torso adjustment. More broadly, Fig. 8, right shows that coupled egocentric control significantly reduced object manipulation time for both grasping and placing actions across all three tasks, indicating that automatically coordi-nating the torso and base with the operator’s head and hand motions supported more efficient interaction with objects. Coupled egocentric control also reduced control effort. Across all Phase I tasks, the baseline interface required 
+
+five times more button usage than the coupled egocentric interface. In addition, the robot arms encountered joint limits or singularities three times more frequently with the baseline than with coupled egocentric control, suggesting that body-following adjustments helped maintain more maneuverable arm configurations. Subjective results further support these findings: coupled egocentric control significantly lowered participants’ mental demand ( p < . 01 ) and increased ease p < .05  p < .01  p < .05         
+
+> 0
+> 50
+> 100
+> Baseline Egocentric
+> 1
+> 2
+> 3
+> 4
+> 5
+> Baseline Egocentric Baseline Egocentric Baseline Egocentric
+> Easy to Use Easy to Learn Confident
+> p < .01
+> NASA -TLX ( mental demand )
+
+Fig. 9: Subjective feedback on mental demand, ease of use, ease of learning, and confidence for the baseline and coupled egocentric interfaces. of use ( p < . 05 ), ease of learning ( p < . 01 ), and confidence (p < . 05 ) compared with the baseline interface (Fig. 9). 
+
+Discussion — These results show that coupled egocentric control improves whole-body teleoperation by allowing the robot body to follow the operator’s gaze and hands. Although total task completion time did not significantly improve for the collecting and transferring tasks, which involved substantial navigation and repositioning, object manipula-tion became faster across all tasks. This indicates that the proposed coupling was most effective during the interaction-rich portions of the tasks, where users needed to coordinate reaching, torso height, and base position. The reduction in button presses and arm singularities further suggests that the system offloaded low-level torso/base coordination while preserving direct user control over gaze and hands. Participants’ comments reflected this benefit: “The coupled egocentric control helped me approach and grasp/place the target seamlessly at the same time” and “It was useful that the base/torso moved in sync with the robot hand, as I often forgot which button to press to control the base/torso.” Design Implications — The Phase I results suggest that coupled egocentric control is most beneficial during interaction-rich moments, when users must simultaneously manage reaching, torso height, and base position. Even when overall task completion time was comparable for navigation-heavy tasks, object manipulation time improved across all tasks, indicating that body-following support can reduce the coordination overhead around grasping and placing. This suggests that whole-body teleoperation interfaces should not only optimize navigation or manipulation separately, but should provide lightweight coupling mechanisms that pre-serve arm maneuverability and reduce the need for explicit posture and base commands during object interaction. 
+
+B. Phase II: Utilization and Preference in a Complex Task 
+
+Correlation analyses showed that greater use of coupled egocentric control was associated with significantly shorter completion time for the complex cleaning task ( p < . 001 )and lower overall NASA-TLX workload ( p < . 05 ), as shown in Fig. 10. These results indicate that participants who relied more on body-following control completed the task more efficiently and with less perceived workload. Interface usage patterns further revealed how participants used the two control modes during the cleaning task. As shown in Fig. 11, participants used coupled egocentric control significantly more often than the baseline for base rotation and torso adjustment. In contrast, there was no significant difference between the baseline and coupled ego-0                                 
+
+> 500
+> 1000
+> 050 100
+> Egocentric Utilization (% of task time)
+> Task Time (seconds )
+> 0
+> 50
+> 100
+> 050 100
+> Egocentric Utilization (% of task time)
+> Overall NASA -TLX (score )
+> 𝑅 2= .818, p < .01 𝑅 2= .683, p < .05
+> Fig. 10: Correlation between coupled egocentric control utilization and both cleaning task time and overall NASA-TLX score. p < .001 p < .001 p < .05
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> BEBEBEBEBE
+> Forward Backward Sideways Rotation Adjustment
+> Base Torso
+> Interface Usage for Base/Torso Control (% of task time )
+> 0
+> 6
+> 12
+> FBSRUD
+> Base Torso
+> Control Preference (# of participants )
+> Baseline
+> Egocentric
+> Fig. 11: Baseline (B) and coupled egocentric (E) control usage and prefer-ence for moving the base forward (F), backward (B), sideways (S), rotating the base (R), and adjusting the torso up (U) and down (D) during the cleaning task.
+
+centric interfaces for forward and sideways base movement. Notably, backward base movement was predominantly con-trolled using the baseline touchpad method ( p < .001 ). Participants’ stated preferences generally aligned with these usage patterns, with stronger preference for coupled ego-centric control in torso adjustment, especially upward torso movement. 
+
+Discussion — Phase II demonstrates that coupled ego-centric control can support complex, cluttered, home-care-inspired tasks by improving efficiency and reducing work-load. The usage results also reveal an important distinc-tion between perception-centered and manipulation-centered coupling. Participants strongly adopted perception-centered coupling, especially using head motion to control base rota-tion and torso adjustment, because these motions naturally extended the robot’s viewpoint. Although torso motion could be driven by both head and arm movement, participants primarily used head-driven torso adjustment, suggesting that vertical body motion was often interpreted as part of active perception. Manipulation-centered coupling showed more mixed us-age. Some participants preferred to manually position the robot near the workspace before manipulating objects, while others used coupled egocentric control to move the base and arms simultaneously for greater efficiency. The strongest exception was backward base motion, where participants pre-ferred the baseline touchpad. This preference likely reflects the ergonomics of the input mapping: moving the arm back-ward can feel less natural and less efficient because it moves the hand away from the manipulation target. Overall, these findings suggest that body-following control is especially effective when the coupling aligns with natural perceptual or manipulation intent, while certain motions may still benefit from explicit manual commands. 
+
+Design Implications — The Phase II results suggest that body-following control should remain interpretable, se-lectable, and easy to override in complex tasks. Participants strongly adopted head-driven torso adjustment and base rotation, indicating that perception-centered coupling can be enabled by default because it naturally extends the robot’s viewpoint. In contrast, arm-driven base translation was more preference-dependent and sometimes better handled through explicit manual commands, especially for backward motion. These findings suggest that future whole-body teleopera-tion interfaces should preserve direct control over high-intent channels such as gaze and hands, while using simple, predictable, and interruptible coupling rules to automate supportive body motions. VI. C ONCLUSION 
+
+In this paper, we presented coupled egocentric control for whole-body robot teleoperation, a body-following approach in which the robot’s torso and base follow the operator’s gaze and hands. Instead of requiring users to explicitly command every torso and base adjustment, our system couples head motion with torso elevation and base rotation, and end-effector motion with torso adjustment and base translation. Through a user study with home-care-inspired tasks, we showed that coupled egocentric control improves object ma-nipulation efficiency, reduces button-based control effort and arm singularities, lowers subjective workload, and increases ease of use, ease of learning, confidence, and preference for torso and base control. These findings suggest that allowing the robot body to follow the operator’s perceptual and manipulation intent can make whole-body teleoperation more fluid and usable. 
+
+Limitations and Future Work — Although coupled ego-centric control improved performance and usability over the baseline hybrid interface, several limitations remain. First, our current implementation relies on handheld VR controllers for arm input. A more natural interface may be controller-free, using hand tracking or gesture input through emerging mixed-reality devices. Future work will investigate how hand-tracking-based control can be combined with coupled egocentric control while preserving reliable manipulation and mode switching. Second, our study evaluated the approach on a mobile manipulator; future work should compare its effectiveness across different whole-body platforms, includ-ing humanoid robots and systems with legged mobility. Third, while our coupling rules were designed to be simple and predictable, future systems could adapt the coupling thresholds or control mappings based on task context, user preference, or robot state. Finally, coupled egocentric control could be integrated with ergonomic and workload-aware models, such as real-time physical workload estimation [22], to reduce fatigue during prolonged teleoperation and provide more personalized body-following assistance. REFERENCES [1] K. Chappellet, M. Murooka, G. Caron, F. Kanehiro, and A. Kheddar, “Humanoid loco-manipulations using combined fast dense 3d track-ing and slam with wide-angle depth-images,” IEEE Transactions on Automation Science and Engineering , 2023. [2] Y. Tong, H. Liu, and Z. Zhang, “Advancements in humanoid robots: A comprehensive review and future prospects,” IEEE/CAA Journal of Automatica Sinica , vol. 11, no. 2, pp. 301–328, 2024. [3] M. Andtfolk, L. Nyholm, H. Eide, and L. Fagerstr¨ om, “Humanoid robots in the care of older persons: A scoping review,” Assistive Technology , vol. 34, no. 5, pp. 518–526, 2022. [4] O. E. Lee, H. Lee, A. Park, and N. G. Choi, “My precious friend: Human-robot interactions in home care for socially isolated older adults,” Clinical Gerontologist , vol. 47, no. 1, pp. 161–170, 2024. [5] J. Koenemann, F. Burget, and M. Bennewitz, “Real-time imitation of human whole-body motions by humanoids,” in 2014 IEEE Interna-tional Conference on Robotics and Automation (ICRA) . IEEE, 2014, pp. 2806–2812. [6] ¨O. Terlemez, S. Ulbrich, C. Mandery, M. Do, N. Vahrenkamp, and T. Asfour, “Master motor map (mmm)—framework and toolkit for capturing, representing, and reproducing human motion on humanoid robots,” in 2014 IEEE-RAS International Conference on Humanoid Robots . IEEE, 2014, pp. 894–901. [7] K. Yamashita, Y. Kato, K. Kurabe, M. Koike, K. Jinno, K. Kito, K. Tatsuno, and M. T. Sqalli, “Remote operation of a robot for maintaining electric power distribution system using a joystick and a master arm as a human robot interface medium,” in 2016 International Symposium on Micro-NanoMechatronics and Human Science (MHS) .IEEE, 2016, pp. 1–7. [8] S. Dafarra, U. Pattacini, G. Romualdi, L. Rapetti, R. Grieco, K. Darvish, G. Milani, E. Valli, I. Sorrentino, P. M. Viceconte et al. ,“icub3 avatar system: Enabling remote fully immersive embodiment of humanoid robots,” Science Robotics , vol. 9, no. 86, p. eadh3834, 2024. [9] T.-C. Lin, A. U. Krishnan, and Z. Li, “Intuitive, efficient and er-gonomic tele-nursing robot interfaces: Design evaluation and evolu-tion,” ACM Transactions on Human-Robot Interaction (THRI) , vol. 11, no. 3, pp. 1–41, 2022. [10] N. Mavridis, G. Pierris, P. Gallina, N. Moustakas, and A. Astaras, “Subjective difficulty and indicators of performance of joystick-based robot arm teleoperation with auditory feedback,” in 2015 International Conference on Advanced Robotics (ICAR) . IEEE, 2015, pp. 91–98. [11] K. Huang, D. Subedi, R. Mitra, I. Yung, K. Boyd, E. Aldrich, and D. Chitrakar, “Telelocomotion—remotely operated legged robots,” 
+
+Applied Sciences , vol. 11, no. 1, p. 194, 2020. [12] H. Zhou, G. Yang, H. Lv, X. Huang, H. Yang, and Z. Pang, “Iot-enabled dual-arm motion capture and mapping for telerobotics in home care,” IEEE journal of biomedical and health informatics , vol. 24, no. 6, pp. 1541–1549, 2019. [13] D. Rakita, B. Mutlu, and M. Gleicher, “A motion retargeting method for effective mimicry-based teleoperation of robot arms,” in Proceed-ings of the 2017 ACM/IEEE International Conference on Human-Robot Interaction , 2017, pp. 361–370. [14] B. Bejczy, R. Bozyil, E. Vaiˇ cekauskas, S. B. K. Petersen, S. Bøgh, S. S. Hjorth, and E. B. Hansen, “Mixed reality interface for improving mo-bile manipulator teleoperation in contamination critical applications,” 
+
+Procedia Manufacturing , vol. 51, pp. 620–626, 2020. [15] M. Wonsick and T. Padır, “Human-humanoid robot interaction through virtual reality interfaces,” in 2021 IEEE Aerospace Conference (50100) . IEEE, 2021, pp. 1–7. [16] Y. Fukumoto, K. Nishiwaki, M. Inaba, and H. Inoue, “Hand-centered whole-body motion control for a humanoid robot,” in 2004 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)(IEEE Cat. No. 04CH37566) , vol. 2. IEEE, 2004, pp. 1186– 1191. [17] C. Ha, S. Park, J. Her, I. Jang, Y. Lee, G. R. Cho, H. I. Son, and D. Lee, “Whole-body multi-modal semi-autonomous teleoperation of mobile manipulator systems,” in 2015 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2015, pp. 164–170. [18] Y. Wu, P. Balatti, M. Lorenzini, F. Zhao, W. Kim, and A. Ajoudani, “A teleoperation interface for loco-manipulation control of mobile col-laborative robotic assistant,” IEEE Robotics and Automation Letters ,vol. 4, no. 4, pp. 3593–3600, 2019. [19] M. Stilman, K. Nishiwaki, and S. Kagami, “Humanoid teleoperation for whole body manipulation,” in 2008 IEEE International Conference on Robotics and Automation . IEEE, 2008, pp. 3175–3180. [20] M. Murooka, I. Kumagai, M. Morisawa, F. Kanehiro, and A. Kheddar, “Humanoid loco-manipulation planning based on graph search and reachability maps,” IEEE Robotics and Automation Letters , vol. 6, no. 2, pp. 1840–1847, 2021. [21] P. Beeson and B. Ames, “Trac-ik: An open-source library for improved solving of generic inverse kinematics,” in 2015 IEEE-RAS 15th Inter-national Conference on Humanoid Robots (Humanoids) . IEEE, 2015, pp. 928–935. [22] T.-C. Lin, A. U. Krishnan, and Z. Li, “The impacts of unreliable autonomy in human-robot collaboration on shared and supervisory control for remote manipulation,” IEEE Robotics and Automation Letters , vol. 8, no. 8, pp. 4641–4648, 2023.

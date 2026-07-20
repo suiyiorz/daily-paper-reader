@@ -6,71 +6,71 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-19
-- 运行时间：2026-07-19 20:08:00 UTC
+- 最新运行日期：2026-07-20
+- 运行时间：2026-07-20 20:24:51 UTC
 - 运行状态：成功
 - 本次总论文数：17
 - 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-今日日报收录17篇论文，精读6篇，其中两项研究获得9.0高分，聚焦于强化学习中的生成控制策略与无人机具身智能的空间认知。最值得关注的是《VINE》提出的分布外鲁棒控制框架及《Self in Space》建立的自意识-空间认知基准，均开辟了具身智能新方向。建议优先精读这两篇高分论文，速读中《Reducing Temporal Redundancy》对推理效率提升有实操参考价值。
-- 详情：[/202607/19/README](/202607/19/README)
+今日共精读6篇、速读11篇，聚焦具身智能泛化微调与跨模态控制两大前沿。最值得关注的是《Generalizable VLA Finetuning via Representation Anchoring and Language-Action Alignment》与《Semantic Audio-driven Understanding for Dynamic Humanoid Whole Body Control》，分别解决VLA模型的泛化对齐问题和基于语义音频的人形全身动态控制。建议普通读者优先精读这两篇，并关注速读中《Xiaomi-Robotics-U0》的世界基础模型进展，以把握具身智能从感知到控制的最新统一框架。
+- 详情：[/202607/20/README](/202607/20/README)
 
 ### 精读区论文标签
-1. [VINE: Taming Generative Control Policies for Reinforcement Learning](/202607/19/2607.10369v1-vine-taming-generative-control-policies-for-reinforcement-learning)  
+1. [Generalizable VLA Finetuning via Representation Anchoring and Language-Action Alignment](/202607/20/2607.13429v1-generalizable-vla-finetuning-via-representation-anchoring-and-language-action-alignment)  
    标签：评分：9.0/10、query:ad
-   evidence：在机器人学习中扩展生成策略的价值梯度强化学习
-2. [Self in Space: Benchmarking Self-Awareness and Spatial Cognition in UAV Embodied Intelligence](/202607/19/2607.12477v1-self-in-space-benchmarking-self-awareness-and-spatial-cognition-in-uav-embodied-intelligence)  
+   evidence：通过表示锚定进行机器人操作的VLA微调
+2. [Semantic Audio-driven Understanding for Dynamic Humanoid Whole Body Control](/202607/20/2607.14182v1-semantic-audio-driven-understanding-for-dynamic-humanoid-whole-body-control)  
    标签：评分：9.0/10、query:ad
-   evidence：无人机具身智能基准测试，关注物理环境中的自我意识和空间认知
-3. [SoftNav: Injecting 3D Scene Tokens into VLMs for Embodied Navigation](/202607/19/2607.14586v1-softnav-injecting-3d-scene-tokens-into-vlms-for-embodied-navigation)  
+   evidence：语义音频驱动的人形机器人全身控制
+3. [MEMORA: Embodied Action Memory from Egocentric Videos for Reasoning and Planning](/202607/20/2607.14252v1-memora-embodied-action-memory-from-egocentric-videos-for-reasoning-and-planning)  
    标签：评分：9.0/10、query:ad
-   evidence：将3D场景令牌注入视觉语言模型用于具身导航
-4. [Scaling Behavior Foundation Model for Humanoid Robots](/202607/19/2607.15163v1-scaling-behavior-foundation-model-for-humanoid-robots)  
+   evidence：面向机器人规划的具身动作记忆
+4. [Towards Human-like Physical Intelligence: LifelongVision-Language-Action Learning for Robotic Manipulation](/202607/20/2607.14852v1-towards-human-like-physical-intelligence-lifelongvision-language-action-learning-for-robotic-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：人形机器人行为基础模型扩展
-5. [VIA: Visual Interface Agent for Robot Control](/202607/19/2607.11119v1-via-visual-interface-agent-for-robot-control)  
-   标签：评分：8.0/10、query:ad
-   evidence：利用基础模型通过视觉界面控制机器人，涉及视觉感知
-6. [Breaking the 15% Barrier: A Real-World Data-Driven System for Proactive Social Robot Triggered by User Nonverbal Cues](/202607/19/2607.11633v1-breaking-the-15-barrier-a-real-world-data-driven-system-for-proactive-social-robot-triggered-by-user-nonverbal-cues)  
-   标签：评分：8.0/10、query:ad
-   evidence：真实零售场景中基于人类非语言线索触发的社交机器人
+   evidence：面向机器人操作的终身视觉-语言-动作学习，部署于开放世界环境
+5. [AC-VLA: Robust Out-of-Distribution Action Execution via Compositional Learning](/202607/20/2607.15714v1-ac-vla-robust-out-of-distribution-action-execution-via-compositional-learning)  
+   标签：评分：9.0/10、query:ad
+   evidence：基于组合学习的VLA机器人操作分布外泛化
+6. [Let the Body Follow: Coupled Egocentric Control for Whole-Body Robot Teleoperation](/202607/20/2607.16095v1-let-the-body-follow-coupled-egocentric-control-for-whole-body-robot-teleoperation)  
+   标签：评分：9.0/10、query:ad
+   evidence：全身遥操作的耦合自我中心控制
 
 ### 速读区论文标签
-1. [WALA Learning Executable Latent Actions from Action-Labeled Demonstrations and Action-Free Videos](/202607/19/2607.11397v1-wala-learning-executable-latent-actions-from-action-labeled-demonstrations-and-action-free-videos)  
+1. [Xiaomi-Robotics-U0: Unified Embodied Synthesis with World Foundation Model](/202607/20/2607.11643v1-xiaomi-robotics-u0-unified-embodied-synthesis-with-world-foundation-model)  
    标签：评分：8.0/10、query:ad
-   evidence：从示范和视频学习潜在动作用于机器人操作
-2. [Analysis of Mutual and Referential Human and Robot Gazes in a Collaborative Word Association Game](/202607/19/2607.12181v1-analysis-of-mutual-and-referential-human-and-robot-gazes-in-a-collaborative-word-association-game)  
+   evidence：使用世界基础模型统一具身合成，满足多视角一致性和机器人实体约束
+2. [Knowledge- and Gradient-Guided Reinforcement Learning for Parametrized Action Markov Decision Processes](/202607/20/2607.12924v1-knowledge--and-gradient-guided-reinforcement-learning-for-parametrized-action-markov-decision-processes)  
    标签：评分：8.0/10、query:ad
-   evidence：研究协作人机游戏中的机器人注视行为
-3. [Reducing Temporal Redundancy for Efficient Vision-Language-Action Inference](/202607/19/2607.12287v1-reducing-temporal-redundancy-for-efficient-vision-language-action-inference)  
+   evidence：知识-和梯度-引导的强化学习用于参数化动作马尔可夫决策过程
+3. [EgoHTR: Egocentric 4D Demonstrations of Human Terrain Traversal](/202607/20/2607.13472v1-egohtr-egocentric-4d-demonstrations-of-human-terrain-traversal)  
    标签：评分：8.0/10、query:ad
-   evidence：通过减少时间冗余实现机器人操作中视觉-语言-动作模型的高效推理
-4. [Model-Based Diffusion Optimal Control for Multi-Robot Motion Planning](/202607/19/2607.12423v1-model-based-diffusion-optimal-control-for-multi-robot-motion-planning)  
+   evidence：自我中心数据集，支持人形机器人在非结构化地形中的运动
+4. [GigaWorld-Policy-0.5: A Faster and Stronger WAM Empowered by AutoResearch](/202607/20/2607.13960v3-gigaworld-policy-05-a-faster-and-stronger-wam-empowered-by-autoresearch)  
    标签：评分：8.0/10、query:ad
-   evidence：基于模型的扩散最优控制用于多机器人运动规划
-5. [Jetson-PI: Towards Onboard Real-Time Robot Control via Foresight-Aligned Asynchronous Inference](/202607/19/2607.12659v1-jetson-pi-towards-onboard-real-time-robot-control-via-foresight-aligned-asynchronous-inference)  
+   evidence：用于高效机器人控制的World Action Model
+5. [Industrial Dexterity Benchmark: A Hardware-Software Benchmarking Platform for Industrial Dexterous Manipulation](/202607/20/2607.14021v1-industrial-dexterity-benchmark-a-hardware-software-benchmarking-platform-for-industrial-dexterous-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：在板载设备上高效部署VLA模型实现实时机器人控制
-6. [DenseReward: Dense Reward Learning via Failure Synthesis for Robotic Manipulation](/202607/19/2607.13033v1-densereward-dense-reward-learning-via-failure-synthesis-for-robotic-manipulation)  
+   evidence：面向工业灵巧操作的基准平台
+6. [PhysClaw-0: A Symbiotic Agentic System for Robot Autonomy via Language Corrections](/202607/20/2607.14047v1-physclaw-0-a-symbiotic-agentic-system-for-robot-autonomy-via-language-corrections)  
    标签：评分：8.0/10、query:ad
-   evidence：强化学习用于机器人操作的密集奖励
-7. [Deployable Human Preference Alignment in Robotics: Learning Representative Rewards from Diverse Human Preferences](/202607/19/2607.12466v1-deployable-human-preference-alignment-in-robotics-learning-representative-rewards-from-diverse-human-preferences)  
+   evidence：通过语言校正的人机共生操作系统
+7. [Just-In-Time Scene Graph Growth: Combating Perceptual Saturation in Long-Horizon Robotics](/202607/20/2607.13245v1-just-in-time-scene-graph-growth-combating-perceptual-saturation-in-long-horizon-robotics)  
    标签：评分：7.0/10、query:ad
-   evidence：基于偏好的奖励聚类，用于机器人策略对齐和强化学习
-8. [Directional Constraints for Efficient Exploration in Safe Reinforcement Learning](/202607/19/2607.12784v1-directional-constraints-for-efficient-exploration-in-safe-reinforcement-learning)  
+   evidence：为具身智能体设计的即时场景图增长方法
+8. [From Language to Navigation Goals: A Vision-Language Approach for Semantic Navigation of Mobile Robots Using RGB-D Perception](/202607/20/2607.13624v1-from-language-to-navigation-goals-a-vision-language-approach-for-semantic-navigation-of-mobile-robots-using-rgb-d-perception)  
    标签：评分：7.0/10、query:ad
-   evidence：带方向约束的安全强化学习用于机器人控制中的高效探索
-9. [Unveiling Complex Collective Behaviors from Simple Rewards](/202607/19/2607.12861v1-unveiling-complex-collective-behaviors-from-simple-rewards)  
+   evidence：基于视觉语言模型和RGB-D感知的移动机器人语言驱动导航
+9. [SPyCE: Skill-Policy Co-evolution for Multimodal Agents](/202607/20/2607.13854v1-spyce-skill-policy-co-evolution-for-multimodal-agents)  
    标签：评分：7.0/10、query:ad
-   evidence：多智能体强化学习用于机器人集群，从简单奖励揭示集体行为
-10. [UR-VC: Unsupervised Robotic Value Correction for Time-Derived Progress Proxies](/202607/19/2607.12892v1-ur-vc-unsupervised-robotic-value-correction-for-time-derived-progress-proxies)  
+   evidence：多模态智能体的技能策略共同演化与强化学习
+10. [Active Real-World Factor-Based Evaluation for Generalist Robot Policies](/202607/20/2607.14439v1-active-real-world-factor-based-evaluation-for-generalist-robot-policies)  
    标签：评分：7.0/10、query:ad
-   evidence：强化学习价值修正用于机器人操作
-11. [Contract-Grounded Behavior Tree Synthesis via Coding Agents](/202607/19/2607.12220v1-contract-grounded-behavior-tree-synthesis-via-coding-agents)  
+   evidence：面向通用机器人操作策略的主动现实世界评估框架
+11. [Environment Design for Reliable Shared Autonomy with Probabilistic Guarantees](/202607/20/2607.15487v1-environment-design-for-reliable-shared-autonomy-with-probabilistic-guarantees)  
    标签：评分：6.0/10、query:ad
-   evidence：基于契约的行为树综合，用于可部署机器人，使用编码智能体
+   evidence：通过环境设计实现带概率保证的共享自主
 
 
 <div class="dpr-home-promo-card">
