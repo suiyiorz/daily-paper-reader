@@ -6,77 +6,71 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-21
-- 运行时间：2026-07-21 20:20:32 UTC
+- 最新运行日期：2026-07-22
+- 运行时间：2026-07-22 21:38:57 UTC
 - 运行状态：成功
-- 本次总论文数：19
-- 精读区：8
+- 本次总论文数：17
+- 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-今日共推荐19篇论文，精读2篇、速读3篇，重点聚焦机器人操作与导航。最值得关注的是两项9.0分的机器人操作工作——直觉操作基准IMBench与元模仿学习，以及方向感知导航DA-Nav和开放自我中心操作数据集Open-AoE。建议优先精读两篇9分论文，再浏览速读中导航与数据集相关研究。
-- 详情：[/202607/21/README](/202607/21/README)
+今天共处理17篇论文，精读6篇，其中《Variational Inference for Bird's Eye View Segmentation》和《FARO》获9.0高分。最值得关注自动驾驶鸟瞰分割的变分推理方法以及机器人运动优化的可行性感知方案。建议优先阅读精读论文，并关注《RoboTTT》等速读中关于机器人策略与导航的亮点工作。
+- 详情：[/202607/22/README](/202607/22/README)
 
 ### 精读区论文标签
-1. [IMBench: A Benchmark for Intuitive Robotic Manipulation](/202607/21/2607.15641v1-imbench-a-benchmark-for-intuitive-robotic-manipulation)  
+1. [Variational Inference for Bird's Eye View Segmentation in Autonomous Driving](/202607/22/2607.14710v1-variational-inference-for-birds-eye-view-segmentation-in-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：直觉机器人操作基准
-2. [Dynamics-Aware Meta-Imitation for Generalization to Unseen Robotic Manipulation](/202607/21/2607.15880v1-dynamics-aware-meta-imitation-for-generalization-to-unseen-robotic-manipulation)  
+   evidence：用于自动驾驶鸟瞰图分割的变分推理方法
+2. [FARO: Feasibility-Aware Robot Motion Optimization](/202607/22/2607.18362v1-faro-feasibility-aware-robot-motion-optimization)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作泛化的元模仿学习
-3. [Foresight Residual RL for Long-Horizon Robot Manipulation with Vision-Language-Action Models](/202607/21/2607.16506v1-foresight-residual-rl-for-long-horizon-robot-manipulation-with-vision-language-action-models)  
+   evidence：面向人形机器人移动和操作的可行性感知运动优化
+3. [End-to-end Conditional Diffusion for Realistic and Controllable Visual Traffic Scenario Generation](/202607/22/2607.18637v1-end-to-end-conditional-diffusion-for-realistic-and-controllable-visual-traffic-scenario-generation)  
    标签：评分：9.0/10、query:ad
-   evidence：使用残差强化学习优化长期机器人操作，结合视觉-语言-动作模型
-4. [PhyAgentOS: A Self-Evolving Operating System for Embodied Agents with Decoupled Cognitive Planning and Physical Execution](/202607/21/2607.16636v1-phyagentos-a-self-evolving-operating-system-for-embodied-agents-with-decoupled-cognitive-planning-and-physical-execution)  
+   evidence：用于自动驾驶评估的可控交通场景生成
+4. [Athena-Brain Technical Report: An Efficient Robot Brain for General Intelligence and Embodied Interactio](/202607/22/2607.18985v1-athena-brain-technical-report-an-efficient-robot-brain-for-general-intelligence-and-embodied-interactio)  
    标签：评分：9.0/10、query:ad
-   evidence：为具身代理设计的自进化操作系统，解耦认知规划与物理执行
-5. [What Do They See? Interpreting Complex Road Scenarios Through the Eyes of Vision-Language-Action Models for Safe and Trustworthy Autonomous Vehicle Learning](/202607/21/2607.16938v1-what-do-they-see-interpreting-complex-road-scenarios-through-the-eyes-of-vision-language-action-models-for-safe-and-trustworthy-autonomous-vehicle-learning)  
+   evidence：将大语言模型作为具身交互的端侧大脑
+5. [Cognitive Dual-Process Planning for Autonomous Driving with Structured Scene Knowledge and Verifiable Reasoning-Action Consistency](/202607/22/2607.19194v1-cognitive-dual-process-planning-for-autonomous-driving-with-structured-scene-knowledge-and-verifiable-reasoning-action-consistency)  
    标签：评分：9.0/10、query:ad
-   evidence：解释自动驾驶中的视觉-语言-动作模型
-6. [GeoWorldAD: Geometry World Action Model for Autonomous Driving](/202607/21/2607.17521v1-geoworldad-geometry-world-action-model-for-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：自动驾驶中基于几何的轨迹规划
-7. [HCPG-Flow:Hierarchical Contact-Progress Guidance for Flow-Policy Robot Manipulation](/202607/21/2607.17651v1-hcpg-flowhierarchical-contact-progress-guidance-for-flow-policy-robot-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：层次化接触-进度引导用于流策略机器人操作
-8. [RynnBrain 1.1: Towards More Capable and Generalizable Embodied Foundation Model](/202607/21/2607.17977v1-rynnbrain-11-towards-more-capable-and-generalizable-embodied-foundation-model)  
-   标签：评分：9.0/10、query:ad
-   evidence：具身基础模型支持感知与规划
+   evidence：面向自动驾驶的认知双过程规划与结构化场景知识
+6. [An Intelligent-Cloud Edge Multimodal Interaction System for Robots](/202607/22/2607.14675v1-an-intelligent-cloud-edge-multimodal-interaction-system-for-robots)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向机器人的云边多模态交互系统
 
 ### 速读区论文标签
-1. [DA-Nav: Direction-Aware City-Scale Vision-Language Navigation](/202607/21/2607.11638v1-da-nav-direction-aware-city-scale-vision-language-navigation)  
+1. [RoboTTT: Context Scaling for Robot Policies](/202607/22/2607.15275v1-robottt-context-scaling-for-robot-policies)  
    标签：评分：8.0/10、query:ad
-   evidence：面向城市规模的视觉语言导航，利用方向指令
-2. [Open-AoE: An Open Egocentric Manipulation Dataset and Toolchain for Embodied Learning](/202607/21/2607.14183v2-open-aoe-an-open-egocentric-manipulation-dataset-and-toolchain-for-embodied-learning)  
+   evidence：通过测试时训练将机器人策略的视觉运动上下文扩展到8000步
+2. [RAVEN: Reinforcement-Adaptive Visibility-Graph Planning for Robust Humanoid Navigation with Collision-Free MPC](/202607/22/2607.15701v1-raven-reinforcement-adaptive-visibility-graph-planning-for-robust-humanoid-navigation-with-collision-free-mpc)  
    标签：评分：8.0/10、query:ad
-   evidence：开放的以自我为中心的操作数据集和工具链，用于机器人学习
-3. [DiMaS: Distribution Matching for Steering Vision-Language-Action Models](/202607/21/2607.14280v1-dimas-distribution-matching-for-steering-vision-language-action-models)  
+   evidence：分层强化学习-模型预测控制用于鲁棒人形导航
+3. [SkillNav: Score-Level Skill Intervention for Zero-Shot Object Goal Navigation](/202607/22/2607.15758v1-skillnav-score-level-skill-intervention-for-zero-shot-object-goal-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：VLA模型操作行为控制的分布匹配转向
-4. [Safe Execution of RL Policies Via Acceleration-Based CBF-QP Constraint Enforcement for Real-World Robotic Deployments](/202607/21/2607.14488v1-safe-execution-of-rl-policies-via-acceleration-based-cbf-qp-constraint-enforcement-for-real-world-robotic-deployments)  
+   evidence：基于技能的VLM零样本目标导航方法
+4. [Handroid: Bridging Dexterous Hand and Humanoid](/202607/22/2607.16187v1-handroid-bridging-dexterous-hand-and-humanoid)  
    标签：评分：8.0/10、query:ad
-   evidence：基于加速度控制障碍函数-二次规划的安全滤波器，用于现实机器人强化学习策略部署
-5. [A Generative Partially Specified Finite State Machine Approach to Complex Behaviour Planning](/202607/21/2607.15674v1-a-generative-partially-specified-finite-state-machine-approach-to-complex-behaviour-planning)  
+   evidence：双形态机器人，融合灵巧操作与人形移动能力
+5. [Differentiable Reinforcement Learning for Path Tracking by an Agile Fish-Like Robot](/202607/22/2607.16508v1-differentiable-reinforcement-learning-for-path-tracking-by-an-agile-fish-like-robot)  
+   标签：评分：8.0/10、query:ad
+   evidence：强化学习用于机器人控制与运动
+6. [From Modalities to Propositions: A Language-Centric Framework for Multimodal Intelligence](/202607/22/2607.16560v1-from-modalities-to-propositions-a-language-centric-framework-for-multimodal-intelligence)  
+   标签：评分：8.0/10、query:ad
+   evidence：以语言为中心的多模态框架用于自动驾驶感知
+7. [Hybrid Machine Learning for Articulation Angle Estimation of Truck-Semitrailer Combinations](/202607/22/2607.16758v1-hybrid-machine-learning-for-articulation-angle-estimation-of-truck-semitrailer-combinations)  
+   标签：评分：8.0/10、query:ad
+   evidence：用于自动驾驶卡车的铰接角度估计
+8. [Embodied Active Learning under Limited Annotation and Navigation Budget for Object Detection](/202607/22/2607.15974v1-embodied-active-learning-under-limited-annotation-and-navigation-budget-for-object-detection)  
    标签：评分：7.0/10、query:ad
-   evidence：用于机器人行为规划的生成式有限状态机神经符号架构
-6. [ConceptTree: Bringing Semantic Transparency to Black-Box Decision Making for Robotic Manipulation](/202607/21/2607.17861v1-concepttree-bringing-semantic-transparency-to-black-box-decision-making-for-robotic-manipulation)  
+   evidence：有限导航和标注预算下的具身主动学习目标检测
+9. [Autonomous VR-Based Risk Detection for Situational Awareness in Dangerous Settings](/202607/22/2607.16582v1-autonomous-vr-based-risk-detection-for-situational-awareness-in-dangerous-settings)  
    标签：评分：7.0/10、query:ad
-   evidence：使用概念级谓词实现可解释的机器人操作决策
-7. [Learning Adaptive Safety Margins for Visual Navigation](/202607/21/2607.18200v1-learning-adaptive-safety-margins-for-visual-navigation)  
+   evidence：通过VR人机交互的VLM辅助机器人态势感知
+10. [SAGE: A Socially-Aware Generative Engine for Heterogeneous Multi-Agent Navigation](/202607/22/2607.16619v1-sage-a-socially-aware-generative-engine-for-heterogeneous-multi-agent-navigation)  
    标签：评分：7.0/10、query:ad
-   evidence：视觉导航的自适应安全裕度
-8. [Patch Policy: Efficient Embodied Control via Dense Visual Representations](/202607/21/2607.18236v1-patch-policy-efficient-embodied-control-via-dense-visual-representations)  
+   evidence：包含机器人和人类的异构智能体社会感知导航
+11. [User-Driven Learning from Demonstration: A Trajectory and Impedance Learning Method](/202607/22/2607.16998v1-user-driven-learning-from-demonstration-a-trajectory-and-impedance-learning-method)  
    标签：评分：7.0/10、query:ad
-   evidence：使用预训练ViT的密集视觉表示实现高效具身控制
-9. [SafeRelBench: A Spatial-Relation-Aware Benchmark for Process-Level Safety in VLM-Driven Embodied Agents](/202607/21/2607.14543v1-saferelbench-a-spatial-relation-aware-benchmark-for-process-level-safety-in-vlm-driven-embodied-agents)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向具身代理的空间关系感知安全基准
-10. [Risk-Aware Preference Learning for Stochastic Outcomes](/202607/21/2607.15483v1-risk-aware-preference-learning-for-stochastic-outcomes)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向人机交互中社会导航的风险感知偏好学习
-11. [Compositional Semantic Communication for Physical AI: Category Theory Meets Game Theory](/202607/21/2607.18115v1-compositional-semantic-communication-for-physical-ai-category-theory-meets-game-theory)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向物理AI传感器融合的语义通信
+   evidence：从示范中学习用于人机交互
 
 
 <div class="dpr-home-promo-card">
