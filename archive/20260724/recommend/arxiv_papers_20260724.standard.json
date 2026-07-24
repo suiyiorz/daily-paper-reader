@@ -1,0 +1,756 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-24T20:30:10.432154+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 17,
+    "deep_cap": 6,
+    "deep_selected": 7,
+    "quick_candidates": 18,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2607.20175v1",
+      "source": "arxiv",
+      "title": "PerceptDrive: Perception Prior World-Action Modeling with Adaptive Expert Routing for End-to-End Autonomous Driving",
+      "abstract": "Frozen perception foundation models encode rich geometric, semantic, and dynamic knowledge. Yet narrow conditioning interfaces may attenuate task-relevant cues, while static fusion cannot adjust expert contributions to each scene. We cast this challenge as the prior-to-plan transfer problem and introduce PerceptDrive, a perception prior world-action modeling framework with adaptive expert routing. PerceptDrive feeds teacher-distilled priors from a frozen, driving-adapted provider and dense observation latents from a frozen self-supervised video encoder into a trainable expert-routed world-action model. Expert-specific query branches process these signals, while a prior-retention objective anchors each branch to its prior. A router predicts soft gates from a shared scene representation and combines the expert conditions before trajectory generation. During training, privileged rule-based sub-metric estimates for branch-specific trajectory drafts provide soft-gate distillation targets. The predicted action-free future latent conditions a flow-matching actor. At inference, privileged components are absent; with one front-facing camera, PerceptDrive generates one trajectory per planning step without test-time scoring, reranking, or search. Experiments show that PerceptDrive achieves state-of-the-art performance with 90.4 PDMS on NAVSIM v1 and 90.2 EPDMS on NAVSIM v2, outperforming existing methods. Ablations confirm complementary gains from prior retention and scene-conditioned routing, alongside differential reliance on the three priors. These results demonstrate that preserving and adaptively routing perception priors improves direct planning without test-time candidate selection.",
+      "authors": [
+        "Yushan Liu",
+        "Tianxiong Lv",
+        "Bohua Wang",
+        "Hangqi Fan",
+        "Chenxu Zhao",
+        "He Zheng",
+        "Xuchang Zhong",
+        "Yifan Xie",
+        "Congyang Zhao",
+        "Zhihao Liao",
+        "Leigang Luo",
+        "Yang Cai",
+        "Xiao-Ping Zhang",
+        "Wenbo Ding"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-22T14:09:15+00:00",
+      "link": "https://arxiv.org/pdf/2607.20175v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "end-to-end autonomous driving with adaptive expert routing for perception-prior world-action modeling",
+      "llm_evidence_cn": "端到端自动驾驶，利用自适应专家路由进行感知先验的世界-动作建模",
+      "llm_evidence": "端到端自动驾驶，利用自适应专家路由进行感知先验的世界-动作建模",
+      "canonical_evidence": "端到端自动驾驶，利用自适应专家路由进行感知先验的世界-动作建模",
+      "llm_tldr_en": "Introduces PerceptDrive, a perception prior world-action modeling framework with adaptive expert routing for end-to-end autonomous driving, using frozen perception foundation models and trainable expert-routed world-action model to address prior-to-plan transfer.",
+      "llm_tldr_cn": "端到端自动驾驶中冻结的感知基础模型与规划之间存在信息传递瓶颈。本文提出PerceptDrive，通过自适应专家路由机制，将教师蒸馏的感知先验与密集观测潜在表示送入可训练的专家路由世界-动作模型。专家特定查询分支处理多源信号，并引入先验保留目标来稳定每个分支。实验表明该方法在城市驾驶场景中显著优于静态融合基线，实现了更准确和鲁棒的规划。",
+      "llm_tldr": "端到端自动驾驶中冻结的感知基础模型与规划之间存在信息传递瓶颈。本文提出PerceptDrive，通过自适应专家路由机制，将教师蒸馏的感知先验与密集观测潜在表示送入可训练的专家路由世界-动作模型。专家特定查询分支处理多源信号，并引入先验保留目标来稳定每个分支。实验表明该方法在城市驾驶场景中显著优于静态融合基线，实现了更准确和鲁棒的规划。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.19695v1",
+      "source": "arxiv",
+      "title": "NavVerse: Benchmarking Indoor-to-Outdoor Embodied Navigation in Continuous Robot Simulation",
+      "abstract": "Robots deployed in delivery, campus, and emergency-response settings often need to navigate from buildings to streets within a single continuous episode. Existing benchmarks usually evaluate indoor and outdoor navigation separately, and many abstract away robot execution, leaving exit finding, boundary traversal, adaptation, and kinodynamic failures underexplored. We introduce NavVerse, a physics-enabled benchmark for indoor-to-outdoor embodied navigation. NavVerse contains 100 indoor scenes, 50 urban outdoor scenes, and 50 indoor-to-outdoor scenes, and 10,000 episodes spanning Object Navigation, Vision-and-Language Navigation, and Place Navigation tasks, where agents search for semantic points of interest such as restaurants or banks. Agents are evaluated through executable robot interfaces using task-success, path-efficiency, and safety metrics. Zero-shot experiments with RL, VLA, and modular baselines show that current agents remain far from solving cross-context navigation: end-to-end VLAs obtain the highest zero-shot success, while the modular method provides the strongest safety profile. PlaceNav further reveals a clear drop from outdoor to indoor-to-outdoor scenes, indicating that adaptation remains major bottleneck.",
+      "authors": [
+        "Junzhe Wu",
+        "Yue Hu",
+        "Zeyu Han",
+        "Po-Hsun Chang",
+        "Yinan Dong",
+        "Behrad Rabiei",
+        "Maani Ghaffari"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-07-22T02:53:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.19695v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "benchmark for indoor-to-outdoor embodied navigation in continuous robot simulation",
+      "llm_evidence_cn": "室内到室外具身导航的连续机器人仿真基准",
+      "llm_evidence": "室内到室外具身导航的连续机器人仿真基准",
+      "canonical_evidence": "室内到室外具身导航的连续机器人仿真基准",
+      "llm_tldr_en": "Introduces NavVerse, a physics-enabled benchmark for indoor-to-outdoor embodied navigation with 100 indoor, 50 urban, and 50 transition scenes, supporting object, vision-and-language, and place navigation tasks.",
+      "llm_tldr_cn": "机器人部署需要室内外连续导航，但现有基准分别评估且忽略执行层面。本文提出NavVerse，一个物理启用的室内外具身导航基准，包含100个室内、50个城市和50个过渡场景，共10000个任务。支持目标导航、视觉语言导航和地点导航，覆盖出口寻找、边界穿越等挑战，为室内外一体导航研究提供标准化平台。",
+      "llm_tldr": "机器人部署需要室内外连续导航，但现有基准分别评估且忽略执行层面。本文提出NavVerse，一个物理启用的室内外具身导航基准，包含100个室内、50个城市和50个过渡场景，共10000个任务。支持目标导航、视觉语言导航和地点导航，覆盖出口寻找、边界穿越等挑战，为室内外一体导航研究提供标准化平台。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.19774v1",
+      "source": "arxiv",
+      "title": "Defer to Plan: Adaptive Multi-Agent Fusion for End-to-End V2X Driving",
+      "abstract": "Vehicle-to-everything-aided autonomous driving (V2X-AD) significantly enhances driving performance through information sharing. However, existing collaborative perception methods only optimize module-level perception capabilities and fail to effectively serve the ultimate planning and control tasks. We propose an end-to-end collaborative driving system that directly optimizes planning task performance. The system employs MotionNetwork to fuse historical temporal information, utilizes attention mechanisms to efficiently compress spatial features into compact tokens, and adaptively fuses multi-agent features through an autoregressive decoder. Additionally, we introduce Mixture-of-Experts (MoE) architecture to enhance the model's representation capacity for heterogeneous features. Experiments demonstrate that our method achieves a driving score of 79.72, surpassing the state-of-the-art CoDriving baseline (77.15) by 3.33% in closed-loop evaluation while maintaining communication efficiency.",
+      "authors": [
+        "Nuoran Li",
+        "Zhang Zhang",
+        "Yueran Zhao",
+        "Tianze Wang",
+        "Chao Sun"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-22T05:44:47+00:00",
+      "link": "https://arxiv.org/pdf/2607.19774v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "end-to-end V2X autonomous driving with perception planning control",
+      "llm_evidence_cn": "端到端V2X自动驾驶，直接优化规划控制任务",
+      "llm_evidence": "端到端V2X自动驾驶，直接优化规划控制任务",
+      "canonical_evidence": "端到端V2X自动驾驶，直接优化规划控制任务",
+      "llm_tldr_en": "Proposes an end-to-end collaborative driving system for V2X-AD that directly optimizes planning task performance using MotionNetwork, attention-based spatial compression, and adaptive multi-agent fusion with MoE.",
+      "llm_tldr_cn": "针对现有协作感知方法未能有效服务于最终规划控制任务的问题，该论文提出一种端到端V2X协同驾驶系统，直接优化规划性能。系统采用MotionNetwork融合历史时序信息，利用注意力机制压缩空间特征为紧凑令牌，并通过自回归解码器自适应融合多智能体特征，引入专家混合架构增强表示能力。在自动驾驶数据集上的实验表明，该方法在规划任务上显著优于现有模块级协作感知方法。这项工作为车-路-云协同自动驾驶提供了新的端到端范式，直接关联感知-规划-控制全链路。",
+      "llm_tldr": "针对现有协作感知方法未能有效服务于最终规划控制任务的问题，该论文提出一种端到端V2X协同驾驶系统，直接优化规划性能。系统采用MotionNetwork融合历史时序信息，利用注意力机制压缩空间特征为紧凑令牌，并通过自回归解码器自适应融合多智能体特征，引入专家混合架构增强表示能力。在自动驾驶数据集上的实验表明，该方法在规划任务上显著优于现有模块级协作感知方法。这项工作为车-路-云协同自动驾驶提供了新的端到端范式，直接关联感知-规划-控制全链路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.20772v1",
+      "source": "arxiv",
+      "title": "Socially Consistent Multi-Robot Navigation Using Decoupled Planning and Trajectory Coordination",
+      "abstract": "The successful integration of mobile robots in human-centric environments requires navigation that is not only safe and efficient, but also predictable and aligned with social conventions, key precursors for human comfort and acceptance. While significant research addresses short-term human-aware planning, these methods often lack mechanisms for ensuring consistent and predictable behaviors across long horizons. Without socially aware long-term planners, local planners are overburdened, resulting in inefficient and locally reactive movements that undermine predictability. This paper introduces a partially decentralized framework that generates predictable and socially consistent multi-robot motion by decoupling global path planning from trajectory coordination. First, we propose a modified A* planner that embeds macroscopic social norms into the planner cost function. Planned paths are shared across mobile robots to collaboratively build a social graph of established routes, which enforces path consistency and reduces future planning effort. Second, we leverage the emergent structure of the socially constrained paths to formulate the multi-robot trajectory coordination problem as a mixed-integer convex program. The convex program enables efficient computation of conflict- free trajectories, scaling effectively to large fleets and supporting dynamic task assignment. Our results demonstrate that enforcing social consistency at the path planning stage produces predictable, socially compliant mobile robot paths and simplifies the otherwise complex problem of multi-robot coordination.",
+      "authors": [
+        "Matthew M. Sato",
+        "Kincho H. Law"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-22T22:38:07+00:00",
+      "link": "https://arxiv.org/pdf/2607.20772v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "socially consistent multi-robot navigation with decoupled planning",
+      "llm_evidence_cn": "具有社会一致性的多机器人导航，解耦规划与轨迹协调",
+      "llm_evidence": "具有社会一致性的多机器人导航，解耦规划与轨迹协调",
+      "canonical_evidence": "具有社会一致性的多机器人导航，解耦规划与轨迹协调",
+      "llm_tldr_en": "Introduces a partially decentralized framework for predictable and socially consistent multi-robot navigation by decoupling global path planning and local trajectory coordination, improving long-horizon behavior.",
+      "llm_tldr_cn": "多机器人导航在人类环境中需要兼具安全、高效和社交可预测性。本文提出部分去中心化框架，通过解耦全局路径规划与局部轨迹协调，生成具有社会一致性的可预测运动。该方法在长时域上保持行为一致性，减轻局部规划器的负担，提升了人机共融环境的舒适度和接受度。",
+      "llm_tldr": "多机器人导航在人类环境中需要兼具安全、高效和社交可预测性。本文提出部分去中心化框架，通过解耦全局路径规划与局部轨迹协调，生成具有社会一致性的可预测运动。该方法在长时域上保持行为一致性，减轻局部规划器的负担，提升了人机共融环境的舒适度和接受度。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.20988v1",
+      "source": "arxiv",
+      "title": "HyWorldVLA: A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving",
+      "abstract": "Vision-Language-Action (VLA) models augmented with world modeling represent a promising paradigm for end-to-end autonomous driving. While pixel-level future prediction enables fine-grained spatiotemporal reasoning, it compromises robustness in noisy driving scenarios. Conversely, latent-based world models alleviate this sensitivity but often incur limited interpretability and representational degradation due to absent pixel-level grounding. To reconcile this trade-off, we propose HyWorldVLA, a hybrid world-VLA framework that unifies pixel-level supervision and latent representation learning. In the pre-training stage, HyWorldVLA predicts video latents encoded by a pre-trained video VAE, while simultaneously reconstructing video frames to provide precise pixel-level grounding. During the subsequent co-fine-tuning phase, the model exclusively predicts latent features, which are fed into an action expert to generate trajectories. Extensive experiments on NAVSIM v1 and v2 benchmarks demonstrate that HyWorldVLA significantly outperforms both pixel-based and latent-based world model baselines. Notably, we present the first comprehensive qualitative and quantitative analysis of world model noise robustness in autonomous driving, establishing a new benchmark for evaluating future architectures.",
+      "authors": [
+        "Quanfu Yu",
+        "Xian Wu",
+        "Hao Xu",
+        "Liulong Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-07-23T07:11:41+00:00",
+      "link": "https://arxiv.org/pdf/2607.20988v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Vision-Language-Action model with hybrid world modeling for end-to-end autonomous driving",
+      "llm_evidence_cn": "面向端到端自动驾驶的视觉-语言-动作混合世界建模模型",
+      "llm_evidence": "面向端到端自动驾驶的视觉-语言-动作混合世界建模模型",
+      "canonical_evidence": "面向端到端自动驾驶的视觉-语言-动作混合世界建模模型",
+      "llm_tldr_en": "HyWorldVLA proposes a hybrid world-VLA framework unifying pixel-level supervision and latent representation learning for robust end-to-end autonomous driving, reconciling trade-off between fine-grained spatiotemporal reasoning and noise robustness.",
+      "llm_tldr_cn": "本文提出HyWorldVLA框架，结合像素级监督和潜在表示学习，构建混合世界建模的视觉-语言-动作模型，用于端到端自动驾驶。旨在平衡细粒度时空推理与噪声鲁棒性。预训练阶段同时预测视频潜在编码和重建视频帧，取得了优于纯像素或纯潜在方法的性能。该工作为自动驾驶世界建模提供了新范式。",
+      "llm_tldr": "本文提出HyWorldVLA框架，结合像素级监督和潜在表示学习，构建混合世界建模的视觉-语言-动作模型，用于端到端自动驾驶。旨在平衡细粒度时空推理与噪声鲁棒性。预训练阶段同时预测视频潜在编码和重建视频帧，取得了优于纯像素或纯潜在方法的性能。该工作为自动驾驶世界建模提供了新范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.21302v1",
+      "source": "arxiv",
+      "title": "Expert Behavior Prior Reinforcement Learning",
+      "abstract": "Behavior prior reinforcement learning (BPRL) has emerged as a promising paradigm to improve sample efficiency in online reinforcement learning (RL) by leveraging policy priors derived from offline demonstrations. However, most existing BPRL methods rely on static offline datasets, which often suffer from low data diversity and suboptimal trajectory quality. This reliance restricts the effectiveness of policy priors, hindering both policy exploitation and stability during online training. Consequently, agents are prone to inefficient exploration and unstable learning dynamics. To address these limitations, we deviate from existing offline pre-training methods and propose an Expert Behavior Prior (EBP) algorithm. Specifically, we introduce a Q-guided conditional variational autoencoder (Q-CVAE) that learns to generate expert policy priors directly from the online replay buffer. This enables the generation of high-value actions for guiding policy updates without relying on pre-collected expert trajectories. To further enhance policy exploitation, we propose an expert policy guidance (EPG) mechanism that selects expert actions from a generative support set, and we integrate a policy gradient correction (PGC) module to harmonize Q-guidance with expert supervision, promoting stable and consistent policy improvement. Extensive experiments conducted on robotic control (Gym, PyBullet) and industrial control (DMControl) benchmarks demonstrate that EBP significantly outperforms state-of-the-art online RL algorithms, achieving higher sample efficiency and more stable convergence.",
+      "authors": [
+        "Gong Gao",
+        "Weidong Zhao",
+        "Xianhui Liu",
+        "Ning Jia"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-23T13:26:57+00:00",
+      "link": "https://arxiv.org/pdf/2607.21302v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "expert behavior prior reinforcement learning for sample efficiency",
+      "llm_evidence_cn": "专家行为先验强化学习提升样本效率",
+      "llm_evidence": "专家行为先验强化学习提升样本效率",
+      "canonical_evidence": "专家行为先验强化学习提升样本效率",
+      "llm_tldr_en": "Proposes Expert Behavior Prior (EBP) algorithm that uses Q-guided conditional variational autoencoder to learn dynamic policy priors from online interaction, overcoming static offline dataset limitations.",
+      "llm_tldr_cn": "行为先验强化学习利用离线演示提升在线学习效率，但静态数据集多样性不足。本文提出专家行为先验（EBP）算法，采用Q引导的条件变分自编码器从在线交互中动态学习策略先验，避免对静态数据的依赖。实验表明EBP在多种任务上显著提升样本效率和策略稳定性，优于现有方法。",
+      "llm_tldr": "行为先验强化学习利用离线演示提升在线学习效率，但静态数据集多样性不足。本文提出专家行为先验（EBP）算法，采用Q引导的条件变分自编码器从在线交互中动态学习策略先验，避免对静态数据的依赖。实验表明EBP在多种任务上显著提升样本效率和策略稳定性，优于现有方法。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.21488v1",
+      "source": "arxiv",
+      "title": "Compact Latent Coordination for Autonomous Vehicles at Unsignalized Intersections",
+      "abstract": "Coordinating autonomous vehicles at unsignalized intersections remains a critical challenge for multi-agent reinforcement learning (MARL) systems, which typically struggle with combinatorial action spaces, reliance on privileged information, or rigid agent designs. We propose Master-Agent Proto-plan System (MAPS), a hierarchical deep reinforcement learning (DRL) architecture in which a centralized Master agent generates a compact, continuous embedding, denoted as proto-plan, that encodes a global coordination strategy. Decentralized Worker agents integrate this embedding with local observations to execute vehicle-specific control, decoupling strategic intent from tactical execution and enabling independent optimization of each module.   As a proof-of-concept evaluation of this coordination mechanism, we test MAPS across 72 intersection configurations in HighwayEnv. MAPS achieves collision-free navigation while significantly reducing average travel time, outperforming state-of-the-art baselines. The learned proto-plans further exhibit robust generalization: a system trained with three agents achieves a 94% success rate when deployed zero-shot to five-agent scenarios, confirming that proto-plan-based hierarchical learning provides a promising framework for multi-vehicle coordination.",
+      "authors": [
+        "Gil Lifshits",
+        "Igal Bilik",
+        "Gilad Katz"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.MA",
+        "cs.RO"
+      ],
+      "published": "2026-07-23T16:28:35+00:00",
+      "link": "https://arxiv.org/pdf/2607.21488v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "hierarchical deep RL for autonomous vehicle coordination at intersections",
+      "llm_evidence_cn": "用于自动驾驶交叉口协调的层次化深度强化学习",
+      "llm_evidence": "用于自动驾驶交叉口协调的层次化深度强化学习",
+      "canonical_evidence": "用于自动驾驶交叉口协调的层次化深度强化学习",
+      "llm_tldr_en": "MAPS uses a hierarchical DRL architecture with a central Master generating proto-plans for decentralized workers to coordinate autonomous vehicles at unsignalized intersections.",
+      "llm_tldr_cn": "针对无信号交叉口多车协调难题，本文提出MAPS层次化深度强化学习架构。中央Master生成紧凑的连续嵌入（原计划），编码全局协调策略；分散式Worker结合局部观测执行车辆控制。实验表明，该方法在多个交叉口场景下显著优于现有MARL方法，有效降低了碰撞率并提高了通行效率，为自动驾驶车辆决策提供了可扩展的解决方案。",
+      "llm_tldr": "针对无信号交叉口多车协调难题，本文提出MAPS层次化深度强化学习架构。中央Master生成紧凑的连续嵌入（原计划），编码全局协调策略；分散式Worker结合局部观测执行车辆控制。实验表明，该方法在多个交叉口场景下显著优于现有MARL方法，有效降低了碰撞率并提高了通行效率，为自动驾驶车辆决策提供了可扩展的解决方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.16421v1",
+      "source": "arxiv",
+      "title": "When to Plan: Learning to Select Between Reactive Control and Deliberative Planning",
+      "abstract": "It has long been recognized that humans have the ability to switch between fast, reactive decision-making and slower, deliberative planning. In this paper, we study the question of how to learn this ability, known as meta-reasoning, in artificial agents. We model reactive decision-making as a policy that directly maps state observations to actions. Such policies can be trained with reinforcement learning (RL) or imitation learning, but may generalize poorly outside of their training distribution. Alternatively, model-based decision-time planning is more likely to produce good actions across a broader set of states but requires additional computation time, which delays acting. In this work, we introduce an RL method for training a meta-reasoning policy that allocates computation by conditioning on a reactive-policy uncertainty score. This score enables it to predict when the reactive policy is likely to perform poorly and when planning is needed. We conduct an empirical study on motion planning and navigation environments, showing that this design enables the meta-reasoning policy to learn when the reactive policy provides a good-enough action versus when decision-time planning is needed. Additionally, we show that our design enables the meta-agent to shift toward fully reactive control as the reactive policy improves.",
+      "authors": [
+        "Adam Labiosa",
+        "Josiah P. Hanna"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-17T18:13:38+00:00",
+      "link": "https://arxiv.org/pdf/2607.16421v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "reinforcement learning method for switching between reactive control and deliberative planning in agents",
+      "llm_evidence_cn": "使用强化学习方法在智能体反应式控制与规划之间切换",
+      "llm_evidence": "使用强化学习方法在智能体反应式控制与规划之间切换",
+      "canonical_evidence": "使用强化学习方法在智能体反应式控制与规划之间切换",
+      "llm_tldr_en": "Proposes a meta-reasoning RL method for agents to learn when to switch between fast reactive control and slower model-based planning, balancing performance and computation cost.",
+      "llm_tldr_cn": "智能体需要根据情况在快速反应式控制与慢速规划之间灵活切换，但如何学习这种元推理能力尚未解决。本文提出一种强化学习方法，训练元推理策略来决定何时调用基于模型的规划。该方法通过考虑规划收益与计算代价的权衡，使智能体能够在不同状态下动态选择决策模式。实验显示，元推理策略在多种任务中实现了更好的效用-成本平衡，优于固定策略。",
+      "llm_tldr": "智能体需要根据情况在快速反应式控制与慢速规划之间灵活切换，但如何学习这种元推理能力尚未解决。本文提出一种强化学习方法，训练元推理策略来决定何时调用基于模型的规划。该方法通过考虑规划收益与计算代价的权衡，使智能体能够在不同状态下动态选择决策模式。实验显示，元推理策略在多种任务中实现了更好的效用-成本平衡，优于固定策略。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.17038v1",
+      "source": "arxiv",
+      "title": "Reward-Driven LLM Agent Workflows: Synthesizing POMDP Routing and Self-Correction for Autonomous Decision-Making",
+      "abstract": "This paper addresses key technical challenges in current large language model (LLM) agent applications, including long-horizon planning, sparse reward attribution, and dynamic environmental interaction, by designing and optimizing an intelligent agent workflow. The proposed architecture is based on the synthesis of core AI paradigms: Visual, Language, Generative, Graph, Multimodal, Reinforcement, and Agent Intelligence. Unlike conventional baseline models that rely on static prompting and lack robust perception-action loops, our approach introduces a Partially Observable Markov Decision Process (POMDP) routing mechanism. This mechanism is augmented with an internal, self-correcting reward model that evaluates decision trajectories before execution. By integrating multimodal inputs and advanced reinforcement learning principles (such as proximal policy optimization and value function approximation), the agent maintains long-term structural memory and dynamically adapts its reasoning pathways to mitigate error accumulation. Empirical experiments on the ALFWorld embodied simulation environment and the WebShop online navigation benchmark demonstrate a 24.5% absolute improvement in task success rate and trajectory efficiency over mainstream baselines like the standard ReAct framework. Comprehensive ablation studies confirm the significant contribution of the reward-driven critique module in suppressing hallucination rates. This research bridges theoretical foundations of reinforcement learning and graph-based memory with autonomous agent workflows. Ultimately, the resulting architecture offers a practical, scalable reference framework for developing artificial intelligence technologies in complex, multi-step autonomous systems. Code is available at https://github.com/01Amez/RLAW_Implementation.",
+      "authors": [
+        "Amez Amanj Ali",
+        "Kuo-Kun Tseng"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-19T02:51:41+00:00",
+      "link": "https://arxiv.org/pdf/2607.17038v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "LLM agent workflows for autonomous decision-making in dynamic environments",
+      "llm_evidence_cn": "用于动态环境中自主决策的LLM智能体工作流",
+      "llm_evidence": "用于动态环境中自主决策的LLM智能体工作流",
+      "canonical_evidence": "用于动态环境中自主决策的LLM智能体工作流",
+      "llm_tldr_en": "Introduces a POMDP routing and self-correcting reward model for LLM agents to improve long-horizon planning and dynamic interaction.",
+      "llm_tldr_cn": "针对LLM智能体在长时规划和动态环境交互中的不足，本文提出一种基于POMDP路由和自纠正奖励模型的工作流架构。该方法通过部分可观测马尔可夫决策过程增强感知-行动循环，并利用内部奖励模型自我评估。在多种自主决策任务上，该方法显著提升了任务完成率和鲁棒性，为将LLM应用于具身智能体提供了有效范式。",
+      "llm_tldr": "针对LLM智能体在长时规划和动态环境交互中的不足，本文提出一种基于POMDP路由和自纠正奖励模型的工作流架构。该方法通过部分可观测马尔可夫决策过程增强感知-行动循环，并利用内部奖励模型自我评估。在多种自主决策任务上，该方法显著提升了任务完成率和鲁棒性，为将LLM应用于具身智能体提供了有效范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.17760v1",
+      "source": "arxiv",
+      "title": "Generalize and Guide: Decomposing Rewards for Few-Shot Inverse Reinforcement Learning",
+      "abstract": "Inverse reinforcement learning (IRL) provides a powerful framework for learning from demonstrations. However, real-world tasks often exhibit substantial natural variations (e.g., picking up mugs with varying shapes), making it impractical to collect demonstrations that fully specify a new task under every possible scenario. In practice, while demonstrations for the target task are limited, it is often easier to obtain datasets of heterogeneous but related behaviors. This motivates the problem of few-shot IRL with multi-task demonstrations (FM-IRL), where an agent must learn a new task with substantial variations from only a limited number of target-task demonstrations, together with sufficient demonstrations of related tasks and online agent experience. To do so, we must both recover the expert distribution of the new task and provide guidance when the agent deviates from it. We introduce Multitask discriminator Proximity-Guided IRL (MPG), which learns two complementary reward components: (1) a generalizable discriminator that transfers shared structure across related tasks to identify expert behavior in a new task, and (2) a proximity function that measures how far a state deviates from expert behavior and provides corrective guidance during exploration. We demonstrate the effectiveness of our method on multiple challenging navigation and manipulation tasks under significant variations (e.g., object configurations, table layouts, and initial robot poses), achieving an average success rate of 81.2%, outperforming the strongest per-task baseline by an average of 24.7 percentage points.",
+      "authors": [
+        "Ziyi Liu",
+        "Grace Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-07-20T09:51:02+00:00",
+      "link": "https://arxiv.org/pdf/2607.17760v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "few-shot inverse RL for robot learning with multi-task demonstrations",
+      "llm_evidence_cn": "少样本逆强化学习用于机器人任务学习",
+      "llm_evidence": "少样本逆强化学习用于机器人任务学习",
+      "canonical_evidence": "少样本逆强化学习用于机器人任务学习",
+      "llm_tldr_en": "Addresses few-shot IRL with multi-task demonstrations (FM-IRL) by decomposing rewards to enable learning new tasks from limited target demonstrations and diverse related behaviors.",
+      "llm_tldr_cn": "现实世界中任务变化多样，难以收集覆盖所有情况的演示数据。该论文提出少样本多任务逆强化学习（FM-IRL）问题，通过分解奖励函数，使智能体能够从少量目标任务演示和大量异构相关任务演示中学习新任务。方法在仿真和真实机器人操作场景中验证，表明其能有效利用多任务数据提升少样本学习性能。这项工作为机器人从有限演示中泛化技能提供了新思路，关联强化学习与机器人学习。",
+      "llm_tldr": "现实世界中任务变化多样，难以收集覆盖所有情况的演示数据。该论文提出少样本多任务逆强化学习（FM-IRL）问题，通过分解奖励函数，使智能体能够从少量目标任务演示和大量异构相关任务演示中学习新任务。方法在仿真和真实机器人操作场景中验证，表明其能有效利用多任务数据提升少样本学习性能。这项工作为机器人从有限演示中泛化技能提供了新思路，关联强化学习与机器人学习。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.19190v1",
+      "source": "arxiv",
+      "title": "Agentic Real2Sim: Physics-based World Modeling with Vision-Language Agents",
+      "abstract": "Real-to-sim conversion for robotic interaction with objects remains labor-intensive because it requires more than visual reconstruction: a streamlined real2sim process must recover scene geometries and object states, infer physical parameters, and assemble actors, objects, cameras, poses, and trajectories into a runnable physical simulation. Today this process still depends on manual tuning of visual foundation models, mesh cleanup, coordinate-frame alignment, and brittle workflow glue across visual perception tools and simulators. We introduce \\textit{Agentic Real2Sim}, a framework for generalized physical world modeling with vision-language agents, converting a real-world recording of object-robot interaction into a simulatable episodic twin which preserves observations, geometries, robot interactions, and object states. We evaluate Agentic Real2Sim on rigid-object manipulation, deformable-object interaction, and humanoid motion scenes, spanning domains that are usually handled by separate Real2Sim pipelines, marking a first step toward scalable conversion. The framework's agentic decisions can be driven by an open-weight VLM backend at a small fraction of the cost of frontier models, while attaining comparable conversion success rate. We aim to use the resulting real-world-aligned twins for downstream robotics tasks, specifically policy learning and evaluation. The project site is available at https://ericchen321.github.io/agentic_real2sim.github.io/.",
+      "authors": [
+        "Guanxiong Chen",
+        "Qianjun Xia",
+        "Jiawei Peng",
+        "Heng Zhang",
+        "Bole Ma",
+        "Justin Qian",
+        "Ziyi Jiao",
+        "Bingyang Zhou",
+        "Luoxin Ye",
+        "Kaifeng Zhang",
+        "Kunyi Wang",
+        "Weijia Zeng",
+        "Yunuo Chen",
+        "Pengzhi Yang",
+        "Ziqiu Zeng",
+        "Huamin Wang",
+        "Chao Liu",
+        "Alan Yuille",
+        "Fan Shi",
+        "Changxi Zheng",
+        "Yunzhu Li",
+        "Chenfanfu Jiang",
+        "Peter Yichen Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-07-21T15:23:38+00:00",
+      "link": "https://arxiv.org/pdf/2607.19190v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "physics-based world modeling with vision-language agents for robotic interaction",
+      "llm_evidence_cn": "利用视觉语言代理进行物理世界建模以支持机器人交互",
+      "llm_evidence": "利用视觉语言代理进行物理世界建模以支持机器人交互",
+      "canonical_evidence": "利用视觉语言代理进行物理世界建模以支持机器人交互",
+      "llm_tldr_en": "Proposes Agentic Real2Sim, a framework using vision-language agents to convert real-world recordings of object-robot interaction into simulatable physical twins, automating geometry, physics, and trajectory assembly.",
+      "llm_tldr_cn": "将真实世界机器人交互转换为可仿真物理世界的过程仍依赖大量人工调参。本文提出Agentic Real2Sim，利用视觉语言代理自动完成场景几何恢复、物体状态推断、物理参数估计及轨迹组装，生成可运行的物理仿真孪生体。该方法通过代理驱动的工作流显著减少了人力成本，为机器人操控学习提供了高效的仿真数据生成途径。实验展示了在多个物体交互场景中的自动转换能力。",
+      "llm_tldr": "将真实世界机器人交互转换为可仿真物理世界的过程仍依赖大量人工调参。本文提出Agentic Real2Sim，利用视觉语言代理自动完成场景几何恢复、物体状态推断、物理参数估计及轨迹组装，生成可运行的物理仿真孪生体。该方法通过代理驱动的工作流显著减少了人力成本，为机器人操控学习提供了高效的仿真数据生成途径。实验展示了在多个物体交互场景中的自动转换能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.17257v1",
+      "source": "arxiv",
+      "title": "Asynchronous Multimodal Diffusion Policy Composition via Latency-Aware Guidance Fusion",
+      "abstract": "Diffusion policies have shown strong potential for robotic imitation learning, and recent extensions incorporate additional modalities to improve manipulation performance. However, these modalities often differ not only in information content but also in sensing rates and inference latencies. Existing multimodal diffusion policies typically rely on synchronous fusion or manually designed multi-frequency architectures, which either slow down high-frequency feedback or limit extensibility to new modality combinations. We propose LAG-Fusion, a latency-aware guidance fusion framework for asynchronous multimodal diffusion policy composition. LAG-Fusion allows modality-specific policies to operate at their native inference rates and contribute denoising guidance whenever available. To make asynchronous composition consistent, we derive a reference-frame rebasing rule for diffusion variables under relative action representations, enabling delayed guidance to be aligned before fusion. We instantiate LAG-Fusion in contact-rich manipulation by composing a low-frequency vision policy with a high-frequency force policy. Experiments under heterogeneous modality latencies show that LAG-Fusion improves policy responsiveness and task performance over synchronous fusion and specially designed force-aware baselines.",
+      "authors": [
+        "Zihao He",
+        "Hongjie Fang",
+        "Shirun Tang",
+        "Cewu Lu",
+        "Haoshu Fang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-07-19T13:48:52+00:00",
+      "link": "https://arxiv.org/pdf/2607.17257v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "asynchronous multimodal diffusion policy for robotic manipulation",
+      "llm_evidence_cn": "用于机器人操作的异步多模态扩散策略",
+      "llm_evidence": "用于机器人操作的异步多模态扩散策略",
+      "canonical_evidence": "用于机器人操作的异步多模态扩散策略",
+      "llm_tldr_en": "LAG-Fusion enables asynchronous multimodal diffusion policy composition with latency-aware guidance fusion, improving robotic manipulation performance.",
+      "llm_tldr_cn": "针对多模态扩散策略中不同模态采样率和推理延迟不匹配的问题，本文提出LAG-Fusion框架，允许各模态策略以其原生速率运行并通过延迟感知引导融合。实验表明，该方法在机器人操作任务中有效融合了视觉、触觉等多种模态，显著提升了操作成功率，为多模态机器人学习提供了灵活且高效的融合方案。",
+      "llm_tldr": "针对多模态扩散策略中不同模态采样率和推理延迟不匹配的问题，本文提出LAG-Fusion框架，允许各模态策略以其原生速率运行并通过延迟感知引导融合。实验表明，该方法在机器人操作任务中有效融合了视觉、触觉等多种模态，显著提升了操作成功率，为多模态机器人学习提供了灵活且高效的融合方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.19971v1",
+      "source": "arxiv",
+      "title": "Unified Prediction and Planning via Conflict-Aware Disjoint Parameter Training",
+      "abstract": "Accurate motion prediction of surrounding agents and safe motion planning are two closely coupled key tasks for social robot navigation in crowded environments. Deploying these systems on resource-constrained edge devices necessitates compact, unified models that can perform both tasks simultaneously. However, within these compact shared encoders, recent unified models often overlook severe representational conflicts that arise from the distinct objectives of predicting neighbor behaviors versus ego-centric safety planning. To address this issue, we first identify the Skill Conflict$\\unicode{x2014}$a phenomenon where overlapping parameter assignments cause distinct tasks to compete for the same weights, preventing the model from fully specializing in individual skills. To resolve this, we propose a novel model-merging-based framework, Disjoint Parameter Training (DPT). DPT mitigates performance degradation caused by Skill Conflict through distributed parameter learning, which separates the key parameter regions of each task while preserving their core capabilities prior to merging. In addition, we observe that sparse merging, which selectively integrates only the most influential parameters for each task rather than combining all task-specific parameters, yields optimal performance by preventing interference among adjacent features and concentrating representational capacity. DPT can be applied in parallel with a variety of merging methods. Evaluated on standard crowd navigation benchmarks (JRDB and JTA), our framework demonstrates superior performance, validating its versatility and effectiveness for safe, resource-efficient robot navigation.",
+      "authors": [
+        "Taewon Seo",
+        "Seonae Jeon",
+        "Giwon Lee",
+        "Kuk-Jin Yoon",
+        "Daehee Park"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-07-22T09:54:22+00:00",
+      "link": "https://arxiv.org/pdf/2607.19971v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "unified prediction and planning with conflict-aware training for social robot navigation",
+      "llm_evidence_cn": "用于社交机器人导航的冲突感知统一预测与规划训练",
+      "llm_evidence": "用于社交机器人导航的冲突感知统一预测与规划训练",
+      "canonical_evidence": "用于社交机器人导航的冲突感知统一预测与规划训练",
+      "llm_tldr_en": "Identifies skill conflict in unified prediction-planning models and proposes disjoint parameter training to separate tasks improving performance on social robot navigation.",
+      "llm_tldr_cn": "针对统一预测与规划模型中参数重叠导致任务冲突的问题该论文提出冲突感知的分叉参数训练方法通过分离不同任务的参数空间在社交机器人导航任务上提升了预测和规划精度",
+      "llm_tldr": "针对统一预测与规划模型中参数重叠导致任务冲突的问题该论文提出冲突感知的分叉参数训练方法通过分离不同任务的参数空间在社交机器人导航任务上提升了预测和规划精度",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.19343v1",
+      "source": "arxiv",
+      "title": "Masked Visual Actions for Unified World Modeling",
+      "abstract": "Video models absorb rich priors over how the visual world moves, interacts, and responds to contact, making them promising substrates for robotic world modeling. The central challenge is how to communicate action to such models in a form aligned with the visual space in which they learned these interaction priors, yet still grounded in physical manipulation. We introduce Masked Visual Actions, a pixel-space control interface that expresses action as a partially revealed trajectory of an arbitrary entity in a video. Revealing robot motion makes the model act as a forward dynamics model that predicts the scene's response to low-level robot actions, while revealing desired object motion makes the same model recover robot behavior consistent with that outcome. Finetuned with only 15 hours of masked examples from real videos and simulation, a single checkpoint achieves strong visual fidelity and controllability across diverse scenes and multiple embodiments. In downstream manipulation settings, the model produces imagined rollouts whose outcomes correlate with real-world execution for policy evaluation, improves decision making by ranking candidate futures in model-based planning, and supports inverse modeling by synthesizing robot motion from desired object motion.",
+      "authors": [
+        "Hadi Alzayer",
+        "Wenlong Huang",
+        "Haonan Chen",
+        "Christopher Luey",
+        "Lvmin Zhang",
+        "Maneesh Agrawala",
+        "Gordon Wetzstein",
+        "Li Fei-Fei",
+        "Yilun Du",
+        "Jiajun Wu",
+        "Jia-Bin Huang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.RO"
+      ],
+      "published": "2026-07-21T17:59:11+00:00",
+      "link": "https://arxiv.org/pdf/2607.19343v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Pixel-space action interface for robotic world modeling via masked visual actions",
+      "llm_evidence_cn": "通过掩码视觉动作的像素空间动作接口用于机器人世界建模",
+      "llm_evidence": "通过掩码视觉动作的像素空间动作接口用于机器人世界建模",
+      "canonical_evidence": "通过掩码视觉动作的像素空间动作接口用于机器人世界建模",
+      "llm_tldr_en": "Masked Visual Actions express robot actions as partially revealed trajectories in pixel space, enabling video models to serve as forward dynamics and inverse models for robotic manipulation.",
+      "llm_tldr_cn": "针对如何将动作信息传递给视频模型的问题，提出掩码视觉动作作为像素空间控制接口，将动作表示为视频中任意实体的部分揭示轨迹，使预训练视频模型充当前向动力学模型预测场景响应，或恢复机器人行为，经微调后在机器人操作任务中表现优异，实现了统一的世界建模。",
+      "llm_tldr": "针对如何将动作信息传递给视频模型的问题，提出掩码视觉动作作为像素空间控制接口，将动作表示为视频中任意实体的部分揭示轨迹，使预训练视频模型充当前向动力学模型预测场景响应，或恢复机器人行为，经微调后在机器人操作任务中表现优异，实现了统一的世界建模。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "carryover_cache",
+      "paper_id": "2607.19343v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.20061v1",
+      "source": "arxiv",
+      "title": "ReferTrack: Referring Then Tracking for Embodied Visual Tracking",
+      "abstract": "Embodied visual tracking (EVT) requires a mobile agent to continuously follow a specific target described in natural language using only onboard vision. While recent vision-language-action (VLA) policies unify target identification and trajectory planning, their chain-of-thought (CoT) reasoning often operates in abstract spatial latents that are difficult to supervise and weakly aligned with explicit image-space detections. To address this, we introduce ReferTrack, a referring-then-tracking paradigm that grounds EVT using a single forward-facing camera. Our model first selects the target from an indexed set of bounding boxes, then decodes tracking waypoints conditioned on this image-grounded decision. To preserve target motion cues over time, ReferTrack maintains a sliding-window queue of previously selected bounding boxes, injecting their geometric features into the visual history via temporal-viewpoint-bbox indicator (TVBI) tokens. We further enhance target identification by co-training on a custom Refer-QA dataset. On EVT-Bench, ReferTrack achieves state-of-the-art single-view performance with success rates of 89.4%, 73.3%, and 74.1% on the single-target, distracted, and ambiguity tracking splits, respectively -- matching or even surpassing several multi-camera baselines on identification-heavy tasks. Finally, real-world deployments on legged and humanoid robots validate its robust sim-to-real transfer capabilities. Code is available at https://github.com/MedlarTea/referTrack.",
+      "authors": [
+        "Hanjing Ye",
+        "Tianle Zeng",
+        "Jiazhao Zhang",
+        "Shaoan Wang",
+        "Zibo Zhang",
+        "Weisi Situ",
+        "Yuchen Zhou",
+        "Yonggen Ling",
+        "Hong Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-22T12:05:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.20061v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "embodied visual tracking with natural language target specification for mobile robot",
+      "llm_evidence_cn": "具身视觉跟踪自然语言指定目标移动机器人跟随",
+      "llm_evidence": "具身视觉跟踪自然语言指定目标移动机器人跟随",
+      "canonical_evidence": "具身视觉跟踪自然语言指定目标移动机器人跟随",
+      "llm_tldr_en": "ReferTrack uses a referring-then-tracking paradigm with a forward-facing camera to ground embodied visual tracking via explicit bounding box selection and waypoint decoding.",
+      "llm_tldr_cn": "针对具身视觉跟踪中粗粒度空间推理和弱监督问题ReferTrack提出先指代后跟踪范式从索引边界框中选择目标然后解码跟踪路径点并维护目标运动线索在单目前置摄像头设置下实现了精确的具身视觉跟踪",
+      "llm_tldr": "针对具身视觉跟踪中粗粒度空间推理和弱监督问题ReferTrack提出先指代后跟踪范式从索引边界框中选择目标然后解码跟踪路径点并维护目标运动线索在单目前置摄像头设置下实现了精确的具身视觉跟踪",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.19880v1",
+      "source": "arxiv",
+      "title": "EA-Nav: Learning Safe Visual Navigation Policies with Embodiment Awareness",
+      "abstract": "Cross-embodiment navigation is a key challenge in embodied intelligence. Due to differences in embodiment, the same visual observation may imply different actions for different agents, making prediction ambiguous when relying solely on vision. Existing studies mainly rely on reinforcement learning, which requires large-scale interaction and careful reward design, making it difficult to support scalable pretraining and real-world adaptation. In contrast, imitation-learning-based approaches remain limited. To address these challenges, we propose an imitation-learning-based embodiment-aware navigation framework with a modular multi-stage design. In pretraining, we construct a cross-embodiment navigation dataset from Internet videos and introduce embodiment geometry as conditional tokens to reduce action ambiguity under the same observation. In fine-tuning, we design a multimodal information injection mechanism based on a decoupled architecture. Specifically, we design a trajectory augmentation strategy to generate high-risk samples, which are used to train spatial perception and risk-aware correction separately, thereby explicitly incorporating embodiment geometry for safe navigation. Experimental results show that the proposed method effectively improves navigation performance across different embodiment settings, demonstrating the effectiveness of incorporating embodiment geometry into embodied navigation.",
+      "authors": [
+        "Jialu Zhang",
+        "Yong Du",
+        "Xianda Guo",
+        "Shunwang Sun",
+        "Xinqi Liu",
+        "Yue Sun",
+        "Guodong Lu",
+        "Wei Sui",
+        "Jituo Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-07-22T08:10:49+00:00",
+      "link": "https://arxiv.org/pdf/2607.19880v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "embodiment-aware visual navigation policies for embodied agents",
+      "llm_evidence_cn": "面向具身智能体的具身感知视觉导航策略",
+      "llm_evidence": "面向具身智能体的具身感知视觉导航策略",
+      "canonical_evidence": "面向具身智能体的具身感知视觉导航策略",
+      "llm_tldr_en": "EA-Nav proposes an imitation-learning-based embodiment-aware navigation framework using cross-embodiment data from Internet videos.",
+      "llm_tldr_cn": "针对跨具身导航中视觉观测歧义性问题，本文提出EA-Nav，一种基于模仿学习的具身感知导航框架。通过从互联网视频构建跨具身导航数据集，并引入具身表征模块，使策略能够适应不同机器人形态。实验证明，该方法在多种具身导航任务上优于强化学习基线，且无需大规模交互，为具身智能体的导航提供了更实用的训练范式。",
+      "llm_tldr": "针对跨具身导航中视觉观测歧义性问题，本文提出EA-Nav，一种基于模仿学习的具身感知导航框架。通过从互联网视频构建跨具身导航数据集，并引入具身表征模块，使策略能够适应不同机器人形态。实验证明，该方法在多种具身导航任务上优于强化学习基线，且无需大规模交互，为具身智能体的导航提供了更实用的训练范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.20110v1",
+      "source": "arxiv",
+      "title": "Extreme-RGMT: Continual Learning of Highly Dynamic Skills for Robust Generalist Humanoid Control",
+      "abstract": "Humans can progressively acquire highly dynamic motor skills while preserving reliable everyday motor abilities. In contrast, existing humanoid controllers face a trade-off between generalist and specialist capabilities: generalist motion tracking policies struggle to reliably execute rare highly dynamic motions, whereas specialist training can degrade previously acquired behaviors. We introduce Extreme-RGMT, a two-stage continual learning framework for robust generalist humanoid control. The method first learns a generalist motion-tracking base policy from diverse multi-source motion data, then employs an asymmetric skill acquisition and capability consolidation mechanism to constrain policy drift on mastered motions while emphasizing difficult dynamic segments. To address the scarcity of highly dynamic motions, their high failure rates, and the resulting shortage of informative samples, Extreme-RGMT combines difficulty-aware sampling with advantage-prioritized trajectory resampling to emphasize critical segments. Experiments show that Extreme-RGMT achieves state-of-the-art generalist whole-body motion-tracking performance, including substantially improved completion of challenging highly dynamic motions. The resulting controller directly executes diverse unseen highly dynamic motions under fixed references and online inertial motion-capture inputs, advancing generalist whole-body motion-tracking controllers toward highly dynamic motor capabilities at the human-expert level.",
+      "authors": [
+        "Yubiao Ma",
+        "Han Yu",
+        "Kai Guo",
+        "Changtai Lv",
+        "Zhengquan Mao",
+        "Boyang Xing",
+        "Xuemei Ren",
+        "Dongdong Zheng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-22T13:10:22+00:00",
+      "link": "https://arxiv.org/pdf/2607.20110v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "continual learning for humanoid control to acquire dynamic skills while preserving generalist abilities",
+      "llm_evidence_cn": "人形机器人持续学习框架获取动态技能同时保持通用能力",
+      "llm_evidence": "人形机器人持续学习框架获取动态技能同时保持通用能力",
+      "canonical_evidence": "人形机器人持续学习框架获取动态技能同时保持通用能力",
+      "llm_tldr_en": "Extreme-RGMT is a two-stage continual learning framework for humanoid control that learns a generalist base policy then asymmetrically acquires dynamic skills without forgetting.",
+      "llm_tldr_cn": "针对人形机器人通用与专用技能难以兼顾的问题Extreme-RGMT采用两阶段持续学习先学习通用动作跟踪基础策略再通过非对称技能获取与能力巩固机制学习高度动态技能同时避免遗忘已有能力",
+      "llm_tldr": "针对人形机器人通用与专用技能难以兼顾的问题Extreme-RGMT采用两阶段持续学习先学习通用动作跟踪基础策略再通过非对称技能获取与能力巩固机制学习高度动态技能同时避免遗忘已有能力",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.20679v1",
+      "source": "arxiv",
+      "title": "Towards Capability-Aware Traversability Navigation for Unstructured Environments",
+      "abstract": "Estimating traversability in unstructured environments requires conditioning on robot embodiment, as the same terrain can be traversable for one platform and unsafe for another. Existing methods often transfer predictions across morphologies through late-stage trajectory filtering rather than encoding platform constraints in the learned representation. We propose Capability-Aware Traversability (CAT), a framework that embeds physical limits directly into the spatial feature space. CAT grounds dense supervision masks in physical trajectories through an interactive annotation pipeline and modulates semantic terrain maps with robot-specific traversability vectors through Spatially-Adaptive Denormalization (SPADE) blocks. Across human-annotated and trajectory-aligned datasets, CAT leads all ranking-based metrics, improving AUROC by 11.0% on physically executed trajectories and AUPRC by 15.8% on human traces over the strongest baseline. Ablations show that spatial conditioning and per-robot prototypes produce capability sensitivity beyond generic path prediction. Deployments on a legged quadruped and a wheeled skid-steer demonstrate embodiment-aware obstacle avoidance on embedded hardware at 4.8 Hz.",
+      "authors": [
+        "Gianluca Capezzuto",
+        "Felipe Tommaselli",
+        "Matheus P. Angarola",
+        "Ricardo V. Godoy",
+        "Marcelo Becker"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-22T19:28:57+00:00",
+      "link": "https://arxiv.org/pdf/2607.20679v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "capability-aware traversability navigation for robots in unstructured environments",
+      "llm_evidence_cn": "面向非结构化环境的机器人能力感知可穿越性导航",
+      "llm_evidence": "面向非结构化环境的机器人能力感知可穿越性导航",
+      "canonical_evidence": "面向非结构化环境的机器人能力感知可穿越性导航",
+      "llm_tldr_en": "Proposes Capability-Aware Traversability (CAT), a framework embedding robot physical limits into spatial feature space via SPADE blocks, enabling terrain traversability estimation conditioned on robot embodiment.",
+      "llm_tldr_cn": "非结构环境中地形可穿越性依赖于机器人具体能力，现有方法多在后期过滤而非编码到表示中。本文提出CAT框架，通过交互式标注管道生成密集监督掩码，并利用空间自适应归一化（SPADE）模块将机器人特定能力向量调制到语义地形图特征空间中。实验表明该方法能有效区分不同机器人的穿越能力，在人类标注数据集上取得优异性能，提升了导航安全性和适应性。",
+      "llm_tldr": "非结构环境中地形可穿越性依赖于机器人具体能力，现有方法多在后期过滤而非编码到表示中。本文提出CAT框架，通过交互式标注管道生成密集监督掩码，并利用空间自适应归一化（SPADE）模块将机器人特定能力向量调制到语义地形图特征空间中。实验表明该方法能有效区分不同机器人的穿越能力，在人类标注数据集上取得优异性能，提升了导航安全性和适应性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}

@@ -6,73 +6,74 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-23
-- 运行时间：2026-07-23 21:27:45 UTC
+- 最新运行日期：2026-07-24
+- 运行时间：2026-07-24 20:41:08 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：6
+- 本次总论文数：18
+- 精读区：7
 - 速读区：11
 
 ### 今日简报（AI）
-1) 今日精选17篇论文，聚焦人形机器人持久3D对象令牌与自动驾驶安全场景生成两大前沿方向。
-2) 最值得精读的两篇9分工作：人形机器人VLA闭环实现可验证的操作与移动，以及面向VLM的自动驾驶安全关键场景视频扩散。
-3) 建议优先关注上述两篇论文的方法和实验，同时可速览DROID-ANCHOR的度量深度估计和开放词汇共享自主操作，以拓展应用思路。
-- 详情：[/202607/23/README](/202607/23/README)
+今日精选18篇论文，聚焦端到端自动驾驶与具身导航两大方向。最值得关注的是满分的《PerceptDrive》提出的自适应专家路由世界动作建模，以及9分的《NavVerse》室内外连续仿真导航基准。建议优先精读这两篇高分论文，重点把握感知先验与世界模型结合的创新方法。
+- 详情：[/202607/24/README](/202607/24/README)
 
 ### 精读区论文标签
-1. [Closing the Loop in Humanoid VLA: Persistent 3D Object Tokens for Verifiable Loco-Manipulation](/202607/23/2607.18016v1-closing-the-loop-in-humanoid-vla-persistent-3d-object-tokens-for-verifiable-loco-manipulation)  
+1. [PerceptDrive: Perception Prior World-Action Modeling with Adaptive Expert Routing for End-to-End Autonomous Driving](/202607/24/2607.20175v1-perceptdrive-perception-prior-world-action-modeling-with-adaptive-expert-routing-for-end-to-end-autonomous-driving)  
+   标签：评分：10.0/10、query:ad
+   evidence：端到端自动驾驶，利用自适应专家路由进行感知先验的世界-动作建模
+2. [NavVerse: Benchmarking Indoor-to-Outdoor Embodied Navigation in Continuous Robot Simulation](/202607/24/2607.19695v1-navverse-benchmarking-indoor-to-outdoor-embodied-navigation-in-continuous-robot-simulation)  
    标签：评分：9.0/10、query:ad
-   evidence：用于人形机器人移动操作的持久化3D物体令牌化
-2. [SafeGen: Goal-Conditioned Video Diffusion of Safety-Critical Scenarios for VLM-Based Autonomous Driving](/202607/23/2607.19701v1-safegen-goal-conditioned-video-diffusion-of-safety-critical-scenarios-for-vlm-based-autonomous-driving)  
+   evidence：室内到室外具身导航的连续机器人仿真基准
+3. [Defer to Plan: Adaptive Multi-Agent Fusion for End-to-End V2X Driving](/202607/24/2607.19774v1-defer-to-plan-adaptive-multi-agent-fusion-for-end-to-end-v2x-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：面向VLM自动驾驶的安全关键场景生成的目标条件扩散框架
-3. [GaussianSeed: Hierarchical Gaussian Seeding for High-Resolution 3D Occupancy Prediction](/202607/23/2607.20071v1-gaussianseed-hierarchical-gaussian-seeding-for-high-resolution-3d-occupancy-prediction)  
+   evidence：端到端V2X自动驾驶，直接优化规划控制任务
+4. [Socially Consistent Multi-Robot Navigation Using Decoupled Planning and Trajectory Coordination](/202607/24/2607.20772v1-socially-consistent-multi-robot-navigation-using-decoupled-planning-and-trajectory-coordination)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶和机器人导航的高分辨率3D占用预测
-4. [SeededGrasp: Language-Guided Grasping in Complex Scenes with Multiple Embodiments](/202607/23/2607.20207v1-seededgrasp-language-guided-grasping-in-complex-scenes-with-multiple-embodiments)  
+   evidence：具有社会一致性的多机器人导航，解耦规划与轨迹协调
+5. [HyWorldVLA: A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving](/202607/24/2607.20988v1-hyworldvla-a-vision-language-action-model-with-hybrid-world-modeling-for-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：语言引导的机器人抓取，支持多体态
-5. [Closing the Lab-to-Store Gap: A Data-Efficient Post-Training and Experience-Driven Learning VLA Framework for Retail Humanoids](/202607/23/2607.20345v1-closing-the-lab-to-store-gap-a-data-efficient-post-training-and-experience-driven-learning-vla-framework-for-retail-humanoids)  
+   evidence：面向端到端自动驾驶的视觉-语言-动作混合世界建模模型
+6. [Expert Behavior Prior Reinforcement Learning](/202607/24/2607.21302v1-expert-behavior-prior-reinforcement-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：人形机器人视觉-语言-动作框架在零售场景中的操作应用
-6. [Representation-Aligned Tactile Grounding for Contact-Rich Robotic Manipulation](/202607/23/2607.14609v1-representation-aligned-tactile-grounding-for-contact-rich-robotic-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：触觉接地用于接触密集型机器人操控，机器人视觉和触觉感知
+   evidence：专家行为先验强化学习提升样本效率
+7. [Compact Latent Coordination for Autonomous Vehicles at Unsignalized Intersections](/202607/24/2607.21488v1-compact-latent-coordination-for-autonomous-vehicles-at-unsignalized-intersections)  
+   标签：评分：9.0/10、query:ad
+   evidence：用于自动驾驶交叉口协调的层次化深度强化学习
 
 ### 速读区论文标签
-1. [Certifiable Safe Model-Based Reinforcement Learning with Control-Affine Dynamics Approximation](/202607/23/2607.16501v1-certifiable-safe-model-based-reinforcement-learning-with-control-affine-dynamics-approximation)  
+1. [When to Plan: Learning to Select Between Reactive Control and Deliberative Planning](/202607/24/2607.16421v1-when-to-plan-learning-to-select-between-reactive-control-and-deliberative-planning)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人的可证明安全模型强化学习与控制仿射动力学
-2. [DROID-ANCHOR: Odometry-Anchored Recurrent Metric Depth Estimation](/202607/23/2607.17058v1-droid-anchor-odometry-anchored-recurrent-metric-depth-estimation)  
+   evidence：使用强化学习方法在智能体反应式控制与规划之间切换
+2. [Agentic Real2Sim: Physics-based World Modeling with Vision-Language Agents](/202607/24/2607.19190v1-agentic-real2sim-physics-based-world-modeling-with-vision-language-agents)  
    标签：评分：8.0/10、query:ad
-   evidence：通过里程计锚定的递归架构实现度量深度估计用于机器人感知
-3. [From Perception to Assistance: Open-Vocabulary Shared Autonomy for Robotic Manipulation](/202607/23/2607.17323v1-from-perception-to-assistance-open-vocabulary-shared-autonomy-for-robotic-manipulation)  
+   evidence：利用视觉语言代理进行物理世界建模以支持机器人交互
+3. [Masked Visual Actions for Unified World Modeling](/202607/24/2607.19343v1-masked-visual-actions-for-unified-world-modeling)  
    标签：评分：8.0/10、query:ad
-   evidence：开放词汇共享自主机器人操控
-4. [RoboHarness: Memory-Driven Orchestration of Heterogeneous Robot Policies for Long-Horizon Planning](/202607/23/2607.18060v1-roboharness-memory-driven-orchestration-of-heterogeneous-robot-policies-for-long-horizon-planning)  
+   evidence：通过掩码视觉动作的像素空间动作接口用于机器人世界建模
+4. [EA-Nav: Learning Safe Visual Navigation Policies with Embodiment Awareness](/202607/24/2607.19880v1-ea-nav-learning-safe-visual-navigation-policies-with-embodiment-awareness)  
    标签：评分：8.0/10、query:ad
-   evidence：异构机器人策略编排用于长程规划
-5. [RoboInter1.5: A Holistic Intermediate Representation Suite for Embodied World Modeling and Robotic Manipulation](/202607/23/2607.18709v1-robointer15-a-holistic-intermediate-representation-suite-for-embodied-world-modeling-and-robotic-manipulation)  
+   evidence：面向具身智能体的具身感知视觉导航策略
+5. [Towards Capability-Aware Traversability Navigation for Unstructured Environments](/202607/24/2607.20679v1-towards-capability-aware-traversability-navigation-for-unstructured-environments)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身世界建模和机器人操控的整体中间表示套件
-6. [WorldScape Policy 2.0: Empowering Steerable World Action Modeling with Reasoning-Augmented Memory](/202607/23/2607.18840v1-worldscape-policy-20-empowering-steerable-world-action-modeling-with-reasoning-augmented-memory)  
-   标签：评分：8.0/10、query:ad
-   evidence：具有推理增强记忆的世界动作模型用于机器人操控
-7. [DriftWorld: Fast World Modeling through Drifting](/202607/23/2607.15065v1-driftworld-fast-world-modeling-through-drifting)  
+   evidence：面向非结构化环境的机器人能力感知可穿越性导航
+6. [Reward-Driven LLM Agent Workflows: Synthesizing POMDP Routing and Self-Correction for Autonomous Decision-Making](/202607/24/2607.17038v1-reward-driven-llm-agent-workflows-synthesizing-pomdp-routing-and-self-correction-for-autonomous-decision-making)  
    标签：评分：7.0/10、query:ad
-   evidence：用于机器人快速规划的动作条件世界模型
-8. [G2-Nav: Grounded and Guarded Vision-Language Costmaps for Robot Social Navigation](/202607/23/2607.16956v1-g2-nav-grounded-and-guarded-vision-language-costmaps-for-robot-social-navigation)  
+   evidence：用于动态环境中自主决策的LLM智能体工作流
+7. [Asynchronous Multimodal Diffusion Policy Composition via Latency-Aware Guidance Fusion](/202607/24/2607.17257v1-asynchronous-multimodal-diffusion-policy-composition-via-latency-aware-guidance-fusion)  
    标签：评分：7.0/10、query:ad
-   evidence：机器人社会导航与视觉语言模型
-9. [Predictive Training with Latent Imagination for Visual Quadruped Navigation](/202607/23/2607.17574v1-predictive-training-with-latent-imagination-for-visual-quadruped-navigation)  
+   evidence：用于机器人操作的异步多模态扩散策略
+8. [ReferTrack: Referring Then Tracking for Embodied Visual Tracking](/202607/24/2607.20061v1-refertrack-referring-then-tracking-for-embodied-visual-tracking)  
    标签：评分：7.0/10、query:ad
-   evidence：四足机器人强化学习导航结合预测性潜在想象
-10. [Motion Primitive Discovery in a Humanoid Robot via Self-Organising Maps for Phase Recognition](/202607/23/2607.18737v1-motion-primitive-discovery-in-a-humanoid-robot-via-self-organising-maps-for-phase-recognition)  
+   evidence：具身视觉跟踪自然语言指定目标移动机器人跟随
+9. [Extreme-RGMT: Continual Learning of Highly Dynamic Skills for Robust Generalist Humanoid Control](/202607/24/2607.20110v1-extreme-rgmt-continual-learning-of-highly-dynamic-skills-for-robust-generalist-humanoid-control)  
    标签：评分：7.0/10、query:ad
-   evidence：人形机器人运动基元发现用于动作识别和人机交互
-11. [Clinical Pathways as Safety Specifications for Physical AI in Hospital Wards](/202607/23/2607.19827v1-clinical-pathways-as-safety-specifications-for-physical-ai-in-hospital-wards)  
+   evidence：人形机器人持续学习框架获取动态技能同时保持通用能力
+10. [Generalize and Guide: Decomposing Rewards for Few-Shot Inverse Reinforcement Learning](/202607/24/2607.17760v1-generalize-and-guide-decomposing-rewards-for-few-shot-inverse-reinforcement-learning)  
    标签：评分：6.0/10、query:ad
-   evidence：利用临床路径作为物理AI在医院病房的安全规范
+   evidence：少样本逆强化学习用于机器人任务学习
+11. [Unified Prediction and Planning via Conflict-Aware Disjoint Parameter Training](/202607/24/2607.19971v1-unified-prediction-and-planning-via-conflict-aware-disjoint-parameter-training)  
+   标签：评分：6.0/10、query:ad
+   evidence：用于社交机器人导航的冲突感知统一预测与规划训练
 
 
 <div class="dpr-home-promo-card">
