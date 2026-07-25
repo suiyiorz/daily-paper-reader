@@ -6,74 +6,65 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-24
-- 运行时间：2026-07-24 20:41:08 UTC
+- 最新运行日期：2026-07-25
+- 运行时间：2026-07-25 20:52:19 UTC
 - 运行状态：成功
-- 本次总论文数：18
-- 精读区：7
-- 速读区：11
+- 本次总论文数：15
+- 精读区：6
+- 速读区：9
 
 ### 今日简报（AI）
-今日精选18篇论文，聚焦端到端自动驾驶与具身导航两大方向。最值得关注的是满分的《PerceptDrive》提出的自适应专家路由世界动作建模，以及9分的《NavVerse》室内外连续仿真导航基准。建议优先精读这两篇高分论文，重点把握感知先验与世界模型结合的创新方法。
-- 详情：[/202607/24/README](/202607/24/README)
+今天精选15篇论文，精读2篇满分9.0佳作——PAVXploreRL的物理动作视觉世界模型强化学习与Robostral Navigate导航技术表现亮眼。速读中FM-VLA触觉记忆模型和个性化安全干预方案也值得关注。建议优先精读两篇高分论文，再延展至触觉与安全交互方向。
+- 详情：[/202607/25/README](/202607/25/README)
 
 ### 精读区论文标签
-1. [PerceptDrive: Perception Prior World-Action Modeling with Adaptive Expert Routing for End-to-End Autonomous Driving](/202607/24/2607.20175v1-perceptdrive-perception-prior-world-action-modeling-with-adaptive-expert-routing-for-end-to-end-autonomous-driving)  
-   标签：评分：10.0/10、query:ad
-   evidence：端到端自动驾驶，利用自适应专家路由进行感知先验的世界-动作建模
-2. [NavVerse: Benchmarking Indoor-to-Outdoor Embodied Navigation in Continuous Robot Simulation](/202607/24/2607.19695v1-navverse-benchmarking-indoor-to-outdoor-embodied-navigation-in-continuous-robot-simulation)  
+1. [PAVXploreRL: Physical-Action-Visual World Model Reinforcement Learning with Action Exploration](/202607/25/2607.16602v2-pavxplorerl-physical-action-visual-world-model-reinforcement-learning-with-action-exploration)  
    标签：评分：9.0/10、query:ad
-   evidence：室内到室外具身导航的连续机器人仿真基准
-3. [Defer to Plan: Adaptive Multi-Agent Fusion for End-to-End V2X Driving](/202607/24/2607.19774v1-defer-to-plan-adaptive-multi-agent-fusion-for-end-to-end-v2x-driving)  
+   evidence：用于具身AI世界模型的强化学习，包含动作探索
+2. [Robostral Navigate](/202607/25/2607.20785v1-robostral-navigate)  
    标签：评分：9.0/10、query:ad
-   evidence：端到端V2X自动驾驶，直接优化规划控制任务
-4. [Socially Consistent Multi-Robot Navigation Using Decoupled Planning and Trajectory Coordination](/202607/24/2607.20772v1-socially-consistent-multi-robot-navigation-using-decoupled-planning-and-trajectory-coordination)  
+   evidence：仅使用单目RGB图像的机器人导航视觉语言模型
+3. [A Real-Time Generalized Nash Equilibrium Framework for Interaction-Aware Autonomous Driving in Mixed Traffic](/202607/25/2607.21043v1-a-real-time-generalized-nash-equilibrium-framework-for-interaction-aware-autonomous-driving-in-mixed-traffic)  
    标签：评分：9.0/10、query:ad
-   evidence：具有社会一致性的多机器人导航，解耦规划与轨迹协调
-5. [HyWorldVLA: A Vision-Language-Action Model with Hybrid World Modeling for Autonomous Driving](/202607/24/2607.20988v1-hyworldvla-a-vision-language-action-model-with-hybrid-world-modeling-for-autonomous-driving)  
+   evidence：基于广义纳什均衡的交互感知自动驾驶决策
+4. [Deep Reinforcement Learning for Adaptive Gain Tuning in Control of Teleoperation Manipulators with Joint Flexibility and Time-Varying Delays](/202607/25/2607.21145v1-deep-reinforcement-learning-for-adaptive-gain-tuning-in-control-of-teleoperation-manipulators-with-joint-flexibility-and-time-varying-delays)  
    标签：评分：9.0/10、query:ad
-   evidence：面向端到端自动驾驶的视觉-语言-动作混合世界建模模型
-6. [Expert Behavior Prior Reinforcement Learning](/202607/24/2607.21302v1-expert-behavior-prior-reinforcement-learning)  
+   evidence：深度强化学习用于遥操作机械臂自适应控制
+5. [Scale Up Strategically: Learning Compositional Generalization via Bias-Aware Evaluation and Data Collection for Robotic Manipulation](/202607/25/2607.21582v1-scale-up-strategically-learning-compositional-generalization-via-bias-aware-evaluation-and-data-collection-for-robotic-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：专家行为先验强化学习提升样本效率
-7. [Compact Latent Coordination for Autonomous Vehicles at Unsignalized Intersections](/202607/24/2607.21488v1-compact-latent-coordination-for-autonomous-vehicles-at-unsignalized-intersections)  
-   标签：评分：9.0/10、query:ad
-   evidence：用于自动驾驶交叉口协调的层次化深度强化学习
+   evidence：机器人操作的组合泛化
+6. [UniETP: Unifying Environments for Generalizable Embodied Task Planning](/202607/25/2607.18062v1-unietp-unifying-environments-for-generalizable-embodied-task-planning)  
+   标签：评分：8.0/10、query:ad
+   evidence：跨多个模拟器的统一具身任务规划接口
 
 ### 速读区论文标签
-1. [When to Plan: Learning to Select Between Reactive Control and Deliberative Planning](/202607/24/2607.16421v1-when-to-plan-learning-to-select-between-reactive-control-and-deliberative-planning)  
+1. [FM-VLA: Force-based Memory for Vision-Language-Action Models in Contact-Rich Manipulation](/202607/25/2607.18231v1-fm-vla-force-based-memory-for-vision-language-action-models-in-contact-rich-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：使用强化学习方法在智能体反应式控制与规划之间切换
-2. [Agentic Real2Sim: Physics-based World Modeling with Vision-Language Agents](/202607/24/2607.19190v1-agentic-real2sim-physics-based-world-modeling-with-vision-language-agents)  
+   evidence：基于力的记忆用于触觉丰富的机器人操作
+2. [Learning Personalized Safety Interventions for Haptic Human-Robot Shared Control](/202607/25/2607.19534v1-learning-personalized-safety-interventions-for-haptic-human-robot-shared-control)  
    标签：评分：8.0/10、query:ad
-   evidence：利用视觉语言代理进行物理世界建模以支持机器人交互
-3. [Masked Visual Actions for Unified World Modeling](/202607/24/2607.19343v1-masked-visual-actions-for-unified-world-modeling)  
+   evidence：学习个性化触觉安全干预用于人机共享控制
+3. [URF: A Unified Robot Control-Policy Framework for Stable Contact Aware Manipulation](/202607/25/2607.20912v1-urf-a-unified-robot-control-policy-framework-for-stable-contact-aware-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：通过掩码视觉动作的像素空间动作接口用于机器人世界建模
-4. [EA-Nav: Learning Safe Visual Navigation Policies with Embodiment Awareness](/202607/24/2607.19880v1-ea-nav-learning-safe-visual-navigation-policies-with-embodiment-awareness)  
+   evidence：用于稳定接触感知操作的统一机器人控制策略框架
+4. [Beyond Episodic Evaluation: Memory Architectural Bottlenecks in Sequential Embodied Question Answering](/202607/25/2607.21571v1-beyond-episodic-evaluation-memory-architectural-bottlenecks-in-sequential-embodied-question-answering)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身智能体的具身感知视觉导航策略
-5. [Towards Capability-Aware Traversability Navigation for Unstructured Environments](/202607/24/2607.20679v1-towards-capability-aware-traversability-navigation-for-unstructured-environments)  
+   evidence：具身问答中的顺序记忆架构研究
+5. [AXIS: A Growable Community-Driven Data Engine for Scalable Robot Manipulation](/202607/25/2607.21588v1-axis-a-growable-community-driven-data-engine-for-scalable-robot-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向非结构化环境的机器人能力感知可穿越性导航
-6. [Reward-Driven LLM Agent Workflows: Synthesizing POMDP Routing and Self-Correction for Autonomous Decision-Making](/202607/24/2607.17038v1-reward-driven-llm-agent-workflows-synthesizing-pomdp-routing-and-self-correction-for-autonomous-decision-making)  
+   evidence：可扩展机器人操作的可增长社区驱动数据引擎
+6. [A Task-Space Receding Horizon Controller for Fast Collision Avoidance](/202607/25/2607.15733v1-a-task-space-receding-horizon-controller-for-fast-collision-avoidance)  
    标签：评分：7.0/10、query:ad
-   evidence：用于动态环境中自主决策的LLM智能体工作流
-7. [Asynchronous Multimodal Diffusion Policy Composition via Latency-Aware Guidance Fusion](/202607/24/2607.17257v1-asynchronous-multimodal-diffusion-policy-composition-via-latency-aware-guidance-fusion)  
+   evidence：机械臂避碰的任务空间滚动时域控制
+7. [EgoExoMoCap: Distributed Ego-Exo Human Motion Capture](/202607/25/2607.15868v1-egoexomocap-distributed-ego-exo-human-motion-capture)  
    标签：评分：7.0/10、query:ad
-   evidence：用于机器人操作的异步多模态扩散策略
-8. [ReferTrack: Referring Then Tracking for Embodied Visual Tracking](/202607/24/2607.20061v1-refertrack-referring-then-tracking-for-embodied-visual-tracking)  
+   evidence：面向具身AI的头戴设备人体运动捕捉
+8. [Self-Supervised Bio-Inspired Robotic Trajectory Planning with Obstacle Avoidance](/202607/25/2607.20743v1-self-supervised-bio-inspired-robotic-trajectory-planning-with-obstacle-avoidance)  
    标签：评分：7.0/10、query:ad
-   evidence：具身视觉跟踪自然语言指定目标移动机器人跟随
-9. [Extreme-RGMT: Continual Learning of Highly Dynamic Skills for Robust Generalist Humanoid Control](/202607/24/2607.20110v1-extreme-rgmt-continual-learning-of-highly-dynamic-skills-for-robust-generalist-humanoid-control)  
+   evidence：机器人轨迹规划，避障，自监督学习
+9. [RL-MACRO: A Cybernetic Closed-Loop Intelligence Framework for Multimodal Adaptive Robotic Craniotomy](/202607/25/2607.21113v1-rl-macro-a-cybernetic-closed-loop-intelligence-framework-for-multimodal-adaptive-robotic-craniotomy)  
    标签：评分：7.0/10、query:ad
-   evidence：人形机器人持续学习框架获取动态技能同时保持通用能力
-10. [Generalize and Guide: Decomposing Rewards for Few-Shot Inverse Reinforcement Learning](/202607/24/2607.17760v1-generalize-and-guide-decomposing-rewards-for-few-shot-inverse-reinforcement-learning)  
-   标签：评分：6.0/10、query:ad
-   evidence：少样本逆强化学习用于机器人任务学习
-11. [Unified Prediction and Planning via Conflict-Aware Disjoint Parameter Training](/202607/24/2607.19971v1-unified-prediction-and-planning-via-conflict-aware-disjoint-parameter-training)  
-   标签：评分：6.0/10、query:ad
-   evidence：用于社交机器人导航的冲突感知统一预测与规划训练
+   evidence：强化学习用于机器人颅骨钻孔，多模态感知与自适应决策
 
 
 <div class="dpr-home-promo-card">
