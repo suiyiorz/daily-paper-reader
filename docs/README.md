@@ -6,65 +6,43 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-25
-- 运行时间：2026-07-25 20:52:19 UTC
+- 最新运行日期：2026-07-26
+- 运行时间：2026-07-26 19:55:57 UTC
 - 运行状态：成功
-- 本次总论文数：15
-- 精读区：6
-- 速读区：9
+- 本次总论文数：7
+- 精读区：5
+- 速读区：2
 
 ### 今日简报（AI）
-今天精选15篇论文，精读2篇满分9.0佳作——PAVXploreRL的物理动作视觉世界模型强化学习与Robostral Navigate导航技术表现亮眼。速读中FM-VLA触觉记忆模型和个性化安全干预方案也值得关注。建议优先精读两篇高分论文，再延展至触觉与安全交互方向。
-- 详情：[/202607/25/README](/202607/25/README)
+今日精选7篇论文，重点精读两篇9分研究，涵盖越野场景视觉感知与四足机器人强化学习。  
+最值得关注的方向：基于全局先验蒸馏的图像affordance预测，以及扭矩驱动的四足机器人步态学习。  
+建议读者优先阅读这两篇高分工作，结合速读中的人群目标拦截与混合专家VLA技能涌现，拓展机器人自主决策视野。
+- 详情：[/202607/26/README](/202607/26/README)
 
 ### 精读区论文标签
-1. [PAVXploreRL: Physical-Action-Visual World Model Reinforcement Learning with Action Exploration](/202607/25/2607.16602v2-pavxplorerl-physical-action-visual-world-model-reinforcement-learning-with-action-exploration)  
+1. [Distilling Global Traversability Priors for Image-based Affordance Prediction in Off-road Environments](/202607/26/2607.17984v1-distilling-global-traversability-priors-for-image-based-affordance-prediction-in-off-road-environments)  
    标签：评分：9.0/10、query:ad
-   evidence：用于具身AI世界模型的强化学习，包含动作探索
-2. [Robostral Navigate](/202607/25/2607.20785v1-robostral-navigate)  
+   evidence：自主导航, 感知规划
+2. [Towards Torque-Driven Reinforcement Learning for Quadruped Locomotion](/202607/26/2607.18365v1-towards-torque-driven-reinforcement-learning-for-quadruped-locomotion)  
    标签：评分：9.0/10、query:ad
-   evidence：仅使用单目RGB图像的机器人导航视觉语言模型
-3. [A Real-Time Generalized Nash Equilibrium Framework for Interaction-Aware Autonomous Driving in Mixed Traffic](/202607/25/2607.21043v1-a-real-time-generalized-nash-equilibrium-framework-for-interaction-aware-autonomous-driving-in-mixed-traffic)  
+   evidence：四足运动, 强化学习
+3. [Milo, a Fully Autonomous Indoor/Outdoor Robotic Guide Dog](/202607/26/2607.19530v1-milo-a-fully-autonomous-indooroutdoor-robotic-guide-dog)  
    标签：评分：9.0/10、query:ad
-   evidence：基于广义纳什均衡的交互感知自动驾驶决策
-4. [Deep Reinforcement Learning for Adaptive Gain Tuning in Control of Teleoperation Manipulators with Joint Flexibility and Time-Varying Delays](/202607/25/2607.21145v1-deep-reinforcement-learning-for-adaptive-gain-tuning-in-control-of-teleoperation-manipulators-with-joint-flexibility-and-time-varying-delays)  
+   evidence：机器人导盲犬自主导航人机交互
+4. [Robots Acquire Manipulation Skills in Seconds from a Single Human Video](/202607/26/2607.20033v2-robots-acquire-manipulation-skills-in-seconds-from-a-single-human-video)  
    标签：评分：9.0/10、query:ad
-   evidence：深度强化学习用于遥操作机械臂自适应控制
-5. [Scale Up Strategically: Learning Compositional Generalization via Bias-Aware Evaluation and Data Collection for Robotic Manipulation](/202607/25/2607.21582v1-scale-up-strategically-learning-compositional-generalization-via-bias-aware-evaluation-and-data-collection-for-robotic-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：机器人操作的组合泛化
-6. [UniETP: Unifying Environments for Generalizable Embodied Task Planning](/202607/25/2607.18062v1-unietp-unifying-environments-for-generalizable-embodied-task-planning)  
+   evidence：使机器人从单个人类视频中秒级获取操作技能，直接针对操作学习
+5. [EgoRecovery: Acquiring Failure Recovery Ability Through Human Recovery Demonstration](/202607/26/2607.19745v2-egorecovery-acquiring-failure-recovery-ability-through-human-recovery-demonstration)  
    标签：评分：8.0/10、query:ad
-   evidence：跨多个模拟器的统一具身任务规划接口
+   evidence：利用人类第一人称恢复数据使机器人具备故障恢复能力
 
 ### 速读区论文标签
-1. [FM-VLA: Force-based Memory for Vision-Language-Action Models in Contact-Rich Manipulation](/202607/25/2607.18231v1-fm-vla-force-based-memory-for-vision-language-action-models-in-contact-rich-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：基于力的记忆用于触觉丰富的机器人操作
-2. [Learning Personalized Safety Interventions for Haptic Human-Robot Shared Control](/202607/25/2607.19534v1-learning-personalized-safety-interventions-for-haptic-human-robot-shared-control)  
-   标签：评分：8.0/10、query:ad
-   evidence：学习个性化触觉安全干预用于人机共享控制
-3. [URF: A Unified Robot Control-Policy Framework for Stable Contact Aware Manipulation](/202607/25/2607.20912v1-urf-a-unified-robot-control-policy-framework-for-stable-contact-aware-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：用于稳定接触感知操作的统一机器人控制策略框架
-4. [Beyond Episodic Evaluation: Memory Architectural Bottlenecks in Sequential Embodied Question Answering](/202607/25/2607.21571v1-beyond-episodic-evaluation-memory-architectural-bottlenecks-in-sequential-embodied-question-answering)  
-   标签：评分：8.0/10、query:ad
-   evidence：具身问答中的顺序记忆架构研究
-5. [AXIS: A Growable Community-Driven Data Engine for Scalable Robot Manipulation](/202607/25/2607.21588v1-axis-a-growable-community-driven-data-engine-for-scalable-robot-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：可扩展机器人操作的可增长社区驱动数据引擎
-6. [A Task-Space Receding Horizon Controller for Fast Collision Avoidance](/202607/25/2607.15733v1-a-task-space-receding-horizon-controller-for-fast-collision-avoidance)  
+1. [Beyond Fixed Goal Delivery: Online POMDP Planning for Target Interception in Crowds](/202607/26/2607.18517v1-beyond-fixed-goal-delivery-online-pomdp-planning-for-target-interception-in-crowds)  
    标签：评分：7.0/10、query:ad
-   evidence：机械臂避碰的任务空间滚动时域控制
-7. [EgoExoMoCap: Distributed Ego-Exo Human Motion Capture](/202607/25/2607.15868v1-egoexomocap-distributed-ego-exo-human-motion-capture)  
+   evidence：在线POMDP规划用于人群中的目标拦截，涉及机器人导航和人机交互
+2. [Emergent Compositional Skills in Mixture-of-Experts VLAs](/202607/26/2607.20771v1-emergent-compositional-skills-in-mixture-of-experts-vlas)  
    标签：评分：7.0/10、query:ad
-   evidence：面向具身AI的头戴设备人体运动捕捉
-8. [Self-Supervised Bio-Inspired Robotic Trajectory Planning with Obstacle Avoidance](/202607/25/2607.20743v1-self-supervised-bio-inspired-robotic-trajectory-planning-with-obstacle-avoidance)  
-   标签：评分：7.0/10、query:ad
-   evidence：机器人轨迹规划，避障，自监督学习
-9. [RL-MACRO: A Cybernetic Closed-Loop Intelligence Framework for Multimodal Adaptive Robotic Craniotomy](/202607/25/2607.21113v1-rl-macro-a-cybernetic-closed-loop-intelligence-framework-for-multimodal-adaptive-robotic-craniotomy)  
-   标签：评分：7.0/10、query:ad
-   evidence：强化学习用于机器人颅骨钻孔，多模态感知与自适应决策
+   evidence：基于混合专家视觉-语言-动作模型的组合式机器人策略
 
 
 <div class="dpr-home-promo-card">
