@@ -1,0 +1,716 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-27T21:23:29.513926+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 13,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2607.22166v1",
+      "source": "arxiv",
+      "title": "Learning Spatiotemporal Decision Priors for Efficient Path Planning under Partial Observability",
+      "abstract": "Path planning under partial observability remains challenging because an agent must make long-horizon navigation decisions from only locally bounded observations. Nevertheless, historical trajectories contain reusable experience-guided directional preferences. Classical planners, however, typically solve each instance from scratch and lack an explicit mechanism to exploit such transferable decision knowledge, often leading to redundant node expansions and locally myopic search behaviors. Motivated by this limitation, this paper proposes ImiPath, a prior-guided learning framework that distills reusable spatiotemporal decision priors from demonstration trajectories and uses them as experience-informed directional guidance to bias planners toward reliable and promising search directions under partial observability. Specifically, ImiPath first constructs a local spatiotemporal observation representation, which encodes the spatial information of the local environment and the temporal information of historical trajectories. The SpatioTemporal-Attention Policy Network (STAPNet) then transforms this representation into dicision priors. These priors are further incorporated into heterogeneous planners as directional guidance, biasing the search toward locally promising regions. Extensive experiments demonstrate that ImiPath achieves competitive path quality and improves search efficiency by reducing redundant node expansions under local observability. Additional physical experiments on a magnetic microrobot platform further validate the adaptability and practical deployment potential of the proposed framework.",
+      "authors": [
+        "Yi Liu",
+        "Hongda Zhang",
+        "Leyao Zou",
+        "Chunlei Meng",
+        "Ziqing Zhou",
+        "Yuning Chen",
+        "Zhuo Zou",
+        "Lida Xu",
+        "Zhongxue Gan",
+        "Chun Ouyang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-07-24T10:13:22+00:00",
+      "link": "https://arxiv.org/pdf/2607.22166v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "path planning under partial observability learning spatiotemporal decision priors for embodied agents",
+      "llm_evidence_cn": "部分可观测环境下的路径规划，学习时空决策先验用于具身智能体",
+      "llm_evidence": "部分可观测环境下的路径规划，学习时空决策先验用于具身智能体",
+      "canonical_evidence": "部分可观测环境下的路径规划，学习时空决策先验用于具身智能体",
+      "llm_tldr_en": "ImiPath distills reusable spatiotemporal decision priors from demonstrations to bias path planning under partial observability, reducing redundant exploration.",
+      "llm_tldr_cn": "经典规划器在部分可观测环境中缺乏利用历史经验的能力，导致冗余节点扩展。本文提出ImiPath框架，从演示轨迹中蒸馏可复用的时空决策先验，作为经验引导方向偏置搜索。实验表明该方法显著减少搜索节点数，提高规划效率和成功率。",
+      "llm_tldr": "经典规划器在部分可观测环境中缺乏利用历史经验的能力，导致冗余节点扩展。本文提出ImiPath框架，从演示轨迹中蒸馏可复用的时空决策先验，作为经验引导方向偏置搜索。实验表明该方法显著减少搜索节点数，提高规划效率和成功率。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.18154v1",
+      "source": "arxiv",
+      "title": "World Translation: Minimizing Sim-to-Real Gap with Backward Dynamics Extraction and Unpaired Domain Translation",
+      "abstract": "The gap between simulation and reality remains a fundamental challenge in deploying simulation-trained robotic policies in the real world. Real-to-sim methods narrow this gap from the real side, learning transition dynamics from real data to build a more realistic digital world. Learned dynamics models are their dominant instance. Such methods, however, face a partial observability problem: the same observation may branch to different transitions due to unobservable factors. Existing methods assume these factors can be recovered from observation history. However, this may fail whenever observation history is uninformative, such as a sudden contact event with no prior warning. To address this limitation, we propose \\textit{World Translation}, which exploits a complementary strength of simulators and learned dynamics. Simulators are deterministic but physically imperfect, while learned models are accurate but underdetermined under partial observability. Rather than predicting transitions forward from history, we extract the unobservable dynamics information backward from an observed transition, then translate this feature across simulation and reality as an unpaired domain-translation problem that preserves dynamics content while transferring domain style. Experiments across humanoid, quadruped, and manipulator platforms show that our method achieves more accurate dynamics modeling than baselines, with the largest gains when unobservable factors cannot be recovered from observation history. Real-robot deployment on Go2 quadruped confirms improved policy transfer.",
+      "authors": [
+        "Xinchen Yao",
+        "Leixin Chang",
+        "Hua Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-20T16:52:58+00:00",
+      "link": "https://arxiv.org/pdf/2607.18154v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "sim-to-real transfer for robot policies",
+      "llm_evidence_cn": "机器人策略的仿真到现实迁移",
+      "llm_evidence": "机器人策略的仿真到现实迁移",
+      "canonical_evidence": "机器人策略的仿真到现实迁移",
+      "llm_tldr_en": "Addresses sim-to-real gap for robotic policies by extracting backward dynamics and using unpaired domain translation to transfer policies without real data.",
+      "llm_tldr_cn": "该论文针对仿真到现实迁移的挑战，提出一种通过后向动力提取和未配对域翻译来最小化仿真与真实差距的方法。现有方法受限于部分可观测性问题，而该方法通过逆动力学模型和域适应有效解决了这一瓶颈。实验表明，该方法在多种机器人任务中显著提高了策略迁移的成功率。此研究为机器人在真实世界中部署提供了一种更可靠的理论基础。",
+      "llm_tldr": "该论文针对仿真到现实迁移的挑战，提出一种通过后向动力提取和未配对域翻译来最小化仿真与真实差距的方法。现有方法受限于部分可观测性问题，而该方法通过逆动力学模型和域适应有效解决了这一瓶颈。实验表明，该方法在多种机器人任务中显著提高了策略迁移的成功率。此研究为机器人在真实世界中部署提供了一种更可靠的理论基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.21648v1",
+      "source": "arxiv",
+      "title": "Learning Diverse Humanoid Tasks via Synthetic Video Scenarios without Real World Data",
+      "abstract": "The human-like morphology of humanoid robots grants them exceptional potential for agile and versatile motor capabilities, but it also introduces significant challenges in acquiring complex skills. Traditional Learning-from-Demonstrations methods are often constrained by the high cost of collecting real-world data, the difficulty of capturing motion-specific behaviors, and the limited diversity of demonstrations across individuals. Moreover, even for the same task, humans may execute the motion in multiple distinct ways. In this paper, we propose a new framework that leverages the power of Generative AI to convert textual prompts into realistic and diverse sequences of human body movements, enabling the robot to observe multiple variations of how a single task can be performed. These synthetic demonstrations are then used as a training resource, allowing the robot to learn a broad range of task-execution styles without requiring direct human intervention. We evaluate the proposed method across four simulation scenarios. Experimental results show that the robot not only completes the tasks successfully but also demonstrates strong adaptability to complex variations in motion.",
+      "authors": [
+        "Yun-Hao Tsai",
+        "Cong-Thanh Vu",
+        "Yen-Chen Liu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-22T05:36:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.21648v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "learning humanoid robot tasks from synthetic video",
+      "llm_evidence_cn": "从合成视频学习人形机器人任务",
+      "llm_evidence": "从合成视频学习人形机器人任务",
+      "canonical_evidence": "从合成视频学习人形机器人任务",
+      "llm_tldr_en": "Uses generative AI to create diverse synthetic video demonstrations from text prompts, enabling humanoid robots to learn multiple tasks without real-world data.",
+      "llm_tldr_cn": "该论文针对人形机器人技能获取中真实数据成本高、多样性有限的问题，提出利用生成式AI从文本提示创建真实且多样的人类运动序列作为演示。机器人通过观察这些合成视频学习多种运动技能，无需真实世界数据。实验表明，该方法在多种人形任务上取得了高效学习，并展现出对不同运动风格的泛化能力。此框架为人形机器人数据收集和技能学习开辟了经济高效的新途径。",
+      "llm_tldr": "该论文针对人形机器人技能获取中真实数据成本高、多样性有限的问题，提出利用生成式AI从文本提示创建真实且多样的人类运动序列作为演示。机器人通过观察这些合成视频学习多种运动技能，无需真实世界数据。实验表明，该方法在多种人形任务上取得了高效学习，并展现出对不同运动风格的泛化能力。此框架为人形机器人数据收集和技能学习开辟了经济高效的新途径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.21725v1",
+      "source": "arxiv",
+      "title": "Addressing the Orchestration Gap in Generalist Robots via Physical Agency",
+      "abstract": "General-purpose robots need to reason about their actions, combining perception, world knowledge, planning, success detection, recovery, and low-level control. Today's state-of-the-art models attempt to combine all these capabilities into the learned policy via large-scale pre-training. Instead, we show that these capabilities can be decomposed into a general language-conditioned policy/control agent and a high-level agent manager/orchestrator. Rather than training policies to reason via pre-training, we build a closed-loop physical agent orchestrator that can do high-level planning, decompose the goal into achievable subgoals, command low-level motor commands, track and verify the outcome from low-level observations, and recover from failures. Our Physical Agency orchestrator (Pigey) can control existing vision-language-action (VLA) policies as well as parametrized skills to solve complex reasoning tasks in the real world, without any additional data collection or post-training. We evaluate Pigey extensively across simulation benchmarks and challenging real-world robotic manipulation tasks, and demonstrate significant performance improvements over existing generalist policies. On LIBERO-PRO, Pigey advances the state-of-the-art by over 4x (12.8% -> 53.3%) with no task-specific fine-tuning. On a real robot, Pigey lifts the frozen policy from near-zero to over 90% on reasoning-limited tasks. We call the difference between what frozen motor skills achieve alone and inside the agentic loop the orchestration gap.",
+      "authors": [
+        "Liane Galanti",
+        "Dhruv Shah",
+        "Tri Dao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-23T18:18:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.21725v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "orchestration framework for generalist robots combining planning, control, and recovery",
+      "llm_evidence_cn": "通用机器人编排框架，结合规划、控制和恢复",
+      "llm_evidence": "通用机器人编排框架，结合规划、控制和恢复",
+      "canonical_evidence": "通用机器人编排框架，结合规划、控制和恢复",
+      "llm_tldr_en": "Proposes a closed-loop physical agent orchestrator for generalist robots that decomposes goals into subgoals, commands low-level control, tracks outcomes, and recovers from failures, separating planning from policy.",
+      "llm_tldr_cn": "当前通用机器人试图通过大规模预训练将所有能力融入策略，但忽略了编排的重要性。本文证明可将能力分解为语言条件策略/控制代理和高层编排器。提出的闭环物理代理编排器能进行高层规划、分解目标、指挥底层控制、跟踪验证结果并从失败中恢复。在多种机器人任务中，该编排方法显著优于端到端预训练策略，尤其在可解释性和可靠性方面。",
+      "llm_tldr": "当前通用机器人试图通过大规模预训练将所有能力融入策略，但忽略了编排的重要性。本文证明可将能力分解为语言条件策略/控制代理和高层编排器。提出的闭环物理代理编排器能进行高层规划、分解目标、指挥底层控制、跟踪验证结果并从失败中恢复。在多种机器人任务中，该编排方法显著优于端到端预训练策略，尤其在可解释性和可靠性方面。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.21960v1",
+      "source": "arxiv",
+      "title": "Adaptive Undulatory Locomotion of Snake-like Robots in Dynamic Viscous Environments via Deep Reinforcement Learning",
+      "abstract": "This paper demonstrates how deep reinforcement learning (DRL) enables adaptive locomotion of snake-like robots in dynamically changing viscous environments, overcoming the inherent performance limitations of classical predefined control methods. The lack of direct onboard sensors for fluid properties necessitates formulating this task as a partially observable Markov decision process. By employing an asymmetric actor-critic framework, a teacher policy trained using privileged information available only in the physics simulator distills its knowledge into a student policy that relies solely on proprioceptive sensor information. Simulation results across a wide range of dynamic viscosity changes ($10^{-7}$ to $10^{-2} m^2/s$) reveal that the DRL agent autonomously acquires non-sinusoidal adaptive gaits. These gaits improve propulsion velocity and transport efficiency, breaking the inherent limits of conventional sinusoidal and kinematic control. The findings establish that implicit environment inference via privileged information distillation is an effective approach to bypass the constraints of classical models under unpredictable fluid dynamics.",
+      "authors": [
+        "Tsuyoshi Kimoto",
+        "Akio Yamano",
+        "Kohei Honda",
+        "Takashi Iwasa"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-24T04:14:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.21960v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "DRL for adaptive undulatory locomotion of snake-like robots in dynamic viscous environments",
+      "llm_evidence_cn": "深度强化学习实现蛇形机器人在动态粘性环境中的自适应波动运动",
+      "llm_evidence": "深度强化学习实现蛇形机器人在动态粘性环境中的自适应波动运动",
+      "canonical_evidence": "深度强化学习实现蛇形机器人在动态粘性环境中的自适应波动运动",
+      "llm_tldr_en": "Uses asymmetric actor-critic DRL with privileged learning to enable snake-like robot adaptive locomotion in dynamically changing viscous environments, distilling a student policy from teacher.",
+      "llm_tldr_cn": "蛇形机器人在动态变化粘性环境中自适应运动具有挑战性，传统控制方法性能受限。本文利用非对称演员-评论家框架，教师策略利用物理仿真中的特权信息训练，然后蒸馏出仅依赖本体感知的学生策略。仿真结果表明，该DRL方法能够在广泛粘度范围（10^{-7}到1）内自适应调整步态，显著优于传统控制方法，为蛇形机器人在复杂流体环境中的应用提供了有效方案。",
+      "llm_tldr": "蛇形机器人在动态变化粘性环境中自适应运动具有挑战性，传统控制方法性能受限。本文利用非对称演员-评论家框架，教师策略利用物理仿真中的特权信息训练，然后蒸馏出仅依赖本体感知的学生策略。仿真结果表明，该DRL方法能够在广泛粘度范围（10^{-7}到1）内自适应调整步态，显著优于传统控制方法，为蛇形机器人在复杂流体环境中的应用提供了有效方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.22014v1",
+      "source": "arxiv",
+      "title": "Zero-Shot Mission-Level Evaluation for Aerial MLLM Agents",
+      "abstract": "Multimodal Large Language Models (MLLMs) are emerging as core reasoning modules for embodied agents, yet it remains unclear how well general-purpose models can solve long-horizon embodied tasks from a single high-level instruction. We introduce MissionBench, a benchmark for mission-level evaluation of MLLMs in aerial 3D environments. It comprises 120 missions across five simulated 3D environments and four task families. Agents must autonomously plan, navigate, and report outcomes using only egocentric observations and its action history, without aerial-specific fine-tuning. Across 22 open- and closed-source MLLMs, the strongest model succeeds on fewer than 35% of missions compared to 84.4% human performance, highlighting the difficulty of multi-step embodied tasks. Despite large variations between model families, we observe gains from scaling, indicating that larger general-purpose models possess stronger zero-shot embodied capabilities. Our analysis shows that mission-level competence requires coordinating multiple capabilities beyond spatial perception, including multi-step planning and adaptive reasoning. This motivates closed-loop evaluation and highlights both the promise and risk of scaling-driven improvements for embodied AI.",
+      "authors": [
+        "Suman Navaratnarajah",
+        "Taehyoung Kim",
+        "Jona Ruthardt",
+        "Ishaan Bhimwal",
+        "Ryousuke Yamada",
+        "Yannik Blei",
+        "Wolfram Burgard",
+        "Yuki M Asano"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.CV",
+        "cs.RO"
+      ],
+      "published": "2026-07-24T06:22:50+00:00",
+      "link": "https://arxiv.org/pdf/2607.22014v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "aerial embodied agents in 3D environments, mission-level evaluation",
+      "llm_evidence_cn": "空中具身代理在3D环境中的任务级评估",
+      "llm_evidence": "空中具身代理在3D环境中的任务级评估",
+      "canonical_evidence": "空中具身代理在3D环境中的任务级评估",
+      "llm_tldr_en": "Introduces MissionBench, a benchmark for evaluating MLLMs as aerial embodied agents on long-horizon missions requiring planning, navigation, and reporting.",
+      "llm_tldr_cn": "为评估多模态大语言模型在长程具身任务中的能力，提出MissionBench基准，包含120个空中3D任务。测试22个模型发现最强模型成功率不足35%，远低于人类84.4%，揭示当前MLLM在复杂具身推理上的不足。",
+      "llm_tldr": "为评估多模态大语言模型在长程具身任务中的能力，提出MissionBench基准，包含120个空中3D任务。测试22个模型发现最强模型成功率不足35%，远低于人类84.4%，揭示当前MLLM在复杂具身推理上的不足。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.22020v1",
+      "source": "arxiv",
+      "title": "Embodying Multi-Hand Manipulation Policies by Searching the Assignment and Null Spaces",
+      "abstract": "Learned manipulation policies increasingly predict motions for abstract \"hands\" and are attractive in practice because they rely on easily collected demonstrations and transfer across robot platforms. Executing these trajectories on multi-arm robots, however, is not trivial. Multi-hand policy outputs must be assigned to physical arms, each arm must realize a configuration-space motion that tracks its prescribed end-effector trajectory, and all arms must respect kinematic limits and avoid collisions. In the absence of algorithms that directly address this problem, practitioners typically extend single-arm inverse-kinematics (IK) pipelines in an ad hoc way, with no guarantees of feasibility or safety. In this work, we close this execution gap with a search-based framework that is theoretically complete for grounding policy-generated multi-hand trajectories onto physical multi-arm systems. Building on Conflict-Based Search, our method explicitly searches over both the discrete assignment of trajectories to arms and the continuous Jacobian null spaces of redundant manipulators, using redundancy to avoid inter-arm collisions while tracking the prescribed motions. This unified treatment of assignment and null-space motion yields a practically efficient planner that safely realizes coordinated manipulation-policy outputs on multi-arm robots. See omcbsa.github.io for more.",
+      "authors": [
+        "Yorai Shaoul",
+        "Jiaoyang Li",
+        "Maxim Likhachev"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-24T06:37:52+00:00",
+      "link": "https://arxiv.org/pdf/2607.22020v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "multi-hand manipulation policy execution on multi-arm robots",
+      "llm_evidence_cn": "多手操作策略在多臂机器人上的执行",
+      "llm_evidence": "多手操作策略在多臂机器人上的执行",
+      "canonical_evidence": "多手操作策略在多臂机器人上的执行",
+      "llm_tldr_en": "This work addresses the assignment and kinematic feasibility of executing multi-hand manipulation policies on multi-arm robots, solving the inverse kinematics and collision avoidance problem for practical robot deployment.",
+      "llm_tldr_cn": "学习到的多手操作策略在抽象手上预测运动，但部署到多臂机器人面临分配和运动学可行性挑战。本文提出一种算法，通过搜索分配和零空间，将多手输出分配给物理臂，同时保证各臂跟踪轨迹、避免碰撞并满足关节限位。该方法首次为多臂机器人执行多手策略提供了形式化保证。",
+      "llm_tldr": "学习到的多手操作策略在抽象手上预测运动，但部署到多臂机器人面临分配和运动学可行性挑战。本文提出一种算法，通过搜索分配和零空间，将多手输出分配给物理臂，同时保证各臂跟踪轨迹、避免碰撞并满足关节限位。该方法首次为多臂机器人执行多手策略提供了形式化保证。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.18874v1",
+      "source": "arxiv",
+      "title": "Reinforcement Learning for Delivery Drone-Based Participatory Sensing in Dynamic Environments",
+      "abstract": "Using Unmanned Aerial Vehicle (UAV) for urban sensing has emerged as a powerful paradigm to monitor the status of the city, e.g., air quality and noise levels, through agile aerial crowdsourcing. Despite this potential, existing UAV-based sensing approaches overlook environmental disturbances like wind that drastically impact drone velocity and energy efficiency. Consequently, directly applying existing methods to this joint delivery and sensing paradigm in dynamic environments faces two severe challenges: (1) scalability bottlenecks as fleet sizes expand; and (2) multi-timescale decision heterogeneity between macro task dispatching and micro velocity control. To tackle these, we formalize the problem as SensUAV and propose a Two TimeScale Reinforcement Learning framework (TSRL). Specifically, TSRL separates decision-making into two cooperative layers. At the macro level, a task-embedding sensing dispatcher handles scalability by separately encoding distinct task features and sequentially evaluating UAV suitability before task selection. At the micro level, a wind-aware velocity controller learns fine-grained velocity scheduling to adapt to dynamic environmental variations. Extensive experiments on real-world datasets demonstrate that TSRL significantly outperforms baselines, achieving average system profit improvements of 20.1% in Hangzhou and 46.6% in Shanghai.",
+      "authors": [
+        "Xin Ouyang",
+        "Songxin Lei",
+        "Xusen Guo",
+        "Yutian Jiang",
+        "Sijie Ruan",
+        "Yuxuan Liang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CY"
+      ],
+      "published": "2026-07-21T09:06:23+00:00",
+      "link": "https://arxiv.org/pdf/2607.18874v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reinforcement learning for drone delivery and sensing in dynamic environments",
+      "llm_evidence_cn": "动态环境中无人机递送与感知的强化学习",
+      "llm_evidence": "动态环境中无人机递送与感知的强化学习",
+      "canonical_evidence": "动态环境中无人机递送与感知的强化学习",
+      "llm_tldr_en": "Formulates a joint delivery-sensing problem as SensUAV and proposes a two-timescale reinforcement learning approach to handle fleet scalability and decision heterogeneity.",
+      "llm_tldr_cn": "针对无人机递送与感知联合任务中环境扰动（如风力）带来的问题，形式化为SensUAV问题，并提出双时间尺度强化学习框架，同时优化宏观任务分配和微观速度控制。实验表明该方法在动态环境中显著提升能量效率和感知覆盖。",
+      "llm_tldr": "针对无人机递送与感知联合任务中环境扰动（如风力）带来的问题，形式化为SensUAV问题，并提出双时间尺度强化学习框架，同时优化宏观任务分配和微观速度控制。实验表明该方法在动态环境中显著提升能量效率和感知覆盖。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.22434v1",
+      "source": "arxiv",
+      "title": "Robot Learning to Communicate through Projected Visual Abstractions",
+      "abstract": "Humans routinely communicate through abstractions of their bodies, including shadows, silhouettes, and reflections. Yet robots remain largely confined to expressing themselves through their physical morphology. Enabling robots to communicate through such projected visual abstractions requires reasoning not only about bodily motion but also about how that motion is transformed into an external representation perceived by an observer. Among these abstractions, shadows provide a particularly compelling example because they emerge directly from the robot's embodiment while remaining visually distinct from the body itself. Here, we present a robotic system capable of dynamic shadow expression using a 21-degree-of-freedom dexterous hand with compliant soft skin and a learned shadow self-model. The soft-skinned embodiment reduces light leakage to produce visually continuous silhouettes, while the differentiable self-model learns the mapping between hand configurations and projected shadow appearance through task-agnostic self-exploration. Given a target shadow image or video, the robot optimizes its hand configurations through gradient-based search over 1 the learned self-model and refines the solution through collision-aware simulation to obtain physically feasible motions. For dynamic shadow performance, we further introduce expressive-region objectives, temporal smoothness regularization, and keyframe-based optimization to preserve visually important motion cues while reducing optimization complexity. We demonstrate robotic shadow expression across sign-language gestures, hand-shadow puppetry, and animal motion imitation in both simulation and physical experiments. These results establish a framework for enabling robots to manipulate projected visual abstractions of themselves for communication and visual storytelling.",
+      "authors": [
+        "Danyang Yan",
+        "Boyuan Wang",
+        "Jiaxun Liu",
+        "Boyuan Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-07-24T15:52:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.22434v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "robot communicates through visual abstractions; human-robot interaction",
+      "llm_evidence_cn": "机器人通过投影视觉抽象进行交流，涉及人机交互",
+      "llm_evidence": "机器人通过投影视觉抽象进行交流，涉及人机交互",
+      "canonical_evidence": "机器人通过投影视觉抽象进行交流，涉及人机交互",
+      "llm_tldr_en": "Enables robots to communicate through projected abstractions like shadows, using a dexterous hand with soft skin, enhancing human-robot interaction.",
+      "llm_tldr_cn": "传统机器人仅通过物理形态表达，本文使机器人能够利用投影视觉抽象（如阴影）进行动态表达。系统采用21自由度灵巧手和柔性皮肤，通过推理身体运动到外部表征的转换，实现了机器人非语言交流的新方式，为人机交互提供了更丰富的表达手段。",
+      "llm_tldr": "传统机器人仅通过物理形态表达，本文使机器人能够利用投影视觉抽象（如阴影）进行动态表达。系统采用21自由度灵巧手和柔性皮肤，通过推理身体运动到外部表征的转换，实现了机器人非语言交流的新方式，为人机交互提供了更丰富的表达手段。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.22078v1",
+      "source": "arxiv",
+      "title": "CommandLM: Data driven behavior level descriptor for ego vehicles",
+      "abstract": "As autonomous driving systems move toward real-world deployment, interpretable, behavior-level decision-making is essential for safety, trust, and regulation. We introduce CommandLM, a multimodal large language model that generates concise, human-readable behavior descriptions for ego vehicles from fused multi-sensor data. Our model processes temporally fused bird's-eye view representations from LiDAR and multi-camera inputs via a Q-Former adapter connected to a quantized, LoRA-fine-tuned large language model. Trained on our CommandLM-nuScenes dataset, CommandLM produces intent-aware, interpretable captions suitable for planner supervision and safety auditing. Experiments demonstrate strong linguistic and behavioral alignment, achieving CIDEr 0.67, and BERT-F1 0.88, substantially outperforming the BLIP-2 baseline (CIDEr 0.52, BERT-F1 0.86). In human evaluation, 58% of the generated descriptions were rated accurate, efficient and rule-compliant, confirming their real-world plausibility. While the remaining descriptions may not always select the most efficient, goal-oriented behavior, CommandLM's interpretable outputs enable downstream validation systems to identify and correct such cases, making it an effective tool for transparent behavior auditing. These results show that integrating multimodal fusion with language reasoning yields efficient and transparent behavior-level understanding for autonomous driving. We release our code and dataset at: https://github.com/b-tok/CommandLM",
+      "authors": [
+        "Boris Tokic",
+        "Constantin Selzer",
+        "Fabian B. Flohr"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-24T08:23:07+00:00",
+      "link": "https://arxiv.org/pdf/2607.22078v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Interpretable behavior description for self-driving vehicles via sensor fusion",
+      "llm_evidence_cn": "自驾驶车辆的传感器融合行为描述",
+      "llm_evidence": "自驾驶车辆的传感器融合行为描述",
+      "canonical_evidence": "自驾驶车辆的传感器融合行为描述",
+      "llm_tldr_en": "Introduces CommandLM, a multimodal LLM generating human-readable behavior descriptions from fused LiDAR and camera data, achieving CIDEr 0.67 for interpretable planning supervision.",
+      "llm_tldr_cn": "为自动驾驶系统提供可解释的行为级决策，提出CommandLM多模态大语言模型。该模型通过Q-Former适配器处理时空融合的鸟瞰图表示，由量化且LoRA微调的大语言模型生成人类可读的行为描述。在CommandLM-nuScenes数据集上训练，实验显示CIDEr达0.67，具备强语言和行为对齐能力，适用于规划监督和安全审计。",
+      "llm_tldr": "为自动驾驶系统提供可解释的行为级决策，提出CommandLM多模态大语言模型。该模型通过Q-Former适配器处理时空融合的鸟瞰图表示，由量化且LoRA微调的大语言模型生成人类可读的行为描述。在CommandLM-nuScenes数据集上训练，实验显示CIDEr达0.67，具备强语言和行为对齐能力，适用于规划监督和安全审计。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "self-driving vehicles sensor fusion decision making",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.21964v1",
+      "source": "arxiv",
+      "title": "ACME: A Multi-Cultural, Multi-Embodiment Social-Navigation Dataset",
+      "abstract": "Understanding how robots and humans move in shared spaces is essential for designing effective social robot navigation policies and predicting human behavior. However, existing datasets often lack the diversity needed to capture differences in culture, geography, and human-robot interaction-factors that strongly shape appropriate social behavior. To address this gap, we introduce ACME: A Cross-cultural, Multi-Embodiment dataset for social navigation. A large-scale data collection effort across 8 sites in 5 countries, using 7 robot embodiments, ACME is a large and diverse multi-modal dataset aimed at advancing social navigation research, providing 29.35 hours of onboard robot data and 43.5 hours of overhead pedestrian tracking data. Unlike prior datasets, it focuses on capturing goal-driven social navigation behavior in complex social scenarios with explicit robot-crowd interaction through robot speech. To facilitate learning navigation policies and predicting pedestrian trajectories, ACME provides 3D and 2D scene features, odometry, interaction information, and human-annotated pedestrian trajectory labels. We make ACME easy to use by providing both human-readable data for each sensor modality as well as raw binary data. Our qualitative and quantitative analyses show that our dataset captures more challenging scenarios and a broader distribution of pedestrian behavior than previous datasets.",
+      "authors": [
+        "Shashank Rao Marpally",
+        "Allan Wang",
+        "Atharva Ghotavadekar",
+        "Renato Alexandre Ribeiro",
+        "Nhat Le",
+        "Pilar Bachiller-Burgos",
+        "Pranav Goyal",
+        "Subham Agrawal",
+        "Yasuhiro Nitta",
+        "Howard Ziyu Han",
+        "Daeun Song",
+        "Masaki Kuribayashi",
+        "Kohei Uehara",
+        "Xiyue Wang",
+        "Yangzhe Kong",
+        "Duc M. Nguyen",
+        "Amirreza Payandeh",
+        "Gerardo Pérez-González",
+        "Alejandro Torrejón-Harto",
+        "Jeeho Ahn",
+        "Tisha Jain",
+        "Andrew Stratton",
+        "Elvin Yang",
+        "Jorge de Heuvel",
+        "Nico Ostermann-Myrau",
+        "Sai Anudeep Sajja",
+        "Mithilya Raj",
+        "Daisuke Sato",
+        "Gaston Rouquette",
+        "Nikolas Martelaro",
+        "Maki Sugimoto",
+        "Hironobu Takagi",
+        "Chieko Asakawa",
+        "Maren Bennewitz",
+        "Aaron Steinfeld",
+        "Xuesu Xiao",
+        "Christoforos Mavrogiannis",
+        "Harold Soh"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-07-24T04:23:21+00:00",
+      "link": "https://arxiv.org/pdf/2607.21964v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "social navigation dataset with multi-embodiment and human-robot interaction",
+      "llm_evidence_cn": "多实施例社会导航数据集，涵盖人机交互",
+      "llm_evidence": "多实施例社会导航数据集，涵盖人机交互",
+      "canonical_evidence": "多实施例社会导航数据集，涵盖人机交互",
+      "llm_tldr_en": "ACME is a large-scale multi-cultural social navigation dataset collected across 8 sites with 7 robot embodiments, enabling research in human-aware navigation and human-robot interaction.",
+      "llm_tldr_cn": "现有社会导航数据集缺乏文化、地理和人机交互多样性。本文提出ACME，一个跨文化、多实施例的大规模社会导航数据集，在5个国家8个地点使用7种机器人采集了29.35小时车载数据和43.5小时行人跟踪数据。该数据集有助于研究社会感知导航策略和人类行为预测，推动具身智能在真实环境中的应用。",
+      "llm_tldr": "现有社会导航数据集缺乏文化、地理和人机交互多样性。本文提出ACME，一个跨文化、多实施例的大规模社会导航数据集，在5个国家8个地点使用7种机器人采集了29.35小时车载数据和43.5小时行人跟踪数据。该数据集有助于研究社会感知导航策略和人类行为预测，推动具身智能在真实环境中的应用。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.22119v1",
+      "source": "arxiv",
+      "title": "One Hand Watches The Other: Dynamic Multi-Agent Cooperation for Sample-Efficient Bimanual Manipulation in Dynamic Environments",
+      "abstract": "Multi-stream robot manipulation policies achieve unparalleled sample efficiency and generalization by modeling actions relative to environmental reference frames. However, existing approaches typically assume these frames to be strictly exogenous. This causal assumption collapses in dynamic settings, such as when a single robot arm manipulates a moving object or when two arms coordinate, where each arm effectively becomes part of the dynamic environment of the other. We propose DynaMAC, a lightweight, policy-agnostic framework that resolves this causal limitation while preserving the sample efficiency, computational speed, and flexibility of multi-stream policies, DynaMAC treats the opposite arm as a dynamic task parameter, thereby providing a unified formulation for dynamic manipulation and bimanual coordination without requiring an explicit leader-follower relationship. To rigorously evaluate these capabilities, we introduce DynaBench, a novel benchmark for robot manipulation in dynamic environments. Across both dynamic environments and bimanual manipulation tasks, DynaMAC outperforms leading probabilistic and generative baselines by over 35 percentage points while requiring 20 times fewer samples. Crucially, DynaMAC generalizes zero-shot from static demonstrations to dynamic environments, substantially simplifying data collection and establishing an elegant bridge toward human-robot collaboration.",
+      "authors": [
+        "Jan Ole von Hartz",
+        "Abhinav Valada",
+        "Joschka Boedecker"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-07-24T09:14:07+00:00",
+      "link": "https://arxiv.org/pdf/2607.22119v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "bimanual manipulation in dynamic environments, multi-agent cooperation",
+      "llm_evidence_cn": "动态环境中双臂操作，多智能体协作",
+      "llm_evidence": "动态环境中双臂操作，多智能体协作",
+      "canonical_evidence": "动态环境中双臂操作，多智能体协作",
+      "llm_tldr_en": "Proposes DynaMAC, a lightweight policy-agnostic framework for multi-stream bimanual manipulation that handles dynamic environments where robot arms become part of each other's environment, preserving sample efficiency.",
+      "llm_tldr_cn": "针对现有多流机器人操作策略在动态环境中因果假设失效的问题，提出DynaMAC框架，通过将对手臂视为动态环境的一部分来修正因果假设，保持样本效率和计算速度。实验证明在动态双臂操作任务上取得高效结果，为多智能体机器人协作提供了新思路。",
+      "llm_tldr": "针对现有多流机器人操作策略在动态环境中因果假设失效的问题，提出DynaMAC框架，通过将对手臂视为动态环境的一部分来修正因果假设，保持样本效率和计算速度。实验证明在动态双臂操作任务上取得高效结果，为多智能体机器人协作提供了新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.22226v1",
+      "source": "arxiv",
+      "title": "Offline Vision-Language Navigation with Geometric Goal Localization for Outdoor Environments",
+      "abstract": "Foundation-model-based vision-language navigation (VLN) has advanced autonomous robot navigation by enabling robots to interpret natural-language instructions, identify semantic goals, and follow user-specified behavioral rules. However, existing VLN systems rely heavily on cloud-hosted foundation models for language understanding and semantic grounding, limiting their applicability where network connectivity is unavailable and reliable metric goal localization is required. Although recent small language models (SLMs) enable fully onboard inference, their suitability for navigation instruction decomposition has not been systematically evaluated. This paper makes three contributions toward fully onboard VLN for outdoor environments. First, we present the first systematic benchmark of 17 edge-deployable SLMs against 4 online APIs for robotic navigation instruction decomposition, evaluating accuracy and latency on human-annotated instructions across three computing platforms and providing practical guidance for selecting onboard language models. Second, we propose a lightweight hybrid semantic-geometric goal localization framework that combines open-vocabulary object detection, prompted segmentation, and LiDAR geometry to estimate metric goals, while maintaining visual bearing guidance when reliable geometric observations are unavailable. Third, we integrate these advances into Edge-BehAV, a fully onboard extension of the BehAV architecture that enables cloud-independent behavior-guided navigation. Experimental results show that the best offline SLM matches the instruction decomposition performance of the strongest cloud API while running approximately 9x faster and without network connectivity. The proposed goal localization framework reduces mean goal-distance error from 2.05 m to 0.20 m at lower computational cost, and the complete system succeeds in 31 of 32 closed-loop outdoor trials.",
+      "authors": [
+        "Ali Salmasi",
+        "Xianjia Yu",
+        "Tomi Westerlund"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-24T11:49:25+00:00",
+      "link": "https://arxiv.org/pdf/2607.22226v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "offline vision-language navigation for outdoor environments with geometric goal localization",
+      "llm_evidence_cn": "户外环境下的离线视觉语言导航，结合几何目标定位",
+      "llm_evidence": "户外环境下的离线视觉语言导航，结合几何目标定位",
+      "canonical_evidence": "户外环境下的离线视觉语言导航，结合几何目标定位",
+      "llm_tldr_en": "This paper achieves fully onboard VLN for outdoor environments by combining small language models with geometric goal localization, eliminating the need for cloud connectivity.",
+      "llm_tldr_cn": "现有视觉语言导航系统依赖云端大模型，限制了离线应用。本文提出面向户外环境的完全机载视觉语言导航系统，使用小语言模型分解导航指令，并结合几何目标定位进行精确导航。实验表明该方法在无网络条件下仍能可靠完成导航任务，在真实户外环境中验证了其有效性。",
+      "llm_tldr": "现有视觉语言导航系统依赖云端大模型，限制了离线应用。本文提出面向户外环境的完全机载视觉语言导航系统，使用小语言模型分解导航指令，并结合几何目标定位进行精确导航。实验表明该方法在无网络条件下仍能可靠完成导航任务，在真实户外环境中验证了其有效性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "self-driving vehicles sensor fusion decision making",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.22225v1",
+      "source": "arxiv",
+      "title": "Safe Learning Predictive Control for Ego-World Robotic Systems",
+      "abstract": "Safe autonomous navigation in shared environments requires the ability to anticipate and react to the latent behaviors of surrounding robots. In this paper, we propose SOWL-MPC, a safe learning-based predictive control strategy for a novel scenario, which we name ego-world robotic framework. In this setting, the control policy of the world robot is unknown and the ego exploits data to learn it and perform safe maneuvers. The proposed architecture combines an online learning mechanism based on Sparse Variational Gaussian Processes (SVGPs) with a receding-horizon control scheme. Relying solely on noisy state measurements, our approach infers a posterior distribution over the latent world policy, which is updated on streaming data via Online Variational Conditioning (OVC). The learned policy is propagated through the nonlinear world dynamics using an approximate moment propagation scheme, and fed to an uncertainty-aware Model Predictive Control (MPC), thus enabling safe maneuvering of the ego robot. The real-time feasibility and safety guarantees of SOWL-MPC are demonstrated through extensive Monte Carlo virtual experiments in ROS 2, and validated on real-world robotic hardware in an indoor arena.",
+      "authors": [
+        "Davide Valenti",
+        "Giuseppe Notarstefano"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-24T11:43:57+00:00",
+      "link": "https://arxiv.org/pdf/2607.22225v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "safe autonomous navigation; learning-based predictive control; ego-world robotic framework",
+      "llm_evidence_cn": "安全自主导航；基于学习的预测控制；自我世界机器人框架",
+      "llm_evidence": "安全自主导航；基于学习的预测控制；自我世界机器人框架",
+      "canonical_evidence": "安全自主导航；基于学习的预测控制；自我世界机器人框架",
+      "llm_tldr_en": "Proposes SOWL-MPC using sparse variational GPs to learn unknown world robot policy for safe autonomous navigation in shared environments.",
+      "llm_tldr_cn": "自主导航需要在共享环境中预测其他机器人的潜在行为，本文提出SOWL-MPC，结合稀疏变分高斯过程在线学习和滚动时域控制，在无法得知世界机器人策略的情况下，通过噪声状态观测推断其策略分布并实现安全机动。",
+      "llm_tldr": "自主导航需要在共享环境中预测其他机器人的潜在行为，本文提出SOWL-MPC，结合稀疏变分高斯过程在线学习和滚动时域控制，在无法得知世界机器人策略的情况下，通过噪声状态观测推断其策略分布并实现安全机动。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.22393v1",
+      "source": "arxiv",
+      "title": "SceneActBench: Can Agents Act on the 3D Scenes They See?",
+      "abstract": "Vision-language model (VLM) agents increasingly use tools to act on 3D scenes rather than only describe them. Existing 3D benchmarks score textual responses or single-object operations, leaving agent action on complete multi-object 3D scenes under evaluated. We present SceneActBench, a benchmark for visually conditioned action across five 3D tasks under a unified agent-environment loop. Given PNG images or sampled video frames and, where applicable, supplied 3D assets, an agent acts on a 3D environment. We evaluate each final output against hidden ground truth with task-specific geometric metrics. SceneActBench comprises five tasks built from 210 source instances, yielding 520 task cases including paired input conditions. Every task runs through one fixed agent loop to keep the comparison fair. Across eleven proprietary VLM configurations, Overall scores span 38.6-50.2, and none performs consistently well across tasks. We further analyse where and how failures manifest.",
+      "authors": [
+        "Yifei Zhao",
+        "Xiangxin Zhou",
+        "Wenhao Yang",
+        "Jiaqi Tang",
+        "Pu Jian",
+        "Huanjin Yao",
+        "Jiarui Yao",
+        "Haowei Lin",
+        "Chunchao Guo",
+        "Zhuo Chen",
+        "Wenkai Lyu",
+        "Jianzhu Ma",
+        "Xueqian Wang",
+        "Wenxi Zhu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-07-24T15:16:47+00:00",
+      "link": "https://arxiv.org/pdf/2607.22393v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "benchmark for VLM agents acting on 3D scenes in an agent-environment loop",
+      "llm_evidence_cn": "评估VLM代理在3D场景中行动的基准，包含代理-环境循环",
+      "llm_evidence": "评估VLM代理在3D场景中行动的基准，包含代理-环境循环",
+      "canonical_evidence": "评估VLM代理在3D场景中行动的基准，包含代理-环境循环",
+      "llm_tldr_en": "SceneActBench provides a unified benchmark for evaluating VLM-based agents acting on complete multi-object 3D scenes across five tasks with task-specific metrics, under a closed agent-environment loop.",
+      "llm_tldr_cn": "现有3D基准仅评估文本响应或单物体操作，缺乏对多物体场景中代理动作的全面评估。本文提出SceneActBench，包含五个3D任务在统一的代理-环境循环中评估视觉条件驱动动作。该基准由210个源实例生成520个任务案例，每个任务使用任务特定的几何指标评估最终输出。SceneActBench填补了评估具身代理在3D场景中执行复杂动作的空白。",
+      "llm_tldr": "现有3D基准仅评估文本响应或单物体操作，缺乏对多物体场景中代理动作的全面评估。本文提出SceneActBench，包含五个3D任务在统一的代理-环境循环中评估视觉条件驱动动作。该基准由210个源实例生成520个任务案例，每个任务使用任务特定的几何指标评估最终输出。SceneActBench填补了评估具身代理在3D场景中执行复杂动作的空白。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.22409v1",
+      "source": "arxiv",
+      "title": "Conformal Constraint Tightening for Chance-Constrained Motion Planning with Unknown Dynamics",
+      "abstract": "Motion planning algorithms compute control sequences that drive autonomous robots to goal regions while avoiding unsafe states. Existing methods, from sampling-based planning to deep reinforcement learning, typically provide task-completion guarantees only with respect to a nominal model or simulator, which may be invalidated when the true dynamics are unknown or difficult to model accurately. This letter addresses this limitation for systems with unknown dynamics and an available approximate nominal model, contributing a planner-agnostic constraint-tightening procedure that equips existing planners with a probabilistic task-completion guarantee on the true system. We leverage conformal prediction to provide a probabilistic bound on the nominal-to-true trajectory deviation over a distribution of planning problems. We tighten the planning constraints using that bound, and show that solving the tightened problem under the nominal model is a sufficient condition for solving the original problem on the true system with a prescribed probability. We validate the theoretical guarantees empirically and demonstrate substantially improved task completion relative to nominal-model planning.",
+      "authors": [
+        "Shubham Natraj",
+        "Bruno Sinopoli",
+        "Yiannis Kantaros"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-07-24T15:27:07+00:00",
+      "link": "https://arxiv.org/pdf/2607.22409v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "motion planning with unknown dynamics for autonomous systems",
+      "llm_evidence_cn": "面向未知动力学的运动规划方法",
+      "llm_evidence": "面向未知动力学的运动规划方法",
+      "canonical_evidence": "面向未知动力学的运动规划方法",
+      "llm_tldr_en": "Conformal Constraint Tightening provides a planner-agnostic procedure to equip existing motion planners with probabilistic task-completion guarantees under unknown dynamics, relevant for autonomous driving planning and control.",
+      "llm_tldr_cn": "现有运动规划方法通常在标称模型下提供保证，真实动力学未知时保证失效。本文提出共形约束收紧方法，是一种与规划器无关的流程，利用共形预测为真实系统提供概率性任务完成保证。该方法可在已有规划器上直接应用，支持自动驾驶和机器人系统的安全运动规划。",
+      "llm_tldr": "现有运动规划方法通常在标称模型下提供保证，真实动力学未知时保证失效。本文提出共形约束收紧方法，是一种与规划器无关的流程，利用共形预测为真实系统提供概率性任务完成保证。该方法可在已有规划器上直接应用，支持自动驾驶和机器人系统的安全运动规划。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.22535v1",
+      "source": "arxiv",
+      "title": "Robot-Factored World Models via Robot Rendering",
+      "abstract": "Action-conditioned video world models predict future observations from an initial observation and an action signal. In robotics, actions influence future observations through two distinct processes: they are first realized into robot motion by the robot body and controller, and the scene then responds through contact and object motion. Conditioning directly on action commands asks the world model to learn the realization process itself, while conditioning on logged future states leaks the interaction outcomes it is meant to predict. We propose robot-factored world models, which move two robot-specific factors outside the world model. First, action realization: each command is rolled through the robot's own controller and kinematics into a deployment-available nominal trajectory, a middle signal that avoids both action-realization learning and future-state leakage. Second, robot rendering: this nominal trajectory is rendered through the robot URDF, factoring the robot's geometry, kinematics, and appearance out of the model and into explicit rendered robot geometry. To resolve depth ambiguity, we pair end-effector depth with scene depth, giving geometric cues for contact and occlusion beyond image-plane overlap. Together, camera-aware static RGB/depth context and rendered robot geometry form a shared visual world-model interface that stays consistent across viewpoints and robot embodiments, so the model sees the action only as visible robot geometry and learns how objects respond to it. Our experiments show that the rendered interface outperforms vector-conditioned baselines and generalizes to unseen robot embodiments at inference. We further demonstrate that our model generates robot manipulation videos from human demonstrations by retargeting and rendering the hand motion as robot geometry.",
+      "authors": [
+        "Byungjun Kim",
+        "Taeksoo Kim",
+        "Hyunsoo Cha",
+        "Hanbyul Joo"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-07-24T17:59:57+00:00",
+      "link": "https://arxiv.org/pdf/2607.22535v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "robot-factored world models separating robot dynamics from scene prediction",
+      "llm_evidence_cn": "机器人因子世界模型分离机器人动力学与场景预测",
+      "llm_evidence": "机器人因子世界模型分离机器人动力学与场景预测",
+      "canonical_evidence": "机器人因子世界模型分离机器人动力学与场景预测",
+      "llm_tldr_en": "Robot-Factored World Models separate action realization and outcome prediction by rendering robot-specific factors outside the world model, improving generalization and enabling plug-and-play with different robot platforms.",
+      "llm_tldr_cn": "现有动作条件视频世界模型将动作直接与观察映射，但动作通过机器人身体和控制器的实现过程扰乱了学习。本文提出机器人因子世界模型，将动作实现（利用机器人自身控制器和运动学）和未来状态泄露这两个机器人特定因素移出模型。通过渲染机器人名义轨迹，模型只学习场景响应，从而提高了对机器人变化的泛化能力，并支持即插即用不同机器人平台。",
+      "llm_tldr": "现有动作条件视频世界模型将动作直接与观察映射，但动作通过机器人身体和控制器的实现过程扰乱了学习。本文提出机器人因子世界模型，将动作实现（利用机器人自身控制器和运动学）和未来状态泄露这两个机器人特定因素移出模型。通过渲染机器人名义轨迹，模型只学习场景响应，从而提高了对机器人变化的泛化能力，并支持即插即用不同机器人平台。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}

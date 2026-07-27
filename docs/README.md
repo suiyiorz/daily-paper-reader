@@ -6,43 +6,71 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-26
-- 运行时间：2026-07-26 19:55:57 UTC
+- 最新运行日期：2026-07-27
+- 运行时间：2026-07-27 21:35:00 UTC
 - 运行状态：成功
-- 本次总论文数：7
-- 精读区：5
-- 速读区：2
+- 本次总论文数：17
+- 精读区：6
+- 速读区：11
 
 ### 今日简报（AI）
-今日精选7篇论文，重点精读两篇9分研究，涵盖越野场景视觉感知与四足机器人强化学习。  
-最值得关注的方向：基于全局先验蒸馏的图像affordance预测，以及扭矩驱动的四足机器人步态学习。  
-建议读者优先阅读这两篇高分工作，结合速读中的人群目标拦截与混合专家VLA技能涌现，拓展机器人自主决策视野。
-- 详情：[/202607/26/README](/202607/26/README)
+今日共整理17篇论文，精读重点攻克了部分可观测下的路径规划先验学习与sim-to-real域翻译两大难题。最值得深读的是《Learning Spatiotemporal Decision Priors》提出的高效路径规划先验，以及《World Translation》通过反向动力学提取与无配对域翻译最小化仿真差距。下一步建议普通读者优先关注多智能体动态协作（如《One Hand Watches The Other》）和无人车行为描述（如《CommandLM》），这些方法在复杂动态环境中展现强应用前景。
+- 详情：[/202607/27/README](/202607/27/README)
 
 ### 精读区论文标签
-1. [Distilling Global Traversability Priors for Image-based Affordance Prediction in Off-road Environments](/202607/26/2607.17984v1-distilling-global-traversability-priors-for-image-based-affordance-prediction-in-off-road-environments)  
+1. [Learning Spatiotemporal Decision Priors for Efficient Path Planning under Partial Observability](/202607/27/2607.22166v1-learning-spatiotemporal-decision-priors-for-efficient-path-planning-under-partial-observability)  
    标签：评分：9.0/10、query:ad
-   evidence：自主导航, 感知规划
-2. [Towards Torque-Driven Reinforcement Learning for Quadruped Locomotion](/202607/26/2607.18365v1-towards-torque-driven-reinforcement-learning-for-quadruped-locomotion)  
-   标签：评分：9.0/10、query:ad
-   evidence：四足运动, 强化学习
-3. [Milo, a Fully Autonomous Indoor/Outdoor Robotic Guide Dog](/202607/26/2607.19530v1-milo-a-fully-autonomous-indooroutdoor-robotic-guide-dog)  
-   标签：评分：9.0/10、query:ad
-   evidence：机器人导盲犬自主导航人机交互
-4. [Robots Acquire Manipulation Skills in Seconds from a Single Human Video](/202607/26/2607.20033v2-robots-acquire-manipulation-skills-in-seconds-from-a-single-human-video)  
-   标签：评分：9.0/10、query:ad
-   evidence：使机器人从单个人类视频中秒级获取操作技能，直接针对操作学习
-5. [EgoRecovery: Acquiring Failure Recovery Ability Through Human Recovery Demonstration](/202607/26/2607.19745v2-egorecovery-acquiring-failure-recovery-ability-through-human-recovery-demonstration)  
+   evidence：部分可观测环境下的路径规划，学习时空决策先验用于具身智能体
+2. [World Translation: Minimizing Sim-to-Real Gap with Backward Dynamics Extraction and Unpaired Domain Translation](/202607/27/2607.18154v1-world-translation-minimizing-sim-to-real-gap-with-backward-dynamics-extraction-and-unpaired-domain-translation)  
    标签：评分：8.0/10、query:ad
-   evidence：利用人类第一人称恢复数据使机器人具备故障恢复能力
+   evidence：机器人策略的仿真到现实迁移
+3. [Learning Diverse Humanoid Tasks via Synthetic Video Scenarios without Real World Data](/202607/27/2607.21648v1-learning-diverse-humanoid-tasks-via-synthetic-video-scenarios-without-real-world-data)  
+   标签：评分：8.0/10、query:ad
+   evidence：从合成视频学习人形机器人任务
+4. [Addressing the Orchestration Gap in Generalist Robots via Physical Agency](/202607/27/2607.21725v1-addressing-the-orchestration-gap-in-generalist-robots-via-physical-agency)  
+   标签：评分：8.0/10、query:ad
+   evidence：通用机器人编排框架，结合规划、控制和恢复
+5. [Adaptive Undulatory Locomotion of Snake-like Robots in Dynamic Viscous Environments via Deep Reinforcement Learning](/202607/27/2607.21960v1-adaptive-undulatory-locomotion-of-snake-like-robots-in-dynamic-viscous-environments-via-deep-reinforcement-learning)  
+   标签：评分：8.0/10、query:ad
+   evidence：深度强化学习实现蛇形机器人在动态粘性环境中的自适应波动运动
+6. [Zero-Shot Mission-Level Evaluation for Aerial MLLM Agents](/202607/27/2607.22014v1-zero-shot-mission-level-evaluation-for-aerial-mllm-agents)  
+   标签：评分：8.0/10、query:ad
+   evidence：空中具身代理在3D环境中的任务级评估
 
 ### 速读区论文标签
-1. [Beyond Fixed Goal Delivery: Online POMDP Planning for Target Interception in Crowds](/202607/26/2607.18517v1-beyond-fixed-goal-delivery-online-pomdp-planning-for-target-interception-in-crowds)  
+1. [Embodying Multi-Hand Manipulation Policies by Searching the Assignment and Null Spaces](/202607/27/2607.22020v1-embodying-multi-hand-manipulation-policies-by-searching-the-assignment-and-null-spaces)  
+   标签：评分：8.0/10、query:ad
+   evidence：多手操作策略在多臂机器人上的执行
+2. [CommandLM: Data driven behavior level descriptor for ego vehicles](/202607/27/2607.22078v1-commandlm-data-driven-behavior-level-descriptor-for-ego-vehicles)  
+   标签：评分：8.0/10、query:ad
+   evidence：自驾驶车辆的传感器融合行为描述
+3. [One Hand Watches The Other: Dynamic Multi-Agent Cooperation for Sample-Efficient Bimanual Manipulation in Dynamic Environments](/202607/27/2607.22119v1-one-hand-watches-the-other-dynamic-multi-agent-cooperation-for-sample-efficient-bimanual-manipulation-in-dynamic-environments)  
+   标签：评分：8.0/10、query:ad
+   evidence：动态环境中双臂操作，多智能体协作
+4. [Safe Learning Predictive Control for Ego-World Robotic Systems](/202607/27/2607.22225v1-safe-learning-predictive-control-for-ego-world-robotic-systems)  
+   标签：评分：8.0/10、query:ad
+   evidence：安全自主导航；基于学习的预测控制；自我世界机器人框架
+5. [SceneActBench: Can Agents Act on the 3D Scenes They See?](/202607/27/2607.22393v1-sceneactbench-can-agents-act-on-the-3d-scenes-they-see)  
+   标签：评分：8.0/10、query:ad
+   evidence：评估VLM代理在3D场景中行动的基准，包含代理-环境循环
+6. [Conformal Constraint Tightening for Chance-Constrained Motion Planning with Unknown Dynamics](/202607/27/2607.22409v1-conformal-constraint-tightening-for-chance-constrained-motion-planning-with-unknown-dynamics)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向未知动力学的运动规划方法
+7. [Robot-Factored World Models via Robot Rendering](/202607/27/2607.22535v1-robot-factored-world-models-via-robot-rendering)  
+   标签：评分：8.0/10、query:ad
+   evidence：机器人因子世界模型分离机器人动力学与场景预测
+8. [Reinforcement Learning for Delivery Drone-Based Participatory Sensing in Dynamic Environments](/202607/27/2607.18874v1-reinforcement-learning-for-delivery-drone-based-participatory-sensing-in-dynamic-environments)  
    标签：评分：7.0/10、query:ad
-   evidence：在线POMDP规划用于人群中的目标拦截，涉及机器人导航和人机交互
-2. [Emergent Compositional Skills in Mixture-of-Experts VLAs](/202607/26/2607.20771v1-emergent-compositional-skills-in-mixture-of-experts-vlas)  
+   evidence：动态环境中无人机递送与感知的强化学习
+9. [ACME: A Multi-Cultural, Multi-Embodiment Social-Navigation Dataset](/202607/27/2607.21964v1-acme-a-multi-cultural-multi-embodiment-social-navigation-dataset)  
    标签：评分：7.0/10、query:ad
-   evidence：基于混合专家视觉-语言-动作模型的组合式机器人策略
+   evidence：多实施例社会导航数据集，涵盖人机交互
+10. [Offline Vision-Language Navigation with Geometric Goal Localization for Outdoor Environments](/202607/27/2607.22226v1-offline-vision-language-navigation-with-geometric-goal-localization-for-outdoor-environments)  
+   标签：评分：7.0/10、query:ad
+   evidence：户外环境下的离线视觉语言导航，结合几何目标定位
+11. [Robot Learning to Communicate through Projected Visual Abstractions](/202607/27/2607.22434v1-robot-learning-to-communicate-through-projected-visual-abstractions)  
+   标签：评分：6.0/10、query:ad
+   evidence：机器人通过投影视觉抽象进行交流，涉及人机交互
 
 
 <div class="dpr-home-promo-card">
