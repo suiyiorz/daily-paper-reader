@@ -6,71 +6,80 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-27
-- 运行时间：2026-07-27 21:35:00 UTC
+- 最新运行日期：2026-07-28
+- 运行时间：2026-07-28 21:43:09 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：6
+- 本次总论文数：20
+- 精读区：9
 - 速读区：11
 
 ### 今日简报（AI）
-今日共整理17篇论文，精读重点攻克了部分可观测下的路径规划先验学习与sim-to-real域翻译两大难题。最值得深读的是《Learning Spatiotemporal Decision Priors》提出的高效路径规划先验，以及《World Translation》通过反向动力学提取与无配对域翻译最小化仿真差距。下一步建议普通读者优先关注多智能体动态协作（如《One Hand Watches The Other》）和无人车行为描述（如《CommandLM》），这些方法在复杂动态环境中展现强应用前景。
-- 详情：[/202607/27/README](/202607/27/README)
+今日精选9篇精读与11篇速读论文，重点关注人机交互通用认知模型与端到端自动驾驶统一框架两大方向。9.0分的《WCM》和《MOJITO》分别提出了世界认知模型和多模态联合学习方法，值得优先精读。建议普通读者从WCM的泛化交互逻辑和MOJITO的端到端架构切入，以把握人机协同与自动驾驶的核心进展。
+- 详情：[/202607/28/README](/202607/28/README)
 
 ### 精读区论文标签
-1. [Learning Spatiotemporal Decision Priors for Efficient Path Planning under Partial Observability](/202607/27/2607.22166v1-learning-spatiotemporal-decision-priors-for-efficient-path-planning-under-partial-observability)  
+1. [WCM: World-Cognition Model for Generalizable Human-Robot Interaction](/202607/28/2607.22999v1-wcm-world-cognition-model-for-generalizable-human-robot-interaction)  
    标签：评分：9.0/10、query:ad
-   evidence：部分可观测环境下的路径规划，学习时空决策先验用于具身智能体
-2. [World Translation: Minimizing Sim-to-Real Gap with Backward Dynamics Extraction and Unpaired Domain Translation](/202607/27/2607.18154v1-world-translation-minimizing-sim-to-real-gap-with-backward-dynamics-extraction-and-unpaired-domain-translation)  
-   标签：评分：8.0/10、query:ad
-   evidence：机器人策略的仿真到现实迁移
-3. [Learning Diverse Humanoid Tasks via Synthetic Video Scenarios without Real World Data](/202607/27/2607.21648v1-learning-diverse-humanoid-tasks-via-synthetic-video-scenarios-without-real-world-data)  
-   标签：评分：8.0/10、query:ad
-   evidence：从合成视频学习人形机器人任务
-4. [Addressing the Orchestration Gap in Generalist Robots via Physical Agency](/202607/27/2607.21725v1-addressing-the-orchestration-gap-in-generalist-robots-via-physical-agency)  
-   标签：评分：8.0/10、query:ad
-   evidence：通用机器人编排框架，结合规划、控制和恢复
-5. [Adaptive Undulatory Locomotion of Snake-like Robots in Dynamic Viscous Environments via Deep Reinforcement Learning](/202607/27/2607.21960v1-adaptive-undulatory-locomotion-of-snake-like-robots-in-dynamic-viscous-environments-via-deep-reinforcement-learning)  
-   标签：评分：8.0/10、query:ad
-   evidence：深度强化学习实现蛇形机器人在动态粘性环境中的自适应波动运动
-6. [Zero-Shot Mission-Level Evaluation for Aerial MLLM Agents](/202607/27/2607.22014v1-zero-shot-mission-level-evaluation-for-aerial-mllm-agents)  
-   标签：评分：8.0/10、query:ad
-   evidence：空中具身代理在3D环境中的任务级评估
+   evidence：包含感知、推理、动作模块的人机交互模型
+2. [MOJITO: Modal Joint Learning for Unified End-to-End Autonomous Driving](/202607/28/2607.23511v1-mojito-modal-joint-learning-for-unified-end-to-end-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：基于模态联合学习的统一端到端自动驾驶框架
+3. [ObsDriveBench: Benchmarking Multimodal Understanding under Adverse Weather with Observability Awareness](/202607/28/2607.23537v1-obsdrivebench-benchmarking-multimodal-understanding-under-adverse-weather-with-observability-awareness)  
+   标签：评分：9.0/10、query:ad
+   evidence：恶劣天气下自动驾驶多模态理解基准
+4. [Embodied GPT-5.1: Evidence of a World Model?](/202607/28/2607.23899v1-embodied-gpt-51-evidence-of-a-world-model)  
+   标签：评分：9.0/10、query:ad
+   evidence：利用GPT-5.1作为实体移动机器人的高层控制器
+5. [WorldDiT: A Unified Diffusion Architecture for World and Action Modeling](/202607/28/2607.23909v1-worlddit-a-unified-diffusion-architecture-for-world-and-action-modeling)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向机器人动作与世界建模的统一扩散架构
+6. [LeapBot-WA: World-Anchor Action Models via Predictive Latent Alignments](/202607/28/2607.23969v1-leapbot-wa-world-anchor-action-models-via-predictive-latent-alignments)  
+   标签：评分：9.0/10、query:ad
+   evidence：通过预测性潜在对齐实现具身智能的世界动作模型
+7. [WARL: Wrench-Augmented Reinforcement Learning for Task-Agnostic Learning in Legged Robots](/202607/28/2607.24036v1-warl-wrench-augmented-reinforcement-learning-for-task-agnostic-learning-in-legged-robots)  
+   标签：评分：9.0/10、query:ad
+   evidence：腿式机器人强化学习中的力矩增强动作空间
+8. [MATS: A novel multi-modality multi-task learning framework for 3D perception in autonomous driving](/202607/28/2607.24224v1-mats-a-novel-multi-modality-multi-task-learning-framework-for-3d-perception-in-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：自动驾驶3D感知的多模态多任务学习
+9. [Continual-RL for Generalization in Autonomous Racing on the RoboRacer Platform](/202607/28/2607.24320v1-continual-rl-for-generalization-in-autonomous-racing-on-the-roboracer-platform)  
+   标签：评分：9.0/10、query:ad
+   evidence：在RoboRacer平台上进行自动驾驶赛车的持续强化学习
 
 ### 速读区论文标签
-1. [Embodying Multi-Hand Manipulation Policies by Searching the Assignment and Null Spaces](/202607/27/2607.22020v1-embodying-multi-hand-manipulation-policies-by-searching-the-assignment-and-null-spaces)  
+1. [MEMENTO: Memory-Guided Memetic Code-as-Policy Evolution](/202607/28/2607.22832v1-memento-memory-guided-memetic-code-as-policy-evolution)  
    标签：评分：8.0/10、query:ad
-   evidence：多手操作策略在多臂机器人上的执行
-2. [CommandLM: Data driven behavior level descriptor for ego vehicles](/202607/27/2607.22078v1-commandlm-data-driven-behavior-level-descriptor-for-ego-vehicles)  
+   evidence：面向长时域具身任务的记忆引导模因代码策略进化
+2. [Towards Dual-Brain Minimal Sufficient Representation for Vision-Language Navigation](/202607/28/2607.23181v1-towards-dual-brain-minimal-sufficient-representation-for-vision-language-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：自驾驶车辆的传感器融合行为描述
-3. [One Hand Watches The Other: Dynamic Multi-Agent Cooperation for Sample-Efficient Bimanual Manipulation in Dynamic Environments](/202607/27/2607.22119v1-one-hand-watches-the-other-dynamic-multi-agent-cooperation-for-sample-efficient-bimanual-manipulation-in-dynamic-environments)  
+   evidence：面向具身智能体的视觉语言连续环境导航
+3. [PRISM: Polynomial Representations for Interaction-Structured Motor Control](/202607/28/2607.23473v1-prism-polynomial-representations-for-interaction-structured-motor-control)  
    标签：评分：8.0/10、query:ad
-   evidence：动态环境中双臂操作，多智能体协作
-4. [Safe Learning Predictive Control for Ego-World Robotic Systems](/202607/27/2607.22225v1-safe-learning-predictive-control-for-ego-world-robotic-systems)  
+   evidence：机器人运动控制策略表示
+4. [Optimal Reward Shaping: Autonomous Car Parking Case Study](/202607/28/2607.23617v1-optimal-reward-shaping-autonomous-car-parking-case-study)  
    标签：评分：8.0/10、query:ad
-   evidence：安全自主导航；基于学习的预测控制；自我世界机器人框架
-5. [SceneActBench: Can Agents Act on the 3D Scenes They See?](/202607/27/2607.22393v1-sceneactbench-can-agents-act-on-the-3d-scenes-they-see)  
+   evidence：基于强化学习的最优奖励塑造用于自动驾驶汽车泊车
+5. [DAP-Pose: Deep Temporal Alignment and Physics-aware Cross-modal Sensor Fusion for Robust Pose Estimation](/202607/28/2607.23755v1-dap-pose-deep-temporal-alignment-and-physics-aware-cross-modal-sensor-fusion-for-robust-pose-estimation)  
    标签：评分：8.0/10、query:ad
-   evidence：评估VLM代理在3D场景中行动的基准，包含代理-环境循环
-6. [Conformal Constraint Tightening for Chance-Constrained Motion Planning with Unknown Dynamics](/202607/27/2607.22409v1-conformal-constraint-tightening-for-chance-constrained-motion-planning-with-unknown-dynamics)  
+   evidence：多模态传感器融合用于自动驾驶中的鲁棒位姿估计
+6. [A Few Words Go a Long Way: Language Guided Robot Policy Synthesis](/202607/28/2607.23784v1-a-few-words-go-a-long-way-language-guided-robot-policy-synthesis)  
    标签：评分：8.0/10、query:ad
-   evidence：面向未知动力学的运动规划方法
-7. [Robot-Factored World Models via Robot Rendering](/202607/27/2607.22535v1-robot-factored-world-models-via-robot-rendering)  
+   evidence：利用LLM编程代理进行语言引导的模块化机器人策略合成
+7. [Learning Reusable Hybrid Motion Priors for Humanoid Locomotion from Motion Imitation](/202607/28/2607.24083v1-learning-reusable-hybrid-motion-priors-for-humanoid-locomotion-from-motion-imitation)  
    标签：评分：8.0/10、query:ad
-   evidence：机器人因子世界模型分离机器人动力学与场景预测
-8. [Reinforcement Learning for Delivery Drone-Based Participatory Sensing in Dynamic Environments](/202607/27/2607.18874v1-reinforcement-learning-for-delivery-drone-based-participatory-sensing-in-dynamic-environments)  
+   evidence：通过运动模仿学习可复用的混合运动先验用于人形机器人行走
+8. [Try Once, Then Optimal: De-Redundified Procedure Memory for Cross-Episode Exploration Amortization](/202607/28/2607.23702v1-try-once-then-optimal-de-redundified-procedure-memory-for-cross-episode-exploration-amortization)  
    标签：评分：7.0/10、query:ad
-   evidence：动态环境中无人机递送与感知的强化学习
-9. [ACME: A Multi-Cultural, Multi-Embodiment Social-Navigation Dataset](/202607/27/2607.21964v1-acme-a-multi-cultural-multi-embodiment-social-navigation-dataset)  
+   evidence：面向对象的内存用于操作隐藏状态对象
+9. [Bridging Reinforcement Learning and Optimal Control via Feasible Action Mapping](/202607/28/2607.23930v1-bridging-reinforcement-learning-and-optimal-control-via-feasible-action-mapping)  
    标签：评分：7.0/10、query:ad
-   evidence：多实施例社会导航数据集，涵盖人机交互
-10. [Offline Vision-Language Navigation with Geometric Goal Localization for Outdoor Environments](/202607/27/2607.22226v1-offline-vision-language-navigation-with-geometric-goal-localization-for-outdoor-environments)  
+   evidence：通过可行动作映射桥接强化学习与最优控制，用于受约束动态系统
+10. [A Motion-Aware Vector Quantization Framework with Centroid Reuse for Efficient VLA Inference](/202607/28/2607.24148v1-a-motion-aware-vector-quantization-framework-with-centroid-reuse-for-efficient-vla-inference)  
    标签：评分：7.0/10、query:ad
-   evidence：户外环境下的离线视觉语言导航，结合几何目标定位
-11. [Robot Learning to Communicate through Projected Visual Abstractions](/202607/27/2607.22434v1-robot-learning-to-communicate-through-projected-visual-abstractions)  
-   标签：评分：6.0/10、query:ad
-   evidence：机器人通过投影视觉抽象进行交流，涉及人机交互
+   evidence：运动感知向量量化实现高效VLA推理
+11. [Not Forgotten: Implementation and Evaluation of a Personalized Episodic Memory for the Humanoid Robot Head Kim](/202607/28/2607.24190v1-not-forgotten-implementation-and-evaluation-of-a-personalized-episodic-memory-for-the-humanoid-robot-head-kim)  
+   标签：评分：7.0/10、query:ad
+   evidence：为人形机器人头部Kim实现的个性化情景记忆以增强人机交互
 
 
 <div class="dpr-home-promo-card">
