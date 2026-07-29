@@ -6,80 +6,70 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-28
-- 运行时间：2026-07-28 21:43:09 UTC
+- 最新运行日期：2026-07-29
+- 运行时间：2026-07-29 21:28:50 UTC
 - 运行状态：成功
-- 本次总论文数：20
-- 精读区：9
-- 速读区：11
+- 本次总论文数：16
+- 精读区：6
+- 速读区：10
 
 ### 今日简报（AI）
-今日精选9篇精读与11篇速读论文，重点关注人机交互通用认知模型与端到端自动驾驶统一框架两大方向。9.0分的《WCM》和《MOJITO》分别提出了世界认知模型和多模态联合学习方法，值得优先精读。建议普通读者从WCM的泛化交互逻辑和MOJITO的端到端架构切入，以把握人机协同与自动驾驶的核心进展。
-- 详情：[/202607/28/README](/202607/28/README)
+1) 今日16篇论文聚焦机器人学习，精读两篇高分解耦视频-动作模型与可解释注意力方法。  
+2) 最值得关注DeVA（9.0分）引入物理引导提升策略学习效率，以及GuidedAttention（8.0分）实现可纠偏的视觉注意力。  
+3) 建议优先精读这两篇，尤其关注物理引导如何增强策略泛化性，可复用于具体操作任务。
+- 详情：[/202607/29/README](/202607/29/README)
 
 ### 精读区论文标签
-1. [WCM: World-Cognition Model for Generalizable Human-Robot Interaction](/202607/28/2607.22999v1-wcm-world-cognition-model-for-generalizable-human-robot-interaction)  
+1. [DeVA: Decoupled Video-Action Model with physical guidance for robot policy learning](/202607/29/2607.24159v1-deva-decoupled-video-action-model-with-physical-guidance-for-robot-policy-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：包含感知、推理、动作模块的人机交互模型
-2. [MOJITO: Modal Joint Learning for Unified End-to-End Autonomous Driving](/202607/28/2607.23511v1-mojito-modal-joint-learning-for-unified-end-to-end-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：基于模态联合学习的统一端到端自动驾驶框架
-3. [ObsDriveBench: Benchmarking Multimodal Understanding under Adverse Weather with Observability Awareness](/202607/28/2607.23537v1-obsdrivebench-benchmarking-multimodal-understanding-under-adverse-weather-with-observability-awareness)  
-   标签：评分：9.0/10、query:ad
-   evidence：恶劣天气下自动驾驶多模态理解基准
-4. [Embodied GPT-5.1: Evidence of a World Model?](/202607/28/2607.23899v1-embodied-gpt-51-evidence-of-a-world-model)  
-   标签：评分：9.0/10、query:ad
-   evidence：利用GPT-5.1作为实体移动机器人的高层控制器
-5. [WorldDiT: A Unified Diffusion Architecture for World and Action Modeling](/202607/28/2607.23909v1-worlddit-a-unified-diffusion-architecture-for-world-and-action-modeling)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向机器人动作与世界建模的统一扩散架构
-6. [LeapBot-WA: World-Anchor Action Models via Predictive Latent Alignments](/202607/28/2607.23969v1-leapbot-wa-world-anchor-action-models-via-predictive-latent-alignments)  
-   标签：评分：9.0/10、query:ad
-   evidence：通过预测性潜在对齐实现具身智能的世界动作模型
-7. [WARL: Wrench-Augmented Reinforcement Learning for Task-Agnostic Learning in Legged Robots](/202607/28/2607.24036v1-warl-wrench-augmented-reinforcement-learning-for-task-agnostic-learning-in-legged-robots)  
-   标签：评分：9.0/10、query:ad
-   evidence：腿式机器人强化学习中的力矩增强动作空间
-8. [MATS: A novel multi-modality multi-task learning framework for 3D perception in autonomous driving](/202607/28/2607.24224v1-mats-a-novel-multi-modality-multi-task-learning-framework-for-3d-perception-in-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：自动驾驶3D感知的多模态多任务学习
-9. [Continual-RL for Generalization in Autonomous Racing on the RoboRacer Platform](/202607/28/2607.24320v1-continual-rl-for-generalization-in-autonomous-racing-on-the-roboracer-platform)  
-   标签：评分：9.0/10、query:ad
-   evidence：在RoboRacer平台上进行自动驾驶赛车的持续强化学习
+   evidence：机器人策略学习、视频-动作模型、物理引导、操控
+2. [GuidedAttention: Interpretable and Correctable Visual Attention for OOD-Robust Robot Manipulation via Imitation Learning](/202607/29/2607.21049v1-guidedattention-interpretable-and-correctable-visual-attention-for-ood-robust-robot-manipulation-via-imitation-learning)  
+   标签：评分：8.0/10、query:ad
+   evidence：可解释的视觉注意力用于机器人操作，模仿学习
+3. [MemVLN: Episodic and Procedural Memory for Vision-and-Language Navigation](/202607/29/2607.23504v1-memvln-episodic-and-procedural-memory-for-vision-and-language-navigation)  
+   标签：评分：8.0/10、query:ad
+   evidence：视觉语言导航中的情节与程序记忆
+4. [FloAff-Kitchen: Bridging Navigation and Manipulation via Canonical and Progressive Floor Affordance Learning](/202607/29/2607.24207v1-floaff-kitchen-bridging-navigation-and-manipulation-via-canonical-and-progressive-floor-affordance-learning)  
+   标签：评分：8.0/10、query:ad
+   evidence：地面可操作性学习用于移动机器人导航与操控
+5. [Learning Adaptive Multi-Task Guidance, Navigation, and Control via Hypernetworks](/202607/29/2607.24292v1-learning-adaptive-multi-task-guidance-navigation-and-control-via-hypernetworks)  
+   标签：评分：8.0/10、query:ad
+   evidence：超网络驱动的多任务强化学习制导导航与控制
+6. [PAC-DP: PAC-Bayesian Diffusion Policy Learning](/202607/29/2607.24296v1-pac-dp-pac-bayesian-diffusion-policy-learning)  
+   标签：评分：8.0/10、query:ad
+   evidence：PAC-贝叶斯扩散策略学习用于机器人操控
 
 ### 速读区论文标签
-1. [MEMENTO: Memory-Guided Memetic Code-as-Policy Evolution](/202607/28/2607.22832v1-memento-memory-guided-memetic-code-as-policy-evolution)  
+1. [Data Pyramid for Embodied Manipulation](/202607/29/2607.24744v1-data-pyramid-for-embodied-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向长时域具身任务的记忆引导模因代码策略进化
-2. [Towards Dual-Brain Minimal Sufficient Representation for Vision-Language Navigation](/202607/28/2607.23181v1-towards-dual-brain-minimal-sufficient-representation-for-vision-language-navigation)  
+   evidence：涵盖多种数据源的具身操作数据金字塔
+2. [Extended Reality as a Mediation Layer for Situated Human Control in Human-Robot Teaming](/202607/29/2607.25047v1-extended-reality-as-a-mediation-layer-for-situated-human-control-in-human-robot-teaming)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身智能体的视觉语言连续环境导航
-3. [PRISM: Polynomial Representations for Interaction-Structured Motor Control](/202607/28/2607.23473v1-prism-polynomial-representations-for-interaction-structured-motor-control)  
+   evidence：扩展现实用于人机协同，情境化控制
+3. [Decompose and Reorganize: Planning with Primitives and Visuomotor Policies Learned from Demonstrations](/202607/29/2607.25397v1-decompose-and-reorganize-planning-with-primitives-and-visuomotor-policies-learned-from-demonstrations)  
    标签：评分：8.0/10、query:ad
-   evidence：机器人运动控制策略表示
-4. [Optimal Reward Shaping: Autonomous Car Parking Case Study](/202607/28/2607.23617v1-optimal-reward-shaping-autonomous-car-parking-case-study)  
+   evidence：整合视觉运动策略与任务运动规划用于机器人操纵
+4. [Transformer Transformer: A Unified Model for Motion-Conditioned Robot Co-design](/202607/29/2607.25798v1-transformer-transformer-a-unified-model-for-motion-conditioned-robot-co-design)  
    标签：评分：8.0/10、query:ad
-   evidence：基于强化学习的最优奖励塑造用于自动驾驶汽车泊车
-5. [DAP-Pose: Deep Temporal Alignment and Physics-aware Cross-modal Sensor Fusion for Robust Pose Estimation](/202607/28/2607.23755v1-dap-pose-deep-temporal-alignment-and-physics-aware-cross-modal-sensor-fusion-for-robust-pose-estimation)  
+   evidence：运动条件机器人共设计，用于操控
+5. [HiFi-UMI: Learning Deployable Manipulation Policies from High-Fidelity UMI Data Alone](/202607/29/2607.25895v1-hifi-umi-learning-deployable-manipulation-policies-from-high-fidelity-umi-data-alone)  
    标签：评分：8.0/10、query:ad
-   evidence：多模态传感器融合用于自动驾驶中的鲁棒位姿估计
-6. [A Few Words Go a Long Way: Language Guided Robot Policy Synthesis](/202607/28/2607.23784v1-a-few-words-go-a-long-way-language-guided-robot-policy-synthesis)  
-   标签：评分：8.0/10、query:ad
-   evidence：利用LLM编程代理进行语言引导的模块化机器人策略合成
-7. [Learning Reusable Hybrid Motion Priors for Humanoid Locomotion from Motion Imitation](/202607/28/2607.24083v1-learning-reusable-hybrid-motion-priors-for-humanoid-locomotion-from-motion-imitation)  
-   标签：评分：8.0/10、query:ad
-   evidence：通过运动模仿学习可复用的混合运动先验用于人形机器人行走
-8. [Try Once, Then Optimal: De-Redundified Procedure Memory for Cross-Episode Exploration Amortization](/202607/28/2607.23702v1-try-once-then-optimal-de-redundified-procedure-memory-for-cross-episode-exploration-amortization)  
+   evidence：无机器人UMI数据实现高精度操作策略
+6. [ArmnetBench v0.1: Parallel Real-World Evaluation of Manipulation Policies on a Low-Cost Arm Farm](/202607/29/2607.24481v1-armnetbench-v01-parallel-real-world-evaluation-of-manipulation-policies-on-a-low-cost-arm-farm)  
    标签：评分：7.0/10、query:ad
-   evidence：面向对象的内存用于操作隐藏状态对象
-9. [Bridging Reinforcement Learning and Optimal Control via Feasible Action Mapping](/202607/28/2607.23930v1-bridging-reinforcement-learning-and-optimal-control-via-feasible-action-mapping)  
+   evidence：机器人操纵策略的真实世界评估基准
+7. [KAI: A Kinematic-Aware Interface for Data-Efficient Articulated Object Manipulation](/202607/29/2607.24493v1-kai-a-kinematic-aware-interface-for-data-efficient-articulated-object-manipulation)  
    标签：评分：7.0/10、query:ad
-   evidence：通过可行动作映射桥接强化学习与最优控制，用于受约束动态系统
-10. [A Motion-Aware Vector Quantization Framework with Centroid Reuse for Efficient VLA Inference](/202607/28/2607.24148v1-a-motion-aware-vector-quantization-framework-with-centroid-reuse-for-efficient-vla-inference)  
+   evidence：运动学感知表示用于关节物体操作，样本效率
+8. [IMPRINT: Image-Conditioned Query Enrichment for Long-Tail Object Goal Navigation](/202607/29/2607.25106v1-imprint-image-conditioned-query-enrichment-for-long-tail-object-goal-navigation)  
    标签：评分：7.0/10、query:ad
-   evidence：运动感知向量量化实现高效VLA推理
-11. [Not Forgotten: Implementation and Evaluation of a Personalized Episodic Memory for the Humanoid Robot Head Kim](/202607/28/2607.24190v1-not-forgotten-implementation-and-evaluation-of-a-personalized-episodic-memory-for-the-humanoid-robot-head-kim)  
+   evidence：图像条件查询增强用于具身AI中的物体目标导航
+9. [S2A2: Audio-Visual Imitation Learning for Manipulation Tasks Using Acoustic Spatial Information](/202607/29/2607.26047v1-s2a2-audio-visual-imitation-learning-for-manipulation-tasks-using-acoustic-spatial-information)  
    标签：评分：7.0/10、query:ad
-   evidence：为人形机器人头部Kim实现的个性化情景记忆以增强人机交互
+   evidence：音频-视觉模仿学习用于机器人操控
+10. [Explainable Reinforcement Learning via Physics-Aware Policy Distillation](/202607/29/2607.24672v1-explainable-reinforcement-learning-via-physics-aware-policy-distillation)  
+   标签：评分：6.0/10、query:ad
+   evidence：通过物理感知策略蒸馏实现可解释强化学习，应用于机器人/汽车
 
 
 <div class="dpr-home-promo-card">
