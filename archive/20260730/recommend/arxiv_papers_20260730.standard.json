@@ -1,0 +1,750 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-30T21:42:41.441599+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 11,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2607.26121v1",
+      "source": "arxiv",
+      "title": "Towards Trustworthy Embodied Intelligence: A Systems Framework and Graded Trustworthiness Levels",
+      "abstract": "Embodied intelligence integrates learned perception and decision making with real-time computation, control, and physical interaction. Because failures can cause immediate physical or operational harm, task completion alone does not establish trustworthiness. We define trustworthy embodied intelligence as the sustained capacity to execute specified tasks reliably under environmental and system variation while maintaining risk within acceptable bounds. We term this objective sustained safe success. Its supporting mechanisms are organized into four interdependent layers. The model layer generates task-competent action proposals with calibrated uncertainty and explicit safety preferences. The system layer realizes authorized actions dependably through integrated sensing, computation, control, hardware safeguards, fault containment, and fallback. The evidence layer substantiates bounded claims through evaluation, verification, validation, traceability, and structured assurance arguments. The deployment layer maintains claim validity through runtime monitoring, authority management, intervention, incident response, and controlled updates. Because assumptions and failures propagate across these layers, neither model capability, isolated safeguards, nor benchmark performance alone can establish end-to-end trustworthiness. Drawing on embodied AI, robotics, control, dependable computing, distributed systems, and autonomous driving, we further propose a non-normative hierarchy of trustworthiness levels. This hierarchy grades the strength of bounded deployment claims across task capability, safety, system assurance, operational governance, and supporting evidence, providing a basis for bounded deployment, comparative evaluation, research prioritization, and future standardization.",
+      "authors": [
+        "Xinyu Yang",
+        "Tianxing Chen",
+        "Honghao Su",
+        "Minxuan Wang",
+        "Chenze Yu",
+        "Zhangzheng Tu",
+        "Yue Chen",
+        "Yuxiao Huo",
+        "Lingfeng Zhang",
+        "Yan Huang",
+        "Yan Qin",
+        "Shaolong Zhu",
+        "Qiwei Liang",
+        "Hekun Tian",
+        "Shujia Liu",
+        "Guangyu Chen",
+        "Junhao Gong",
+        "Zixuan Li",
+        "Wenwei Lin",
+        "Zijian Lin",
+        "Wenxuan Zhu",
+        "Eric J Chen",
+        "Yue Yuan",
+        "Qize Yu",
+        "Jiaqi Liang",
+        "Haowen Yan",
+        "Hengfei Zhao",
+        "Weijie Wan",
+        "Zikun Xiao",
+        "Junyuan Tang",
+        "Baijun Chen",
+        "Kai-Chong Lei",
+        "Kaixuan Wang",
+        "Kailun Su",
+        "Zanxin Chen",
+        "Yao Mu",
+        "Renjing Xu",
+        "Chuqiao Lyu",
+        "Qi Xiong",
+        "Ping Luo",
+        "Wenbo Ding"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CY"
+      ],
+      "published": "2026-07-28T17:50:44+00:00",
+      "link": "https://arxiv.org/pdf/2607.26121v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "embodied intelligence systems framework trustworthiness",
+      "llm_evidence_cn": "具身智能系统框架与可信度",
+      "llm_evidence": "具身智能系统框架与可信度",
+      "canonical_evidence": "具身智能系统框架与可信度",
+      "llm_tldr_en": "Proposes a layered systems framework for trustworthy embodied intelligence, defining sustained safe success and organizing mechanisms into model, system, monitoring, and verification layers.",
+      "llm_tldr_cn": "当前具身智能系统缺乏对可信度的系统化定义和保障机制。本文提出一个四层系统框架，将可信具身智能定义为在环境和系统变化下持续可靠执行任务并维持风险可接受的能力，即持续安全成功。模型层生成带有校准不确定性和安全偏好的动作提案，系统层实现授权行动，监控层跟踪风险，验证层确保合规。该框架为开发和评估可信具身系统提供了结构化指导。",
+      "llm_tldr": "当前具身智能系统缺乏对可信度的系统化定义和保障机制。本文提出一个四层系统框架，将可信具身智能定义为在环境和系统变化下持续可靠执行任务并维持风险可接受的能力，即持续安全成功。模型层生成带有校准不确定性和安全偏好的动作提案，系统层实现授权行动，监控层跟踪风险，验证层确保合规。该框架为开发和评估可信具身系统提供了结构化指导。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26460v1",
+      "source": "arxiv",
+      "title": "RLMM-Flow: A Flow-based Mobile Manipulation Framework with Latent-Space Reinforcement Learning",
+      "abstract": "Mobile manipulation requires generating whole-body action chunks that jointly satisfy goal reaching, collision avoidance, base kinematic constraints, manipulator joint limits, and trajectory smoothness. Flow-based generative policies provide an efficient paradigm for learning multimodal and temporally consistent motion priors from expert demonstrations, but imitation-only training cannot improve policy quality beyond the demonstration distribution. We propose RLMM-Flow, a flow-based mobile manipulation framework that combines expert flow-policy pretraining with latent-space reinforcement learning post-training. The framework first learns a flow policy that captures a multimodal whole-body motion prior from expert demonstrations. The pretrained flow policy is then frozen, while a latent steering network steers its initial noise toward higher-value action chunks. To stabilize high-dimensional latent optimization, we warm up an action-space critic before jointly training the latent critic and latent actor, and introduce coarse-to-fine latent steering that progressively expands control from a horizon-shared latent representation to a full-dimensional residual representation. Experiments on mobile manipulation motion-planning benchmarks show that RLMM-Flow substantially improves task success, collision avoidance, and trajectory quality over imitation-only flow policies and existing reinforcement learning post-training baselines, while preserving fast flow-based inference.",
+      "authors": [
+        "Shuhang Wang",
+        "Ziming Li",
+        "Hui Cheng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-29T04:22:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.26460v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "flow-based mobile manipulation policy with latent-space RL fine-tuning",
+      "llm_evidence_cn": "流模型预训练结合潜空间强化学习的移动操作方法",
+      "llm_evidence": "流模型预训练结合潜空间强化学习的移动操作方法",
+      "canonical_evidence": "流模型预训练结合潜空间强化学习的移动操作方法",
+      "llm_tldr_en": "Combines flow-based generative policy pre-training with latent-space reinforcement learning for mobile manipulation, overcoming imitation-only limitations.",
+      "llm_tldr_cn": "移动操作需要生成满足多种约束的全身动作块。流模型虽能学习多模态运动先验，但仅靠模仿训练无法超越演示分布。本文提出RLMM-Flow，先通过专家演示预训练流策略，再在潜空间中使用强化学习进行后训练。该方法在保留流模型优势的同时，通过强化学习优化策略性能。实验表明，RLMM-Flow在移动操作任务上取得了显著提升。",
+      "llm_tldr": "移动操作需要生成满足多种约束的全身动作块。流模型虽能学习多模态运动先验，但仅靠模仿训练无法超越演示分布。本文提出RLMM-Flow，先通过专家演示预训练流策略，再在潜空间中使用强化学习进行后训练。该方法在保留流模型优势的同时，通过强化学习优化策略性能。实验表明，RLMM-Flow在移动操作任务上取得了显著提升。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26802v1",
+      "source": "arxiv",
+      "title": "Risk-Aware Motion Planning with Learned Trajectory Primitives and Probabilistic Safety Assessment",
+      "abstract": "This paper presents a radial basis function network (RBFN)-informed motion planning framework for safe and efficient urban autonomous driving. The proposed approach combines RBFN-based candidate trajectory generation with an analytic collision probability assessment and optimization-based trajectory refinement. The network learns jerk-minimal trajectories, enabling the MPC to operate within a reduced and dynamically consistent search space. Candidate motion primitives are selected based on an accurate probabilistic risk measure. This design decreases solver complexity while preserving safety and constraint satisfaction. The framework is evaluated in numerous urban driving scenarios. Results demonstrate improved risk awareness and fewer vehicle-limit violations compared to benchmark methods. The proposed approach integrates learning-based trajectories into optimization-based motion planning, thereby ensuring safety and interpretability.",
+      "authors": [
+        "Marc Kaufeld",
+        "Dian Zhuang",
+        "Johannes Betz"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-29T11:41:00+00:00",
+      "link": "https://arxiv.org/pdf/2607.26802v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "risk-aware motion planning with RBFN trajectory primitives and probabilistic safety assessment for urban autonomous driving",
+      "llm_evidence_cn": "用于城市自动驾驶的风险感知运动规划，结合RBFN轨迹基元和概率安全评估",
+      "llm_evidence": "用于城市自动驾驶的风险感知运动规划，结合RBFN轨迹基元和概率安全评估",
+      "canonical_evidence": "用于城市自动驾驶的风险感知运动规划，结合RBFN轨迹基元和概率安全评估",
+      "llm_tldr_en": "Proposes an RBFN-informed motion planning framework for urban autonomous driving that generates jerk-minimal trajectory primitives and selects them based on probabilistic risk, then refines with optimization.",
+      "llm_tldr_cn": "城市自动驾驶需要在安全性和效率间权衡。本文提出径向基函数网络（RBFN）指导的规划框架：RBFN学习最小加加速度轨迹基元，缩小MPC搜索空间；基于精确碰撞概率风险评估选择候选基元，并通过优化精化。在多种城市场景中，该方法降低了求解复杂度同时保证了安全性和约束满足。该工作展示了学习型轨迹基元与概率风险度量结合的有效性。",
+      "llm_tldr": "城市自动驾驶需要在安全性和效率间权衡。本文提出径向基函数网络（RBFN）指导的规划框架：RBFN学习最小加加速度轨迹基元，缩小MPC搜索空间；基于精确碰撞概率风险评估选择候选基元，并通过优化精化。在多种城市场景中，该方法降低了求解复杂度同时保证了安全性和约束满足。该工作展示了学习型轨迹基元与概率风险度量结合的有效性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26903v1",
+      "source": "arxiv",
+      "title": "From Passive Video to Editable Experience: Physically Grounded Experience Synthesis for Embodied Intelligence",
+      "abstract": "The key bottleneck in embodied AI is not model architecture but data. Although billions of human manipulation videos exist online, robots cannot directly learn from them due to the embodiment gap between human morphology and robot hardware. We introduce Pegasus, a low-resource framework that bridges this gap by translating human demonstrations into robot-learnable data through structured knowledge transfer. Instead of relying on raw video prompts, Pegasus constructs a graph-based intermediate representation: a Task Graph extracted from human videos is transformed through Affordance and Constraint Graphs into a Robot Planning Graph for robot-conditioned video generation. A hierarchical affordance latent space models the relationship between object states, affordances, and tasks, enabling generalization beyond object identities. A closed-loop physics verifier further filters invalid generations using kinematic feasibility, collision constraints, and joint limits. We evaluate Pegasus across a range of egocentric manipulation benchmarks, including GTEA Gaze+ and EPIC-KITCHENS-100, and diverse robot embodiments, assessing Task Correctness, Executability, State Consistency, and Learnability. Results demonstrate reliable cross-embodiment translation and show that robot data generation can be reframed from a hardware collection problem into a scalable, low-resource knowledge transfer problem.",
+      "authors": [
+        "Jia Luo"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-07-29T13:35:23+00:00",
+      "link": "https://arxiv.org/pdf/2607.26903v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "bridges embodiment gap using graph-based knowledge transfer for robot data generation",
+      "llm_evidence_cn": "利用图结构知识迁移桥接具身差距生成机器人可学习数据",
+      "llm_evidence": "利用图结构知识迁移桥接具身差距生成机器人可学习数据",
+      "canonical_evidence": "利用图结构知识迁移桥接具身差距生成机器人可学习数据",
+      "llm_tldr_en": "Proposes Pegasus that translates human demonstrations into robot-learnable data via graph-based intermediate representation, addressing the embodiment gap in embodied AI.",
+      "llm_tldr_cn": "具身智能的关键瓶颈在于数据而非模型架构。本文提出Pegasus框架，通过任务图、可操作图和约束图等图结构中间表示，将海量人类操作视频转化为机器人可学习的数据。该方法无需高清视频提示，而是构建层次化可操作潜在空间模型。实验表明，Pegasus能够有效桥接人体与机器人之间的形态差距，为低成本获取具身智能训练数据提供了新路径。",
+      "llm_tldr": "具身智能的关键瓶颈在于数据而非模型架构。本文提出Pegasus框架，通过任务图、可操作图和约束图等图结构中间表示，将海量人类操作视频转化为机器人可学习的数据。该方法无需高清视频提示，而是构建层次化可操作潜在空间模型。实验表明，Pegasus能够有效桥接人体与机器人之间的形态差距，为低成本获取具身智能训练数据提供了新路径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.27058v1",
+      "source": "arxiv",
+      "title": "Object Detection for Autonomous Driving in Chinese Rural Scenes: An Experimental Study on Real-Synthetic Data Mixing and Model Evaluation",
+      "abstract": "Currently, autonomous driving object detection models face significant data scarcity and generalization challenges when navigating complex Chinese rural traffic scenarios. To address these limitations, we propose a novel real-synthetic mixed object detection dataset tailored specifically for Chinese rural roads and systematically evaluate the performance of 13 mainstream detectors under different real-to-synthetic data ratios, thereby providing empirical evidence for model selection and data strategy design in rural autonomous driving scenarios. Our dataset combines real-world images captured in Weishi County, Henan Province, with parameterized virtual scenes generated via Unreal Engine. To accurately reflect the unique realities of rural traffic, we define a comprehensive 14-category object system encompassing region-specific elements such as electric tricycles, low-speed vehicles (LSVs), and roadside stalls. Under a unified training protocol, we systematically evaluate 13 mainstream detectors -- spanning the YOLOv5, YOLOv8, YOLO11, and YOLO26 series, as well as RT-DETR-L -- across three data configurations: an all-real baseline, a 1:0.5 real-to-virtual mix, and a 1:1 mix. Experimental results demonstrate that a moderate injection of synthetic data (1:0.5 ratio) effectively enhances detection performance, with YOLO11m achieving the highest mAP@0.5 of 0.758. However, a higher proportion of synthetic data (1:1) introduces domain shifts that offset the benefits of data scaling. While most models reliably identify distinct local vehicles, significant perceptual bottlenecks remain for long-tail, non-standard objects like stalls and railings. This research provides crucial empirical evidence and novel insights for model selection and synthetic data strategies, facilitating the practical deployment of autonomous driving perception systems in rural areas.",
+      "authors": [
+        "Danning Zhu",
+        "Ziyan Lin",
+        "Jing Wu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-29T15:49:02+00:00",
+      "link": "https://arxiv.org/pdf/2607.27058v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "object detection for autonomous driving in rural scenes with real-synthetic data mixing",
+      "llm_evidence_cn": "面向乡村自动驾驶的目标检测，真实合成数据混合",
+      "llm_evidence": "面向乡村自动驾驶的目标检测，真实合成数据混合",
+      "canonical_evidence": "面向乡村自动驾驶的目标检测，真实合成数据混合",
+      "llm_tldr_en": "Creates a real-synthetic mixed object detection dataset for Chinese rural roads and evaluates 13 detectors under varying data ratios to guide model selection.",
+      "llm_tldr_cn": "自动驾驶在复杂乡村场景面临数据稀缺和泛化难题。本文构建了针对中国乡村道路的真实-合成混合目标检测数据集，系统评估13种主流检测器在不同真实/合成数据比例下的性能，为乡村自动驾驶的模型选择和数据处理策略提供实证依据。实验发现适量合成数据可提升泛化能力。该工作填补了乡村自动驾驶目标检测数据集的空白。",
+      "llm_tldr": "自动驾驶在复杂乡村场景面临数据稀缺和泛化难题。本文构建了针对中国乡村道路的真实-合成混合目标检测数据集，系统评估13种主流检测器在不同真实/合成数据比例下的性能，为乡村自动驾驶的模型选择和数据处理策略提供实证依据。实验发现适量合成数据可提升泛化能力。该工作填补了乡村自动驾驶目标检测数据集的空白。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26148v1",
+      "source": "arxiv",
+      "title": "Embodied Agents Take Control: Minimal-Interface Zero-Shot Agents Rival Industrial-Scale Policies in Vision-and-Language Navigation",
+      "abstract": "Autonomous embodied agents must sustain a long decision-making loop that involves perceiving, acting, verifying, and self-correcting over many steps. Current systems sustain this loop through task-specific workflows or embodied policies. We study a third form, agentic embodied control, in which a general-purpose agent holds the loop itself. Using zero-shot navigation as a controlled testbed, we evaluate three software-engineering agent harnesses given only a monocular RGB camera and discrete actions. Under this strictly minimal condition, replicated default-effort configurations reach 70.7$\\pm$3.5% success (opus-5, mean over three runs), and fable-5 reaches 78% at maximum effort. When a trained waypoint tool is exposed alongside primitives as an optional capability, the hybrid fable-5 agent reaches 76.7$\\pm$0.6% at default effort, using half the environment steps and less than one quarter of the wall time of the maximum-effort primitive run. Controlled interventions show that capability is primarily model-centered: model choice strongly changes success, harness effects are descriptive, and a forced waypoint interface helps weaker models but can hinder stronger ones. Performance nevertheless falls sharply on longer-horizon tasks, while latency and context growth limit sustained operation. These results show that agentic control is already competitive in zero-shot navigation and that models, harnesses, and interfaces offer complementary paths toward autonomous embodied agents.",
+      "authors": [
+        "Jian Zhou",
+        "Xunyi Zhao",
+        "Gengze Zhou",
+        "Zerui Li",
+        "Sihao Lin",
+        "Jiajun Liu",
+        "Qi Wu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-28T18:00:34+00:00",
+      "link": "https://arxiv.org/pdf/2607.26148v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "embodied agent zero-shot navigation minimal interface",
+      "llm_evidence_cn": "具身智能体零样本导航最小接口",
+      "llm_evidence": "具身智能体零样本导航最小接口",
+      "canonical_evidence": "具身智能体零样本导航最小接口",
+      "llm_tldr_en": "Proposes agentic embodied control for zero-shot navigation using only monocular RGB and discrete actions, rivaling industrial policies.",
+      "llm_tldr_cn": "针对当前具身智能体在长周期决策中依赖任务特定工作流的问题，本文提出了一种基于通用智能体的具身控制范式，让智能体自行维持感知-行动-验证-纠错闭环。在零样本导航测试中，仅使用单目RGB相机和离散动作，默认配置下的opus-5模型达到70.7%成功率，fable-5在最大努力下达到78%。该方法展示了通用智能体在具身任务中的潜力，为最小接口条件下的导航提供了新思路。",
+      "llm_tldr": "针对当前具身智能体在长周期决策中依赖任务特定工作流的问题，本文提出了一种基于通用智能体的具身控制范式，让智能体自行维持感知-行动-验证-纠错闭环。在零样本导航测试中，仅使用单目RGB相机和离散动作，默认配置下的opus-5模型达到70.7%成功率，fable-5在最大努力下达到78%。该方法展示了通用智能体在具身任务中的潜力，为最小接口条件下的导航提供了新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.26579v1",
+      "source": "arxiv",
+      "title": "ContactFlow: A video action conditioning that transfers across embodiments",
+      "abstract": "World models offer a promising route toward robot planning by enabling agents to imagine and verify the consequences of actions before execution. However, current video-based world models often struggle to capture the physical constraints that govern manipulation, particularly contact. Further, their action conditioning is often constrained to specific embodiments such as parallel grippers. We propose \\emph{Contact Flow}, an embodiment-agnostic action representation that encodes manipulation through the trajectory of 3D contact points between an actor and a target object. By discarding actor-specific appearance and kinematics, Contact Flow provides a shared conditioning signal for both human demonstrations and robotic execution. Therefore, we can train a large-scale video generative model on both human and robotic object interaction videos conditioned on Contact Flow, yielding a world model that predicts physically plausible manipulation outcomes. We integrate this model into a propose-imagine-verify-act pipeline, where generated rollouts are assessed by a vision-language model before execution. Experiments on the DROID dataset and real-world tabletop manipulation tasks demonstrate that Contact Flow enables transfer between human demonstrations and different robotic embodiments.",
+      "authors": [
+        "Sami Azirar",
+        "Enrico Pallotta",
+        "Jan Nogga",
+        "Jürgen Gall",
+        "Sven Behnke",
+        "Hermann Blum"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-07-29T07:59:47+00:00",
+      "link": "https://arxiv.org/pdf/2607.26579v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "embodiment-agnostic action representation using contact point trajectories for robot manipulation planning",
+      "llm_evidence_cn": "使用接触点轨迹的跨实体动作表示，用于机器人操作规划",
+      "llm_evidence": "使用接触点轨迹的跨实体动作表示，用于机器人操作规划",
+      "canonical_evidence": "使用接触点轨迹的跨实体动作表示，用于机器人操作规划",
+      "llm_tldr_en": "ContactFlow proposes an embodiment-agnostic action representation encoding manipulation via 3D contact point trajectories, enabling world models to condition on actions across different embodiments including human and robot.",
+      "llm_tldr_cn": "基于视频的世界模型在机器人规划中难以捕捉接触约束，且动作条件受限于特定实体。ContactFlow提出接触流表示：通过三维接触点轨迹编码操作动作，摒弃了实体特定的外观和运动学。该表示可同时用于人类演示和机器人执行的视频预测。实验表明，使用接触流条件的世界模型能够准确预测操作结果，并跨实体迁移。该方法为实现通用操作规划提供了新视角。",
+      "llm_tldr": "基于视频的世界模型在机器人规划中难以捕捉接触约束，且动作条件受限于特定实体。ContactFlow提出接触流表示：通过三维接触点轨迹编码操作动作，摒弃了实体特定的外观和运动学。该表示可同时用于人类演示和机器人执行的视频预测。实验表明，使用接触流条件的世界模型能够准确预测操作结果，并跨实体迁移。该方法为实现通用操作规划提供了新视角。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.21309v1",
+      "source": "arxiv",
+      "title": "Factorized Spatio-Temporal Convolutions for Human Pose Estimation from Planar Lidar",
+      "abstract": "Localizing nearby humans and estimating their facing direction are key capabilities for safe navigation and socially aware human-robot interaction. Many pose-estimation pipelines target cameras and 3D LiDAR or assume GPU-class compute, whereas service robots are often equipped only with omnidirectional planar LiDARs and modest onboard processors. We address omnidirectional human detection and relative 2D pose estimation from planar LiDAR sequences with a lightweight network based on Space-Time Blocks, which explicitly separate spatial processing along scan rays from temporal aggregation across scans. Our network processes 360° LiDAR sequences to output per-ray human presence, distance, and relative orientation. We train it via cross-modal self-supervision from a narrow RGB-D body tracker in the sensors' overlap region, removing the need for manual LiDAR labels. Quantitative experiments show that our approach consistently outperforms a parameter-matched baseline model, reducing errors in distance (-38%), position (-28%), and orientation (-15%). We further benchmark on the public FROG dataset, report real-time CPU inference on a service robot, and validate with in-field demonstrations, supporting its suitability for spatial perception on computationally constrained service robots.",
+      "authors": [
+        "Simone Arreghini",
+        "Mirko Nava",
+        "Nicholas Carlotti",
+        "Antonio Paolillo",
+        "Alessandro Giusti"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-23T13:31:54+00:00",
+      "link": "https://arxiv.org/pdf/2607.21309v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "human pose estimation from planar LiDAR for human-robot interaction",
+      "llm_evidence_cn": "利用平面激光雷达进行人体姿态估计服务于人机交互",
+      "llm_evidence": "利用平面激光雷达进行人体姿态估计服务于人机交互",
+      "canonical_evidence": "利用平面激光雷达进行人体姿态估计服务于人机交互",
+      "llm_tldr_en": "Proposes a lightweight network with Space-Time Blocks for human detection and orientation estimation from planar LiDAR sequences, enabling socially aware robot navigation.",
+      "llm_tldr_cn": "服务机器人通常配备平面激光雷达，而现有姿态估计方法依赖相机或3D LiDAR。本文提出基于时空分解块的轻量网络，从360度平面激光雷达序列中估计人体存在、距离和朝向。该网络分离空间处理和时间聚合，在低算力平台上实时运行。通过跨模态训练方法提升性能。该工作有助于实现社交感知的人机交互。",
+      "llm_tldr": "服务机器人通常配备平面激光雷达，而现有姿态估计方法依赖相机或3D LiDAR。本文提出基于时空分解块的轻量网络，从360度平面激光雷达序列中估计人体存在、距离和朝向。该网络分离空间处理和时间聚合，在低算力平台上实时运行。通过跨模态训练方法提升性能。该工作有助于实现社交感知的人机交互。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.24860v1",
+      "source": "arxiv",
+      "title": "Egocentric Station Holding of Robotic Fish in Unknown Turbulent Background Flow",
+      "abstract": "Approaching a target position and holding station in flowing water is a fundamental and critical capability for robotic fish operating in natural aquatic environments. Despite decades of advances in enhancing swimming efficiency and maneuverability, this capability remains underdeveloped, largely owing to the insufficiently characterized, highly nonlinear fluid-structure interactions inherent to freely swimming robotic fish in flows. To bridge this gap, we propose the SWiFT framework, a Swimming With Flow Toolbox that enables the efficient exploration of an egocentric station-holding policy for a body and/or caudal fin (BCF) robotic fish in unknown and turbulent background flows via reinforcement learning (RL). Our SWiFT integrates a free-swimming flow-tank experimental setup with a highly efficient, physically consistent computational fluid dynamics (CFD)-based simulator and a systematic sim-to-real transfer pipeline. The resulting policy achieves substantial improvements over state-of-the-art methods across all metrics, most notably root-mean-square error (RMSE) of distance. Furthermore, we validated that egocentric feedback alone, without any explicit flow sensing, enables station-holding in unknown turbulent flows, closely mirroring the biological phenomenon of rheotaxis. Accordingly, the success of this egocentric station-holding policy not only advances robotic fish control toward real-world deployment, but also highlights SWiFT's promise as a foundation for tackling complex swimming tasks for underwater robots.",
+      "authors": [
+        "Xiaozhu Lin",
+        "Xu Huang",
+        "Hongru Dai",
+        "Xiaopei Liu",
+        "Junzhi Yu",
+        "Yang Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-26T12:14:03+00:00",
+      "link": "https://arxiv.org/pdf/2607.24860v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "reinforcement learning for station-holding control of robotic fish in turbulent flow",
+      "llm_evidence_cn": "强化学习用于机器鱼在湍流中的定位保持控制",
+      "llm_evidence": "强化学习用于机器鱼在湍流中的定位保持控制",
+      "canonical_evidence": "强化学习用于机器鱼在湍流中的定位保持控制",
+      "llm_tldr_en": "SWiFT framework uses RL to learn an egocentric station-holding policy for robotic fish in unknown turbulent background flows.",
+      "llm_tldr_cn": "机器鱼在自然水流中保持位置是极具挑战的基础能力。本文提出SWiFT框架，集成自由游动模拟与强化学习，高效探索机器鱼在未知湍流背景流中的自我中心定位保持策略。实验表明所学习的策略能够应对复杂流体扰动，实现稳定驻留。该工作填补了机器鱼在水流中抗扰控制的研究空白，为水下机器人自主操作奠定了控制基础。",
+      "llm_tldr": "机器鱼在自然水流中保持位置是极具挑战的基础能力。本文提出SWiFT框架，集成自由游动模拟与强化学习，高效探索机器鱼在未知湍流背景流中的自我中心定位保持策略。实验表明所学习的策略能够应对复杂流体扰动，实现稳定驻留。该工作填补了机器鱼在水流中抗扰控制的研究空白，为水下机器人自主操作奠定了控制基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.26657v1",
+      "source": "arxiv",
+      "title": "Enfold: Folding World-Generator Computation into Predictive Representations for Efficient Embodied Control",
+      "abstract": "World generative models are typically used through what they produce: a rendered future, a video-conditioned action, or latent context computed by a costly generative branch. We argue that their more reusable asset is the computation that constructs a future. As a generator transforms a corrupted future into a coherent trajectory, its intermediate states organize appearance, spatial layout, and interaction across levels of abstraction. Can this future-generative computation be internalized in a representation inferred from the present alone? We present Enfold, which transfers this computation into a representation predicted from the current visual context and language instruction. During training, multi-level states exposed as the generator processes the observed future supervise a current-only encoder. The learned representation is fed back to condition future generation and is read by task heads without allowing task gradients to reshape the encoder. At deployment, action prediction no longer executes the generator. Across LIBERO, RoboTwin2.0, and real-robot tasks, Enfold supports strong control while reducing action latency by $3.7\\times$ relative to Fast--WAM, Enfold-Flash reaches $10.1\\times$. Representation analyses show that it suppresses nuisance variation and preferentially captures changes that emerge over longer horizons. When the current scene is altered by human intervention, both the generated continuation and the executed actions adapt, which is inconsistent with fixed trajectory replay. These results recast a world generator as a source of predictive control representations: its future need not be materialized at every step if its internal structure can be enfolded into the present.",
+      "authors": [
+        "Weili Zeng",
+        "Yitong Xing",
+        "Fulong Liu",
+        "Chengqun Yang",
+        "Antao Xiang",
+        "Feng Tian",
+        "Jingnan Gao",
+        "Jisong Cai",
+        "Xin Wang",
+        "Xiaomin Wu",
+        "Yao Mu",
+        "Yichao Yan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-29T09:17:33+00:00",
+      "link": "https://arxiv.org/pdf/2607.26657v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Efficient embodied control via folding world-generator computation into predictive representations",
+      "llm_evidence_cn": "通过将世界生成器计算内化为预测表示实现高效具身控制",
+      "llm_evidence": "通过将世界生成器计算内化为预测表示实现高效具身控制",
+      "canonical_evidence": "通过将世界生成器计算内化为预测表示实现高效具身控制",
+      "llm_tldr_en": "Proposes Enfold that transfers future-generative computation from a world model into a representation predicted from current context and language instruction, enabling efficient embodied control without costly generative branches.",
+      "llm_tldr_cn": "针对世界生成模型计算成本高的问题，提出Enfold方法，将未来轨迹生成过程中的多层级中间状态内化为从当前视觉和语言指令预测的表示，在训练时通过多级状态监督使表示具备生成性，实现无需昂贵生成分支的高效具身控制。",
+      "llm_tldr": "针对世界生成模型计算成本高的问题，提出Enfold方法，将未来轨迹生成过程中的多层级中间状态内化为从当前视觉和语言指令预测的表示，在训练时通过多级状态监督使表示具备生成性，实现无需昂贵生成分支的高效具身控制。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.25082v2",
+      "source": "arxiv",
+      "title": "PLATO: Pointer Learner for Agent and Task Openness",
+      "abstract": "Open agent systems (OASYS) are increasingly prevalent in real-world domains where the sets of agents and tasks change unpredictably over time. Such openness, including agent openness (AO) and task openness (TO), poses a fundamental challenge to multi-agent reinforcement learning (MARL), which typically assumes fixed state and action spaces. Existing methods address openness only partially: padding and masking approaches introduce artificial bounds, while recent graph-based or hypergraph methods handle one dimension of openness but still depend on restrictive assumptions. In this paper, we introduce Pointer Learner for Agent and Task Openness (PLATO), a pointer-network-based actor combined with a centralized graph neural network (GNN) critic, trained with multi-agent proximal policy optimization under a centralized training and decentralized execution paradigm. Our pointer-based actor outputs distributions directly over the current task set. This directly supports changing action spaces without masking or retraining. Our GNN critic encodes agent-task interactions as a graph that changes shape with task and agent composition. Together, these components consider AO and TO without the boundedness of existing approaches. We formalize PLATO in a Task-and-Agent-Open Markov Game (TaAgO-MG), extending prior task-open formulations, and prove it is well-defined over the resulting unbounded state and action spaces. We evaluate PLATO with the Methods for Open Agent Systems Evaluation Initiative (MOASEI) wildfire suppression domain, an environment designed for open multi-agent system evaluation, and we demonstrate strong performance and more consistent zero-shot generalization than state-of-the-art baselines in OASYS.",
+      "authors": [
+        "Alireza Saleh Abadi",
+        "Leen-Kiat Soh",
+        "Daniel Alan Redder",
+        "Adam Eck",
+        "Prashant Doshi"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-07-27T21:20:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.25082v2",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multi-agent reinforcement learning for open agent systems with pointer networks and GNN",
+      "llm_evidence_cn": "用于开放智能体系统的多智能体强化学习，结合指针网络和图神经网络",
+      "llm_evidence": "用于开放智能体系统的多智能体强化学习，结合指针网络和图神经网络",
+      "canonical_evidence": "用于开放智能体系统的多智能体强化学习，结合指针网络和图神经网络",
+      "llm_tldr_en": "PLATO uses a pointer-network actor and GNN critic to handle agent and task openness in multi-agent reinforcement learning, enabling adaptation to varying numbers of agents and tasks.",
+      "llm_tldr_cn": "开放智能体系统中智能体和任务的动态变化对多智能体强化学习构成挑战。PLATO提出基于指针网络的策略网络和集中式图神经网络评价器，通过指针网络选择相关智能体，应对智能体和任务数量的变化。实验结果表明，该方法在多种开放场景下显著优于现有填充和掩码方法。该工作为多智能体系统在现实动态环境中的应用提供了有效方案。",
+      "llm_tldr": "开放智能体系统中智能体和任务的动态变化对多智能体强化学习构成挑战。PLATO提出基于指针网络的策略网络和集中式图神经网络评价器，通过指针网络选择相关智能体，应对智能体和任务数量的变化。实验结果表明，该方法在多种开放场景下显著优于现有填充和掩码方法。该工作为多智能体系统在现实动态环境中的应用提供了有效方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.26784v1",
+      "source": "arxiv",
+      "title": "SkillRise: Agentic Reinforcement Learning for Cross-Task Skill Evolution",
+      "abstract": "Large language model agents often encounter related yet distinct tasks that share reusable solution patterns. Yet standard agentic reinforcement learning treats tasks as independent episodes, while existing approaches to skill learning either focus on repeated attempts of one task or use pipelines with multiple stages that entangle extraction, retrieval, and execution. We introduce SkillRise, a unified reinforcement learning framework for learning skills across tasks. SkillRise organizes related instances into progressively challenging sequences and uses a single policy to alternate between task solving and curating an evolving skill document passed directly to the next task. Decoupled credit assignment across tasks supervises solving with the current task outcome and curation with discounted downstream outcomes. Experiments on ALFWorld, WebShop, and ScienceWorld show that SkillRise achieves the strongest Pass@1 performance among the compared methods, with gains over the strongest baseline ranging from 2.3 to 8.5 percentage points. Although trained across distinct tasks, its learned curation policy remains effective for repeated attempts on the same task. Further analysis reveals scaling at test time across tasks: performance improves with longer sequences of related tasks even when each task is attempted only once. This trend suggests that SkillRise reuses transferable skills across tasks rather than benefiting from repeated sampling of the same task. SkillRise further retains strong performance while substantially reducing the runtime overhead of skill learning pipelines with multiple stages. Together, these results provide a simple and efficient training paradigm for LLM agents to extract, refine, and reuse transferable skills across tasks.",
+      "authors": [
+        "Zhiyuan Yao",
+        "Yuxin Chen",
+        "Zhengxi Lu",
+        "Zishan Xu",
+        "Yueqing Sun",
+        "Yifu Guo",
+        "Yuquan Lu",
+        "Zhengzhou Cai",
+        "Kangning Zhang",
+        "Zhuowen Han",
+        "Zi-Han Wang",
+        "Ziang Ye",
+        "Qi Gu",
+        "Xunliang Cai",
+        "Weiwen Liu",
+        "Yongliang Shen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-29T11:26:33+00:00",
+      "link": "https://arxiv.org/pdf/2607.26784v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "reinforcement learning framework for cross-task skill evolution in agents",
+      "llm_evidence_cn": "面向智能体跨任务技能演化的强化学习框架",
+      "llm_evidence": "面向智能体跨任务技能演化的强化学习框架",
+      "canonical_evidence": "面向智能体跨任务技能演化的强化学习框架",
+      "llm_tldr_en": "SkillRise uses a single RL policy to alternately solve tasks and curate a skill document, enabling cross-task skill evolution in agentic RL settings.",
+      "llm_tldr_cn": "智能体在相关但不同的任务间往往需要重复学习。本文提出SkillRise，利用单一强化学习策略在逐步增难的任务序列中交替执行求解和整理技能文档，通过跨任务信用分配和文档传递实现技能演化。实验表明该方法能有效重复利用知识，提升后续任务学习效率。该框架为实现持续学习型智能体提供了一种统一方案。",
+      "llm_tldr": "智能体在相关但不同的任务间往往需要重复学习。本文提出SkillRise，利用单一强化学习策略在逐步增难的任务序列中交替执行求解和整理技能文档，通过跨任务信用分配和文档传递实现技能演化。实验表明该方法能有效重复利用知识，提升后续任务学习效率。该框架为实现持续学习型智能体提供了一种统一方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.26809v1",
+      "source": "arxiv",
+      "title": "Practice Makes Policies: Bootstrapping and Consolidating Robotic Capabilities from Zero Human Demonstrations",
+      "abstract": "General-purpose robotic manipulation requires robots to perform diverse tasks in open-world environments while improving their skills over time. Despite recent progress in robotic manipulation, existing systems still primarily acquire manipulation skills in a static manner, where capabilities are learned for specific tasks or settings rather than adaptively evolving through physical interaction. Resembling how repeated practice enables humans to develop muscle memory, advanced manipulation proficiency requires an autonomous capability evolution mechanism that allows robots to progressively transform interaction experiences into increasingly effective manipulation abilities. To this end, we propose HERO, a self-improving hierarchical embodied agent that enables autonomous capability evolution from zero human demonstrations. HERO organizes heuristic reasoning, exemplar reuse, and reflexive execution into a unified orchestration framework, allowing robots to autonomously bootstrap manipulation experience, rapidly accumulate reusable behaviors through experience transfer, and progressively consolidate recurring interactions into efficient closed-loop visuomotor policies. By tightly coupling autonomous data collection with task execution, HERO continuously expands and dynamically schedules manipulation capabilities according to different stages of experience accumulation and execution requirements. Extensive experiments demonstrate that HERO substantially reduces human intervention during robotic data collection while achieving robust manipulation across diverse tasks, providing a promising path toward self-improving robotic systems.",
+      "authors": [
+        "Jialiang Li",
+        "Yuhan Wang",
+        "Haojun Li",
+        "Gaojing Zhang",
+        "Yangtian Ye",
+        "Qipeng Liu",
+        "Haotian Liang",
+        "Wenzhao Lian"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-29T11:51:41+00:00",
+      "link": "https://arxiv.org/pdf/2607.26809v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "self-improving robotic manipulation from zero demonstrations",
+      "llm_evidence_cn": "零示范的机器人操作自我提升",
+      "llm_evidence": "零示范的机器人操作自我提升",
+      "canonical_evidence": "零示范的机器人操作自我提升",
+      "llm_tldr_en": "Proposes HERO, a framework for robotic manipulation that autonomously bootstraps and consolidates skills through physical interaction without human demonstrations, enabling lifelong improvement.",
+      "llm_tldr_cn": "传统机器人操作技能学习依赖静态数据集。本文提出HERO框架，让机器人在真实环境中自主交互，从零开始逐步提升操作能力，模拟人类通过练习形成肌肉记忆的过程。实验表明HERO能在多种任务上持续改进，无需人类示范，为通用机器人操作奠定基础。",
+      "llm_tldr": "传统机器人操作技能学习依赖静态数据集。本文提出HERO框架，让机器人在真实环境中自主交互，从零开始逐步提升操作能力，模拟人类通过练习形成肌肉记忆的过程。实验表明HERO能在多种任务上持续改进，无需人类示范，为通用机器人操作奠定基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.26315v1",
+      "source": "arxiv",
+      "title": "MoMo: Dial Motion Mode in Robot Manipulation with Spatiotemporal Action Tokenization",
+      "abstract": "To operate effectively across diverse contexts, robots must not only perform manipulation tasks accurately but also adapt how their actions unfold to the task, object, and interaction setting. We ask whether this execution-level variation can be learned as a reusable behavioral factor shared across tasks. We present \\textbf{MoMo}, a two-stage imitation-learning framework consisting of a spatiotemporal action tokenizer and a behavior-cloning transformer that takes task and a continuous motion-mode condition as inputs. Across six real-robot manipulation tasks, varying this condition produces steady, dynamic, and intermediate behaviors that human raters can distinguish and that differ in joint speed, acceleration, and end-effector approach pitch. On tasks demonstrated in only one mode, MoMo transfers the unseen requested mode while largely preserving task success. Together, these results provide evidence of compositional generalization to unseen task--mode combinations and show that motion mode can be reused across tasks to control how a manipulation skill is performed.",
+      "authors": [
+        "Yuhan Hu",
+        "Hugues Thomas",
+        "Peide Huang",
+        "Mouli Sivapurapu",
+        "Benoit Landry",
+        "Arto Kivila"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-28T22:25:10+00:00",
+      "link": "https://arxiv.org/pdf/2607.26315v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "learning motion modes in robot manipulation via imitation learning",
+      "llm_evidence_cn": "通过模仿学习机器人操作中的运动模式",
+      "llm_evidence": "通过模仿学习机器人操作中的运动模式",
+      "canonical_evidence": "通过模仿学习机器人操作中的运动模式",
+      "llm_tldr_en": "Presents MoMo, a two-stage imitation-learning framework that learns reusable motion modes via spatiotemporal action tokenization and adapts behavior to task context.",
+      "llm_tldr_cn": "机器人操作需适应不同任务和对象，但执行层变异是否作为可复用行为因子尚待研究。本文提出MoMo，两阶段模仿学习框架：时空动作分词器将连续动作离散化为令牌，行为克隆Transformer以任务和连续运动模式条件为输入。在六个真实机器人操作任务上，改变模式条件产生稳态、动态和中间行为，人类评估者可区分，且关节速度、加速度和末端执行器接近方式不同。",
+      "llm_tldr": "机器人操作需适应不同任务和对象，但执行层变异是否作为可复用行为因子尚待研究。本文提出MoMo，两阶段模仿学习框架：时空动作分词器将连续动作离散化为令牌，行为克隆Transformer以任务和连续运动模式条件为输入。在六个真实机器人操作任务上，改变模式条件产生稳态、动态和中间行为，人类评估者可区分，且关节速度、加速度和末端执行器接近方式不同。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.26985v1",
+      "source": "arxiv",
+      "title": "SymmGrid: Super-Scaling On-Robot Learning with Parallelized Symmetries and Egocentric-Exocentric Visual Perception",
+      "abstract": "Deep reinforcement policy learning directly in physical robots (on-robot learning) remains bottlenecked by slow wall-clock training times. We present SymmGrid, a trajectory level augmentation framework inspired by parallelized symmetries that super-scales group transformations to significantly accelerate on-robot learning in both egocentric and exocentric visual setups. We model a Markov Decision Process (MDP) under a symmetry tree, in which state-action pairs have admissible parallelized invariant transformations that yield a geometric grid structure. The state is modelled with ego- or exocentric images and proprioception information. The latter require special treatment, in the form of homographies, to warp visual scenes in line with their corresponding spatial transformations. These parallelized transformations produce a large set of unique symmetric equivalences that populate the replay buffer with diverse and consistent experiences that speed up learning and improve performance. We present extensive training and evaluations performed directly on real robot manipulation contact tasks including peg-insertions, cable routing, and object relocations. Relative to SOTA, SymmGrid achieved wall-clock training convergence speed-ups of 1.37-2.17x, evaluation success rate improvements of 1.09x-1.27x, fastest training convergence times of 16.6, 10.9, and 79.3 minutes respectively. For trajectory wide assessments, we used normalized area under the curve (nAUC) ratios. SymmGrid achieved improvements of up to 2.59x. These results confirm that simple branch symmetries can have an outsized result due to super-scaling and bring us closer to sub-10 minute on-robot learning training in manipulation tasks suitable for arms and humanoids. The project page is available at symmgrid-robot.github.io",
+      "authors": [
+        "Gabe Everett",
+        "Brice Gunter",
+        "Ryan Vander Stelt",
+        "Cleiver Ruiz-Martinez",
+        "Blake Hull",
+        "Juan Rojas"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-07-29T14:41:02+00:00",
+      "link": "https://arxiv.org/pdf/2607.26985v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "intelligent control reinforcement learning for robots",
+      "llm_evidence_cn": "机器人强化学习加速框架",
+      "llm_evidence": "机器人强化学习加速框架",
+      "canonical_evidence": "机器人强化学习加速框架",
+      "llm_tldr_en": "SymmGrid accelerates on-robot reinforcement learning by leveraging parallelized symmetries in trajectory augmentations for both egocentric and exocentric visual setups.",
+      "llm_tldr_cn": "针对物理机器人上强化学习训练缓慢的问题，本文提出SymmGrid框架，利用并行化对称性对轨迹进行增广。该框架在马尔可夫决策过程中建模对称树，通过同构图变换生成几何网格结构，显著加速具身视觉设置下的学习。实验证明该方法大幅缩短了实际训练时间，适用于中心及非中心视觉场景。该工作为机器人强化学习的实际部署提供了高效加速手段。",
+      "llm_tldr": "针对物理机器人上强化学习训练缓慢的问题，本文提出SymmGrid框架，利用并行化对称性对轨迹进行增广。该框架在马尔可夫决策过程中建模对称树，通过同构图变换生成几何网格结构，显著加速具身视觉设置下的学习。实验证明该方法大幅缩短了实际训练时间，适用于中心及非中心视觉场景。该工作为机器人强化学习的实际部署提供了高效加速手段。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.26370v1",
+      "source": "arxiv",
+      "title": "Self-Adaptive Learning and Model Predictive Control for Tracking Unknown Dynamics with No Regret",
+      "abstract": "We propose a self-adaptive online learning for control method for tracking unknown target dynamics. The target dynamics can exhibit switching behavior, particularly, a mixture of structured, random, and/or adversarial motion. Such challenging target tracking scenarios arise in applications of dynamic mapping, traffic control, and pursuit evasion, where robots need to track, pursue, or avoid collision with moving landmarks, objects, humans, etc., whose dynamics are unknown. Our method simultaneously learns multiple predictors from scratch, via self-supervised, one-shot, and computationally efficient learning, and adaptively selects the best one to match the observed target behavior. The method enjoys finite-time near-optimality guarantees in expectation, characterized as a function of the learning error of the target dynamics and the frequency that the target dynamics switch. In the absence of both error and switching, the method asymptotically matches the optimal non-causal control policy that knows a priori the target dynamics, i.e., the method enjoys no regret in expectation. In the presence of learning errors and switching, the method degrades gracefully, \\eg when there are errors and no switching, the average regret is proportional to the average learning error and switching times. To prove these guarantees, a novel technical approach is required compared to the existing works that employ RFF-based online learning. We validate our method in Crazyflie simulations and hardware experiments, across target trajectories that vary from structured to random to adversarial, in comparison to non-stochastic, kernel-based, and neural-network-based methods for online learning.",
+      "authors": [
+        "Atharva Navsalkar",
+        "Hongyu Zhou",
+        "Vasileios Tzoumas"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG",
+        "eess.SY"
+      ],
+      "published": "2026-07-29T01:07:28+00:00",
+      "link": "https://arxiv.org/pdf/2607.26370v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Self-adaptive online learning for control to track unknown dynamics with switching behavior",
+      "llm_evidence_cn": "面向切换行为的未知动态跟踪的自适应在线学习控制",
+      "llm_evidence": "面向切换行为的未知动态跟踪的自适应在线学习控制",
+      "canonical_evidence": "面向切换行为的未知动态跟踪的自适应在线学习控制",
+      "llm_tldr_en": "Proposes a self-adaptive online learning control method that simultaneously learns multiple predictors from scratch and adaptively selects the best one to track unknown switching target dynamics with finite-time near-optimality.",
+      "llm_tldr_cn": "针对机器人需要跟踪未知动态（如移动物体或人）的问题，提出自适应的在线学习控制方法，同时从零学习多个预测器并根据观察行为自适应选择最优者，实现对切换动态的无遗憾跟踪，具有有限时间近最优性。",
+      "llm_tldr": "针对机器人需要跟踪未知动态（如移动物体或人）的问题，提出自适应的在线学习控制方法，同时从零学习多个预测器并根据观察行为自适应选择最优者，实现对切换动态的无遗憾跟踪，具有有限时间近最优性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.27180v1",
+      "source": "arxiv",
+      "title": "HumanCLAW: Can Vision-Language Models Act Through a Body?",
+      "abstract": "Evaluating whether a vision-language model (VLM) can act through a physical body is challenging. The outcome of an action couples the VLM's decision with motor control. When a task fails, it is hard to tell whether the VLM made a bad choice or the motor controller simply failed to execute it, e.g., losing balance and falling. In this work, we introduce HumanCLAW, an evaluation framework that decouples action decision-making from low-level execution. At every step, a harnessed, off-the-shelf VLM issues an atomic skill command, and the command is translated into a sub-second chunk of continuous full-body motion with real physical consequences, including gravity and collisions. The body can therefore act freely in the physical world, while execution-side disturbances, balance and motor errors, are factored out. What remains measurable is the model's action intelligence: its moment-to-moment choice of what the body should execute next. Based on this framework, we build HumanCLAW-Bench: 1,218 long-horizon, egocentric find-navigate-interact episodes across 41 indoor scenes. We test nine state-of-the-art VLMs and find that none solves the benchmark; the best model reaches only a 16.8% success rate. Recognizing the target is not the bottleneck. What current VLMs lack is embodied self-awareness: they lose track of their own body, failing to tell where it is, whether it has reached the goal, or whether it has hit an obstacle.",
+      "authors": [
+        "Siyao Li",
+        "Jiawei Gu",
+        "Shuai Liu",
+        "Kairui Hu",
+        "Zekun Li",
+        "Linjie Li",
+        "Chengcheng Tang",
+        "Po-Chen Wu",
+        "Ivan Shugurov",
+        "Lingni Ma",
+        "Michael Zollhoefer",
+        "Sizhe An",
+        "Abhay Mittal",
+        "Amy Zhao",
+        "Ranjay Krishna",
+        "Manling Li",
+        "Ziwei Liu",
+        "Chuan Guo"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.RO"
+      ],
+      "published": "2026-07-29T17:51:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.27180v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "evaluating vision-language models acting through a physical body",
+      "llm_evidence_cn": "评估视觉语言模型通过物理身体行动的能力",
+      "llm_evidence": "评估视觉语言模型通过物理身体行动的能力",
+      "canonical_evidence": "评估视觉语言模型通过物理身体行动的能力",
+      "llm_tldr_en": "Introduces HumanCLAW, a framework that decouples VLM decision-making from low-level execution to evaluate whether VLMs can act through a body in physical environments.",
+      "llm_tldr_cn": "评估视觉语言模型能否通过物理身体行动具有挑战性，因为失败原因混淆。本文提出HumanCLAW评估框架，将动作决策与低级执行解耦：每一步由VLM发出原子技能命令，然后转换为具有物理后果的完整身体运动。该框架允许身体在物理世界中自由行动，同时隔离执行侧干扰，从而单独评估VLM的决策能力。",
+      "llm_tldr": "评估视觉语言模型能否通过物理身体行动具有挑战性，因为失败原因混淆。本文提出HumanCLAW评估框架，将动作决策与低级执行解耦：每一步由VLM发出原子技能命令，然后转换为具有物理后果的完整身体运动。该框架允许身体在物理世界中自由行动，同时隔离执行侧干扰，从而单独评估VLM的决策能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}
