@@ -6,73 +6,56 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-30
-- 运行时间：2026-07-30 21:53:05 UTC
+- 最新运行日期：2026-07-31
+- 运行时间：2026-07-31 20:52:15 UTC
 - 运行状态：成功
-- 本次总论文数：17
+- 本次总论文数：12
 - 精读区：6
-- 速读区：11
+- 速读区：6
 
 ### 今日简报（AI）
-今日论文聚焦具身智能可信性系统框架与移动操作潜空间强化学习，精读两篇高分文章。  
-最值得关注《Towards Trustworthy Embodied Intelligence》提出的分级可信度机制，以及《RLMM-Flow》的潜空间强化学习移动操作框架。  
-建议优先精读这两篇论文，深入理解可信具身智能与高效操作的前沿方向。
-- 详情：[/202607/30/README](/202607/30/README)
+今日聚焦12篇论文，精读2篇、速读3篇，核心覆盖自动驾驶与机器人导航。最值得关注的是全天气自监督深度估计的鲁棒性提升（9.0分）及基于人体腿部感知的社交机器人导航（9.0分），分别解决恶劣环境感知与行人交互难题。建议深入阅读这两篇高分工作的技术细节，并留意多智能体协作与具身智能自进化方向的后续进展。
+- 详情：[/202607/31/README](/202607/31/README)
 
 ### 精读区论文标签
-1. [Towards Trustworthy Embodied Intelligence: A Systems Framework and Graded Trustworthiness Levels](/202607/30/2607.26121v1-towards-trustworthy-embodied-intelligence-a-systems-framework-and-graded-trustworthiness-levels)  
+1. [Boosting Robustness for All-Weather Self-Supervised Depth Estimation in Autonomous Driving](/202607/31/2607.21526v1-boosting-robustness-for-all-weather-self-supervised-depth-estimation-in-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：具身智能系统框架与可信度
-2. [RLMM-Flow: A Flow-based Mobile Manipulation Framework with Latent-Space Reinforcement Learning](/202607/30/2607.26460v1-rlmm-flow-a-flow-based-mobile-manipulation-framework-with-latent-space-reinforcement-learning)  
+   evidence：面向全天气自动驾驶的自监督深度估计与雷达融合
+2. [Learning Social Robot Navigation By Sensing Human Legs](/202607/31/2607.27922v1-learning-social-robot-navigation-by-sensing-human-legs)  
    标签：评分：9.0/10、query:ad
-   evidence：流模型预训练结合潜空间强化学习的移动操作方法
-3. [Risk-Aware Motion Planning with Learned Trajectory Primitives and Probabilistic Safety Assessment](/202607/30/2607.26802v1-risk-aware-motion-planning-with-learned-trajectory-primitives-and-probabilistic-safety-assessment)  
+   evidence：基于腿部雷达感知和深度强化学习的社交机器人导航
+3. [PAC-MAN: Perception-Aware CBF-RL for Whole-Body Safety in Humanoid Dodgeball](/202607/31/2607.28623v1-pac-man-perception-aware-cbf-rl-for-whole-body-safety-in-humanoid-dodgeball)  
    标签：评分：9.0/10、query:ad
-   evidence：用于城市自动驾驶的风险感知运动规划，结合RBFN轨迹基元和概率安全评估
-4. [From Passive Video to Editable Experience: Physically Grounded Experience Synthesis for Embodied Intelligence](/202607/30/2607.26903v1-from-passive-video-to-editable-experience-physically-grounded-experience-synthesis-for-embodied-intelligence)  
-   标签：评分：9.0/10、query:ad
-   evidence：利用图结构知识迁移桥接具身差距生成机器人可学习数据
-5. [Object Detection for Autonomous Driving in Chinese Rural Scenes: An Experimental Study on Real-Synthetic Data Mixing and Model Evaluation](/202607/30/2607.27058v1-object-detection-for-autonomous-driving-in-chinese-rural-scenes-an-experimental-study-on-real-synthetic-data-mixing-and-model-evaluation)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向乡村自动驾驶的目标检测，真实合成数据混合
-6. [Embodied Agents Take Control: Minimal-Interface Zero-Shot Agents Rival Industrial-Scale Policies in Vision-and-Language Navigation](/202607/30/2607.26148v1-embodied-agents-take-control-minimal-interface-zero-shot-agents-rival-industrial-scale-policies-in-vision-and-language-navigation)  
+   evidence：结合控制屏障函数与强化学习的人形机器人全身安全控制
+4. [Cross-Embodiment Transfer via Behavior-Aligned Representations](/202607/31/2607.27549v1-cross-embodiment-transfer-via-behavior-aligned-representations)  
    标签：评分：8.0/10、query:ad
-   evidence：具身智能体零样本导航最小接口
+   evidence：在视觉语言动作模型中使用行为对齐表示提升跨具身机器人操作迁移
+5. [World Action Planner: Generalizable Decision-Making with Action-Conditioned World Models](/202607/31/2607.27599v1-world-action-planner-generalizable-decision-making-with-action-conditioned-world-models)  
+   标签：评分：8.0/10、query:ad
+   evidence：结合视觉语言模型与世界模型的机器人通用决策规划
+6. [RoboBRIDGE: A Modular Framework for Bridging Policies to Robust Real-World Robotic Agents](/202607/31/2607.27881v1-robobridge-a-modular-framework-for-bridging-policies-to-robust-real-world-robotic-agents)  
+   标签：评分：8.0/10、query:ad
+   evidence：将视觉-语言-动作模型部署为鲁棒真实世界机器人智能体的模块化框架
 
 ### 速读区论文标签
-1. [ContactFlow: A video action conditioning that transfers across embodiments](/202607/30/2607.26579v1-contactflow-a-video-action-conditioning-that-transfers-across-embodiments)  
+1. [MARS-RA: Rank Aggregation for Credit Assignment via Multimodal Comparisons in Embodied Multi-Agent Cooperation](/202607/31/2607.27967v1-mars-ra-rank-aggregation-for-credit-assignment-via-multimodal-comparisons-in-embodied-multi-agent-cooperation)  
    标签：评分：8.0/10、query:ad
-   evidence：使用接触点轨迹的跨实体动作表示，用于机器人操作规划
-2. [Enfold: Folding World-Generator Computation into Predictive Representations for Efficient Embodied Control](/202607/30/2607.26657v1-enfold-folding-world-generator-computation-into-predictive-representations-for-efficient-embodied-control)  
+   evidence：具身多智能体强化学习中的信用分配与多模态排名聚合
+2. [Self-Evolving Learning for Embodied AI with Criticality Model](/202607/31/2607.28251v1-self-evolving-learning-for-embodied-ai-with-criticality-model)  
    标签：评分：8.0/10、query:ad
-   evidence：通过将世界生成器计算内化为预测表示实现高效具身控制
-3. [Practice Makes Policies: Bootstrapping and Consolidating Robotic Capabilities from Zero Human Demonstrations](/202607/30/2607.26809v1-practice-makes-policies-bootstrapping-and-consolidating-robotic-capabilities-from-zero-human-demonstrations)  
+   evidence：面向具身智能微调瓶颈的自进化学习方法
+3. [X-NavDP: Generalizing Navigation Diffusion Policy to Novel Behavior and Embodiments with Group Q-score Reweighted Matching](/202607/31/2607.28560v1-x-navdp-generalizing-navigation-diffusion-policy-to-novel-behavior-and-embodiments-with-group-q-score-reweighted-matching)  
    标签：评分：8.0/10、query:ad
-   evidence：零示范的机器人操作自我提升
-4. [SymmGrid: Super-Scaling On-Robot Learning with Parallelized Symmetries and Egocentric-Exocentric Visual Perception](/202607/30/2607.26985v1-symmgrid-super-scaling-on-robot-learning-with-parallelized-symmetries-and-egocentric-exocentric-visual-perception)  
+   evidence：面向新颖机体导航扩散策略泛化的强化学习后训练
+4. [ACE-Data-0: Human-Centric Ambient Capture as Embodied Data Engine](/202607/31/2607.28625v1-ace-data-0-human-centric-ambient-capture-as-embodied-data-engine)  
    标签：评分：8.0/10、query:ad
-   evidence：机器人强化学习加速框架
-5. [HumanCLAW: Can Vision-Language Models Act Through a Body?](/202607/30/2607.27180v1-humanclaw-can-vision-language-models-act-through-a-body)  
-   标签：评分：8.0/10、query:ad
-   evidence：评估视觉语言模型通过物理身体行动的能力
-6. [Factorized Spatio-Temporal Convolutions for Human Pose Estimation from Planar Lidar](/202607/30/2607.21309v1-factorized-spatio-temporal-convolutions-for-human-pose-estimation-from-planar-lidar)  
+   evidence：捕获真实家庭感知-行动闭环的具身数据引擎
+5. [EgoGenesis: Egocentric World-Action Modeling with Online Anchored Projective Memory and Action-3D RoPE](/202607/31/2607.28243v1-egogenesis-egocentric-world-action-modeling-with-online-anchored-projective-memory-and-action-3d-rope)  
    标签：评分：7.0/10、query:ad
-   evidence：利用平面激光雷达进行人体姿态估计服务于人机交互
-7. [PLATO: Pointer Learner for Agent and Task Openness](/202607/30/2607.25082v2-plato-pointer-learner-for-agent-and-task-openness)  
+   evidence：通过第一视角视频合成为具身AI操作扩充训练数据
+6. [ViewMind3D: Modular View-Aware Inference for Training-Free 3D-QA](/202607/31/2607.28442v1-viewmind3d-modular-view-aware-inference-for-training-free-3d-qa)  
    标签：评分：7.0/10、query:ad
-   evidence：用于开放智能体系统的多智能体强化学习，结合指针网络和图神经网络
-8. [MoMo: Dial Motion Mode in Robot Manipulation with Spatiotemporal Action Tokenization](/202607/30/2607.26315v1-momo-dial-motion-mode-in-robot-manipulation-with-spatiotemporal-action-tokenization)  
-   标签：评分：7.0/10、query:ad
-   evidence：通过模仿学习机器人操作中的运动模式
-9. [Self-Adaptive Learning and Model Predictive Control for Tracking Unknown Dynamics with No Regret](/202607/30/2607.26370v1-self-adaptive-learning-and-model-predictive-control-for-tracking-unknown-dynamics-with-no-regret)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向切换行为的未知动态跟踪的自适应在线学习控制
-10. [Egocentric Station Holding of Robotic Fish in Unknown Turbulent Background Flow](/202607/30/2607.24860v1-egocentric-station-holding-of-robotic-fish-in-unknown-turbulent-background-flow)  
-   标签：评分：6.0/10、query:ad
-   evidence：强化学习用于机器鱼在湍流中的定位保持控制
-11. [SkillRise: Agentic Reinforcement Learning for Cross-Task Skill Evolution](/202607/30/2607.26784v1-skillrise-agentic-reinforcement-learning-for-cross-task-skill-evolution)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向智能体跨任务技能演化的强化学习框架
+   evidence：面向具身AI与机器人感知的免训练3D空间推理
 
 
 <div class="dpr-home-promo-card">
