@@ -6,44 +6,62 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-02
-- 运行时间：2026-08-02 21:17:26 UTC
+- 最新运行日期：2026-08-03
+- 运行时间：2026-08-03 21:49:27 UTC
 - 运行状态：成功
-- 本次总论文数：8
+- 本次总论文数：14
 - 精读区：6
-- 速读区：2
+- 速读区：8
 
 ### 今日简报（AI）
-今日精读6篇、速读2篇，重点关注机器人学习与自动驾驶数据方向；高分论文为《P3》与《LAIA Dataset》。最值得看的是基于VAE的机器人学习稳定性改进，以及标注注意力数据的智能驾驶研究。建议普通读者优先了解机器人学习的概率传播方法，并关注后续自动驾驶数据集的开放进展。
-- 详情：[/202608/02/README](/202608/02/README)
+今日精读6篇、速读8篇，重点聚焦具身智能与自动驾驶两大方向。最高分9.0的两篇——异构多机器人视觉语言协作（D-VLC）与端到端驾驶潜在世界模型（Auto-JEPA）值得优先阅读。建议从D-VLC开始，看多机器人如何用跨智能体协作应对未知环境，兼顾落地可行性。
+- 详情：[/202608/03/README](/202608/03/README)
 
 ### 精读区论文标签
-1. [P3: Probabilistic Policy Propagation for Stable VAE-Based Robot Learning](/202608/02/2607.25541v1-p3-probabilistic-policy-propagation-for-stable-vae-based-robot-learning)  
+1. [D-VLC: Decentralized Vision-Language Collaboration for Heterogeneous Embodied Multi-Robot Systems in Unknown Environments](/202608/03/2607.29009v1-d-vlc-decentralized-vision-language-collaboration-for-heterogeneous-embodied-multi-robot-systems-in-unknown-environments)  
    标签：评分：9.0/10、query:ad
-   evidence：用于稳定VAE机器人强化学习的概率策略传播
-2. [The LAIA Dataset: Labelled Attention for Intelligent Automobiles](/202608/02/2607.25570v2-the-laia-dataset-labelled-attention-for-intelligent-automobiles)  
+   evidence：异构具身多机器人在未知环境中基于视觉语言模型的协作
+2. [Auto-JEPA: A Latent World Model of Continuous Intent for End-to-End Autonomous Driving](/202608/03/2607.29031v1-auto-jepa-a-latent-world-model-of-continuous-intent-for-end-to-end-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：用于端到端自动驾驶的人类注意力合成数据集
-3. [DVPSFormer: Efficient Online Depth-aware Video Panoptic Segmentation for Autonomous Driving](/202608/02/2607.26165v1-dvpsformer-efficient-online-depth-aware-video-panoptic-segmentation-for-autonomous-driving)  
+   evidence：面向端到端自动驾驶的潜在世界模型，预测连续驾驶意图以进行规划
+3. [Outcome-Guided Distillation: A Teacher-Student Framework to Advance VLM Reasoning in Autonomous Driving](/202608/03/2607.29052v1-outcome-guided-distillation-a-teacher-student-framework-to-advance-vlm-reasoning-in-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶的在线深度感知视频全景分割
-4. [TacWAM: Anchor-Guided World Action Model with Mechanics-Aware Tactile Prediction](/202608/02/2607.28391v1-tacwam-anchor-guided-world-action-model-with-mechanics-aware-tactile-prediction)  
+   evidence：通过教师-学生蒸馏提升端到端自动驾驶的VLM推理能力
+4. [STAGE: STyle-controllable Action GEneration for personalized autonomous driving](/202608/03/2607.29517v1-stage-style-controllable-action-generation-for-personalized-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：面向接触丰富操作的力学感知触觉预测，含空间对齐融合
-5. [Real2Sim2Real for Vision-Language-Action Manipulation: An AMD ROCm-Based Pipeline](/202608/02/2607.22997v1-real2sim2real-for-vision-language-action-manipulation-an-amd-rocm-based-pipeline)  
-   标签：评分：8.0/10、query:ad
-   evidence：用于具身视觉-语言-动作操作的Real2Sim2Real流水线
-6. [NEO: NeRF It Once, Edit It Many Times for Continuous Object Manipulation](/202608/02/2607.24538v1-neo-nerf-it-once-edit-it-many-times-for-continuous-object-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：语言引导的NeRF编辑用于机器人操作与场景状态预测
+   evidence：面向自主驾驶的风格可控动作生成
+5. [HAM-VLN: Harnessing Hierarchical Agentic Memory for Zero-Shot Vision-and-Language Navigation](/202608/03/2607.29600v1-ham-vln-harnessing-hierarchical-agentic-memory-for-zero-shot-vision-and-language-navigation)  
+   标签：评分：9.0/10、query:ad
+   evidence：具备持久世界图记忆的具身视觉语言导航智能体
+6. [WCM: A World Critic Model for Vision-Language-Action Reinforcement Learning](/202608/03/2607.29613v1-wcm-a-world-critic-model-for-vision-language-action-reinforcement-learning)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向机器人操作的视觉-语言-动作强化学习世界评论家模型
 
 ### 速读区论文标签
-1. [Corrigible Assistance in One Round: Pragmatic-Pedagogic Best Response](/202608/02/2607.27508v1-corrigible-assistance-in-one-round-pragmatic-pedagogic-best-response)  
+1. [CoTinyVLA: Chain-of-Thought Distillation for a Sub-Billion-Parameter Vision-Language-Action Model](/202608/03/2607.25487v1-cotinyvla-chain-of-thought-distillation-for-a-sub-billion-parameter-vision-language-action-model)  
    标签：评分：8.0/10、query:ad
-   evidence：通过辅助博弈进行人机协作与目标推断
-2. [Learning to Understand Body Language from Flight through Robust 3D Avatar Placing](/202608/02/2607.27865v1-learning-to-understand-body-language-from-flight-through-robust-3d-avatar-placing)  
+   evidence：用于机器人动作序列的亚十亿参数VLA模型
+2. [ActFovea: Runtime Safeguarding for VLA Policies via Spatiotemporal Visual-Action Consistency](/202608/03/2607.29169v1-actfovea-runtime-safeguarding-for-vla-policies-via-spatiotemporal-visual-action-consistency)  
    标签：评分：8.0/10、query:ad
-   evidence：用于无人机感知人体肢体语言的数据集与方法，支持人机交互
+   evidence：针对VLA机器人操作策略的运行时安全防护
+3. [CLIFT: Turning Gemini Robotics On-Device into Humanoid Specialists via Non-Invasive Closed-Loop Iterative Fine-Tuning](/202608/03/2607.29172v1-clift-turning-gemini-robotics-on-device-into-humanoid-specialists-via-non-invasive-closed-loop-iterative-fine-tuning)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向人形机器人的闭源基础模型非侵入式闭环迭代微调
+4. [BWM: A Low-Cost High-Fidelity World Simulator for Robot Learning](/202608/03/2607.29302v1-bwm-a-low-cost-high-fidelity-world-simulator-for-robot-learning)  
+   标签：评分：8.0/10、query:ad
+   evidence：用于机器人操作学习的世界模拟器
+5. [Temporal Policy: History-Initialized Action Generation for Robotic Learning from Demonstration](/202608/03/2607.29482v1-temporal-policy-history-initialized-action-generation-for-robotic-learning-from-demonstration)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向机器人示教学习的生成框架，利用历史初始化的随机插值器进行动作生成。
+6. [FibVLA: An Efficient Temporal Vision-Language-Action Model with Fibonacci Sampling](/202608/03/2607.29596v1-fibvla-an-efficient-temporal-vision-language-action-model-with-fibonacci-sampling)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向具身AI应用的高效时间视觉-语言-动作模型
+7. [Sample Efficient Hierarchical Reinforcement Learning via Best Policy Identification](/202608/03/2607.29294v1-sample-efficient-hierarchical-reinforcement-learning-via-best-policy-identification)  
+   标签：评分：7.0/10、query:ad
+   evidence：具有样本效率保证的分层强化学习算法
+8. [MUGEN: A Unified Framework for Efficient Motion Understanding and Generation](/202608/03/2607.27581v1-mugen-a-unified-framework-for-efficient-motion-understanding-and-generation)  
+   标签：评分：6.0/10、query:ad
+   evidence：面向运动-语言理解与生成的统一框架，与人类运动理解和人机交互相关
 
 
 <div class="dpr-home-promo-card">
