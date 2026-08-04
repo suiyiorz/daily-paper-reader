@@ -6,62 +6,107 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-03
-- 运行时间：2026-08-03 21:49:27 UTC
+- 最新运行日期：2026-08-04
+- 运行时间：2026-08-04 21:58:09 UTC
 - 运行状态：成功
-- 本次总论文数：14
-- 精读区：6
-- 速读区：8
+- 本次总论文数：29
+- 精读区：18
+- 速读区：11
 
 ### 今日简报（AI）
-今日精读6篇、速读8篇，重点聚焦具身智能与自动驾驶两大方向。最高分9.0的两篇——异构多机器人视觉语言协作（D-VLC）与端到端驾驶潜在世界模型（Auto-JEPA）值得优先阅读。建议从D-VLC开始，看多机器人如何用跨智能体协作应对未知环境，兼顾落地可行性。
-- 详情：[/202608/03/README](/202608/03/README)
+今日精读18篇、速读11篇，聚焦具身智能与机器人操作前沿；最值得关注的两大方向是操作与运动技能组合生成，以及从失败中学习的鲁棒长时程规划方法；建议普通读者从“技能组合”和“失败驱动的具身规划”这两个关键词切入，快速把握近期机器人学习趋势。
+- 详情：[/202608/04/README](/202608/04/README)
 
 ### 精读区论文标签
-1. [D-VLC: Decentralized Vision-Language Collaboration for Heterogeneous Embodied Multi-Robot Systems in Unknown Environments](/202608/03/2607.29009v1-d-vlc-decentralized-vision-language-collaboration-for-heterogeneous-embodied-multi-robot-systems-in-unknown-environments)  
+1. [Developing Combined Manipulation and Locomotion Skills with Interaction Representation and Skill Composition](/202608/04/2608.00208v1-developing-combined-manipulation-and-locomotion-skills-with-interaction-representation-and-skill-composition)  
    标签：评分：9.0/10、query:ad
-   evidence：异构具身多机器人在未知环境中基于视觉语言模型的协作
-2. [Auto-JEPA: A Latent World Model of Continuous Intent for End-to-End Autonomous Driving](/202608/03/2607.29031v1-auto-jepa-a-latent-world-model-of-continuous-intent-for-end-to-end-autonomous-driving)  
+   evidence：结合全身抓取与站立行走策略，组合出操作与运动复合技能，用于人形机器人
+2. [From Failures to Supervision: DynamicEnvPlan for Robust Long-Horizon Embodied Planning](/202608/04/2608.00613v1-from-failures-to-supervision-dynamicenvplan-for-robust-long-horizon-embodied-planning)  
    标签：评分：9.0/10、query:ad
-   evidence：面向端到端自动驾驶的潜在世界模型，预测连续驾驶意图以进行规划
-3. [Outcome-Guided Distillation: A Teacher-Student Framework to Advance VLM Reasoning in Autonomous Driving](/202608/03/2607.29052v1-outcome-guided-distillation-a-teacher-student-framework-to-advance-vlm-reasoning-in-autonomous-driving)  
+   evidence：动态环境偏离下的闭环具身规划
+3. [SIPTraj: Map-Free End-to-End Trajectory Prediction via Physics-Guided Scene Interaction](/202608/04/2608.00779v1-siptraj-map-free-end-to-end-trajectory-prediction-via-physics-guided-scene-interaction)  
    标签：评分：9.0/10、query:ad
-   evidence：通过教师-学生蒸馏提升端到端自动驾驶的VLM推理能力
-4. [STAGE: STyle-controllable Action GEneration for personalized autonomous driving](/202608/03/2607.29517v1-stage-style-controllable-action-generation-for-personalized-autonomous-driving)  
+   evidence：面向自动驾驶的无地图轨迹预测
+4. [Minute-Scale Training for Microrobot Navigation](/202608/04/2608.00854v1-minute-scale-training-for-microrobot-navigation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自主驾驶的风格可控动作生成
-5. [HAM-VLN: Harnessing Hierarchical Agentic Memory for Zero-Shot Vision-and-Language Navigation](/202608/03/2607.29600v1-ham-vln-harnessing-hierarchical-agentic-memory-for-zero-shot-vision-and-language-navigation)  
+   evidence：面向微机器人导航的深度强化学习框架，实现分钟级训练。
+5. [WAM-Diff2: Hierarchical AR-to-Diffusion Distillation for Highly Efficient Autonomous Driving VLA](/202608/04/2608.01035v1-wam-diff2-hierarchical-ar-to-diffusion-distillation-for-highly-efficient-autonomous-driving-vla)  
    标签：评分：9.0/10、query:ad
-   evidence：具备持久世界图记忆的具身视觉语言导航智能体
-6. [WCM: A World Critic Model for Vision-Language-Action Reinforcement Learning](/202608/03/2607.29613v1-wcm-a-world-critic-model-for-vision-language-action-reinforcement-learning)  
+   evidence：通过自回归转扩散蒸馏实现高效自动驾驶VLA模型
+6. [OC-VLA++: Monocular Geometry-Guided Cross-View Consistency for Viewpoint-Robust Robotic Manipulation](/202608/04/2608.01066v1-oc-vla-monocular-geometry-guided-cross-view-consistency-for-viewpoint-robust-robotic-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作的视觉-语言-动作强化学习世界评论家模型
+   evidence：基于单目几何引导的跨视角一致性实现视角鲁棒的机器人操作
+7. [Policy Optimality Measurement for Multi-Vehicle Decision-Making: From Extrinsic Indicators to Intrinsic Quality](/202608/04/2608.01133v1-policy-optimality-measurement-for-multi-vehicle-decision-making-from-extrinsic-indicators-to-intrinsic-quality)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向自动驾驶多车决策的强化学习策略内在质量信息论诊断框架
+8. [PRISM: Privileged Probabilistic Latent Supervision for End-to-End Autonomous Driving Motion Planning](/202608/04/2608.01201v1-prism-privileged-probabilistic-latent-supervision-for-end-to-end-autonomous-driving-motion-planning)  
+   标签：评分：9.0/10、query:ad
+   evidence：端到端自动驾驶感知预测规划一体化
+9. [DreamTrajectory: Trajectory-Guided Action Generation with World Model Alignment for Mobile Manipulation](/202608/04/2608.01381v1-dreamtrajectory-trajectory-guided-action-generation-with-world-model-alignment-for-mobile-manipulation)  
+   标签：评分：9.0/10、query:ad
+   evidence：通过世界模型对齐的轨迹引导视觉-语言-动作生成，用于移动操作
+10. [DynamicManip: Enabling Dynamic Manipulation from a Single Static Demonstration](/202608/04/2608.01452v1-dynamicmanip-enabling-dynamic-manipulation-from-a-single-static-demonstration)  
+   标签：评分：9.0/10、query:ad
+   evidence：从单个静态演示合成动态操作数据并训练低延迟模仿策略以实现机器人动态操作
+11. [STAR-VLM: Spatiotemporal Grounding Vision-Language Models for Motion and Velocity Estimation via Automotive Radar Supervision](/202608/04/2608.01535v1-star-vlm-spatiotemporal-grounding-vision-language-models-for-motion-and-velocity-estimation-via-automotive-radar-supervision)  
+   标签：评分：9.0/10、query:ad
+   evidence：利用车载雷达监督提升VLM时空推理与动态场景运动/速度估计，服务于自动驾驶。
+12. [AffordTrajDP: Dynamic Affordance-Guided Visuomotor Policy Learning for Robotic Manipulation](/202608/04/2608.01603v1-affordtrajdp-dynamic-affordance-guided-visuomotor-policy-learning-for-robotic-manipulation)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向机器人操作的动态可供性引导视觉运动策略学习
+13. [Deferred Exposure of Future Trajectories for Verifiable Reasoning in Autonomous Driving VLMs](/202608/04/2608.01755v1-deferred-exposure-of-future-trajectories-for-verifiable-reasoning-in-autonomous-driving-vlms)  
+   标签：评分：9.0/10、query:ad
+   evidence：自动驾驶VLM思维链监督中的轨迹锚定偏差，延迟未来轨迹暴露以实现可验证推理
+14. [ReTouch: Empowering Contact-Rich Dexterous Manipulation with Online-Refined Tactile Prediction](/202608/04/2608.01824v1-retouch-empowering-contact-rich-dexterous-manipulation-with-online-refined-tactile-prediction)  
+   标签：评分：9.0/10、query:ad
+   evidence：利用在线细化的触觉预测的视觉-语言-动作模型，用于接触丰富的灵巧操作
+15. [TALSC: Timeliness-Aware Large-Small VLM Collaboration for Infrastructure-Assisted Autonomous Driving](/202608/04/2608.01998v1-talsc-timeliness-aware-large-small-vlm-collaboration-for-infrastructure-assisted-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向基础设施辅助自动驾驶的大-小视觉语言模型时间感知协作
+16. [Learning Panorama-Aware VLA for Mobile Manipulation with Whole-Body Teleoperation](/202608/04/2608.02257v1-learning-panorama-aware-vla-for-mobile-manipulation-with-whole-body-teleoperation)  
+   标签：评分：9.0/10、query:ad
+   evidence：全身遥操作与全景感知视觉-语言-动作策略，用于移动操作中的底盘与机械臂协同控制
+17. [MoRAL: Sensor-Grounded BEV Reasoning for Compact VLMs toward Edge-Oriented Autonomous Driving](/202608/04/2608.02449v1-moral-sensor-grounded-bev-reasoning-for-compact-vlms-toward-edge-oriented-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：将LiDAR、雷达和物体类别编码到BEV表示中，支撑紧凑VLM在边缘设备上做出驾驶决策
+18. [Ego2Robot: Scalable Robot Data Synthesis from Egocentric Human Data](/202608/04/2608.02580v1-ego2robot-scalable-robot-data-synthesis-from-egocentric-human-data)  
+   标签：评分：9.0/10、query:ad
+   evidence：将人类第一视角操作视频转化为机器人训练数据的规模化流程。
 
 ### 速读区论文标签
-1. [CoTinyVLA: Chain-of-Thought Distillation for a Sub-Billion-Parameter Vision-Language-Action Model](/202608/03/2607.25487v1-cotinyvla-chain-of-thought-distillation-for-a-sub-billion-parameter-vision-language-action-model)  
+1. [Latent-Centroid Steering: Single-Pass Classifier-Free Guidance for Command-Aligned Autonomous Driving](/202608/04/2608.00237v1-latent-centroid-steering-single-pass-classifier-free-guidance-for-command-aligned-autonomous-driving)  
    标签：评分：8.0/10、query:ad
-   evidence：用于机器人动作序列的亚十亿参数VLA模型
-2. [ActFovea: Runtime Safeguarding for VLA Policies via Spatiotemporal Visual-Action Consistency](/202608/03/2607.29169v1-actfovea-runtime-safeguarding-for-vla-policies-via-spatiotemporal-visual-action-consistency)  
+   evidence：针对VLM自动驾驶指令跟随问题的潜在质心引导
+2. [Hybrid Attention Estimation Pipeline for Adaptive HRI Using an Expressive Robotic Head](/202608/04/2608.00284v1-hybrid-attention-estimation-pipeline-for-adaptive-hri-using-an-expressive-robotic-head)  
    标签：评分：8.0/10、query:ad
-   evidence：针对VLA机器人操作策略的运行时安全防护
-3. [CLIFT: Turning Gemini Robotics On-Device into Humanoid Specialists via Non-Invasive Closed-Loop Iterative Fine-Tuning](/202608/03/2607.29172v1-clift-turning-gemini-robotics-on-device-into-humanoid-specialists-via-non-invasive-closed-loop-iterative-fine-tuning)  
+   evidence：面向自适应人机交互的混合视觉注意力估计，基于表情机器人头
+3. [DexMani: Human-Derived Manipulability Guidance for Dexterous Rotation](/202608/04/2608.00554v1-dexmani-human-derived-manipulability-guidance-for-dexterous-rotation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向人形机器人的闭源基础模型非侵入式闭环迭代微调
-4. [BWM: A Low-Cost High-Fidelity World Simulator for Robot Learning](/202608/03/2607.29302v1-bwm-a-low-cost-high-fidelity-world-simulator-for-robot-learning)  
+   evidence：基于强化学习的灵巧操作，结合人类操作先验
+4. [Learning-Based Motion Planning for Dynamic Environments: From Foundational Algorithms to Emerging Paradigms](/202608/04/2608.00625v1-learning-based-motion-planning-for-dynamic-environments-from-foundational-algorithms-to-emerging-paradigms)  
    标签：评分：8.0/10、query:ad
-   evidence：用于机器人操作学习的世界模拟器
-5. [Temporal Policy: History-Initialized Action Generation for Robotic Learning from Demonstration](/202608/03/2607.29482v1-temporal-policy-history-initialized-action-generation-for-robotic-learning-from-demonstration)  
+   evidence：动态环境学习型运动规划综述，涵盖自动驾驶与机器人应用
+5. [SelfWAM: A Self-Grounded Unified World Action Model for Fast Robot Control](/202608/04/2608.00725v1-selfwam-a-self-grounded-unified-world-action-model-for-fast-robot-control)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人示教学习的生成框架，利用历史初始化的随机插值器进行动作生成。
-6. [FibVLA: An Efficient Temporal Vision-Language-Action Model with Fibonacci Sampling](/202608/03/2607.29596v1-fibvla-an-efficient-temporal-vision-language-action-model-with-fibonacci-sampling)  
+   evidence：自接地统一世界动作模型，将未来预测锚定于机器人身体与动作
+6. [ORCESTRA: VLM-driven Visual Robot programming in Mixed Reality](/202608/04/2608.00775v1-orcestra-vlm-driven-visual-robot-programming-in-mixed-reality)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身AI应用的高效时间视觉-语言-动作模型
-7. [Sample Efficient Hierarchical Reinforcement Learning via Best Policy Identification](/202608/03/2607.29294v1-sample-efficient-hierarchical-reinforcement-learning-via-best-policy-identification)  
+   evidence：混合现实中无代码机器人编程与语言引导控制，强调人机交互
+7. [GeminiPainter's sequence-formed pipeline comprised of perception, cognition, planning, and action stages](/202608/04/2608.00829v1-geminipainters-sequence-formed-pipeline-comprised-of-perception-cognition-planning-and-action-stages)  
+   标签：评分：8.0/10、query:ad
+   evidence：自主机器人肖像绘制，集成感知规划与机械臂控制
+8. [Goal-Oriented Logic-based Semantic Communication for Neuro-Symbolic Reasoning with Applications onto Autonomous Driving](/202608/04/2608.00878v1-goal-oriented-logic-based-semantic-communication-for-neuro-symbolic-reasoning-with-applications-onto-autonomous-driving)  
+   标签：评分：8.0/10、query:ad
+   evidence：通过语义融合实现协作式自动驾驶决策
+9. [Bicycle Acrobatics with Reinforcement Learning](/202608/04/2608.00880v1-bicycle-acrobatics-with-reinforcement-learning)  
+   标签：评分：8.0/10、query:ad
+   evidence：用强化学习让自行车机器人学习并编排多种动态杂技动作与控制技能
+10. [Sampling-Based Visibility Task Planning](/202608/04/2608.01027v1-sampling-based-visibility-task-planning)  
    标签：评分：7.0/10、query:ad
-   evidence：具有样本效率保证的分层强化学习算法
-8. [MUGEN: A Unified Framework for Efficient Motion Understanding and Generation](/202608/03/2607.27581v1-mugen-a-unified-framework-for-efficient-motion-understanding-and-generation)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向运动-语言理解与生成的统一框架，与人类运动理解和人机交互相关
+   evidence：基于可见性传感器的任务与运动规划
+11. [PhotoHOI: Synthesizing 3D Hand-Object Interactions from a Single RGB Photograph](/202608/04/2608.01905v1-photohoi-synthesizing-3d-hand-object-interactions-from-a-single-rgb-photograph)  
+   标签：评分：7.0/10、query:ad
+   evidence：从单张照片合成三维手物交互，涉及具身交互
 
 
 <div class="dpr-home-promo-card">

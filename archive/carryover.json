@@ -1,12 +1,173 @@
 {
-  "generated_at": "2026-08-03T21:42:19.864844+00:00",
-  "updated_date": "20260803",
+  "generated_at": "2026-08-04T21:45:41.633760+00:00",
+  "updated_date": "20260804",
   "carryover_days": 9,
   "tag_states": {
     "ad": {
-      "updated_date": "20260803",
+      "updated_date": "20260804",
       "carryover_days": 9,
-      "items": []
+      "items": [
+        {
+          "id": "2608.01013v1",
+          "source": "arxiv",
+          "title": "RL Bootstrapping of OpenVLA-OFT for a Novel Robot Embodiment",
+          "abstract": "Adapting a pretrained vision-language-action (VLA) policy to a new robot usually assumes embodiment-specific demonstrations. This assumption is especially restrictive for custom robots whose morphology differs strongly from the manipulators seen in large robot datasets. We study a harder setting: zero-demo embodiment alignment of OpenVLA-OFT on a cable-driven parallel robot (CDPR) with a simple gripper and a previously unseen control interface. Instead of supervised fine-tuning, we use reinforcement learning in simulation with dense geometric rewards computed from simulator state. The training is performed in two stages: a PPO stage for directional motion primitives, followed by GRPO continuation from the PPO checkpoint with an expanded instruction space that includes object-conditioned commands. On the four shared directional instructions, the average held-out success rate improves from 34.25\\% after PPO to 53.50\\% after PPO$\\rightarrow$GRPO, with especially large gains on \\texttt{move left} and \\texttt{move backward}. In the GRPO stage we additionally introduce \\texttt{move to <object>} over eight target objects and obtain 39/400 = 9.75\\% strict success, while qualitative rollouts frequently show correct target-directed approach behavior before late-stage instability. Compared with prior OpenVLA and OpenVLA-OFT results, which rely on demonstration datasets and mostly standard rigid-arm embodiments, our method uses no embodiment-specific dataset at all. The results do not yet establish robust manipulation, but they provide stronger evidence that RL-only bootstrapping can create the first usable language-conditioned controller for a genuinely novel embodiment.",
+          "authors": [
+            "Damir Nurtdinov",
+            "Alexei Kornaev",
+            "Alexander Maloletov"
+          ],
+          "primary_category": "cs.RO",
+          "categories": [
+            "cs.RO"
+          ],
+          "published": "2026-08-02T05:33:36+00:00",
+          "link": "https://arxiv.org/pdf/2608.01013v1",
+          "tags": [
+            "keyword:ad",
+            "query:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "reinforcement learning to align a VLA policy for a novel cable-driven robot embodiment without demonstrations",
+          "llm_evidence_cn": "使用强化学习在无人类演示下将视觉-语言-动作策略适配到新型绳驱机器人本体",
+          "llm_evidence": "使用强化学习在无人类演示下将视觉-语言-动作策略适配到新型绳驱机器人本体",
+          "canonical_evidence": "使用强化学习在无人类演示下将视觉-语言-动作策略适配到新型绳驱机器人本体",
+          "llm_tldr_en": "This paper uses two-stage RL (PPO then GRPO) in simulation to adapt the OpenVLA-OFT policy to a cable-driven parallel robot with a new control interface, requiring zero demonstrations.",
+          "llm_tldr_cn": "将预训练视觉-语言-动作(VLA)策略迁移到新的机器人本体通常需要特定于本体的演示数据，对形态差异大的定制机器人限制很大。本文研究零演示的本体对齐：在绳驱并联机器人上，仅使用仿真中的密集几何奖励进行强化学习。训练分为PPO学习方向性运动基元和GRPO扩展指令空间两阶段，无需任何人类演示即可适配新的控制接口，为VLA策略的快速本体迁移提供了新路径。",
+          "llm_tldr": "将预训练视觉-语言-动作(VLA)策略迁移到新的机器人本体通常需要特定于本体的演示数据，对形态差异大的定制机器人限制很大。本文研究零演示的本体对齐：在绳驱并联机器人上，仅使用仿真中的密集几何奖励进行强化学习。训练分为PPO学习方向性运动基元和GRPO扩展指令空间两阶段，无需任何人类演示即可适配新的控制接口，为VLA策略的快速本体迁移提供了新路径。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "intelligent control reinforcement learning for robots",
+          "matched_requirement_id": "req-6",
+          "selection_source": "carryover_cache",
+          "paper_id": "2608.01013v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2608.01880v1",
+          "source": "arxiv",
+          "title": "World Action Models in Real Time: An Empirical Study of Smooth Execution via Asynchronous Deployment",
+          "abstract": "World Action Models generate fixed-horizon action chunks through iterative denoising, creating substantial inference latency that can cause pauses, stale actions, and discontinuities during robotic execution. We present an empirical study of asynchronous deployment strategies that overlap model inference with action execution to enable responsive and smooth control. We compare six strategies, including synchronous execution, pure asynchronous switching, post-hoc action blending, denoising-time blending, inference-time velocity guidance, and prefix-conditioned generation, on a 10 Hz bimanual robot. Evaluation combines offline trajectory analysis with online experiments across dynamic manipulation, precision-critical placement, and long-horizon tasks. Our results identify accurate temporal alignment between observations, predictions, and executed commands as a fundamental requirement. Alignment errors produce persistent chunk-boundary discontinuities that cannot be corrected through blending alone. With proper alignment, direct action weighting provides a simple and smooth baseline but sacrifices accuracy in precision-critical tasks. Inference-time velocity guidance fails to reliably constrain committed actions on our platform. In contrast, prefix-conditioned generation achieves the best overall balance between task performance, execution speed, and trajectory smoothness by learning consistent action continuations during training. These findings clarify the practical trade-offs among asynchronous deployment strategies and provide guidance for deploying high-latency World Action Models in real-time robotic systems.",
+          "authors": [
+            "Motubrain Team"
+          ],
+          "primary_category": "cs.RO",
+          "categories": [
+            "cs.RO"
+          ],
+          "published": "2026-08-03T08:24:36+00:00",
+          "link": "https://arxiv.org/pdf/2608.01880v1",
+          "tags": [
+            "keyword:ad",
+            "query:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "Asynchronous deployment strategies for World Action Models to enable smooth control on bimanual robot manipulation.",
+          "llm_evidence_cn": "面向世界动作模型的异步部署策略，用于双臂机器人操作的平滑控制。",
+          "llm_evidence": "面向世界动作模型的异步部署策略，用于双臂机器人操作的平滑控制。",
+          "canonical_evidence": "面向世界动作模型的异步部署策略，用于双臂机器人操作的平滑控制。",
+          "llm_tldr_en": "World Action Models suffer from inference latency causing pauses and discontinuities. This empirical study compares six asynchronous deployment strategies overlapping inference with execution on a 10 Hz bimanual robot, showing how to achieve responsive and smooth control.",
+          "llm_tldr_cn": "世界动作模型通过迭代去噪生成长时动作块，推理延迟会造成机器人在执行中的停顿与不连续。本文在10Hz双臂机器人上比较六种异步部署策略，将模型推理与动作执行重叠起来。离线轨迹分析与在线实验表明，合适的异步策略可显著提升动态操作与精密放置的平滑性和响应性。",
+          "llm_tldr": "世界动作模型通过迭代去噪生成长时动作块，推理延迟会造成机器人在执行中的停顿与不连续。本文在10Hz双臂机器人上比较六种异步部署策略，将模型推理与动作执行重叠起来。离线轨迹分析与在线实验表明，合适的异步策略可显著提升动态操作与精密放置的平滑性和响应性。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+          "matched_requirement_id": "req-2",
+          "selection_source": "carryover_cache",
+          "paper_id": "2608.01880v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2608.01456v1",
+          "source": "arxiv",
+          "title": "Long-Horizon Embodied Decision-Making via Multimodal Memory Compression",
+          "abstract": "Agents are increasingly expected to act not only as task executors, but also as decision-makers on behalf of human users. This shift requires agents to accumulate evidence over long horizons, interpret implicit user preferences, and compare multiple candidates under partial observations. In this work, we propose DunphyBench, a new benchmark for evaluating agents on long-horizon human-centered embodied decision-making, where the agent must navigate through multiple embodied housing environments and make decisions that align with multi-dimensional human preferences. Unlike standard embodied reasoning tasks that often focus on procedural planning or immediate goal completion, our setting requires agents to integrate multimodal, multi-source input into coherent knowledge that supports complex reasoning across long horizon. The evaluation results reveal that there is a substantial gap between current agents and human performance. Furthermore, our diagnosis of state-of-the-art VLM-driven agents reveals that memory management is one of the bottlenecks, where raw multimodal history introduces noise that hinders decision quality. Motivated by this finding, we design MeMento, a preference-conditioned multimodal memory compressor that selectively compresses decision-relevant information from long-horizon history based on user preferences with a fixed set of memory tokens. Experiments show that MeMento helps VLM-driven agents improve accuracy by 7.18%, while reducing memory usage by 85.38% compared to the strongest baseline.",
+          "authors": [
+            "Bingxuan Li",
+            "Rui Yang",
+            "Cheng Qian",
+            "Jiateng Liu",
+            "Jeonghwan Kim",
+            "Zhenhailong Wang",
+            "Manling Li",
+            "Tong Zhang",
+            "Heng Ji"
+          ],
+          "primary_category": "cs.CV",
+          "categories": [
+            "cs.CV",
+            "cs.CL"
+          ],
+          "published": "2026-08-02T19:29:48+00:00",
+          "link": "https://arxiv.org/pdf/2608.01456v1",
+          "tags": [
+            "keyword:ad",
+            "query:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "Embodied decision-making benchmark in real-world physical environments",
+          "llm_evidence_cn": "面向现实场景的具身决策基准",
+          "llm_evidence": "面向现实场景的具身决策基准",
+          "canonical_evidence": "面向现实场景的具身决策基准",
+          "llm_tldr_en": "Introduces DunphyBench, a benchmark for long-horizon human-centered embodied decision-making, requiring agents to integrate multimodal inputs and align with human preferences across multiple housing environments.",
+          "llm_tldr_cn": "针对长期具身决策中智能体难以整合多模态信息并理解隐含人类偏好的问题，该论文提出DunphyBench基准。该基准要求智能体在多个具身居住环境中导航，在部分观测条件下比较多个候选方案，并依据多维人类偏好做出决策。实验设置强调长期证据积累与多源信息融合，而不是单纯的过程规划或即时目标完成。该工作为评价和改进面向人类中心场景的具身决策智能体提供了新的标准。",
+          "llm_tldr": "针对长期具身决策中智能体难以整合多模态信息并理解隐含人类偏好的问题，该论文提出DunphyBench基准。该基准要求智能体在多个具身居住环境中导航，在部分观测条件下比较多个候选方案，并依据多维人类偏好做出决策。实验设置强调长期证据积累与多源信息融合，而不是单纯的过程规划或即时目标完成。该工作为评价和改进面向人类中心场景的具身决策智能体提供了新的标准。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "embodied AI agents in real world scenarios",
+          "matched_requirement_id": "req-9",
+          "selection_source": "carryover_cache",
+          "paper_id": "2608.01456v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2608.01015v1",
+          "source": "arxiv",
+          "title": "KING: Embodiment-Aware Kinematic Graph Neural Network for Unified Motion Representation of Legged and Wheeled Robots",
+          "abstract": "Kinematic models provide reliable motion constraints for odometry estimation in featureless environments, where exteroceptive sensing degrades and IMU integration drifts. Learning-based kinematic models can achieve more accurate odometry estimation than model-based methods by capturing nonlinear effects; however, most existing learning-based models are trained on a single embodiment and generalize poorly to new embodiments. This generalization is difficult because the meanings and structures of proprioceptive measurements vary across embodiments, including the number of joints and ground-contact elements (e.g., wheels, feet). To address this challenge, we propose KING, a Graph Neural Network (GNN)-based kinematic model that explicitly incorporates robot embodiments by representing them as a common graph. We show that wheel and leg kinematic models can be expressed by a unified representation, enabling a single model for both wheeled and legged robots. Trained on datasets spanning diverse embodiments, KING provides a unified representation of wheeled and legged kinematics and achieves high-accuracy odometry estimation in real environments. KING estimates accurate odometry using only an embodiment description (e.g., a URDF file) and on-board proprioception (encoders and an IMU) and can be adapted to new robot embodiments through few-shot learning with only one minute of data, avoiding retraining from scratch on a new dataset for each robot. The project page is available at: https://smrg-aist.github.io/king_project_page/",
+          "authors": [
+            "Taku Okawara",
+            "Aoki Takanose",
+            "Kenji Koide",
+            "Shuji Oishi",
+            "Masashi Yokozuka"
+          ],
+          "primary_category": "cs.RO",
+          "categories": [
+            "cs.RO",
+            "cs.AI"
+          ],
+          "published": "2026-08-02T05:42:58+00:00",
+          "link": "https://arxiv.org/pdf/2608.01015v1",
+          "tags": [
+            "keyword:ad",
+            "query:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "embodiment-aware kinematic GNN for unified odometry estimation of legged and wheeled robots, addressing locomotion generalization across embodiments",
+          "llm_evidence_cn": "具身感知运动学图神经网络统一腿式与轮式机器人的里程计运动表示，解决跨形态运动泛化",
+          "llm_evidence": "具身感知运动学图神经网络统一腿式与轮式机器人的里程计运动表示，解决跨形态运动泛化",
+          "canonical_evidence": "具身感知运动学图神经网络统一腿式与轮式机器人的里程计运动表示，解决跨形态运动泛化",
+          "llm_tldr_en": "KING is an embodiment-aware GNN kinematic model that unifies motion representation for legged and wheeled robots, improving odometry estimation and generalization across embodiments.",
+          "llm_tldr_cn": "针对学习式运动学模型通常针对单一机器人形态训练、难以推广到新形态的问题，本文提出KING，一种具身感知的运动学图神经网络。它通过图结构表达不同机器人关节与地面接触单元之间的运动学关系，统一腿式与轮式机器人的运动表示。该方法在无特征环境下能显著提升里程计估计精度并跨形态泛化。KING为解决机器人运动学习的形态泛化问题提供了一种统一的表示框架。",
+          "llm_tldr": "针对学习式运动学模型通常针对单一机器人形态训练、难以推广到新形态的问题，本文提出KING，一种具身感知的运动学图神经网络。它通过图结构表达不同机器人关节与地面接触单元之间的运动学关系，统一腿式与轮式机器人的运动表示。该方法在无特征环境下能显著提升里程计估计精度并跨形态泛化。KING为解决机器人运动学习的形态泛化问题提供了一种统一的表示框架。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+          "matched_requirement_id": "req-2",
+          "selection_source": "carryover_cache",
+          "paper_id": "2608.01015v1",
+          "carry_days": 1
+        }
+      ]
     }
   }
 }

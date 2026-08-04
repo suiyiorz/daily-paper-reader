@@ -1,0 +1,175 @@
+Title: GeminiPainter's sequence-formed pipeline comprised of perception, cognition, planning, and action stages
+
+URL Source: https://arxiv.org/pdf/2608.00829v1
+
+Published Time: Tue, 04 Aug 2026 00:51:54 GMT
+
+Number of Pages: 4
+
+Markdown Content:
+# GeminiPainter: Real-Time AI-Guided Robotic Sketch Generation for Live Portraiture 
+
+Miguel Altamirano Cabrera * Aleksey Fedoseev † Iana Zhura ‡ Dzmitry Tsetserukou §
+
+Intelligent Space Robotics Lab, Skolkovo Institute of Science and Technology, Moscow, Russian Federation. 
+
+Figure 1: GeminiPainter’s sequence-formed pipeline comprised of perception, cognition, planning, and action stages. 
+
+ABSTRACT 
+
+We present an autonomous robotic portrait-generation system com-bining real-time face detection, AI-based sketch generation, and robotic drawing. The system captures video frames, extracts facial regions, converts them into minimalist single-line sketches using the Gemini Vision API, optimizes stroke order through graph-based path planning, and executes smooth trajectories on a 6-DoF col-laborative manipulator. This perception-cognition-action pipeline integrates computer vision, neural artistic abstraction, motion opti-mization, and robot control. User ratings on a 5-point scale were high for sketch quality (4 .33), perceived execution (4 .53), and user experience (4 .65), indicating recognizable, appealing, and engag-ing robotic portraits. 
+
+Index Terms: Human-Robot Interaction (HRI), Visual-Language Models (VLM), Collaborative Robotics, Trajectory Optimization, Immersive Analytics. 
+
+1 INTRODUCTION 
+
+The intersection of artificial intelligence, computer vision, and robotics has opened new possibilities for creative human-robot in-teraction. While robots have long been employed for manufactur-ing and precise manipulation, recent advances in deep learning and neural networks enable robots to engage in more nuanced, artis-tic tasks. Portrait drawing, in particular, is a compelling domain that requires simultaneous understanding of human facial features, artistic abstraction, and precise motor control. Prior work in robotic drawing has primarily focused on two paradigms: (1) reproducing pre-designed artwork through inverse kinematics and trajectory planning [10], and (2) generating draw-ings from predefined stylization algorithms [2]. Systems such as the drawing robot by Liu et al. [6] employed image processing pipelines (edge detection and edge thinning algorithms) to extract 
+
+> *
+
+E-mail: m.altamirano@skoltech.ru 
+
+> †
+
+E-mail: Aleksey.Fedoseev@skoltech.ru 
+
+> ‡
+
+E-mail: Iana.Zhura@skoltech.ru 
+
+> §
+
+E-mail: d.tsetserukou@skoltech.ru 
+
+strokes from photographs. However, these approaches produce rigid, geometric abstractions that lack artistic nuance. The emergence of generative models and vision transformers has shifted the paradigm. Recent work by OpenAI and Google has demonstrated that large vision models can effectively understand and abstract visual scenes into semantic representations. DALL-E [8], Stable Diffusion [9], and similar systems can generate diverse artistic renditions from text and image inputs. Our work leverages this capability by using Google’s Gemini Vision API to generate minimalist single-line sketches that capture facial essence while re-maining simple enough for robotic execution. The emergence of generative models and vision transformers has shifted this paradigm. Text-to-image and multimodal sys-tems, such as DALL-E [8], Stable Diffusion [9], and more recently Google’s Gemini [11], can synthesize diverse, semantically faithful imagery from text and image inputs. Our work leverages the na-tive image generation of Gemini to produce minimalist single-line sketches that capture facial essence while remaining simple enough for robotic execution. Real-time face detection has matured significantly with advances in efficient neural networks. MediaPipe Face Detection [7], YOLO-Face [13], and RetinaFace [1] offer fast, accurate detection with low latency suitable for interactive applications. These systems en-able practical facial region-of-interest extraction, essential for our pipeline’s first perception stage. The problem of ordering drawing strokes to minimize “lift dis-tance” (non-drawing movements) is analogous to the traveling salesman problem. Classical approaches employ greedy nearest-neighbor heuristics, while more sophisticated methods use graph-based optimization and genetic algorithms [3]. Our system imple-ments stroke ordering to reduce robot idle time and energy con-sumption, critical for live demonstration scenarios. Collaborative robots (cobots) like the [model omitted for blind review] from applied robotics, enable safe human-robot co-presence through force-torque feedback and trajectory smoothing. Modern controllers support trajectory blending, wherein interme-diate waypoints are connected via smooth circular arcs rather than point-to-point linear motions, enabling continuous, high-speed op-eration [5]. This capability is central to our smooth execution mode. While individual components (face detection, sketch generation, robot control) are well-established, their integration into a cohesive, arXiv:2608.00829v1 [cs.RO] 1 Aug 2026 real-time interactive system for live portrait generation presents several novel aspects. Our contribution is focused into a real-time, interactive portrait-drawing system, together with an initial empir-ical characterization of that system. In contrast to robotic-drawing pipelines built on geometric edge detection, which produce rigid and noise-sensitive abstractions, we use a large multimodal model (Gemini) to reduce a face to a sparse single-line sketch that still preserves recognizable, expressive features. We then couple this abstraction with stroke-order optimization and trajectory blending so that a collaborative [model omitted for blind review] manipu-lator renders the sketch as continuous, smooth motion within an interactive time budget. Finally, we report a user study ( N = 10) that quantifies the end-to-end latency of the pipeline and measures how users perceive the resulting portraits. 
+
+2 METHODS 
+
+2.1 System Architecture 
+
+The designed pipeline of our system is presented in (Fig. 1). There, each stage is designed in a modular structure, where some steps may be replaced with a different method of trajectory gener-ation or executed by the robot of a different model. The system configuration utilized in this work consists of the following subsys-tems: 1. Live Face Detection: real-time video acquisition and facial region extraction. 2. Sketch Generation: AI-driven conversion of face image to single-line sketch via Gemini Vision API. 3. Trajectory Planning: extraction of stroke coordinates and optimal ordering. 4. Manipulator Execution: inverse kinematics, trajectory blending, and smooth arm motion. 
+
+2.2 Live Face Detection 
+
+We perform real-time face detection on standard USB camera input (30 FPS) using a Haar feature-based cascade classifier [12], which provides low-latency frontal-face detection without additional de-pendencies or GPU acceleration. We select the largest box, crop it with a small margin, and apply Contrast-Limited Adaptive His-togram Equalization (CLAHE) to normalize contrast under varying lighting. The enhanced face crop F is passed to sketch generation. 
+
+2.3 AI-Driven Sketch Generation 
+
+Traditional edge detection (Canny, Sobel) produces geometric, brit-tle abstractions sensitive to noise and lighting. Large vision models, trained on billions of diverse images and captions, implicitly learn to recognize semantically meaningful features and artistic conven-tions. Recent advances in diffusion models [4] have demonstrated remarkable capabilities in conditional image generation, which we leverage for sketch synthesis. We prompt the Gemini Vision API with a text prompt specifi-cally engineered to emphasize continuous lines: 
+
+“Generate a minimalist, single-line portrait sketch of this face. Draw only essential features (eyes, nose, mouth, jawline). Use a single continuous or near-continuous line. Output should resemble a line drawing suitable for robotic drawing. Minimize the number of strokes.” 
+
+This prompt serves to pinpoint desired output over two dimen-sions: semantic prioritization and physical simplicity. Firstly, re-stricting the output to ”essential features” encourages the model to focus on high-level facial geometry, discarding shading and tex-ture—a necessary simplification for real-time processing. Sec-ondly, demanding a ”continuous” or ”near-continuous” line with minimal strokes aims at the generated path that is topologically sim-ple, minimizing computational effort required for kinematic plan-ning and lowering the chance of abrupt joint movements. The model returns a PNG image of the generated sketch. We extract stroke coordinates via standard image processing: 
+
+Algorithm 1 Sketch to Stroke Extraction 
+
+S ← PNG2Gray (GeneratedSketch )
+
+B ← Threshold (S, τluminance )
+
+Contours ← FindContours (B)
+
+for each contour c in Contours do if Area (c) > Amin then Si ← RamerDouglasPeucker (c, ε)
+
+Append Si to StrokeList 
+
+end if end for return StrokeList This yields a set of strokes {S1, S2, . . . , Sn}, each a sequence of 2D points Si = [ p1, p2, . . . , pmi ].
+
+2.4 Trajectory Planning 
+
+2.4.1 Stroke Ordering and Path Optimization 
+
+Drawing efficiency depends critically on minimizing “lift dis-tance”—the non-productive motion between stroke endpoints. We model this as a traveling salesman variant: min 
+
+> π
+> n−1
+
+# ∑
+
+> i=1
+
+d(pend (Sπ(i)), pstart (Sπ(i+1))) , (1) where π is the permutation of {1, 2, . . . , n}, and d(·, ·) is the Eu-clidean distance. We employ a greedy nearest-neighbor heuristic with post-optimization: 
+
+Algorithm 2 Stroke Ordering Order ← [] , Remaining ← { 1, 2, . . . , n}
+
+Current ← S1, Remaining ← Remaining \{ 1}
+
+while Remaining ̸ = /0 do 
+
+j∗ ← arg min j d(pend (Current ), pstart (S j)) for j ∈ Remaining Order ← Order ∪{ j∗}
+
+Current ← S j∗ , Remaining ← Remaining \{ j∗}
+
+end while return Order Additionally, we check if reversing any stroke reduces distance and apply local 2-opt swaps. 
+
+2.4.2 Coordinate Mapping 
+
+Face images are captured in pixel coordinates [u, v] with origin at image top-left. Whiteboard positions are defined in 3D robot coor-dinates (meters) relative to the robot base frame. We perform affine mapping which is calibrated via four-point correspondence (image corners to whiteboard corners). We maintain separate lift and draw-ing Z-offsets to ensure the tool (marker/pen) makes contact only during drawing. 
+
+2.5 Manipulator Execution 
+
+2.5.1 End-Effector Design and Marker Holder Mechanism 
+
+The end-effector assembly consists of a marker holder equipped with a mechanical springer system. The springer mechanism pro-vides compliance in the vertical direction, allowing the marker to Figure 2: GeminiPainter generating and painting a human portrait in real time through VLM-based sketch retrieval and optimized path planning. 
+
+move 1 .5 cm relative to the tool frame. This mechanical compli-ance serves multiple functions: (1) it accommodates minor vari-ations in whiteboard surface planarity, (2) it reduces impact forces during tool contact transitions, and (3) it enables uniform line width rendering by maintaining consistent contact pressure. The marker position within this compliance range is controlled via Z-axis tra-jectory commands relative to the whiteboard surface. The spring force is calibrated such that the marker maintains contact with the drawing surface under combined weight and spring force differen-tial. 
+
+2.5.2 Trajectory Execution 
+
+Trajectory execution is decomposed into two sequential phases: kinematic inversion to compute joint configurations from Cartesian poses, and temporal interpolation with blending to ensure smooth, continuous joint motion. This approach maintains continuous, high-speed motion while preserving geometric accuracy of stroke features. The execution protocol proceeds stroke by stroke. Starting from a retracted pose at the clearance Z-offset, the tool moves to the stroke’s start point via a blended trajectory, lowers to the drawing surface, and traces the stroke waypoints with trajectory blending. It then retracts to the clearance height and advances to the start of the next stroke, repeating until all strokes are drawn. Safety constraints include joint velocity/acceleration limits, sin-gularity avoidance, and emergency abort triggers. 
+
+3 EXPERIMENTAL VALIDATION 
+
+We report a user study ( N = 10 participants) that evaluates the sys-tem along two dimensions: (i) the real-time performance of the full perception–cognition–planning pipeline, and (ii) the user-perceived quality of the generated sketches, their robotic rendering, and the overall interactive experience. 
+
+3.1 Experimental Design 
+
+Participants and apparatus. Ten participants (3 women, 7 men; ages 23–37) of mixed background each completed one full session. For each session the system captured a live frame, detected and cropped the face, generated a single-line portrait via the Gemini Vi-sion API, extracted and ordered the strokes, mapped them to robot coordinates, and rendered the resulting drawing. Stage-by-stage timing was logged automatically.     
+
+> Table 1: Pipeline latency breakdown over N=10 runs. The Gemini image-generation call dominates end-to-end latency.
+
+Stage Mean (ms) SD (ms) % of total Face detection 30.4 28.0 0.4 Gemini API 8377.7 2066.3 98.5 Stroke extraction 82.4 49.7 1.0 Path planning 8.6 7.3 0.1 IK computation 5.7 1.2 0.1 
+
+Total 8504.8 2061.7 100.0 
+
+Measures. We recorded two types of measure. First, we logged the end-to-end latency L = tface + tgemini + tstroke + tplanning + tIK ,with each pipeline stage timed separately, against a target of L <
+
+10 s for interactive use. Second, after each session participants rated ten items on a 5-point Likert scale (1 = strongly disagree, 5 = strongly agree), grouped into three constructs: sketch quality 
+
+(recognizability, artistic quality, essential features), perceived exe-cution (line continuity, line-width consistency, feature closure), and 
+
+user experience (overall impression, feedback clarity, perceived au-tonomy, engagement intent). 
+
+3.2 Results 
+
+3.2.1 Real-Time Performance 
+
+Table 1 reports the latency breakdown. Mean end-to-end latency was 8 .5 ± 2.1 s (range 6 .6–13 .8 s), satisfying the < 10 s interac-tivity target. The pipeline is overwhelmingly network-bound: the Gemini image-generation call accounted for 98 .5% of total latency (8 .38 ± 2.07 s), while all on-device computation—face detection (30 ms), stroke extraction (82 ms), path planning (9 ms), and inverse kinematics (6 ms)—together required only ≈ 127 ms (1 .5%). Local processing therefore imposes negligible overhead, and end-to-end responsiveness is determined almost entirely by the latency of the remote vision model. 
+
+3.2.2 User Evaluation 
+
+All ten survey items scored well above the neutral midpoint of 3 (Table 2). At the construct level, user experience was rated highest (mean 4 .65 ± 0.46), followed by perceived execution (4 .53 ± 0.63) and sketch quality (4 .33 ± 0.70). The strongest individual items Table 2: User ratings ( N = 10 ) on a 5-point Likert scale (1 = strongly disagree, 5 = strongly agree). 
+
+Construct Item Mean SD Sketch Quality Recognizability 4.30 1.06 Artistic quality 4.30 0.82 Essential features 4.40 0.84 Perceived Execution Line continuity 4.40 0.97 Line-width consist. 4.50 0.71 Feature closure 4.70 0.48 User Experience Overall impression 4.60 0.97 Feedback clarity 4.70 0.48 Perceived autonomy 4.50 0.71 Engagement intent 4.80 0.42 
+
+Sketch quality (mean) 4.33 0.70 
+
+Perceived execution (mean) 4.53 0.63 
+
+User experience (mean) 4.65 0.46 were engagement intent (4 .80 ± 0.42) and feedback clarity (4 .70 ±
+
+0.48), indicating that participants found the system compelling and the live camera/detection feedback easy to follow. Recognizabil-ity showed the widest dispersion (4 .30 ± 1.06): most participants judged their portrait clearly face-like, but a minority of sketches were less recognizable, consistent with occasional abstraction by the vision model. 
+
+3.3 Discussion 
+
+The two results are complementary. The timing analysis shows that the engineered components of the pipeline, namely detection, abstraction-to-strokes, optimization, and kinematics, add negligible latency, so the system is already fast enough for interactive use and would benefit most from a faster or local generative model rather than further code optimization. The perceptual ratings show that, despite reducing a face to a sparse single-line drawing, the output is consistently recognized, judged aesthetically pleasing, and expe-rienced as engaging and autonomous. Together these support our central claim: a modern vision model coupled with a collaborative manipulator can perform a nuanced artistic task in real time and be perceived positively by non-expert users. In perspective of the ethical discussions, the authors consider it important to mention that the developed system is not architected to outperform or replace traditional artistic practice. The prompt is designed to output a stylized, single-line abstraction, and the cobot motion is grounded in kinematic optimization: with this, the robot explicitly vacates the territory of human artistic mastery and sub-jective touch. Thus, the GeminiPainter is deliberately positioning itself in a new niche where real-time computation and robotic actu-ation converge to produce interactive performative art, rather than imposing as a substitute for the painter’s studio. 
+
+4 CONCLUSION 
+
+We investigate an autonomous robotic portrait generation system that combines real-time computer vision, deep neural networks for sketch abstraction, path planning algorithms, and collaborative robotic control to enable autonomous portrait drawing. Key techni-cal contributions include: (1) the application of large vision mod-els (Gemini Vision) for semantically meaningful sketch generation, (2) efficient combinatorial optimization of stroke sequences to min-imize non-productive motion, and (3) trajectory blending strategies that enable smooth, continuous robot operation. Collectively, these techniques demonstrate that modern deep learning and collabora-tive manipulators can execute nuanced artistic tasks that tradition-ally required human skill. The system architecture integrates digital perception (face detec-tion), AI-driven abstraction (Gemini sketch generation), and phys-ical robotic execution ([model omitted for blind review] drawing) within a structured human-robot interaction context. The mechani-cal end-effector design—featuring a compliant marker holder with 1.5 cm vertical compliance—enables robust sketch rendering de-spite surface irregularities. Real-time feedback mechanisms and interactive user guidance establish a dynamic relationship between human subjects and robotic agents during collaborative artwork generation. Future work includes: (1) extending to multi-face collaborative drawing scenarios, (2) incorporating adaptive drawing speed and orientation strategies to achieve varied line weights and artistic ef-fects, (3) exploring alternative sketch models (fine-tuned diffusion models and user-provided style transfer), and (4) deploying the sys-tem in gallery and festival contexts to study long-term user engage-ment and feedback. 
+
+ACKNOWLEDGEMENTS 
+
+Research reported in this publication was financially supported by the RSF grant No. 24-41-02039. 
+
+REFERENCES
