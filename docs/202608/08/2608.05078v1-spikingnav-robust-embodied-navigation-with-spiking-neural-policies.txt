@@ -1,0 +1,380 @@
+Title: SpikingNav: Robust Embodied Navigation with Spiking Neural Policies
+
+URL Source: https://arxiv.org/pdf/2608.05078v1
+
+Published Time: Thu, 06 Aug 2026 01:21:33 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+> IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 1
+
+# SpikingNav: Robust Embodied Navigation with Spiking Neural Policies 
+
+Jiahong Zhang †, Sijun Shen †, Dehua Wu , Yifan Lin , Xuechen Xia , Xu Chu , Youhui Zhang ,and Guoqi Li ∗
+
+Abstract —Embodied navigation requires an agent to make sequential decisions from egocentric observations in a physical environment. Existing Artificial Neural Network (ANN)-based navigation models have achieved strong performance, yet they often rely on dense computation and may degrade under visual corruptions. Spiking neural networks (SNNs) provide event-driven computation and intrinsic temporal dynamics, which are promising for compact and robust navigation on resource-constrained platforms. However, whether spike-based sensing and policy dynamics can improve robustness in visually rich embodied navigation remains an open problem. This paper proposes SpikingNav, a spiking framework for robust indoor embodied navigation. It contains a Spiking Sensing Encoder (SSE) and a Spiking Policy Network (SPN). The SSE extracts task-conditioned visual features with a spike-based backbone. The SPN maintains a recurrent policy state through membrane integration, thresholding, and spike-triggered reset. In this way, SpikingNav exploits the dynamic properties and spike activations of SNNs to improve navigation performance and robustness. We evaluate SpikingNav on PointNav and ObjectNav under clean observations and visual corruptions. SpikingNav achieves com-petitive clean performance and stronger robustness with fewer parameters and lower per-step computation than a matched ANN baseline. For instance, SpikingNav improves ObjectNav success from 31.05% to 34.12%, and raises the average success under visual corruptions from 8.45% to 13.71%, demonstrating the benefits of spike-based sensing and policy dynamics. We further validate the deployability of our spike-based sensing method on the Thruster–V2 neuromorphic chip. This physical hardware validation shows that SpikingNav can be instantiated on a real neuromorphic substrate for cyber-physical systems. 
+
+Index Terms —Embodied navigation, robustness, spiking neural networks, temporal decision making, visual navigation, neuro-morphic hardware. 
+
+I. I NTRODUCTION 
+
+Embodied navigation is a core capability for industrial cyber-physical agents that must perceive, reason, and act in visually complex environments. Unlike static visual recog-nition and detection problems, navigation requires continu-ous decision making from streaming observations, where the 
+
+†Jiahong Zhang and Sijun Shen contributed equally to this work. Jiahong Zhang, Yifan Lin, Xuechen Xia, and Guoqi Li are with the Institute of Automation, Chinese Academy of Sciences, Beijing 100045, China, and with the School of Artificial Intelligence, University of Chinese Academy of Sciences, Beijing 100049, China. Sijun Shen is with the State Key Laboratory of Media Convergence and Communication, Communication University of China, Beijing 100024, China. Dehua Wu, Xu Chu and Youhui Zhang are with the Department of Computer Science and Technology, Tsinghua University, Beijing 100084, China. Youhui Zhang is also with the Beijing National Research Center for Information Science and Technology, Tsinghua University, Beijing 100084, China. 
+
+∗Corresponding author: Guoqi Li. 
+
+agent must remain effective under sensor noise and scene changes [1], [2]. These requirements make embodied navi-gation not only a perception problem, but also a sequential control problem for cyber-physical systems deployed in the physical world. Recent progress in embodied AI has been largely driven by artificial neural networks (ANNs). Strong visual backbones and reinforcement learning (RL) frameworks have enabled impressive performance on tasks such as PointNav and Ob-jectNav [3], [4]. However, this progress also exposes an important practical limitation: high navigation performance often depends on dense feature extraction and computationally heavy policy networks, which are not always suitable for com-pact embodied platforms [5]–[7]. More importantly, embodied agents can be sensitive to corruptions and deployment-time disturbances, such as blur and noise [8]. As a result, improving robustness under realistic perturbations while keeping compu-tation affordable remains an open problem. Spiking neural networks (SNNs) provide a promising di-rection for addressing this challenge, as they combine event-driven computation with intrinsic temporal dynamics [9]– [11]. These properties suggest possible advantages for embod-ied navigation, where both efficiency and temporally robust decision-making are important. Despite recent progress in SNN architectures and training methods [12]–[15], however, most strong empirical results have still been reported on frame-level perception tasks [16], [17]. In such settings, SNNs often exhibit appealing properties such as robustness and low-energy event-driven computation, yet these advantages do not consis-tently translate into superior performance over mature ANN backbones because of spike discretization and optimization difficulty [18], [19]. It remains unclear whether these trade-offs persist in embodied navigation, where the challenge lies not only in semantic discrimination but also in stable temporal information integration under varying sensory inputs. To investigate this problem, we present a spiking visual navigation framework, termed SpikingNav , which extends SNNs from perceptual encoding to the navigation policy core for compact physical navigation systems. SpikingNav consists of two spike-based components. The Spiking Sensing Encoder (SSE) extracts visual representations with a spike-based ResNet-style backbone, encodes the task-specific goal representation, and fuses the two streams into a compact task-conditioned feature. The Spiking Policy Network (SPN) then updates the policy representation through membrane-based spiking recurrent dynamics before producing the actor and critic outputs. This design is motivated by the sequential nature of navigation, where reliable action selection depends not arXiv:2608.05078v1 [cs.RO] 5 Aug 2026 IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 2
+
+only on instantaneous visual evidence but also on temporally consistent state estimation. In this context, membrane leakage, thresholding, and reset of spiking neurons help suppress tran-sient visual fluctuations before they propagate into the policy state. Compared with prior SNN-based navigation studies mainly focused on mapless control, spatial coding, or hierarchical motion generation [20]–[22], our study considers a broader and more challenging setting by jointly evaluating PointNav and ObjectNav in visually rich indoor environments [23]. Within this setting, we examine whether an SNN-based navigator can achieve competitive performance relative to an ANN navigator of similar model scale, and whether the spiking policy de-grades more gracefully under visual corruptions. We further connect this algorithmic evaluation to a real neuromorphic processor on Thruster–V2 1, thereby grounding the proposed navigation pipeline in a physical computing system. Extensive experiments show that SpikingNav achieves high performance under clean settings while exhibiting stronger robustness. Compared with ANNNav, SpikingNav uses fewer parameters and lower per-step FLOPs (12.1M/0.97G vs. 14.0M/4.21G), improves clean ObjectNav success rate from 31.05% to 34.12%, and raises the average corrupted Object-Nav success rate from 8.45% to 13.71%. Taken together, these results suggest that the practical value of SNNs in embodied systems lies in enabling compact and disturbance-tolerant sensing and policy modules for navigation. The main contributions of this work are summarized as follows: 1) We propose SpikingNav, a spiking navigation framework that integrates an SSE and an SPN into a standard actor-critic RL pipeline, extending SNNs from perceptual encoding to policy learning for visually rich indoor navigation. 2) We develop the SPN as a compact recurrent policy core that converts sensing features into membrane states and updates them through spiking neural dynamics. By regulating the policy state through spike-triggered reset, the SPN supports stable action generation under corrupted observations. 3) Experimental results show that SpikingNav improves robustness under visual corruptions while maintaining competitive clean-task performance and lower model cost than the ANN baseline. 4) We implement the SSE on the Thruster–V2 neuromor-phic chip and evaluate its on-chip execution character-istics, including cycles, dynamic current, and dynamic energy, providing an initial hardware-level validation of spike-based visual perception and target fusion on a physical neuromorphic computing system. II. R ELATED WORK 
+
+A. Spiking Neural Networks 
+
+SNNs are widely regarded as the third generation of neural models due to their utilization of temporally structured spikes rather than continuous activations [9]. Despite this biological plausibility, SNNs traditionally face optimization challenges owing to the non-differentiable nature of discrete activations, often resulting in a performance gap compared to Artificial Neural Networks (ANNs). Modern advances have sought to bridge this gap, driving SNNs toward ANN-level performance through innovations such as spatio-temporal backpropaga-tion [10], SLAYER [24], direct training [12], and specialized normalization techniques [25], [26]. Furthermore, the develop-ment of deeper and more expressive architectures, including SEW-ResNet [13], MS-ResNet [27], and Spikformer [14], [28], has significantly expanded the scaling potential of spiking models. A parallel line of research investigates the intrinsic ro-bustness and temporal modeling capabilities of SNNs, positing that spike discretization and membrane dynamics can enhance noise tolerance and sequential representation [29]–[32]. Despite these theoretical and architectural milestones, the majority of empirical evidence for SNNs remains confined to feedforward vision tasks, event-based classification, or object detection [16], [33]. Recent research involving spiking models also primarily targets frame-level perception rather than the real-time state estimation and action generation required for active agents [17]. Even in studies where robustness is a central theme, the prevailing benchmarks are typically restricted to visual recognition or sequence classification rather than the more complex domain of navigation policy learning [15], [34]– [36]. Our work studies SNNs within an autonomous navigation framework and demonstrates their effectiveness relative to ANNs, without requiring modifications to the standard RL task interface. 
+
+B. Embodied Visual Navigation 
+
+Visual navigation has evolved from classical mapping-and-planning pipelines to end-to-end learned policies that process RGB, depth, and language-conditioned observations [37]–[40]. Among embodied benchmarks, PointNav mainly evaluates goal-directed movement, whereas ObjectNav additionally re-quires semantic grounding and is therefore more sensitive to perception failures [23]. Recent navigation systems typically rely on CNN or Transformer visual encoders, coupled with recurrent or hierarchical memory to integrate past observations and actions for sequential decision-making [41]–[44]. SNN-based navigation has also received increasing atten-tion [45]. Existing studies have explored RL with spiking policies for low-level mobile robot navigation [46], [47], demonstrating the practical potential of spike-based control in mapless scenarios [20], [48], [49]. Brain-inspired navigation further introduces spatial encoders based on grid cells, head-direction cells, and boundary-vector cells [21]. Hierarchical spiking control combines a spiking high-level controller with continuous attractor dynamics to generate physically feasible robot actions [22]. Prior work suggests that spiking dynamics may support navigation by improving memory, spatial representation, and action generation. However, current evidence is mainly limited to relatively simple or mapless settings with lidar-based or other low-dimensional sensory inputs. As a result, their ef-fectiveness in visually grounded embodied navigation under complex scene semantics remains unclear. In this work, we study SNN-based navigation in RoboTHOR [23], comparing IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 3Spiking Sensing Encoder 
+
+## Sensor Inputs 
+
+RGB Sensors Target (obj/point) Sensor +
+
+> Embedding Layer
+
+Fusion Backbone 
+
+SpikingNav Environment 
+
+> Action Logits
+> State Value
+
+Spiking Policy Network 
+
+Vision Backbone Target Backbone       
+
+> Concat
+> Spiking Neuron
+> Conv Conv
+> Flatten
+> FC
+> 𝐀 𝐀
+> 𝐀 𝐀 𝐀𝐀𝐀𝐀
+> 𝐀 𝐀
+> Memory State
+> +
+> 𝐀 𝐀
+> 𝐀 𝐀
+> Spike Gate
+> 𝐀 𝐀 = 0, CLOSED
+> 𝐀 𝐀 = 1, OPEN Memory Feedback
+> 𝐀 𝐀 𝐀 𝐀
+> 𝐀 𝐀
+> Feature Compressor Actor Head Critic Head FC
+> 𝐀 𝐀 𝐀𝐀𝐀
+> Spike Gate LIF
+> 𝐀 𝐀
+> Memory State
+> 𝐀 𝐀−1
+> 𝐀 𝐀
+> ℎ𝐀
+> ℎ𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> Move Ahead Rotate Left Rotate Right Look Up Look Down Stop
+> Actions
+> 𝐀 𝐀
+
+Fig. 1: Overview of SpikingNav. Given the current RGB observation and a target, the Spiking Sensing Encoder (SSE) first extracts observation features through a visual backbone and maps the target into a target feature via an embedding layer. A lightweight fusion backbone then aligns and compresses the two representations to produce sensing features. The resulting feature is fed into the Spiking Policy Network (SPN), which maintains spike-driven temporal dynamics and outputs the action policy and state value while preserving the standard actor-critic RL interface. a matched SNN-ANN pair under both clean and corrupted conditions across PointNav and ObjectNav within a unified policy framework. III. M ETHOD 
+
+A. Spiking Neural Network Preliminaries 
+
+SNNs replace the continuous-valued activations in ANNs with temporally evolving neuron states and discrete spikes. A typical spiking neuron integrates its input into a membrane potential and emits a spike only when the potential crosses a threshold [9], [10]. This formulation can be written as: 
+
+eUt = λU t−1 + It, (1) 
+
+St = H( eUt − ϑ), (2) 
+
+Ut = eUt ⊙ (1 − St), (3) where eUt is the pre-reset membrane potential, Ut is the membrane potential after reset, It is the input current, and 
+
+St ∈ { 0, 1}d denotes the spike output at internal spiking step 
+
+t, where t ∈ { 1, . . . , T }. Here, T is the total number of internal spiking steps. λ is a leak factor, ⊙ denotes element-wise multiplication, ϑ is the firing threshold, and H(·) denotes the spike-generation function. Because H(·) is non-differentiable, modern SNNs are usually trained with surrogate-gradient methods that approximate its derivative during backpropaga-tion [10]. Compared with conventional ANNs, this computational mechanism provides two properties that are relevant to nav-igation. First, membrane integration allows the model to accumulate recent evidence through internal spiking dynamics, rather than responding solely to an instantaneous feature map. Second, the discrete nature of spike-based activity can provide a form of local state stability: when small perturbations do not alter the spiking pattern, their influence on the encoded state remains limited. These characteristics motivate the use of SNNs in navigation policies. 
+
+B. Problem Formulation 
+
+We consider embodied navigation as a partially observable Markov decision process. At time step t, the agent receives an observation ot from an egocentric visual stream and maintains an internal state ht summarizing interaction history. The policy outputs an action at that changes both the environment state and the next observation. The task objective is to navigate suc-cessfully to a specified goal, such as a target point in PointNav or an instance of a target object category in ObjectNav. 
+
+C. SpikingNav 
+
+SpikingNav adopts a minimally disruptive design that pre-serves the standard embodied RL interface while introducing spiking computation only into the sensing encoder and the policy core. Fig. 1 illustrates the overall pipeline. Given the current visual observation and a target token, SpikingNav first extracts sensing features using the SSE. Specifically, the visual observation is processed by a visual backbone to obtain observation features, while the target token is transformed into a target feature through an embedding layer. The embedding layer maps each target category identifier to a learnable feature representation. For PointNav, the goal input is a continuous goal descriptor provided by the environment and is trans-formed through a goal encoder. These two representations are then aligned and compressed by a lightweight fusion backbone before being fed into the SPN, which maintains a spike-driven temporal state and produces actor-critic outputs. IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 4
+
+1) Spiking Sensing Encoder: As shown in Fig. 1, the SSE consists of three components: a visual backbone for extracting observation features, a target backbone for encoding the goal input, and a lightweight fusion backbone for aligning the joint representation. Let xt ∈ RH×W ×C denote the current RGB or RGB-D observation at time step t, where H and W are the input spatial dimensions and C depends on the enabled sensor configuration. The visual backbone consists of a spike-based ResNet18-style network [50] followed by a feature compressor with two convolutional layers. Given xt, the encoder processes the input over T internal spiking steps and produces a visual representation: 
+
+zt = Evis (xt; T ), zt ∈ RHz ×Wz ×Dz , (4) where Hz , Wz , and Dz denote the spatial height, spatial width, and channel dimension of the visual feature, respectively. Following the original model setting [50], we set T = 4 . In our implementation, the feature compressor uses two convolutional layers, with intermediate and output channel dimensions of 128 and Dz , respectively. We set Hz = 7 , Wz = 7 , and 
+
+Dz = 32 .The target backbone encodes the task-specific goal input gt
+
+into a target representation: 
+
+et = Etar (gt), et ∈ RDq , (5) The target vector is spatially expanded to match the visual fea-ture map, yielding qt ∈ RHz ×Wz ×Dq , where Etar (·) denotes the target embedding layer and Dq is the channel dimension of the target representation. In our implementation, we set 
+
+Dq = Dz . For ObjectNav, gt corresponds to the target object token; for PointNav, it denotes the goal descriptor provided by the environment. The visual feature zt and target feature qt are concate-nated along the channel dimension and then processed by a lightweight fusion module with two convolutional layers followed by a flatten operation: 
+
+rt = Ffus 
+
+ [zt; qt], rt ∈ RDin , (6) where [zt; qt] ∈ RHz ×Wz ×(Dz +Dq ), and Din = Hz Wz Dz .
+
+2) Spiking Policy Network: The navigation policy of SpikingNav is realized by an SPN, as illustrated in Fig. 1. Let csens  
+
+> t
+
+and cmem  
+
+> t
+
+denote the sensory and recurrent currents, respectively, where Wr and Wh are learnable weight matrices: 
+
+csens  
+
+> t
+
+= Wr rt, (7) 
+
+cmem  
+
+> t
+
+= Whut−1. (8) The spiking recurrent core then updates its internal state as: 
+
+vt = λu t−1 + csens  
+
+> t
+
++ cmem  
+
+> t
+
+, (9) 
+
+st = H(vt − ϑ), (10) 
+
+ut = vt ⊙ (1 − st). (11) Here, vt denotes the pre-reset membrane potential that inte-grates the sensory embedding rt and the previous memory state ut−1, while λ ∈ (0 , 1) controls the decay of past memory. The binary spike signal st, generated by the Heaviside step function H(·) with threshold ϑ, further serves as a spike gate that determines whether the newly accumulated membrane state is preserved or reset. Specifically, when the neuron does not fire ( st = 0 ), the gate remains closed and the membrane potential is directly carried forward, yielding ut = vt. When the neuron fires ( st = 1 ), the gate opens and resets the fired state component through ut = vt ⊙ (1 − st). This mechanism enables event-driven memory regulation: subthreshold infor-mation is retained for future computation, while threshold-crossing activations are selectively cleared after spike emis-sion. During training, the non-differentiable spike function 
+
+H(·) is optimized using surrogate gradients. Together, these dynamics form a lightweight memory mech-anism with implicit gating. Unlike the Spiking-GRU formula-tions adopted in [20], [22], which introduce explicit GRU-style update and reset gates into the spiking domain, our design is built on the native integration-and-fire dynamics of spiking neurons. The membrane inertia λu t−1 in Eq. (9) provides a gradual update of latent history, while the threshold-triggered spike and reset in Eq. (11) make state changes event-dependent. As a result, transient sensory perturbations that remain below the firing threshold have limited influence on the recurrent state. We use the post-reset membrane state ut as the recurrent policy state ht, that is, ht := ut. The policy and value outputs are then defined as: 
+
+π(at | o≤t) = softmax( Wπ ht + bπ ), (12) 
+
+Vt = Wv ht + bv , (13) where π(at | o≤t) denotes the action distribution and Vt is the scalar value estimate at time step t.
+
+3) Training Method: SpikingNav is trained in the same embodied RL pipeline based on AllenAct [38], from which we also adopt its corresponding hyperparameter settings, with the value loss coefficient α set to 0.5 and the entropy coefficient 
+
+β set to 0.01. The model is optimized with a PPO-style actor-critic objective: 
+
+L = Lpolicy + αLvalue − β Ent( π), (14) where Lpolicy and Lvalue denote the policy and value losses, respectively, Ent( π) is the policy entropy regularizer, and α
+
+and β are weighting coefficients. For the policy term, we use the PPO clipped surrogate objective: 
+
+Lpolicy = −Et
+
+h
+
+min  ηt(θ) ˆAt, clip( ηt(θ), 1 − ϵ, 1 + ϵ) ˆAt
+
+i
+
+,
+
+(15) where 
+
+ηt(θ) = πθ (at | o≤t)
+
+πθold (at | o≤t) . (16) Here, πθ and πθold denote the current and old policies, respectively, ϵ is the clipping threshold, and ˆAt = ˆRt − Vt
+
+is the advantage estimate at time step t, where Vt is the critic output defined above and ˆRt is the target return. The value loss is defined as: 
+
+Lvalue = Et
+
+h
+
+(Vt − ˆRt)2i
+
+. (17) IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 5
+
+D. A Temporal Robustness Perspective 
+
+We analyze the local temporal stability of the SPN dynamics introduced in Sec. III-C2. This analysis provides a sufficient condition under which bounded perturbations in sensory fea-tures preserve the spike pattern of the recurrent policy core and induce a bounded change in the actor logits. Let (ut, r t, v t, s t) and (ˆ ut, ˆrt, ˆvt, ˆst) denote the clean and perturbed SPN variables at navigation step t, respectively. We define: ∆ut = ˆ ut − ut, ∆vt = ˆ vt − vt,
+
+∆rt = ˆ rt − rt, dt = Wr ∆rt. (18) We follow the notation of Sec. III-C2, where (ut, r t, v t, s t)
+
+denote the SPN variables at navigation step t. For a perturbed sensory sequence, we use hatted variables (ˆ ut, ˆrt, ˆvt, ˆst) to denote the corresponding perturbed trajectory. 
+
+Accumulated perturbation budget. Using the compact notation: 
+
+M = λI + Wh, (19) where I denotes the identity matrix, the pre-reset membrane update in Eq. (9) can be written as 
+
+vt = Mut−1 + Wr rt. (20) Applying the same update to the perturbed trajectory and subtracting Eq. (20), we obtain: 
+
+∆vt = M∆ut−1 + dt. (21) Therefore, 
+
+∥∆vt∥∞ ≤ ∥M∥ ∞∥∆ut−1∥∞ + ∥dt∥∞. (22) Over a finite interval {τ, . . . , t }, Eq. (22) induces a worst-case accumulated perturbation budget. For any j ∈ { τ, . . . , t },we define: 
+
+Bτ,j = ∥M∥ j−τ +1  
+
+> ∞
+
+∥∆uτ −1∥∞ +
+
+> j
+
+X
+
+> k=τ
+
+∥M∥ j−k 
+
+> ∞
+
+∥dk∥∞. (23) The first term describes the initial membrane perturbation propagated to step j, while the summation term accumulates the sensory-current perturbations injected from step τ to step j. Thus, Bτ,j upper-bounds the worst-case membrane perturbation accumulated over the interval. 
+
+Spike margin. Since the spike output is determined element-wise by the sign of vt − ϑ, we define the local spike margin for neuron i as: 
+
+mt,i = |vt,i − ϑ|, ¯mt = min  
+
+> i
+
+mt,i . (24) Here, i indexes the neuron dimension, and ¯mt is the minimum distance from the clean membrane potential to the shared firing threshold. The following proposition states the local robustness mech-anism. It compares the accumulated perturbation budget in Eq. (23) with the spike margin in Eq. (24). When the accumu-lated perturbation remains smaller than the margin to the firing threshold, the spike pattern is preserved over the considered interval. We then discuss its implication for the actor logits. 
+
+Proposition 1 (Spike-pattern preservation) . Consider a finite interval {τ, . . . , t }, and let Bτ,j be the perturbation budget defined in Eq. (23) . If: 
+
+Bτ,j < ¯mj , ∀j ∈ { τ, . . . , t }, (25) 
+
+then the perturbed trajectory preserves the same spike pattern as the clean trajectory over this interval, i.e., 
+
+ˆsj = sj , ∀j ∈ { τ, . . . , t }. (26) 
+
+Proof. From Eq. (23), the membrane perturbation at step j is bounded by: 
+
+∥∆vj ∥∞ ≤ Bτ,j . (27) Under the condition Bτ,j < ¯mj , we have: 
+
+∥∆vj ∥∞ < ¯mj ≤ | vj,i − ϑ|, ∀i. (28) Therefore, for each neuron i, the perturbation cannot move the membrane potential across the firing threshold ϑ. Hence, 
+
+sign(ˆ vj,i − ϑ) = sign( vj,i − ϑ), ∀i. (29) Since the spike output is determined by this threshold com-parison, we obtain: 
+
+ˆsj = sj , ∀j ∈ { τ, . . . , t }. (30) This completes the proof. 
+
+Implication for actor-logit variation. The spike-pattern preservation condition also bounds the variation of the recur-rent policy state. Since the clean and perturbed trajectories share the same spike pattern over {τ, . . . , t }, the reset opera-tion is applied in the same way to both trajectories. Hence, it does not amplify the membrane perturbation, yielding: 
+
+∥∆hj ∥∞ = ∥∆uj ∥∞
+
+≤ ∥ ∆vj ∥∞ ≤ Bτ,j , ∀j ∈ { τ, . . . , t }. (31) For the policy logits: 
+
+ℓj = Wπ hj + bπ , (32) we therefore obtain: 
+
+∥ˆℓj − ℓj ∥∞ = ∥Wπ (ˆhj − hj )∥∞
+
+≤ ∥ Wπ ∥∞∥∆hj ∥∞
+
+≤ ∥ Wπ ∥∞Bτ,j .
+
+(33) Thus, once the perturbation budget remains below the spike margin, the actor-logit variation is controlled by the same accumulated budget Bτ,j , scaled by the policy-head norm. IV. E XPERIMENTS 
+
+A. Dataset and Evaluation Metric 
+
+The experiments are conducted in RoboTHOR [23]. We consider two tasks, namely PointNav and ObjectNav. In PointNav, the agent is required to reach a target position specified relative to its current pose, which mainly evaluates goal-conditioned navigation with explicit geometric guidance. In ObjectNav, the agent must navigate to an instance of a target object category from egocentric observations, making the problem more challenging due to the additional need for IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 6
+
+semantic grounding and target search. Detailed experimental setups, evaluation protocols, and full training configurations are provided in Supplementary Materials S1. We report Success Rate (SR) and Success weighted by Path Length (SPL) as the main evaluation metrics. SR measures the fraction of successful episodes, whereas SPL further accounts for navigation efficiency by comparing the executed trajectory with the shortest feasible path. These two metrics are reported for both clean and perturbed settings so that robustness can be assessed in terms of both task completion and path quality. Robustness is evaluated under the visual corruptions in RobustNav [8]. The visual corruptions include low lighting, motion blur, camera crack, defocus blur, speckle noise, re-duced field of view (lower FOV), and spatter, which degrade the quality of egocentric observations. These corruptions emu-late common physical-system disturbances, testing whether the policy remains stable when the physical sensing is degraded. 
+
+B. Navigation Performance, Model Scale, and Efficiency 
+
+Table I compares the performance of SpikingNav and ANN navigation methods on different navigation tasks. On Point-Nav, SpikingNav can match strong ANN performance on this standard goal-conditioned navigation task. For the more chal-lenging ObjectNav task, recent high-performing ANN-based ObjectNav systems often rely on pretrained vision-language models such as CLIP [51], or even external large language models [52], [53], to enhance semantic perception and decision making. Although effective, these designs are considerably less suitable for edge deployment due to their model size and computational overhead. In contrast, our comparison focuses on compact models under a matched parameter budget. Under this setting, SpikingNav achieves better ObjectNav perfor-mance than its ANN counterpart RobustNav [8] and SNN counterpart LIF+GRU, suggesting that spiking policies offer a more favorable solution when strong embodied navigation performance must be obtained with small-scale models. To enable a fair comparison, we re-implement the ANN pipeline of RobustNav [8] using the same data processing, training protocol, and evaluation setting as SpikingNav, and denote this model as ANNNav. The parameter count, compu-tational cost (FLOPs), and task performance of ANNNav and SpikingNav are reported in Table II. Under this matched set-ting, SpikingNav is competitive on PointNav and outperforms ANNNav on ObjectNav while using fewer parameters and sub-stantially fewer FLOPs, indicating that SNNs are a promising solution when strong embodied navigation performance must be achieved with small models. 
+
+C. Navigation Robustness 
+
+Fig. 2 reports PointNav performance under clean conditions and a range of visual corruptions. Under clean conditions, ANNNav achieves the highest SR and SPL. However, under several visual corruptions, SpikingNav outperforms ANNNav by a substantial margin. These results suggest that SpikingNav achieves near-parity with ANNNav under clean conditions, while exhibiting stronger robustness. TABLE I: PointNav and ObjectNav results on RoboTHOR.                                                        
+
+> Method Params SR(%) SPL(%)
+> PointNav
+> IL RGB 14M 61.0 52.0 DD-PPO Depth [38] 14M 93.0 88.0 RobustNav-RGB DD-PPO [54] 14M 98.8 83.1 RobustNav-RGBD DD-PPO [54] 14M 98.5 84.6 ENTL RGB+CLIP [55] >69M 95.0 91.0
+> SpikingNav (Ours) 12.1M 96.5 72.9
+> ObjectNav
+> LIF+GRU 12.4M 23.4 10.2 Action Boost [56] /28.0 12.0 Dreamer [57] /31.0 6.0 uORF [58] /31.3 14.6 RGB+D ResNet18 [38] 14M 26.0 11.0 RobustNav-RGB DD-PPO [54] 14M 31.1 14.3 ENTL [55] 96M 46.0 16.0 EmbCLIP [51] ∼40M 47.0 20.0 SG-Nav-LLaMA [52] ∼14B 47.3 23.7 SG-Nav-GPT [52] >180B 47.5 24.0 VLTNet [53] >100B 33.2 17.1
+> SpikingNav (Ours) 12.1M 34.1 16.2
+
+TABLE II: Model scale and clean performance. PointNav and ObjectNav entries are reported as SR / SPL (%). FLOPs denote the per-step forward computation measured under the same input resolution.             
+
+> Method Params FLOPs PointNav ObjectNav ANNNav 14M 4.21G 98.21 / 82.13 31.05 / 14.26 SpikingNav 12.1M 0.97G 96.54 / 72.93 34.12 / 16.20
+
+Compared with PointNav, ObjectNav places substantially heavier demands on semantic perception and long-horizon state maintenance, since the agent must not only navigate but also identify and continuously pursue a target object from egocentric observations. As shown in Fig. 2, SpikingNav achieves a higher SR and SPL than ANNNav. Under most visual perturbations, this advantage is preserved or further enlarged, with especially clear gains under motion blur, camera crack, and defocus blur. Only under lower FOV does ANNNav remain slightly stronger. We provide qualitative navigation examples in Supplemen-tary Material S2 to further illustrate how SpikingNav behaves under visual conditions and goal-driven navigation scenarios. 
+
+D. Ablation Study 
+
+To clarify which components contribute to the robustness gains, we add a controlled module ablation around the two design choices in SpikingNav: SSE and SPN. 
+
+SSE. As shown in Table III, the SSE-only variant replaces the ANN perception module in ANNNav with the SSE while keeping the ANN policy module unchanged. Relative to ANNNav, this replacement slightly lowers clean SR (30.70% vs. 31.05%), but improves clean SPL (15.30% vs. 14.26%) and average robustness under visual corruptions (9.58%/4.74% vs. 8.45%/3.59% in SR/SPL). This suggests that replacing the perception front-end with SSE mainly improves the stability IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 7Speckle Noise Motion Blur Spatter PointNav ObjectNav 
+
+Fig. 2: Robustness comparison under visual corruptions on PointNav and ObjectNav. The left column presents representative corrupted observations, including speckle noise, motion blur, and spatter. The right panels compare the SR and SPL of SpikingNav and ANNNav across different visual corruptions. “Avg.” denotes the average over the seven corrupted settings, excluding the clean setting. TABLE III: Module-replacement ablation on ObjectNav. Start-ing from the ANNNav baseline, we replace its ANN percep-tion module with the SSE, and its ANN policy module with the SPN. Results are reported as SR / SPL (%). Robustness denotes the average performance over the visual corruptions.                     
+
+> Variant SSE SPN Clean Robustness ANNNav baseline ––31.05 / 14.26 8.45 / 3.59 SSE only ✓–30.70 / 15.30 9.58 / 4.74 SPN only –✓31.00 / 12.60 10.20 / 4.25
+> SpikingNav ✓✓34.12 / 16.20 13.71 / 5.67
+
+of visual feature extraction, leading to more robust task-conditioned representations under corrupted observations even when the downstream policy remains ANN-based. 
+
+SPN. Table III also shows that the SPN-only variant keeps the ANN perception module and replaces only the ANN policy module with the SPN. Under this setting, clean SR remains nearly unchanged relative to ANNNav (31.00% vs. 31.05%), while robustness improves to 10.20%/4.25% in SR/SPL. This indicates that replacing the policy core with SPN can improve robustness even without modifying the visual front-end. At the same time, clean SPL decreases to 12.60%, suggesting that the robustness gain introduced by spike-based recurrent policy dynamics may be accompanied by some loss in path efficiency under clean conditions. 
+
+Full model. Finally, Table III shows that replacing both ANN modules with their spike-based counterparts yields the full SpikingNav model, which achieves the best robustness re-sult in the ablation study, reaching 13.71%/5.67% in SR/SPL, compared with 8.45%/3.59% for ANNNav. It also attains the highest clean SR (34.12%) with SPL (16.20%). Overall, the ablation results suggest that the two replacements play complementary roles: SSE improves the robustness of the perceptual representation, whereas SPN improves the robust-ness of temporal policy updating. Their combination yields the strongest overall gain under corruptions. 
+
+E. Neuromorphic Hardware Deployment 
+
+To examine the hardware deployability of SpikingNav as a physical computing system, we mapped its SSE onto Thruster–V2 1. It is a multi-core neuromorphic processor de-rived from the GaBAN architecture [59] and has been taped-out. Following the memory prefetching and buffering design of GaBAN, Thruster–V2 supports Buffets [60] prefetching and asynchronous buffering, which helps reduce the impact of memory-access latency in SNN workloads. The deployed SSE includes the spike-based visual backbone, target-token encoding, and goal-conditioned feature fusion, which together form the sensing front end of SpikingNav. The deployment was executed on one GaBAN processing core under a 5 V 
+
+supply voltage. Cycle counts were converted using a 625 MHz 
+
+cycle-counter frequency. Each run used an input batch with the same scale as that used in the simulator evaluation, containing 
+
+128 sampled inputs. Each input consists of one visual observa-tion and the corresponding target category token. The reported per-sample cycles and energy were averaged from the batch-level measurements. We repeated the measurement five times to reduce the influence of operational variation. The deployed spiking sensing module required (2 .133 ± 0.048) × 10 9 cycles per sample and the measured dynamic energy consumption was 3.92 ± 0.14 J per sample. These results verify that the sensing and target-fusion computation of SpikingNav can be mapped to and executed on a physical neuromorphic hardware platform, providing an initial hardware-level validation of the proposed framework. The current implementation prioritizes  
+
+> 1The hardware implementation work of Thruster–V2 has not been published yet. IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 8
+
+TABLE IV: On-chip execution statistics of the deployed spik-ing sensing module on the Thruster–V2 neuromorphic chip.                  
+
+> Deployment setting or metric Result
+> Supply voltage 5VChip frequency 625 MHz Cycles per sample 2.133 ±0.048 G cycles Dynamic current 229 .5±4.7mA Dynamic energy per sample 3.92 ±0.14 J
+
+Fig. 3: Deployment process on the Thruster–V2 1. The right subfigure shows the layout of the taped-out Thruster–V2 multi-core neuromorphic processor, which provides the physical hardware basis for the SpikingNav. functional compatibility and programmability, while further hardware-aware sparse execution and event-driven optimiza-tion of SpikingNav may reduce the deployment cost. V. A NALYSIS AND DISCUSSION 
+
+In static vision tasks, such as image recognition on Im-ageNet [61], SNN backbones often struggle to surpass the performance of their ANN counterparts. Furthermore, while SNNs demonstrate potential advantages in adversarial robust-ness, recent studies suggest that their resilience to real-world image corruptions remains inferior to that of corresponding ANNs [15], [50]. To provide a comprehensive evaluation of both clean accuracy and robustness, we compared the SNN backbone used in SpikingNav with the ResNet backbone from ANNNav using the ImageNet-C dataset [62]. This benchmark encompasses a wide range of corruptions, such as noise, blur, and lighting variations, mirroring the disturbances found in the RobustNav benchmark. As shown in Table V, the SNN encoder achieves nearly the same clean recognition accuracy as the ANN encoder, but obtains a lower corruption average (31.32% vs. 34.41%). In contrast, the navigation results show a different trend. SpikingNav improves clean ObjectNav SR from 31.05% to 34.12%, and increases corrupted ObjectNav SR from 8.45% to 13.71%. This indicates that embodied navigation does not simply inherit the single-frame recognition ranking of the visual backbone. To quantify this difference, we compute a retention ra-tio Rret = Pcorrupt  
+
+> Pclean
+
+, where Pclean and Pcorrupt denote the clean and corruption-averaged performance under the same evaluation protocol. For recognition, P denotes classifica-tion accuracy; for navigation, P denotes ObjectNav SR. As summarized in Fig. 4, the ANN encoder retains 49.33% of its clean recognition accuracy under corruptions, while the TABLE V: Comparison between backbone recognition and embodied navigation under clean and corrupted visual obser-vations. Recognition performance is evaluated using the ANN or SNN visual encoder as a static image classifier.                
+
+> Model Recognition Navigation Clean Acc. Corrupt Avg. Clean SR Corrupt SR ANNNav 69.76% 34.41% 31.05% 8.45% SpikingNav 69.89% 31.32% 34.12% 13.71%
+> Recognition Navigation
+> 015 30 45 60
+> Retention ratio (%) ANNNav SpikingNav
+
+Fig. 4: Retention ratios of ANNNav and SpikingNav under visual corruptions. Recognition denotes the retention ratio of ImageNet-C classification accuracy, while Navigation denotes the retention ratio of ObjectNav success rate. SNN encoder retains 44.82%. In contrast, ANNNav retains only 27.21% of its clean ObjectNav SR, whereas SpikingNav retains 40.18%. Therefore, although the SNN encoder is not more robust as an isolated frame classifier, the full spiking navigation system preserves a much larger fraction of task success under corrupted observations. This discrepancy reflects the difference between static recognition and embodied navigation. Static recognition eval-uates whether a corrupted frame can still map to the correct category. Embodied navigation instead evaluates whether an agent can maintain effective action decisions while observa-tions, internal states, and environmental feedback evolve over time. Thus, a corrupted observation is not merely a perception error; it becomes a perturbation to a closed-loop decision process. Conversely, a moderately degraded visual feature does not necessarily cause task failure if the policy state can absorb the perturbation and preserve action-relevant information. From this perspective, the advantage of SpikingNav does not lie in producing universally more robust static visual features. Rather, it appears when spike-based perception is coupled with spike-based policy dynamics. The SSE converts visual evidence into a compact task-conditioned representation, while the SPN further regulates this representation through mem-brane accumulation, thresholding, and spike-triggered reset. Small feature fluctuations can be integrated without immedi-ately changing the spike pattern, and transient responses can be suppressed after firing. This finding aligns with Proposition 1, as the spike pattern remains intact when the perturbation-induced membrane change falls below the local spike margin. Therefore, the robustness gain mainly arises from temporal state evolution rather than isolated visual recognition. The module ablation further supports this interpretation. The SSE-only variant improves corrupted ObjectNav SR from IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 9
+
+8.45% to 9.58%, indicating that spike-based perception pro-vides a more stable task-conditioned interface. The SPN-only variant increases corrupted SR to 10.20%, showing that spike-based recurrent policy dynamics can improve robustness even with an ANN visual encoder. The full model achieves 13.71%, outperforming either partial replacement. This complementar-ity suggests that robust embodied behavior requires both a corruption-tolerant perceptual interface and a policy state that can temporally regulate noisy evidence. These findings clarify why embodied navigation provides a meaningful setting for evaluating SNNs. The benefit of Spik-ingNav is not fully reflected by static recognition accuracy, but emerges when spiking perception and spiking policy dynamics are integrated in a closed-loop agent. By accumulating, gating, and resetting sensory evidence over time, spiking dynamics provide a task-relevant decision substrate for embodied agents. 
+
+A. Limitations and Future Work 
+
+The present study demonstrates the feasibility of incor-porating SNNs into a modern embodied navigation pipeline and highlights their performance and robustness under visual corruptions. Several limitations remain for future research. First, our evaluation is mainly conducted in high-fidelity simulation environments. Although these simulations include realistic sensor noise, the current hardware validation only covers the spiking sensing module and does not yet include the complete closed-loop navigation agent. Future work will extend SpikingNav toward full neuromorphic deployment and hardware-aware sparse execution, enabling a more compre-hensive evaluation of practical latency and energy efficiency in embodied systems. Second, this work focuses on compact models designed for edge-oriented agents. This setting is aligned with our target scenarios, but it also limits the generality of our conclusions to larger architectures. It remains unclear whether the benefits of discrete activations and neuron-level temporal dynamics persist in large-scale Vision-Language-Action models or more complex long-horizon multimodal tasks. Exploring spike-based navigation in larger embodied intelligence systems is therefore an important future direction. VI. C ONCLUSION 
+
+This paper presented SpikingNav, a spiking embodied navi-gation framework that extends SNNs from perceptual encoding to navigation policy learning in visually rich indoor environ-ments and targets robust navigation in cyber-physical systems. By integrating an SSE and an SPN into a standard embodied RL pipeline, SpikingNav enables temporally grounded state construction and action generation with spike-based dynamics. Experimental results on PointNav and ObjectNav showed that SpikingNav achieves competitive clean-task performance while exhibiting stronger robustness under visual corruptions, with fewer parameters and lower per-step computation than the ANN counterpart. The deployment of the SSE on Thruster– V2 further shows that the sensing component can run on a real neuromorphic chip, linking the cyber navigation algorithm to a physical hardware substrate. These findings suggest that the practical value of SNNs in embodied navigation lies in supporting compact and disturbance-tolerant sensing and policy modules for resource-constrained embodied systems. REFERENCES [1] M. Savva, A. Kadian, O. Maksymets, Y. Zhao, E. Wijmans, B. Jain, J. Straub, J. Liu, V. Koltun, J. Malik et al. , “Habitat: A platform for embodied ai research,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2019, pp. 9339–9347. [2] Y. Wu, P. Zhang, M. Gu, J. Zheng, and X. Bai, “Embodied navigation with multi-modal information: A survey from tasks to methodology,” 
+
+Information Fusion , vol. 112, p. 102532, 2024. [3] D. S. Chaplot, D. P. Gandhi, A. Gupta, and R. R. Salakhutdinov, “Object goal navigation using goal-oriented semantic exploration,” Advances in Neural Information Processing Systems , vol. 33, pp. 4247–4258, 2020. [4] D. Batra, A. Gokaslan, A. Kembhavi, O. Maksymets, R. Mottaghi, M. Savva, A. Toshev, and E. Wijmans, “Objectnav revisited: On evaluation of embodied agents navigating to objects,” arXiv preprint arXiv:2006.13171 , 2020. [5] A. Bar, G. Zhou, D. Tran, T. Darrell, and Y. LeCun, “Navigation world models,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , June 2025, pp. 15 791–15 801. [6] J. Zhang, A. Li, Y. Qi, M. Li, J. Liu, S. Wang, H. Liu, G. Zhou, Y. Wu, X. Li et al. , “Embodied navigation foundation model,” arXiv preprint arXiv:2509.12129 , 2025. [7] M. Gao, Z. Zhu, Z. Sun, Z. Ma, L. Yuan, Z. Ma, Z. Gao, J. Zhang, and S. Zou, “Drive-nav: Directional reasoning, inspection, and verification for efficient open-vocabulary navigation,” arXiv preprint arXiv:2603.28691 , 2026. [8] P. Chattopadhyay, J. Hoffman, R. Mottaghi, and A. Kembhavi, “Ro-bustnav: Towards benchmarking robustness in embodied navigation,” in 
+
+Proceedings of the IEEE/CVF International Conference on Computer Vision , October 2021, pp. 15 691–15 700. [9] W. Maass, “Networks of spiking neurons: the third generation of neural network models,” Neural Networks , vol. 10, pp. 1659–1671, 1997. [10] Y. Wu, L. Deng, G. Li, J. Zhu, and L. Shi, “Spatio-temporal backpropa-gation for training high-performance spiking neural networks,” Frontiers in Neuroscience , vol. 12, p. 331, 2018. [11] W. Fang, Y. Chen, J. Ding, Z. Yu, T. Masquelier, D. Chen, L. Huang, H. Zhou, G. Li, and Y. Tian, “Spikingjelly: An open-source machine learning infrastructure platform for spike-based intelligence,” Science Advances , vol. 9, p. eadi1480, 2023. [12] Y. Wu, L. Deng, G. Li, J. Zhu, Y. Xie, and L. Shi, “Direct training for spiking neural networks: Faster, larger, better,” in Proceedings of the AAAI Conference on Artificial Intelligence , vol. 33, 2019, pp. 1311– 1318. [13] W. Fang, Z. Yu, Y. Chen, T. Huang, T. Masquelier, and Y. Tian, “Deep residual learning in spiking neural networks,” Advances in Neural Information Processing Systems , vol. 34, pp. 21 056–21 069, 2021. [14] M. Yao, J. Hu, Z. Zhou, L. Yuan, Y. Tian, B. Xu, and G. Li, “Spike-driven transformer,” Advances in Neural Information Processing Systems , vol. 36, pp. 64 043–64 058, 2024. [15] J. Zhang, K. Wang, M. Yao, H. Xu, P. Zhou, B. Xu, and G. Li, “Enhancing robustness of spiking neural networks through retina-like coding and memory-based neurons,” Neural Networks , p. 107950, 2025. [16] Q. Su, Y. Chou, Y. Hu, J. Li, S. Mei, Z. Zhang, and G. Li, “Deep directly-trained spiking neural networks for object detection,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2023, pp. 6555–6565. [17] Z. Ren, J. Chen, F. Wu, Q. Zhang, and J. Cheng, “Language-guided multimodal spiking neural networks for event-based action recognition,” 
+
+IEEE Transactions on Multimedia , 2026. [18] S. Sharmin, N. Rathi, P. Panda, and K. Roy, “Inherent adversarial robustness of deep spiking neural networks: Effects of discrete input encoding and non-linear activations,” in European Conference on Com-puter Vision , 2020, pp. 399–414. [19] K. Wu, M. Yao, Y. Chou, X. Qiu, R. Yang, B. Xu, and G. Li, “Rsc-snn: Exploring the trade-off between adversarial robustness and accuracy in spiking neural networks via randomized smoothing coding,” in 
+
+Proceedings of the 32nd ACM International Conference on Multimedia ,2024, pp. 2748–2756. [20] B. Yang, M. Yuan, C. Zhang, C. Hong, G. Pan, and H. Tang, “Spiking reinforcement learning with memory ability for mapless navigation,” in 2023 IEEE/RSJ International Conference on Intelligent Robots and Systems , 2023, pp. 1–8. IEEE TRANSACTIONS ON INDUSTRIAL CYBER-PHYSICAL SYSTEMS, VOL. XX, NO. XX, MONTH 2026 10 
+
+[21] Q. Chai, J. Wang, R. Jiang, B. Yang, R. Yan, and H. Tang, “Brain-inspired spatial continuous state encoding for efficient spiking-based navigation,” in 2025 IEEE International Conference on Robotics and Automation , 2025, pp. 13 413–13 419. [22] B. Yang, S. Zhou, C. Lin, Q. Chai, R. Yan, D. Ma, G. Pan, and H. Tang, “Hsrl: A hierarchical control system based on spiking deep reinforcement learning for robot navigation,” in 2025 IEEE International Conference on Robotics and Automation , 2025, pp. 13 384–13 390. [23] M. Deitke, W. Han, A. Herrasti, A. Kembhavi, E. Kolve, R. Mot-taghi, J. Salvador, D. Schwenk, E. VanderBilt, M. Wallingford et al. ,“Robothor: An open simulation-to-real embodied ai platform,” in Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2020, pp. 3164–3174. [24] S. B. Shrestha and G. Orchard, “Slayer: Spike layer error reassignment in time,” Advances in Neural Information Processing Systems , vol. 31, 2018. [25] H. Zheng, Y. Wu, L. Deng, Y. Hu, and G. Li, “Going deeper with directly-trained larger spiking neural networks,” in Proceedings of the AAAI Conference on Artificial Intelligence , vol. 35, 2021, pp. 11 062– 11 070. [26] C. Duan, J. Ding, S. Chen, Z. Yu, and T. Huang, “Temporal effective batch normalization in spiking neural networks,” Advances in Neural Information Processing Systems , vol. 35, pp. 34 377–34 390, 2022. [27] Y. Hu, L. Deng, Y. Wu, M. Yao, and G. Li, “Advancing spiking neural networks toward deep residual learning,” IEEE Transactions on Neural Networks and Learning Systems , vol. 36, no. 2, pp. 2353–2367, 2024. [28] M. Yao, X. Qiu, T. Hu, J. Hu, Y. Chou, K. Tian, J. Liao, L. Leng, B. Xu, and G. Li, “Scaling spike-driven transformer with efficient spike firing approximation training,” IEEE Transactions on Pattern Analysis and Machine Intelligence , 2025. [29] J. Park, B. Heo, and M. Kim, “Noise-robust deep spiking neural networks with temporal information,” in Proceedings of the Design Automation Conference , 2021. [30] N. Rathi, K. Roy, and P. Panda, “Inherent adversarial robustness of deep spiking neural networks: Effects of discrete input encoding and non-linear activations,” in European Conference on Computer Vision , 2020. [31] Y. Kim and P. Panda, “Rate coding or direct coding: Which one is better for accurate, robust, and energy-efficient spiking neural networks?” in IEEE International Conference on Acoustics, Speech and Signal Processing , 2022. [32] B. Mukhoty, H. AlQuabeh, G. De Masi, H. Xiong, and B. Gu, “Certified adversarial robustness for rate encoded spiking neural networks,” in 
+
+International Conference on Learning Representations , 2023. [33] X. Luo, M. Yao, Y. Chou, B. Xu, and G. Li, “Integer-valued training and spike-driven inference spiking neural network for high-performance and energy-efficient object detection,” in European Conference on Computer Vision , 2024, pp. 253–272. [34] A. Zhang, H. Zhou, X. Li, and W. Zhu, “Fast and robust learning in spiking feed-forward neural networks based on intrinsic plasticity mechanism,” Neurocomputing , vol. 365, pp. 102–112, 2019. [35] Y. Zheng, S. Li, R. Yan, H. Tang, and K. C. Tan, “Sparse temporal encoding of visual features for robust object recognition by spiking neurons,” IEEE Transactions on Neural Networks and Learning Systems ,vol. 29, no. 12, pp. 5823–5833, 2018. [36] S. Shen, J. Zhang, Z. Chen, X. Xia, Y. Hu, and W. Fu, “Stage-wise robust distillation for spiking neural network training,” in ICASSP 2026-2026 IEEE International Conference on Acoustics, Speech and Signal Processing , 2026, pp. 2421–2425. [37] E. Wijmans, A. Kadian, A. Morcos, S. Lee, I. Essa, D. Parikh, M. Savva, and D. Batra, “Dd-ppo: Learning near-perfect pointgoal navigators from 2.5 billion frames,” in International Conference on Learning Representations , 2020. [38] L. Weihs, J. Salvador, K. Kotar, U. Jain, K.-H. Zeng, R. Mottaghi, and A. Kembhavi, “Allenact: A framework for embodied ai research,” arXiv preprint arXiv:2008.12760 , 2020. [39] S. Wu, X. Fu, F. Wu, and Z.-J. Zha, “Vision-and-language navigation via latent semantic alignment learning,” IEEE Transactions on Multimedia ,vol. 26, pp. 8406–8418, 2024. [40] T. Yu, Y. Wu, Q. Cui, Q. Huang, and J. Yu, “Mossvln: Memory-observation synergistic system for continuous vision-language naviga-tion,” IEEE Transactions on Multimedia , 2025. [41] R. Ramrakhya, D. Batra, E. Wijmans, and A. Das, “Pirlnav: Pretraining with imitation and rl finetuning for objectnav,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,2023, pp. 17 896–17 906. [42] N. Yokoyama, R. Ramrakhya, A. Das, D. Batra, and S. Ha, “Hm3d-ovon: A dataset and benchmark for open-vocabulary object goal navigation,” in 2024 IEEE/RSJ International Conference on Intelligent Robots and Systems , 2024, pp. 5543–5550. [43] Z. Chen, J. Zhang, S. Shen, W. Fu, and L. Cao, “Memory-augmented continuous-time neural policy for vision-guided embodied navigation,” in Proceedings of the 7th ACM International Conference on Multimedia in Asia , ser. MMAsia ’25 Workshops. New York, NY, USA: Association for Computing Machinery, 2025. [Online]. Available: https://doi.org/10.1145/3769748.3773343 [44] J. Zhang, Y. Lin, Y. Zhang, S. Shen, K. Wang, Y. Pan, H. Pei, W. Wang, and G. Li, “Beyond transformers: Linear attention policy for open-vocabulary object goal navigation,” arXiv preprint arXiv:2607.18794 ,2026. [45] K. M. Oikonomou, I. Kansizoglou, and A. Gasteratos, “Reinforcement learning with spiking neural networks for robotic applications: A sur-vey,” Authorea Preprints , 2025. [46] C. Zhang, K.-W. Yip, B. Yang, Z. Zhang, M. Yuan, R. Yan, and H. Tang, “Casrl: Collision avoidance with spiking reinforcement learning among dynamic, decision-making agents,” in 2024 IEEE/RSJ International Conference on Intelligent Robots and Systems , 2024, pp. 8031–8038. [47] Z. Yang, S. Guo, Y. Fang, Z. Yu, and J. K. Liu, “Spiking variational policy gradient for brain inspired reinforcement learning,” IEEE Trans-actions on Pattern Analysis and Machine Intelligence , vol. 47, no. 3, pp. 1975–1990, 2025. [48] J. Gillespie, I. Ra˜ n´ o, N. Siddique, J. Santos, and M. Khamassi, “Using reinforcement learning to attenuate for stochasticity in robot navigation controllers,” in 2019 IEEE Symposium Series on Computational Intelli-gence , 2019, pp. 705–713. [49] H. Espino, R. Bain, and J. L. Krichmar, “A rapid adapting and continual learning spiking neural network path planning algorithm for mobile robots,” IEEE Robotics and Automation Letters , vol. 9, no. 11, pp. 9542– 9549, 2024. [50] J. Zhang, S. Shen, M. Yao, H. Xu, M. Huang, Y. Tian, B. Xu, and G. Li, “Burst spiking neural networks,” arXiv preprint arXiv:2607.11914 ,2026. [51] A. Khandelwal, L. Weihs, R. Mottaghi, and A. Kembhavi, “Simple but effective: CLIP embeddings for embodied AI,” in 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition , pp. 14 809– 14 818. [52] H. Yin, X. Xu, Z. Wu, J. Zhou, and J. Lu, “Sg-nav: Online 3d scene graph prompting for llm-based zero-shot object navigation,” Advances in neural information processing systems , vol. 37, pp. 5285–5307, 2024. [53] C. Wen, Y. Huang, H. Huang, Y. Huang, S. Yuan, Y. Hao, H. Lin, Y.-S. Liu, and Y. Fang, “Zero-shot object navigation with vision-language models reasoning,” in International Conference on Pattern Recognition .Springer, 2025, pp. 389–404. [54] P. Chattopadhyay, J. Hoffman, R. Mottaghi, and A. Kembhavi, “Ro-bustNav: Towards benchmarking robustness in embodied navigation,” in 2021 IEEE/CVF International Conference on Computer Vision , pp. 15 671–15 680. [55] K. Kotar, A. Walsman, and R. Mottaghi, “ENTL: Embodied navigation trajectory learner,” in 2023 IEEE/CVF International Conference on Computer Vision , pp. 10 829–10 838. [56] D. Batra, A. X. Chang, S. Chernova, A. J. Davison, J. Deng, V. Koltun, S. Levine, J. Malik, I. Mordatch, R. Mottaghi et al. , “Rearrangement: A challenge for embodied ai,” arXiv preprint arXiv:2011.01975 , 2020. [57] D. Hafner, T. Lillicrap, J. Ba, and M. Norouzi, “Dream to control: Learning behaviors by latent imagination,” in International Conference on Learning Representations , 2021. [58] H.-X. Yu, L. Guibas, and J. Wu, “Unsupervised discovery of object radi-ance fields,” in International Conference on Learning Representations ,2021. [59] J. Chen, L. Yang, and Y. Zhang, “Gaban: A generic and flexibly programmable vector neuro-processor on fpga,” in Proceedings of the 59th ACM/IEEE Design Automation Conference , 2022, pp. 931–936. [60] M. Pellauer, Y. S. Shao, J. Clemons, N. Crago, K. Hegde, R. Venkatesan, S. W. Keckler, C. W. Fletcher, and J. Emer, “Buffets: An efficient and composable storage idiom for explicit decoupled data orchestration,” in 
+
+Proceedings of the Twenty-Fourth International Conference on Archi-tectural Support for Programming Languages and Operating Systems ,2019, pp. 137–151. [61] J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and F.-F. Li, “Ima-genet: A large-scale hierarchical image database,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,2009, pp. 248–255. [62] D. Hendrycks and T. Dietterich, “Benchmarking neural network ro-bustness to common corruptions and perturbations,” in International Conference on Learning Representations , 2019.
