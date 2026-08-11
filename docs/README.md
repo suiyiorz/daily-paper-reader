@@ -6,70 +6,101 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-10
-- 运行时间：2026-08-10 20:20:01 UTC
+- 最新运行日期：2026-08-11
+- 运行时间：2026-08-11 20:49:42 UTC
 - 运行状态：成功
-- 本次总论文数：16
-- 精读区：7
-- 速读区：9
+- 本次总论文数：27
+- 精读区：16
+- 速读区：11
 
 ### 今日简报（AI）
-今日梳理16篇论文，精读7篇、速读9篇，聚焦具身智能与机器人操控。
-最值得看：Mimir将神经符号记忆用于动态环境交互，World-to-Wrist为精细操作提供任务条件化未来手腕建模。
-建议优先精读这两篇高分工作，并可延伸至VLA轨迹先验与跨具身导航。
-- 详情：[/202608/10/README](/202608/10/README)
+今日共读27篇论文，其中16篇精读，重点聚焦具身智能与视觉-语言-动作（VLA）模型。最值得关注的是两篇高分工作：几何感知潜世界建模的GWM-VLA，以及面向多车协同驾驶的CMU-Drive与V2V-VLA。建议普通读者优先追踪VLA在真实世界推理与多智能体协作中的进展，可搭配速读中的人形机器人长程操作与视觉控制论文。
+- 详情：[/202608/11/README](/202608/11/README)
 
 ### 精读区论文标签
-1. [Mimir: A Neuro-Symbolic Memory System with Dynamic Grounding for Embodied Agents in Interactive Environments](/202608/10/2608.04933v1-mimir-a-neuro-symbolic-memory-system-with-dynamic-grounding-for-embodied-agents-in-interactive-environments)  
+1. [GWM-VLA: Geometry-Aware Latent World Modeling for Vision-Language-Action Learning](/202608/11/2608.07619v1-gwm-vla-geometry-aware-latent-world-modeling-for-vision-language-action-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：用于长时程具身任务的神经符号记忆系统
-2. [World-to-Wrist: Task-Conditioned Future Wrist Modeling for Fine-Grained Robot Manipulation](/202608/10/2608.05369v1-world-to-wrist-task-conditioned-future-wrist-modeling-for-fine-grained-robot-manipulation)  
+   evidence：几何感知潜在世界建模，提升机器人操作VLA鲁棒性
+2. [CMU-Drive and V2V-VLA: Cooperative Multi-agent Unified Driving with Reasoning Benchmark and Vehicle-to-Vehicle Vision-Language-Action Models](/202608/11/2608.07621v1-cmu-drive-and-v2v-vla-cooperative-multi-agent-unified-driving-with-reasoning-benchmark-and-vehicle-to-vehicle-vision-language-action-models)  
    标签：评分：9.0/10、query:ad
-   evidence：面向细粒度操作的任务条件化腕部建模
-3. [ARGUS: Aligning Robot Scene Geometry Under Shifting Views with Large 3D Vision Models](/202608/10/2608.05579v1-argus-aligning-robot-scene-geometry-under-shifting-views-with-large-3d-vision-models)  
+   evidence：协同自动驾驶中的感知、推理与规划
+3. [GraphThink: Graph-Enhanced LLM Thinking for Long-Horizon Embodied Task Planning](/202608/11/2608.07905v1-graphthink-graph-enhanced-llm-thinking-for-long-horizon-embodied-task-planning)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作策略的视觉感知视角对齐
-4. [SpaceVLA: Spatially Grounded VLA for Robotic Manipulation with User-Authored Grasp and Place Anchors](/202608/10/2608.05730v1-spacevla-spatially-grounded-vla-for-robotic-manipulation-with-user-authored-grasp-and-place-anchors)  
+   evidence：基于图增强LLM的具身任务规划
+4. [Lingjing: A Simulation Testbed for Multi-Agent Embodied Tasks in Open-Ended Cities](/202608/11/2608.08045v1-lingjing-a-simulation-testbed-for-multi-agent-embodied-tasks-in-open-ended-cities)  
    标签：评分：9.0/10、query:ad
-   evidence：空间锚定的视觉-语言-动作模型用于机器人抓取与放置操作。
-5. [Fast and Accurate: An Adaptive VLA Inference Framework through Environment-aware Model Selection](/202608/10/2608.06434v1-fast-and-accurate-an-adaptive-vla-inference-framework-through-environment-aware-model-selection)  
+   evidence：面向自动驾驶与机器人异构多智能体具身智能的仿真测试平台
+5. [TrustRoboReward: Preference-Ordered Isotonic Score Editing for Multi-Paradigm Robot Reward Models](/202608/11/2608.08491v1-trustroboreward-preference-ordered-isotonic-score-editing-for-multi-paradigm-robot-reward-models)  
    标签：评分：9.0/10、query:ad
-   evidence：面向具身智能的自适应视觉-语言-动作推理，环境感知模型选择
-6. [Capek 0.5: An Execution-Centric Vision-Language Model for Embodied Intelligence](/202608/10/2608.06756v1-capek-05-an-execution-centric-vision-language-model-for-embodied-intelligence)  
+   evidence：面向机器人操作强化学习的VLM奖励模型
+6. [Discovering Diverse Planning Policies for Multimodal Embodied Agents with Quality-Diversity Optimization](/202608/11/2608.08523v1-discovering-diverse-planning-policies-for-multimodal-embodied-agents-with-quality-diversity-optimization)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人执行的具身智能视觉语言模型
-7. [Unordered Landmark Visual Navigation](/202608/10/2608.06833v1-unordered-landmark-visual-navigation)  
+   evidence：基于质量-多样性优化的多模态具身智能体规划策略发现
+7. [UnsDrive: Towards Robust End-to-End Autonomous Driving in Unstructured Scenes](/202608/11/2608.09098v1-unsdrive-towards-robust-end-to-end-autonomous-driving-in-unstructured-scenes)  
    标签：评分：9.0/10、query:ad
-   evidence：面向具身智能体的图像目标导航，去除时序与里程计先验，RGB纯视觉框架，契合物理环境中的具身智能体。
+   evidence：非结构化场景下的端到端自动驾驶规划
+8. [SpeedTuning: Speeding Up Policy Execution with Lightweight Reinforcement Learning](/202608/11/2608.09138v1-speedtuning-speeding-up-policy-execution-with-lightweight-reinforcement-learning)  
+   标签：评分：9.0/10、query:ad
+   evidence：用强化学习加速机器人操作策略执行
+9. [SAIN: Structure-Aware Interactive Navigation with Active Dialogue Grounding for Mobile Robot](/202608/11/2608.09196v1-sain-structure-aware-interactive-navigation-with-active-dialogue-grounding-for-mobile-robot)  
+   标签：评分：9.0/10、query:ad
+   evidence：具身移动机器人通过主动对话导航与环境交互
+10. [CRUISE: Vision-Language Model-Guided Uncertainty-Aware Cross-Modal Sensor Fusion for Robust Autonomous Driving](/202608/11/2608.09202v1-cruise-vision-language-model-guided-uncertainty-aware-cross-modal-sensor-fusion-for-robust-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：视觉-语言模型引导的不确定性感知跨模态传感器融合用于自动驾驶
+11. [DH-VLM: Dual-Horizon Cooperative Latent Reasoning for Autonomous Driving](/202608/11/2608.09333v1-dh-vlm-dual-horizon-cooperative-latent-reasoning-for-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：基于VLM的双视界协同推理用于自动驾驶
+12. [Skills in Weights, Memory in Code: Hybrid Learning for Memory-Dependent Robot Manipulation](/202608/11/2608.09410v1-skills-in-weights-memory-in-code-hybrid-learning-for-memory-dependent-robot-manipulation)  
+   标签：评分：9.0/10、query:ad
+   evidence：技能与记忆分离的混合学习，解决依赖长程记忆的机器人操作
+13. [HarnessWAM: Bridging Prediction and Deliberation in World Action Models](/202608/11/2608.09516v1-harnesswam-bridging-prediction-and-deliberation-in-world-action-models)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向具身控制的世界动作模型与结构化任务图
+14. [FactorDrive: Adaptive Multi-Step Reasoning Driven by Planning-Critical Factors for End-to-End Autonomous Driving](/202608/11/2608.09591v1-factordrive-adaptive-multi-step-reasoning-driven-by-planning-critical-factors-for-end-to-end-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向端到端自动驾驶的规划关键因子自适应多步推理
+15. [Efficient Real-World Online Reinforcement Learning for Robot Manipulation via Centralized Training and Critic Decomposition](/202608/11/2608.09762v1-efficient-real-world-online-reinforcement-learning-for-robot-manipulation-via-centralized-training-and-critic-decomposition)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向机器人操作的真实世界在线强化学习
+16. [SLIM-0.5B: Learning Action-Grounded Predictive Latents for Robot Manipulation](/202608/11/2608.09771v1-slim-05b-learning-action-grounded-predictive-latents-for-robot-manipulation)  
+   标签：评分：9.0/10、query:ad
+   evidence：紧凑动作接地预测性潜在策略，用于机器人操作
 
 ### 速读区论文标签
-1. [Hermite Curves as Trajectory Priors for Vision-Language-Action Models](/202608/10/2608.01265v1-hermite-curves-as-trajectory-priors-for-vision-language-action-models)  
+1. [LUCID: Latent-Skill Unified Control via Imagined Dynamics for Long-Horizon Humanoid Loco-Manipulation](/202608/11/2608.07746v1-lucid-latent-skill-unified-control-via-imagined-dynamics-for-long-horizon-humanoid-loco-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：VLA操作中的Hermite轨迹先验
-2. [DF$^3$: World Modeling via Decoder-Free Feature Forecasting in Autonomous Navigation](/202608/10/2608.02428v1-df3-world-modeling-via-decoder-free-feature-forecasting-in-autonomous-navigation)  
+   evidence：面向人形机器人移动操作的模型强化学习
+2. [V-Simba: Unleashing the Architectural Potential of RL in Visual Continuous Control](/202608/11/2608.07870v1-v-simba-unleashing-the-architectural-potential-of-rl-in-visual-continuous-control)  
    标签：评分：8.0/10、query:ad
-   evidence：面向自主导航的潜在空间世界建模与特征预测
-3. [CrossTracer: Cross-Embodiment Navigation via VLA Model Reasoning and Trace Residuals Adapting](/202608/10/2608.06688v1-crosstracer-cross-embodiment-navigation-via-vla-model-reasoning-and-trace-residuals-adapting)  
+   evidence：面向机器人视觉连续控制的强化学习架构研究
+3. [Compiling and Benchmarking Task-State Horizons for Embodied Agents](/202608/11/2608.08036v1-compiling-and-benchmarking-task-state-horizons-for-embodied-agents)  
    标签：评分：8.0/10、query:ad
-   evidence：跨形态导航，通过VLA模型推理和轨迹残差适配，解决物理环境中的导航约束。
-4. [AtlasVLA: Persistent World-Ego State Modeling for Vision-Language-Action Models](/202608/10/2608.06729v1-atlasvla-persistent-world-ego-state-modeling-for-vision-language-action-models)  
+   evidence：以任务状态视界评测长时程具身智能体
+4. [Multi-modal Interactive Control of Robotic Arm based on Offline Large Language Models](/202608/11/2608.08183v1-multi-modal-interactive-control-of-robotic-arm-based-on-offline-large-language-models)  
    标签：评分：8.0/10、query:ad
-   evidence：通过持久世界-自我状态建模改进具身智能VLA的长时程操作。
-5. [Is Forward Prediction Enough? Physical State Grounding for JEPA World Models](/202608/10/2608.06799v1-is-forward-prediction-enough-physical-state-grounding-for-jepa-world-models)  
+   evidence：基于离线大语言模型的多模态交互机械臂控制
+5. [Diminishing Returns of Intelligence: The Non-Linear Relationship Between LLM Scale and User Perception in Short-Duration Open-Ended Social Human-Robot Interactions](/202608/11/2608.08320v1-diminishing-returns-of-intelligence-the-non-linear-relationship-between-llm-scale-and-user-perception-in-short-duration-open-ended-social-human-robot-interactions)  
    标签：评分：8.0/10、query:ad
-   evidence：通过机器人本体感知状态和关节角变化塑造JEPA世界模型潜在表示
-6. [Spatiotemporal Agility: Time-Constrained Reinforcement Learning for Vision-Guided Dynamic Quadrupedal Interception](/202608/10/2608.06907v1-spatiotemporal-agility-time-constrained-reinforcement-learning-for-vision-guided-dynamic-quadrupedal-interception)  
+   evidence：社交人机交互中LLM规模对用户感知的影响
+6. [RayLift: Lifting Complementary Ray-Wise Evidence with 3D Geometry Priors for Semantic Scene Completion](/202608/11/2608.08476v1-raylift-lifting-complementary-ray-wise-evidence-with-3d-geometry-priors-for-semantic-scene-completion)  
    标签：评分：8.0/10、query:ad
-   evidence：时间约束下的视觉引导四足动态拦截强化学习
-7. [A Haptic Robot Finger Designed for Guqin Instrument Playing](/202608/10/2608.07002v1-a-haptic-robot-finger-designed-for-guqin-instrument-playing)  
+   evidence：面向自动驾驶与机器人的语义场景补全方法
+7. [Curriculum Generation under Structured Parametric Environments for Robust Navigation Policies](/202608/11/2608.08545v1-curriculum-generation-under-structured-parametric-environments-for-robust-navigation-policies)  
    标签：评分：8.0/10、query:ad
-   evidence：用于灵巧操作的仿生多模态触觉指尖
-8. [AutoIntervene: Calibrated Intervention for Action-Chunking Imitation Learning Policies](/202608/10/2608.07065v1-autointervene-calibrated-intervention-for-action-chunking-imitation-learning-policies)  
+   evidence：结构化参数环境下的课程生成以提升导航策略鲁棒性
+8. [OnEvoMemory: Evolving Memory through Online Robot Rollouts for Pretrained Robot Policies](/202608/11/2608.08749v1-onevomemory-evolving-memory-through-online-robot-rollouts-for-pretrained-robot-policies)  
    标签：评分：8.0/10、query:ad
-   evidence：面向动作分块机器人策略的在线干预框架
-9. [Representation Handoffs for OpenArm-Based Laboratory Mobile Manipulation](/202608/10/2608.07154v1-representation-handoffs-for-openarm-based-laboratory-mobile-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：基于OpenArm的移动操作与表征交接
+   evidence：通过在线机器人滚动演化长时程操作记忆
+9. [Action- and Language-Conditioned Video Assessment for Embodied Control](/202608/11/2608.08273v1-action--and-language-conditioned-video-assessment-for-embodied-control)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向具身控制的视觉智能体任务进度评估
+10. [WorldSimProbe: Diagnosing Simulator Faithfulness in Action-Conditioned World Models for Embodied Manipulation](/202608/11/2608.09298v1-worldsimprobe-diagnosing-simulator-faithfulness-in-action-conditioned-world-models-for-embodied-manipulation)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向具身操作的世界模型仿真保真度诊断
+11. [Agentic Harnesses: LLM-Driven Verification Layers for Robot Autonomy](/202608/11/2608.09857v1-agentic-harnesses-llm-driven-verification-layers-for-robot-autonomy)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向机器人动作规划的LLM验证层，保障具身自主安全
 
 
 <div class="dpr-home-promo-card">
