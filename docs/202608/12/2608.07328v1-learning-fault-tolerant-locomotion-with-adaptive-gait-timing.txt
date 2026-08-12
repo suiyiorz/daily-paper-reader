@@ -1,0 +1,474 @@
+Title: Learning Fault-Tolerant Locomotion with Adaptive Gait Timing
+
+URL Source: https://arxiv.org/pdf/2608.07328v1
+
+Published Time: Mon, 10 Aug 2026 01:03:20 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Learning Fault-Tolerant Locomotion with Adaptive Gait Timing 
+
+Giovanbattista Gravina 1, Luca Rossini 1, Carlo Rizzardo 1, Arturo Laurenzi 1 and Nikos Tsagarakis 1
+
+Abstract — Hardware failures require legged robots to rapidly reorganize coordination and gait timing to maintain stabil-ity and mobility. This is particularly challenging for larger quadrupeds, where increased mass and tighter actuation limits reduce the feasibility of aggressive, high-frequency compensa-tion strategies often observed on smaller platforms. In this work, we propose a deep reinforcement learning approach for fault-tolerant locomotion under actuator power loss. The method employs an asymmetric actor-critic architecture in which the critic has access to privileged information during training, while the actor learns to reconstruct a corresponding latent representation from proprioceptive observations. We introduce a latent-alignment loss that encourages consistency between actor and critic representations. Additionally, we augment the action space with a learnable gait frequency parameter, enabling adaptive gait timing in response to ter-rain variations and actuator degradation without predefined faulty-leg strategies. The approach is validated in high-fidelity simulation on uneven terrain and real-world experiments on flat ground using a 68 kg quadruped robot. 
+
+I. INTRODUCTION Legged robots, especially quadrupeds [1]–[5], are in-creasingly deployed in harsh and unstructured environments for real-world applications, such as search and rescue [6], inspection [7] and parcel delivery [8], [9]. In such scenar-ios, the likelihood of hardware faults — like joint failures or actuator degradations — is significantly higher than in structured indoor or flat environments. Ensuring that a robot can continue to operate, or at least reach a safe state, while experiencing such degraded conditions is therefore a critical challenge for practical deployment. This requires rapid adaptation to failures (e.g., transi-tioning from nominal to degraded gaits) and the capacity to encode a wide repertoire of behaviors within a single controller, as different faults may demand different strategies. A robust controller must reorganize coordination across the remaining degrees of freedom, generate feasible motion pat-terns, and preserve stability, mobility, and task performance across diverse failure scenarios and terrains. The mostly addressed hardware faults in the literature are: ( i) joint locking fault [10], where the joint becomes immobilized or suffers a severe reduction in its range of motion due to mechanical issues such as broken gears or transmission jamming, and ( ii ) power loss [11], [12], either partial, in case of weakened motor, or complete, when the actuator generates no torque causing the joint to rotate freely under external loads or gravity. 
+
+> 1All authors are with the Humanoids and Human-Centered Mechatronics Research Line, Italian Institute of Technology, Genoa 16163, Italy (emails:
+
+name.surname@iit.it ). This work is supported by the EU Horizon 2020 EuROBIN project (grant agreement No.101070596). 1 2 3
+
+4 5 6             
+
+> Fig. 1. Fault-tolerant locomotion under sudden actuator power loss. The affected joint (highlighted in red) experiences acomplete torque failure during motion. Experiments are performed on the 68 kg Kyon quadruped robot [5]. Website: https://gianni0907.github.io/ fault_tolerant_locomotion/ .
+
+Recently, deep Reinforcement Learning (RL) has enabled control policies capable of addressing fault-tolerant locomo-tion by learning adaptive behaviors directly from data, reduc-ing the reliance on manually designed, fault-specific control strategies. Despite this progress, several open challenges remain. First, many prior approaches implicitly constrain locomotion under failure, either by relying on predefined gait generators for healthy legs or by discouraging the use of faulty legs. Such strategies may limit the policy’s ability to fully exploit the remaining actuation capabilities left and to adapt the gait pattern to both fault conditions and terrain profile. Second, most experimental validations have been conducted on small-size quadrupeds and primarily on flat or mildly uneven terrain (e.g., grass, gravel or small height perturbations). Scaling these approaches to heavier legged robots — such as platforms designed for high payload and outdoor deployment — introduces additional challenges [4]. Increased mass and inertia amplify dynamic coupling effects, reduce feasible stepping frequencies, and tighten actuation margins, making highly reactive or dynamically aggressive behaviors less viable, especially under hardware faults. In this work, we propose a framework to train a control policy via deep RL to address fault-tolerant legged loco-motion on uneven terrains under actuator power loss. The proposed architecture aims to reconstruct a latent represen-tation of privileged observations, including joint fault status, by leveraging a history of proprioceptive observations. The main contributions of this paper are as follows:  
+
+> •
+
+Fault-aware locomotion from fault-unaware sensing: design of a single-stage training procedure based on an asymmetric actor–critic architecture, where the learn-ing objective is augmented with an auxiliary latent-arXiv:2608.07328v1 [cs.RO] 7 Aug 2026 alignment loss that encourages the actor to reconstruct privileged representations from proprioceptive observa-tions;  
+
+> •
+
+Adaptive gait timing: augmentation of the action space with a learnable gait-frequency term alongside joint position targets, enabling the policy to autonomously regulate step timing and adapt contact scheduling to fault and terrain conditions;  
+
+> •
+
+Fault inference: analysis of the effect of proprioceptive observation history length on the policy’s ability to infer faults and compensate for them;  
+
+> •
+
+Sim-to-real validation: evaluation of the proposed method in high-fidelity simulations on uneven terrain and real-world experiments on flat ground using the Kyon robot [5], a 68 kg medium-sized quadruped plat-form. II. RELATED WORK 
+
+A. Reinforcement Learning for Legged Locomotion 
+
+Legged locomotion control has benefited significantly from recent developments in RL. This approach has led to robust control policies for complex behaviors, including agile locomotion over uneven terrains [13]–[15], high-speed locomotion [16], and parkour skills [17], [18]. The possibility to avoid the high costs and physical risks associated with real-world experimentation by leverag-ing massively parallelized simulation environments to train agents safely is a major advantage of RL. Training in simulation also provides access to privileged information which cannot be measured directly in real world scenarios and can be used to improve training efficiency and final performance. A common approach to utilize such privileged knowledge is through offline teacher-student distillation [13]. A teacher policy is first trained with access to all information, and then a student policy is trained to mimic the teacher using only sensors available on the robot. An alternative approach that retains the benefit of privileged information, but within a unified training loop, is the asymmetric actor-critic architecture [19]. In this case, the critic uses privileged information to evaluate actions during training, while the actor — which becomes the deployed controller — only uses real-world observations. While asymmetric actor-critic training is effective, a large gap between privileged and non-privileged observations can limit the actor’s ability to learn complex behaviors from the reward signal alone. Recent works address this by introduc-ing auxiliary representation alignment mechanisms within single-stage reinforcement learning frameworks [20], [21]. 
+
+B. Fault-Tolerant Locomotion 
+
+Traditional model-based approaches to fault-tolerant loco-motion typically rely on tailored models for specific failure cases and extensive parameter tuning [22], [23]. This limited scalability has motivated the exploration of deep RL as a more flexible alternative. Early learning-based approaches assumed that the robot has access to explicit fault state information, enabling policies to condition their behavior on the known damage configuration [24]. However, this assumption is rarely realistic in practice, where faults must be managed without ground-truth knowledge of their nature or severity. The first works addressing fault-unaware loco-motion resorted to model-based meta-RL [25] and RL with adaptive dynamics randomization [26], achieving promising results but remaining limited to simulation deployment. A prominent direction involves learning to implicitly infer fault conditions by leveraging privileged information —such as the ground-truth joint fault status — available only in simulation, during training [27]–[31]. These approaches typically rely on teacher-student or asymmetric learning schemes, where privileged signals guide the training of a deployable policy that must rely solely on proprioceptive observation at test time. Within this paradigm, prior works have considered diverse fault types, including joint locking [27], partial or complete power loss [28], and even multiple simultaneous faults affecting one or two legs [30]. Explored strategies range from latent representation learning with aux-iliary regression objectives [27]–[29], to multi-expert distil-lation [30] and contrastive forward prediction learning [31]. Progressive curriculum learning is also commonly adopted to gradually increase diversity and severity of impairments while mitigating catastrophic forgetting [29], [32]. Learning a single policy that both identifies the fault condition and rapidly adapts the locomotion pattern is not trivial, as such, several architectures that bypass this issue have been proposed. Some works incorporate an explicit fault estimation module whose predictions are used online to modulate the locomotion policy [32]. Others rely on hierar-chical or modular strategies, where task-specific policies are independently trained for healthy and faulty conditions and combined through a higher-level selection or coordination mechanisms [33], [34]. Despite these advances, most prior works adopt blind lo-comotion strategy [28], [31], [32], where terrain information is treated as privileged during training and the deployed policy relies solely on proprioceptive feedback. While this avoids integrating perception into the control pipeline, it inherently produces purely reactive behaviors: the robot responds to terrain variations only after physical interaction, rather than planning footholds in advance. Such reactive strategies are typically effective on noisy or mildly uneven terrains, but struggle in more demanding scenarios. This limitation becomes particularly critical for heavier robot platforms operating under hardware faults, where reduced actuation capacity and stability margins leave little tolerance for aggressive corrective actions. Moreover, several approaches introduce ad-hoc reward terms tailored to specific failure scenarios, such as penalties on ground contact of an impaired leg [30], [32] or additional objectives designed to enforce balance under damage [28]. Although these terms can stabilize training, they may also bias the learned behavior toward overly constrained or un-natural locomotion patterns. In addition, many works rely on predefined gait generators that encourage constant gait timing [29], [32]. While such priors can produce smooth observation observation observation ... ... ccprivileged observation observation history actor head critic head critic actor (50 Hz) PD controller (1 kHz) critic encoder actor encoder PPO loss MSE loss ... joint fault mask 
+
+> terrain observation
+
+Fig. 2. Overview of the proposed training approach based on asymmetric actor-critic framework [19]. 
+
+and natural-looking motion in nominal condition, they re-strict adaptability under faults and in uneven terrain, where dynamic modulation of gait frequency and structure is critical for load redistribution and balance. III. METHOD Our objective is to learn a velocity-commanded control policy that enables an nL-legged robot to rapidly adapt to sudden power-loss faults of the actuators while traversing uneven terrain. To achieve this, we employ a deep Rein-forcement Learning (RL) method based on an asymmetric actor-critic architecture [19], trained using Proximal Policy Optimization (PPO) [35]. Our approach leverages asymmetric training to bridge the gap between simulation and reality: the critic has access to explicit fault information, while the actor is trained to approximate a privileged latent representation derived from fault-aware observations using only its proprioceptive history. The resulting policy operates at 50 Hz, providing position targets for the nJ joints and a gait frequency term. 
+
+A. Proposed Approach 
+
+We formulate fault-tolerant locomotion as a partially ob-servable control problem. While full system state is available during training, the deployed policy only has access to a subset of observations. This asymmetry motivates the use of an asymmetric actor-critic framework with privileged information. The proposed architecture, illustrated in Fig. 2, consists of an actor and a critic, each comprising an encoder and a head network. The critic encoder embeds the privileged observation op 
+
+> t
+
+, composed of proprioceptive observation ot
+
+and privileged information et, into a latent representation 
+
+rt. This latent vector is then concatenated with ot and the terrain-related observations oz 
+
+> t
+
+to form the input to the critic head for value estimation. In parallel, the actor encoder processes a history of H proprioceptive observations ht =
+
+⟨ot, . . . , ot−H+1 ⟩ and outputs a latent vector ˆrt. The actor head receives the concatenation of ˆrt, ot, and oz 
+
+> t
+
+to produce the policy action at.To bridge the information gap between actor and critic, we introduce an auxiliary latent-alignment objective that encourages ˆrt to approximate rt during training. 
+
+TABLE I OBSERVATION TERMS . N OISE IS ONLY ADDED TO OBSERVATIONS RECEIVED BY THE ACTOR .Term Description Dim Noise U(±σ)
+
+ot
+
+ωt base ang. velocity in base frame 3 0.1
+
+gt gravity vector in world frame 3 0.03 ∆qdef  
+
+> t
+
+joint angle readings w.r.t. default nJ 0.05 ∆qref  
+
+> t
+
+joint angle readings w.r.t. reference nJ 0.05 
+
+pf 
+
+> t
+
+feet position in base frame 3nL ∗
+
+at−1 previous action nJ + 1 -
+
+vcmd  
+
+> t
+
+velocity commands 3 -
+
+Φt reference gait phase 2nL -
+
+et
+
+vt base lin. velocity in base frame 3
+
+-
+
+˙vt base lin. acceleration in base frame 3 
+
+> W
+
+ωt base ang. velocity in world frame 3˙qt joint velocities nJ
+
+τt applied motor torques nJ
+
+ct binary feet contact state nL
+
+˙pf 
+
+> t
+
+feet lin. velocity 3nL
+
+mJ,t binary mask of joint status nJ
+
+oz
+
+> t
+
+zf 
+
+> t
+
+feet height w.r.t. terrain nL 0.005 
+
+zter  
+
+> t
+
+per-feet terrain height map 25 nL 0.005  
+
+> ∗
+
+Noise range for pf 
+
+> t
+
+is [±0.01 , ±0.005 , ±0.02] for x, y, z respectively. 
+
+B. Action & Observation Space 
+
+The actor head outputs a heterogeneous action vector at =
+
+⟨aq 
+
+> t
+
+, a νt ⟩ ∈ RnJ+1 , where aq 
+
+> t
+
+∈ RnJ represents the joint angle deviations with respect to a default joint configuration qdef ,and aνt ∈ R controls the gait frequency. The reference joint configuration is defined as qref  
+
+> t
+
+=
+
+qdef + sqaq 
+
+> t
+
+, where sq is a scaling factor, and is tracked using a proportional-derivative (PD) controller that computes commanded joint torques as τt = Kp(qref  
+
+> t
+
+− qt) − Kd ˙qt,where Kp, Kd ∈ RnJ×nJ are diagonal gain matrices, and 
+
+qt, ˙qt ∈ RnJ denote the observed joint positions and veloci-ties, respectively. The scalar action aνt modulates the stepping frequency of a reference gait encouraged through a reward term. The reference gait frequency is computed as 
+
+νref  
+
+> t
+
+= νdef + sν aνt ,
+
+where νdef is a nominal frequency and sν a scaling coeffi-cient. The reference phase of each leg ϕt,ℓ is then updated according to 
+
+ϕt+1 ,ℓ = mod  ϕt,ℓ + 2 π∆tν ref  
+
+> t
+
++ π, 2π−π, 
+
+with ∆t denoting the control timestep. The reference phase is initialized according to the selected gait pattern (e.g., trot or walk), reset when the commanded base velocity is near zero, and used to generate a reference foot-contact schedule used in the reward function (see Sect. III-C). Introducing a learnable gait frequency allows the policy to adapt the timing of this reference schedule to terrain geometry and fault conditions, without explicitly redesigning the gait pattern. Our architecture utilizes three observation sets: proprio-ceptive ot ∈ R10+3 nJ+5 nL , privileged op 
+
+> t
+
+= ⟨ot, et⟩ ∈R19+6 nJ+9 nL , and terrain-related oz 
+
+> t
+
+∈ R26 nL . All the observed quantities are detailed in Tab. I. In addition to sensor-based quantities, the propri-oceptive observation ot includes: the previous action 
+
+at−1, the commands vcmd  
+
+> t
+
+= ⟨vcmd  
+
+> t,x
+
+, v cmd  
+
+> t,y
+
+, ω cmd  
+
+> t,z
+
+⟩ —i.e., linear velocity in xy -plane and angular velocity around z-axis — , and the encoded gait phase Φt =
+
+⟨cos ϕt, 1, sin ϕt, 1, . . . , cos ϕt,n L , sin ϕt,n L ⟩. The privileged observation op 
+
+> t
+
+augments this set with quantities that are unavailable at deployment, including joint velocities, contact information, and the joint fault mask. The latter encodes the joint status in a binary vector mJ,t ∈ { 0, 1}nJ , where the 
+
+j-th element is 
+
+mJ,t,j =
+
+(
+
+1, if j-th joint is healthy ,
+
+0, otherwise (1) Finally, the terrain observation set oz 
+
+> t
+
+includes the feet height from the ground zf 
+
+> t
+
+and a per-feet terrain height map zter  
+
+> t
+
+, consisting of 25 nL scan points, arranged in nL
+
+5-by-5 grids, centered at the feet xy positions and with 5 cm resolution. Since the focus of this work is adaptation under joint failures on uneven terrains, we assume access to the terrain height information during both training and deployment. In practice, such information can be recon-structed through a perception pipeline processing data from exteroceptive sensors (e.g., LiDAR or RGB-D cameras [14], [21]). Integrating a perception module within the proposed framework constitutes a natural extension of this work. During training, sensor-based observations provided to the actor are corrupted with uniform noise (see Tab. I), while the critic always receives noiseless quantities. 
+
+C. Loss & Reward Function 
+
+The model is trained using the PPO objective [35] aug-mented with a latent-alignment term. The PPO loss is defined as 
+
+LPPO = Lπ + λ1LV + λ2Lϵ,
+
+where Lπ , LV , Lϵ denote the surrogate policy loss, value function loss, and entropy regularization term, respectively, and λ1, λ2 are weighting coefficients. To align the actor latent representation with the privileged embedding produced by the critic encoder, we introduce an auxiliary Mean Squared Error (MSE) loss: 
+
+LMSE (ˆ rt, rt) = E[(ˆ rt − rt)2]
+
+The overall objective is therefore 
+
+L = LPPO + λ3LMSE ,
+
+where λ3 controls the strength of the latent-alignment term. The reward function comprises standard locomotion objec-tives encouraging velocity tracking, energy efficiency, action smoothness, and safe interaction with the terrain. These terms are designed following the locomotion task rewards of MuJoCo Playground [36]. In addition, we include aphase-consistency reward that promotes agreement between                                                          
+
+> TABLE II REWARD FUNCTION TERMS
+> Term Formula Weight
+> xy linear velocity exp
+> 
+> −∥vcmd
+> xy −vxy ∥2
+> 0.25
+> 
+> 2
+> zangular velocity exp
+> 
+> −(ωcmd
+> z−ωz)2
+> 0.25
+> 
+> 1.2
+> torques ∥τ∥+P
+> j|τj|−2e-4
+> energy P
+> j|˙qj| | τj|−1e-3
+> action smoothness ∥aq
+> t−aq
+> t−1∥2+∥aq
+> t−2aq
+> t−1+aq
+> t−2∥2−0.01
+> termination 1{base/terrain collision }−1
+> undesired contacts P
+> ℓ1{ℓ-th shank/terrain collision }−0.5
+> feet slide P
+> ℓcℓ∥˙pf
+> ℓ∥2−0.1
+> feet phase ∗exp  −∥ c−1{∥vcmd ∥>0.1}cref ∥20.5
+> standing posture ∗∗ exp  −10 ·1{∥vcmd ∥<0.01 }∥q−qdef ∥20.1
+> ∗contact error of faulty legs is not considered.
+> ∗∗ active in fully healthy scenarios only.
+
+a reference contact schedule and the measured foot contacts. For each leg ℓ, the reference contact is defined as 
+
+cref  
+
+> t,ℓ
+
+=
+
+(
+
+0, if ϕt,ℓ ∈ (−π, 0] ,
+
+1, if ϕt,ℓ ∈ (0 , π ] (2) Faulty legs do not contribute to this reward term. This prevents penalizing unavoidable contact mismatches under failure and allows the policy to autonomously discover ef-fective compensation strategies, without explicitly enforcing a particular faulty-leg behavior. Finally, a standing posture term is activated only when zero velocity is commanded and only in fully healthy conditions. This avoids interfering with the adaptation mechanism during fault scenarios, while still promoting stable nominal standing behavior. All reward terms are detailed in Tab. II. 
+
+D. Fault Application Logic 
+
+Weakened motor faults are modeled by scaling the PD controller output torque τ using a torque efficiency vector 
+
+kτ ∈ [0 , 1] nJ , both during training and deployment. During training, for each environment and episode of duration T , we uniformly sample a time instant ¯t ∼ U (0 , T ) and a joint j ∼U(1 , . . . , n J) representing the fault onset time and affected joint. From ¯t until the end of the episode, the commanded torque of the selected joint is scaled as τj ← kτ ,j τj .Since complete motor loss significantly affects locomo-tion, we adopt a curriculum strategy to progressively in-crease fault severity based on tracking performance [32]. At the beginning of training, all joints are assigned an initial efficiency kτ ,i = kinit > 0, ensuring that the policy first experiences partial failures. If the episodic averages of the velocity tracking rewards exceed predefined thresholds rth 
+
+> vxy
+
+and rth  
+
+> ωz
+
+under the faulty joint condition, and no termination occurs, the fault severity for that joint is increased in the subsequent episode according to kτ ,j ← max( kτ ,j − δk, 0) .Fig. 3. Hundreds of quadrupeds locomoting across the terrain used for training. TABLE III NETWORK SIZES                              
+
+> Module Hidden Layers Critic Encoder [128 ,64]
+> Critic Head [256 ×5]
+> Actor Encoder [512 ,128 ,64]
+> Actor Head [128 ×4]
+> TABLE IV PPO T RAINING SETTINGS
+> Parameter Value Epochs 4
+> Mini-batches 32
+> Mini-batch size 256 ×20
+> Discount factor γ0.97
+> GAE factor λ0.95
+> Clip range 0.3
+> Learning rate 3×10 −4
+> Entropy coeff. λ20.01
+> Value coeff. λ10.25
+
+IV. EXPERIMENTAL RESULTS 
+
+A. Training Setup 
+
+All trainings were conducted in simulation using MuJoCo XLA (MJX) with the MJWarp physics engine on a NVIDIA GeForce RTX 5090 GPU. We employ a simulation model of the Kyon robot, a 68 kg quadruped with nL = 4 legs and 3 actuated degrees of freedom per leg, resulting in 
+
+nJ = 12 joints. A total of 8192 parallel agents are distributed over square stepped pyramids with 10 -by-10 meters base, separated by 2 m wide flat corridors. Three types of pyra-mids are considered, with step heights of 4, 8, and 12 cm, and corresponding widths of 1.2, 1, and 0.8 m, as shown in Fig. 3. The maximum episode duration is T = 20 s, corresponding to 1000 control steps at 50 Hz. During each episode, velocity commands vcmd = ⟨vcmd  
+
+> x
+
+, v cmd  
+
+> y
+
+, ω cmd  
+
+> z
+
+⟩ are resampled every 4 s within the ranges vcmd  
+
+> x
+
+∈ [−1.5, 1.5] m/s, 
+
+vcmd  
+
+> y
+
+∈ [−0.8, 0.8] m/s, and ωcmd  
+
+> z
+
+∈ [−1, 1] rad/s. The PD gains are set to Kp = 300 I12 and Kd = 10 I12 . Action scaling parameters are sq = 0 .5, sν = 1 .25 , with default gait frequency νdef = 1 .25 Hz. All networks are implemented as MLPs (see Tab. III), with latent representations ˆrt and rt of dimension 32 . Joint torque efficiency is initially set to kinit =0.25 and progressively reduced of δk = 0 .0125 , as described in Sect. III-D, considering tracking thresholds rth  
+
+> vxy
+
+= 0 .7
+
+and rth  
+
+> ωz
+
+= 0.8. Tab. IV reports the hyperparameters of the Brax PPO implementation [37] used for training, while Tab. V summarizes the applied domain randomization. 
+
+B. Performance Evaluation 
+
+We evaluate the proposed method by comparing the fol-lowing variants:  
+
+> •
+
+Oracle : both actor and critic have full access to priv-ileged noiseless information, including the joint fault                                      
+
+> TABLE V DOMAIN RANDOMIZATION
+> Term (Unit) Range Joint actuator stiffness Kp×U(0 .8,1.2)
+> Joint actuator damping Kd×U(√0.8,√1.2)
+> Joint passive damping ×U(0 .8,1.2)
+> Joint dry friction ×U(0 .9,1.1)
+> Joint rotor inertia ×U(1 .0,1.05)
+> Terrain sliding friction U(0 .4,1.0)
+> Link masses ×U(0 .8,1.2)
+> Torso mass (kg) +U(−5.0,10 .0)
+> Torso CoM position (m) +U(−0.10 ,0.10)
+> Initial joint position (rad) +U(−0.05 ,0.05)
+> Fig. 4. Episodic total reward averaged over five training runs. Shaded regions indicate the 95% confidence interval. Except for the oracle (blue), which has access to privileged information, our method (red) outperforms the same architecture without proprioceptive history (green) and without latent-alignment loss (yellow).
+
+mask, and noiseless terrain observation;  
+
+> •
+
+Ours w/o latent alignment : the latent-alignment term is disabled by setting λ3 = 0 , such that the objective reduces to LPPO . An observation history length of H =3 is used;  
+
+> •
+
+Ours w/o observation history : the observation history length is set to H = 1 , such that ht = ot. Latent alignment is enabled by setting λ3 = 1 ; 
+
+> •
+
+Ours : the full proposed method with H = 3 and λ3 = 1 .For a fair comparison, we performed five independent train-ing runs for each variant. Fig. 4 reports the average episodic total reward during training. The curves indicate that the proposed approach, combining latent representation align-ment with proprioceptive observation history, achieves per-formance closest to the oracle among the compared variants. We further evaluate the learned policies through simulation experiments conducted on a Laptop equipped with an Intel Core i7-13650HX CPU (2.6 GHz), with 16 GB RAM, and an NVIDIA GeForce RTX 4060 GPU. For each training run, we select the policy achieving the highest episodic total reward. Each selected policy is then tested using 1024 agents randomly distributed across the same terrain used during training (see Fig. 3) and assigned random velocity commands within the training range. Each experiment lasts 25 s and every agent experiences a power-loss fault on a randomly sampled joint at t = 5 s. Performance is assessed in terms of linear and angular Fig. 5. Simulation evaluation under random actuator power loss. Command tracking error (linear and angular) and survival time under faulty conditions (maximum time is 20 s) are reported for each method. Results are grouped by fault location (front/rear legs and joint type) and aggregated across all faults. 
+
+command tracking errors under fault (lower is better) and survival time under fault (higher is better). Results are summarized in Fig. 5, where metrics are reported both per fault location — distinguishing front and rear legs as well as joint type (hip roll, hip pitch, knee pitch) — and aggregated to provide overall comparison. The results are consistent with the learning curves in Fig. 4, and indicate that the knee-joint faults are generally the most challenging to handle. 
+
+1) Sim-to-Sim: We evaluated sim-to-sim transferability of the learned policy by considering the MuJoCo simulator [38]. In addition to the simulator loop, low-level commu-nication with each actuator is managed through the XBot2 middleware [39]. This configuration allows us to replicate the real experimental setup in simulation as closely as possible, aside from unavoidable effects such as model mismatch and unmodeled actuator dynamics. Specifically, XBot2 operates in a separate process at a custom frequency of 1 kHz, thereby introducing asynchronous communication between the con-trol policy and the simulator — an aspect that was not ex-plicitly accounted for during training. With this architecture, we aim to reproduce a more realistic deployment scenario, ultimately facilitating a smoother sim-to-real transition. The policy showed remarkable generalization capabilities even in scenarios not encountered during training, such as stairs with a novel profile — e.g., 10 cm step height and 0.7 mstep width — and ramps with gradients up to 13 ◦, as illustrated in Fig. 6. The top row shows snapshots of the robot climbing stairs following a forward velocity command and experiencing a power-loss fault at the front-right hip pitch joint. The bottom row shows the robot traversing ramps while moving backward and subject to a fault at the rear-right knee joint. Interestingly, faults at the knee often cause the robot to switch to a tripodal locomotion pattern (bottom row), whereas in case of hip-related faults (top row), the injured leg can still contribute to locomotion by exploiting the remaining degrees of freedom to maintain balance and stability. 
+
+2) Sim-to-Real: Real-world experiments were conducted to further validate our method. Without a perception module, we demonstrate zero-shot sim-to-real transfer on flat terrain 1 2 3 4 5     
+
+> 12345
+> Fig. 6. Snapshots from experiments in the MuJoCo simulator with XBot2 integration. Top row: stair climbing on novel step dimensions under power-loss fault at the front-right hip pitch joint. Bottom row: ramp traversal ( 13 ◦)under rear-right knee pitch fault.
+
+by setting the terrain observation oz 
+
+> t
+
+provided to the policy to zero. Fig. 7 shows snapshots of the real robot successfully handling a sudden power-loss fault at the rear-left knee pitch joint while locomoting on flat terrain. 
+
+C. Ablation Studies 1) Observation History Length: We analyze the impact of the proprioceptive observation history by varying the history length H ∈ { 1, 2, 3, 5, 7}. Learning curves are shown in Fig. 8, reporting both the episodic total reward and the cosine similarity between the latent representations ˆrt and 
+
+rt. Introducing past observations helps the policy reconstruct the latent representation of the privileged information. The results indicate that increasing the history length from H =1 — corresponding to no past observations — to H = 2 pro-vides the largest performance improvement. However, further increases in the history length lead to only marginal gains. This suggests that, for the considered task, information about one-step temporal variations is sufficient for the actor to infer the privileged representation. Based on these findings — and considering that longer histories increase the number of network parameters — we adopt H = 3 as a practical trade-off. 
+
+2) Learnable Gait Frequency: To assess the benefits of the learnable gait-frequency action, we compare our policy with a free-gait controller that only outputs joint position targets. For a fair comparison, we replace the feet-phase reward term (see Tab. II) with the widely used feet air-time reward, which encourages natural swing phases and prevents the policy from learning overly conservative low-clearance steps. As in the feet-phase reward, contributions to the feet air-time reward from faulty legs are not considered. To isolate the effect of fault adaptation, we evaluate the two policies in a flat-terrain scenario where the robot is commanded to move forward at vcmd  
+
+> x
+
+= 0 .7 m/s and a fault occurs at the front-left knee pitch joint. Fig. 9 (bottom) shows a comparison of the resulting gait patterns. Under faulty conditions, both approaches successfully switch to a tripodal gait. However, while the free-gait policy produces aperiodic and spurious contacts — particularly during single support on the rear-right leg — our method yields a more stable gait with longer and more periodic swing–stance phases. Moreover, the difference in stance duration between single and double support is clearly reflected in the learned gait-frequency action (top), which increases during single support 1 2 3 4 5 6Fig. 7. Real-world experimental validation of the proposed control policy conducted on the Kyon quadruped robot. The sequence of snapshots shows successful locomotion under power-loss fault at rear-left knee pitch joint. 
+
+Fig. 8. Episodic total reward and latent cosine similarity, averaged over five training runs. Shaded regions denote the 95% confidence interval. A significant improvement is observed when increasing the proprioceptive history length from H = 1 to H = 2 , whereas further increases provide marginal or no performance gains. 
+
+Fig. 9. Analysis of the learnable gait frequency. Shaded red regions indicate the faulty condition. Top: profile of the gait-frequency action term 
+
+aν . Bottom: comparison of the foot-contact sequences generated by our gait-adaptive policy (green) and the free-gait policy (blue). After a fault occurs at the front-left knee joint, the gait-frequency action exhibits a periodic behavior, with higher frequencies during single support and lower frequencies during double support. 
+
+and decreases during double support. Finally, the smoother and more stable behavior of our controller is further confirmed in Fig. 10, where we compare the two approaches in terms of joint accelerations and control action variations, both averaged over the healthy joints during the faulty condition. V. CONCLUSIONS This work presented a deep reinforcement learning ap-proach for fault-tolerant locomotion under actuator power loss. The method combines an asymmetric actor-critic ar-chitecture with a latent representation alignment objective, enabling the actor to infer privileged information from a history of proprioceptive observations. 
+
+Fig. 10. Comparison between our gait-adaptive policy and a free-gait policy. Boxplots of the average joint accelerations (left) and action variation (right), computed over all non-faulty joints. The free-gait policy consistently results in higher values for both metrics, indicating less smooth actuation. 
+
+A central design choice is the inclusion of a learnable gait-frequency action, allowing the policy to adapt step timing. We argue that for heavier quadrupeds, fast reactive strategies effective on lighter platforms do not scale well due to tighter actuation limits and stronger dynamic coupling. Adaptive gait timing therefore becomes critical under degraded ac-tuation. By leveraging terrain information together with gait frequency modulation, the policy achieves robust locomotion without predefined faulty-leg strategies or restrictive reward shaping. Simulation results validate the importance of propriocep-tive history and latent alignment. Sim-to-sim and zero-shot sim-to-real transfer on a 68 kg quadruped further demonstrate consistent behavior across simulation and hardware. Future work includes integrating onboard perception for terrain reconstruction, learning unified fault-tolerant locomotion and fall-recovery policies, and exploring fault tolerance in hybrid wheeled-legged systems. REFERENCES [1] M. Hutter, C. Gehring, D. Jud, A. Lauber, C. D. Bellicoso, V. Tsounis, J. Hwangbo, K. Bodie, P. Fankhauser, M. Bloesch, R. Diethelm, S. Bachmann, A. Melzer, and M. Hoepflinger, “Anymal - a highly mobile and dynamic quadrupedal robot,” in 2016 IEEE/RSJ Interna-tional Conference on Intelligent Robots and Systems (IROS) , 2016, pp. 38–44. [2] Y.-H. Shin, S. Hong, S. Woo, J. Choe, H. Son, G. Kim, J.-H. Kim, K. Lee, J. Hwangbo, and H.-W. Park, “Design of kaist hound, a quadruped robot platform for fast and efficient locomotion with mixed-integer nonlinear optimization of a gear train,” in 2022 International Conference on Robotics and Automation (ICRA) , 2022, pp. 6614– 6620. [3] N. Kashiri, L. Baccelliere, L. Muratore, A. Laurenzi, Z. Ren, E. M. Hoffman, M. Kamedula, G. F. Rigano, J. Malzahn, S. Cordasco, P. Guria, A. Margan, and N. G. Tsagarakis, “Centauro: A hybrid locomotion and high power resilient manipulation platform,” IEEE Robotics and Automation Letters , vol. 4, no. 2, pp. 1595–1602, 2019. [4] G. Valsecchi, N. Rudin, L. Nachtigall, K. Mayer, F. Tischhauser, and M. Hutter, “Barry: A high-payload and agile quadruped robot,” IEEE Robotics and Automation Letters , vol. 8, no. 11, pp. 6939–6946, 2023. [5] L. Rossini, A. Laurenzi, F. Ruscelli, Y. Zhang, G. Gravina, L. Baccelliere, C. Burchielli, S. Cordasco, and N. Tsagarakis, “Kyon: Semi-modular wheel-legged quadruped with agile bimanual capability,” 2026. [Online]. Available: https://arxiv.org/abs/2606.30243 [6] S. Solmaz, P. Innerwinkler, M. W´ ojcik, K. Tong, E. Politi, G. Dimi-trakopoulos, P. Purucker, A. H¨ oß, B. W. Schuller, and R. John, “Robust robotic search and rescue in harsh environments: An example and open challenges,” in 2024 IEEE International Symposium on Robotic and Sensors Environments (ROSE) , 2024, pp. 1–8. [7] C. Gehring, P. Fankhauser, L. Isler, R. Diethelm, S. Bachmann, M. Potz, L. Gerstenberg, and M. Hutter, “Anymal in the field: Solving industrial inspection of an offshore hvdc platform with a quadrupedal robot,” in Field and Service Robotics , G. Ishigami and K. Yoshida, Eds. Singapore: Springer Singapore, 2021, pp. 247–260. [8] A. Suarez, R. Kartmann, D. Leidner et al. , “Door-to-door parcel delivery from supply point to user’s home with heterogeneous robot team: The eurobin first-year robotics hackathon,” IEEE Robotics & Automation Magazine , vol. 32, no. 3, pp. 8–25, 2025. [9] J. Hooks, M. S. Ahn, J. Yu, X. Zhang, T. Zhu, H. Chae, and D. Hong, “Alphred: A multi-modal operations quadruped robot for package delivery applications,” IEEE Robotics and Automation Letters , vol. 5, no. 4, pp. 5409–5416, 2020. [10] J.-M. Yang, “Fault-tolerant gaits of quadruped robots for locked joint failures,” IEEE Transactions on Systems, Man, and Cybernetics, Part C (Applications and Reviews) , vol. 32, no. 4, pp. 507–516, 2002. [11] J. English and A. Maciejewski, “Fault tolerance for kinematically re-dundant manipulators: anticipating free-swinging joint failures,” IEEE Transactions on Robotics and Automation , vol. 14, no. 4, pp. 566–575, 1998. [12] M. M. Gor, P. Pathak, A. Samantaray, J. M. Yang, and S. Kwak, “Fault-tolerant control of a compliant legged quadruped robot for free swinging failure,” Proceedings of the Institution of Mechanical Engineers, Part I: Journal of Systems and Control Engineering , vol. 232, no. 2, pp. 161–177, 2018. [Online]. Available: https://doi.org/10.1177/0959651817743410 [13] J. Lee, J. Hwangbo, L. Wellhausen, V. Koltun, and M. Hutter, “Learning quadrupedal locomotion over challenging terrain,” Science Robotics , vol. 5, no. 47, p. eabc5986, 2020. [Online]. Available: https://www.science.org/doi/abs/10.1126/scirobotics.abc5986 [14] T. Miki, J. Lee, J. Hwangbo, L. Wellhausen, V. Koltun, and M. Hutter, “Learning robust perceptive locomotion for quadrupedal robots in the wild,” Science Robotics , vol. 7, no. 62, p. eabk2822, 2022. [Online]. Available: https://www.science.org/doi/abs/10.1126/ scirobotics.abk2822 [15] S. Choi, G. Ji, J. Park, H. Kim, J. Mun, J. H. Lee, and J. Hwangbo, “Learning quadrupedal locomotion on deformable terrain,” Science Robotics , vol. 8, no. 74, p. eade2256, 2023. [Online]. Available: https://www.science.org/doi/abs/10.1126/scirobotics.ade2256 [16] G. B. Margolis, G. Yang, K. Paigwar, T. Chen, and P. Agrawal, “Rapid locomotion via reinforcement learning,” The International Journal of Robotics Research , vol. 43, no. 4, pp. 572–587, 2024. [Online]. Available: https://doi.org/10.1177/02783649231224053 [17] X. Cheng, K. Shi, A. Agarwal, and D. Pathak, “Extreme parkour with legged robots,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) , 2024, pp. 11 443–11 450. [18] D. Hoeller, N. Rudin, D. Sako, and M. Hutter, “Anymal parkour: Learning agile navigation for quadrupedal robots,” Science Robotics , vol. 9, no. 88, p. eadi7566, 2024. [Online]. Available: https://www.science.org/doi/abs/10.1126/scirobotics.adi7566 [19] L. Pinto, M. Andrychowicz, P. Welinder, W. Zaremba, and P. Abbeel, “Asymmetric actor critic for image-based robot learning,” 2017. [Online]. Available: https://arxiv.org/abs/1710.06542 [20] H. Wang, H. Luo, W. Zhang, and H. Chen, “Cts: Concurrent teacher-student reinforcement learning for legged locomotion,” IEEE Robotics and Automation Letters , vol. 9, no. 11, pp. 9191–9198, 2024. [21] H. Song, H. Zhu, T. Yu, Y. Liu, M. Yuan, W. Zhou, H. Chen, and H. Li, “Gait-adaptive perceptive humanoid locomotion with real-time under-base terrain reconstruction,” IEEE Robotics and Automation Letters ,pp. 1–8, 2026. [22] J. Cui, Z. Li, J. Qiu, and T. Li, “Fault-tolerant motion planning and generation of quadruped robots synthesised by posture optimization and whole body control,” Complex & Intelligent Systems , vol. 8, no. 4, pp. 2991–3003, 2022. [23] Z. Chen, Q. Xi, F. Gao, and Y. Zhao, “Fault-tolerant gait design for quadruped robots with one locked leg using the gf set theory,” 
+
+Mechanism and Machine Theory , vol. 178, p. 105069, 2022. [Online]. Available: https://www.sciencedirect.com/science/article/pii/ S0094114X22003160 [24] F. Yang, C. Yang, D. Guo, H. Liu, and F. Sun, “Fault-aware robust control via adversarial reinforcement learning,” in 2021 IEEE 11th An-nual International Conference on CYBER Technology in Automation, Control, and Intelligent Systems (CYBER) , 2021, pp. 109–115. [25] T. Anne, J. Wilkinson, and Z. Li, “Meta-learning for fast adaptive locomotion with uncertainties in environments and robot dynamics,” in 2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 2021, pp. 4568–4575. [26] W. Okamoto, H. Kera, and K. Kawamoto, “Reinforcement learning with adaptive curriculum dynamics randomization for fault-tolerant robot control,” 2021. [Online]. Available: https://arxiv.org/abs/2111. 10005 [27] D. Liu, J. Yin, and S. See, “Towards fault-tolerant quadruped loco-motion with reinforcement learning,” in 2024 IEEE Conference on Artificial Intelligence (CAI) , 2024, pp. 1438–1441. [28] Z. Luo, E. Xiao, and P. Lu, “Ft-net: Learning failure recovery and fault-tolerant locomotion for quadruped robots,” IEEE Robotics and Automation Letters , vol. 8, no. 12, pp. 8414–8421, 2023. [29] M. Kim, U. Shin, and J.-Y. Kim, “Learning quadrupedal locomotion with impaired joints using random joint masking,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) , 2024, pp. 9751–9757. [30] T. Xu, Y. Cheng, P. Shen, and L. Zhao, “Acl: Action learner for fault-tolerant quadruped locomotion control,” 2025. [Online]. Available: https://arxiv.org/abs/2503.21401 [31] Y. Fu, Y. Zhang, Q. Yang, L. Yan, Z. Cao, and Y. Gao, “Contrastive forward prediction reinforcement learning for adaptive fault-tolerant legged robots,” in Proceedings of The 9th Conference on Robot Learning , ser. Proceedings of Machine Learning Research, J. Lim, S. Song, and H.-W. Park, Eds., vol. 305. PMLR, 27–30 Sep 2025, pp. 3285–3303. [Online]. Available: https: //proceedings.mlr.press/v305/fu25b.html [32] S. Lee, I. M. A. Nahrendra, D. Lee, B. Yu, M. Oh, H. Lee, and H. Myung, “Dreamflex: Learning fault-aware quadrupedal locomotion controller for anomaly situation in rough terrains,” in 2025 IEEE International Conference on Robotics and Automation (ICRA) , 2025, pp. 16 001–16 007. [33] T. Hou, J. Tu, X. Gao, Z. Dong, P. Zhai, and L. Zhang, “Multi-task learning of active fault-tolerant controller for leg failures in quadruped robots,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) , 2024, pp. 9758–9764. [34] P. Zhang, Z. Hua, Q. Qiu, and J. Ding, “Ft-cpg: Learning central pat-tern generators for fault-tolerant quadruped locomotion under multi-joint failures,” IEEE Robotics and Automation Letters , vol. 10, no. 7, pp. 6936–6943, 2025. [35] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal policy optimization algorithms,” 2017. [Online]. Available: https://arxiv.org/abs/1707.06347 [36] K. Zakka, B. Tabanpour, Q. Liao, M. Haiderbhai, S. Holt, J. Y. Luo, A. Allshire, E. Frey, K. Sreenath, L. A. Kahrs, C. Sferrazza, Y. Tassa, and P. Abbeel, “Mujoco playground: An open-source framework for gpu-accelerated robot learning and sim-to-real transfer.” 2025. [Online]. Available: https://github.com/ google-deepmind/mujoco playground [37] C. D. Freeman, E. Frey, A. Raichuk, S. Girgin, I. Mordatch, and O. Bachem, “Brax – a differentiable physics engine for large scale rigid body simulation,” 2021. [Online]. Available: https://arxiv.org/abs/2106.13281 [38] E. Todorov, T. Erez, and Y. Tassa, “Mujoco: A physics engine for model-based control,” in 2012 IEEE/RSJ International Conference on Intelligent Robots and Systems . IEEE, 2012, pp. 5026–5033. [39] A. Laurenzi, D. Antonucci, N. G. Tsagarakis, and L. Muratore, “The xbot2 real-time middleware for robotics,” Robotics and Autonomous Systems , vol. 163, p. 104379, 2023. [Online]. Available: https: //www.sciencedirect.com/science/article/pii/S0921889023000180

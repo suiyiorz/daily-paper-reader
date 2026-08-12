@@ -1,0 +1,766 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-12T21:02:21.273605+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 17,
+    "deep_cap": 6,
+    "deep_selected": 10,
+    "quick_candidates": 8,
+    "quick_skim_target": 11,
+    "quick_selected": 8
+  },
+  "deep_dive": [
+    {
+      "id": "2608.07328v1",
+      "source": "arxiv",
+      "title": "Learning Fault-Tolerant Locomotion with Adaptive Gait Timing",
+      "abstract": "Hardware failures require legged robots to rapidly reorganize coordination and gait timing to maintain stability and mobility. This is particularly challenging for larger quadrupeds, where increased mass and tighter actuation limits reduce the feasibility of aggressive, high-frequency compensation strategies often observed on smaller platforms. In this work, we propose a deep reinforcement learning approach for fault-tolerant locomotion under actuator power loss. The method employs an asymmetric actor-critic architecture in which the critic has access to privileged information during training, while the actor learns to reconstruct a corresponding latent representation from proprioceptive observations. We introduce a latent-alignment loss that encourages consistency between actor and critic representations. Additionally, we augment the action space with a learnable gait frequency parameter, enabling adaptive gait timing in response to terrain variations and actuator degradation without predefined faulty-leg strategies. The approach is validated in high-fidelity simulation on uneven terrain and real-world experiments on flat ground using a 68 kg quadruped robot.",
+      "authors": [
+        "Giovanbattista Gravina",
+        "Luca Rossini",
+        "Carlo Rizzardo",
+        "Arturo Laurenzi",
+        "Nikos Tsagarakis"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG"
+      ],
+      "published": "2026-08-07T15:27:03+00:00",
+      "link": "https://arxiv.org/pdf/2608.07328v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Deep RL for fault-tolerant legged locomotion",
+      "llm_evidence_cn": "面向腿足机器人容错运动的深度强化学习",
+      "llm_evidence": "面向腿足机器人容错运动的深度强化学习",
+      "canonical_evidence": "面向腿足机器人容错运动的深度强化学习",
+      "llm_tldr_en": "Addresses fault-tolerant locomotion for legged robots under actuator power loss; proposes deep RL with asymmetric actor-critic and latent-alignment loss to recover stable gait timing.",
+      "llm_tldr_cn": "本文针对四足机器人在执行器动力损失下的容错运动问题，提出一种深度强化学习框架。该方法采用非对称演员-评论家架构，评论家在训练时使用特权信息，演员从本体感觉观测重建潜在表征，并通过潜在对齐损失提升表征一致性。该方法面向较大型四足平台，能根据故障状况自适应调整步态时序，有效恢复运动稳定性与机动性。",
+      "llm_tldr": "本文针对四足机器人在执行器动力损失下的容错运动问题，提出一种深度强化学习框架。该方法采用非对称演员-评论家架构，评论家在训练时使用特权信息，演员从本体感觉观测重建潜在表征，并通过潜在对齐损失提升表征一致性。该方法面向较大型四足平台，能根据故障状况自适应调整步态时序，有效恢复运动稳定性与机动性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.09853v1",
+      "source": "arxiv",
+      "title": "RynnValue: Scaling Robotic Value Foundation Models with Temporal Distance",
+      "abstract": "General-purpose reward models are increasingly the bottleneck for scaling robot learning, yet the recipe for learning value-related capabilities from large-scale heterogeneous corpora remains underexplored. Existing approaches tie supervision to task-internal anchors such as preferences or normalized progress, none of which transfer cleanly across embodiments and data sources. We introduce RynnValue, an open-source value foundation model for robotic manipulation that replaces these anchors with temporal distance, the directed cost-to-go from an observation to the language-specified goal. Because temporal-distance labels can be derived directly from timestamps, RynnValue scales to over 7,000 hours and roughly 3M instruction-conditioned clips without preference or progress annotations. To make temporal-value learning reliable at scale, we combine random temporal sampling, temporal-order shuffling, and value-isolation attention, suppressing shortcuts that would leave predictions insensitive to failures and regressions. Trained without preference labels, RynnValue attains an average Kendall's tau_a of 0.675 on RBM-EVAL-OOD, surpassing the fully preference-supervised state of the art (0.655) and more than doubling a progress-only counterpart (0.292), while generalizing zero-shot to unseen tasks, embodiments, and viewpoints. Converted into dense rewards via potential-based shaping, it raises real-world policy success from 52.5% to 72.5% online and from 63.8% to 82.5% offline. These results establish temporal distance as a scalable supervision target and practical reward interface for generalist robot policies.",
+      "authors": [
+        "Dongchi Huang",
+        "Hongyin Zhang",
+        "Bohan Hou",
+        "Siteng Huang",
+        "Zhian Su",
+        "Hang Guo",
+        "Tong Lu",
+        "Zhaofeng Xu",
+        "Jiahao Tang",
+        "Jianfei Yang",
+        "Donglin Wang",
+        "Peixi Peng",
+        "Mingxiu Chen",
+        "Deli Zhao",
+        "Xin Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-08-10T17:09:37+00:00",
+      "link": "https://arxiv.org/pdf/2608.09853v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Open-source value foundation model for robotic manipulation scaled with temporal distance labels",
+      "llm_evidence_cn": "以时序距离标签扩展的机器人操作开放价值基础模型",
+      "llm_evidence": "以时序距离标签扩展的机器人操作开放价值基础模型",
+      "canonical_evidence": "以时序距离标签扩展的机器人操作开放价值基础模型",
+      "llm_tldr_en": "RynnValue is an open-source value foundation model for robotic manipulation that replaces task-internal anchors with temporal distance, scaling to over 7,000 hours and 3M instruction-conditioned clips across embodiments.",
+      "llm_tldr_cn": "通用奖励模型正成为机器人学习规模化的瓶颈，现有偏好或归一化进度等锚点难以跨本体迁移。RynnValue以时序距离——从观测到语言指定目标的定向代价——作为监督信号，可直接从时间戳导出。它在7000多小时的异构数据、约300万条指令条件片段上训练，得到开放的价值基础模型。该模型能跨本体迁移，为机器人操作强化学习提供了可扩展的奖励基础。",
+      "llm_tldr": "通用奖励模型正成为机器人学习规模化的瓶颈，现有偏好或归一化进度等锚点难以跨本体迁移。RynnValue以时序距离——从观测到语言指定目标的定向代价——作为监督信号，可直接从时间戳导出。它在7000多小时的异构数据、约300万条指令条件片段上训练，得到开放的价值基础模型。该模型能跨本体迁移，为机器人操作强化学习提供了可扩展的奖励基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10386v1",
+      "source": "arxiv",
+      "title": "Dreamer-SAC: Off-Policy Learning in Latent World Models for Sample-Efficient Autonomous Driving",
+      "abstract": "Sample-efficient reinforcement learning for autonomous driving is often limited by the trade-off between data efficiency and model bias. While world models reduce the reliance on costly environment interactions, policy optimization over learned dynamics remains sensitive to prediction errors. This paper proposes the Dreamer-SAC framework, which integrates a recurrent state-space world model with an off-policy soft actor-critic algorithm trained directly in latent space. The framework uses a combination of real interactions and short-horizon generated trajectories with n-step target estimation and multi-objective supervision. Evaluated in autonomous driving scenarios with objectives encompassing driving efficiency and safety, the proposed framework consistently outperforms representative reinforcement learning baselines, including DreamerV3, SAC, and PPO, while achieving improved performance with substantially fewer real environment interactions. Experiments reveal an inverted-U relationship between rollout horizon and policy performance, where short-horizon latent rollouts achieve the best trade-off between additional training signals and accumulated model bias. Furthermore, n-step target estimation demonstrates more effectiveness over one-step temporal-difference targets in exploiting predicted experience for value learning.",
+      "authors": [
+        "Jiazhuo Li",
+        "Linjiang Cao",
+        "Qi Liu",
+        "Xi Xiong"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.RO"
+      ],
+      "published": "2026-08-11T02:27:26+00:00",
+      "link": "https://arxiv.org/pdf/2608.10386v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Sample-efficient reinforcement learning with latent world models for autonomous driving",
+      "llm_evidence_cn": "基于潜在世界模型的自动驾驶样本高效强化学习",
+      "llm_evidence": "基于潜在世界模型的自动驾驶样本高效强化学习",
+      "canonical_evidence": "基于潜在世界模型的自动驾驶样本高效强化学习",
+      "llm_tldr_en": "Dreamer-SAC combines a recurrent world model with off-policy SAC in latent space for sample-efficient, multi-objective autonomous driving policies that balance efficiency and safety.",
+      "llm_tldr_cn": "自动驾驶强化学习常在数据效率与模型偏差之间权衡，世界模型虽可降低交互成本，但在学习动态上的策略优化对预测误差敏感。Dreamer-SAC将循环状态空间世界模型与离线策略SAC结合，直接在潜在空间训练，并利用真实交互与短时生成轨迹进行n步目标估计和多目标监督。在自动驾驶场景中同时考虑效率与安全目标的实验显示，该方法以更少环境交互达到更高的驾驶综合性能。",
+      "llm_tldr": "自动驾驶强化学习常在数据效率与模型偏差之间权衡，世界模型虽可降低交互成本，但在学习动态上的策略优化对预测误差敏感。Dreamer-SAC将循环状态空间世界模型与离线策略SAC结合，直接在潜在空间训练，并利用真实交互与短时生成轨迹进行n步目标估计和多目标监督。在自动驾驶场景中同时考虑效率与安全目标的实验显示，该方法以更少环境交互达到更高的驾驶综合性能。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10413v1",
+      "source": "arxiv",
+      "title": "DriveVLA-M0: Failure-Aware Memory Augmentation for Autonomous Driving",
+      "abstract": "Vision-Language-Action (VLA) models have recently emerged as a promising paradigm for end-to-end autonomous driving by enabling unified reasoning across perception, language, and planning. However, existing approaches lack mechanisms to exploit past failures or adapt to distribution shifts, causing the model to persistently underperform on similar scenarios where it has previously failed. In this paper, we propose DriveVLA-M0, a retrieval-augmented VLA with failure-aware latent memory. We construct a latent memory pool that stores failure cases along with their structure scene representations and expert trajectory labels, and design a dedicated Retrieve Model that decouples static road structure and dynamic agent interactions to enable structurally grounded retrieval. At inference time, retrieved cases are injected into the model via a lightweight decoupled LoRA-based test-time training (TTT) mechanism, allowing targeted and scenario-specific correction without modifying the backbone. Extensive experiments on NAVSIMv1 and NAVSIMv2 benchmark demonstrate that our approach consistently outperforms prior methods, achieving 94.1 PDMS on Navtest and 47.0 EPDMS on Navhard with only 26.44 ms TTT backward latency overhead. Furthermore, we show that DriveVLA-M0 scales effectively with additional memory, enabling training-free performance gains through memory expansion. The code is available at https://github.com/ZebinX/DriveVLA-M0.",
+      "authors": [
+        "Zebin Xing",
+        "Yupeng Zheng",
+        "Qiang Chen",
+        "Linbo Wang",
+        "Yichen Zhang",
+        "Pengxuan Yang",
+        "Junli Wang",
+        "Deheng Qian",
+        "Xiaoqing Ye",
+        "Junyu Han",
+        "Yifeng Pan",
+        "Qichao Zhang",
+        "Dongbin Zhao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-11T03:01:46+00:00",
+      "link": "https://arxiv.org/pdf/2608.10413v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "retrieval-augmented VLA with failure-aware latent memory for end-to-end autonomous driving",
+      "llm_evidence_cn": "具有故障感知潜在记忆的检索增强VLA，用于端到端自动驾驶",
+      "llm_evidence": "具有故障感知潜在记忆的检索增强VLA，用于端到端自动驾驶",
+      "canonical_evidence": "具有故障感知潜在记忆的检索增强VLA，用于端到端自动驾驶",
+      "llm_tldr_en": "Proposes DriveVLA-M0, a retrieval-augmented VLA with failure-aware latent memory that stores past failures and retrieves structurally similar scenes to improve adaptation to distribution shifts in autonomous driving.",
+      "llm_tldr_cn": "针对端到端自动驾驶中缺乏利用历史故障与适应分布变化的能力，提出DriveVLA-M0，构建存储失败案例及其结构场景表示的潜在记忆池，并设计解耦静态道路结构与动态智能体交互的检索模型。该方法通过结构相似性检索相关失败案例，为规划提供参考，从而在相似场景下持续提高性能。实验表明其能够有效应对分布偏移并减少重复失败，增强了VLA模型的鲁棒性。",
+      "llm_tldr": "针对端到端自动驾驶中缺乏利用历史故障与适应分布变化的能力，提出DriveVLA-M0，构建存储失败案例及其结构场景表示的潜在记忆池，并设计解耦静态道路结构与动态智能体交互的检索模型。该方法通过结构相似性检索相关失败案例，为规划提供参考，从而在相似场景下持续提高性能。实验表明其能够有效应对分布偏移并减少重复失败，增强了VLA模型的鲁棒性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10618v1",
+      "source": "arxiv",
+      "title": "Toward the Cognitive--Physical Limits of Embodied Intelligence through a World-Model-Centric Autonomous Racing Agent",
+      "abstract": "Embodied artificial intelligence aims to develop agents that perceive, reason, and act through continuous interaction with the physical world. However, most embodied systems are still evaluated within conservative safety margins or moderate interaction regimes, leaving their capability boundaries under extreme conditions insufficiently understood. Autonomous racing provides a stringent testbed by combining high-frequency localization and perception, adversarial interaction, near-saturated vehicle dynamics, and strict safety constraints. Existing systems push high-speed performance but rarely model and refine cognitive and physical limits jointly. Here we show that a world-model-centric autonomous racing agent provides a concrete step toward exploring these coupled limits. The framework learns predictive world models from near-limit successes and failures to capture interaction evolution, ego dynamics, and feasible-motion boundaries, coupling world-state construction, future-aware reasoning, and near-limit control in a closed-loop refinement process. Training data were collected from real-vehicle autonomous racing, where the onboard system maintained robust localization and perception at speeds up to 256.3 km/h and peak lateral acceleration of 26.8 m/s$^2$. In full-scale simulated racing, the well trained world-model-centric agent achieves an 88.3% interaction success rate across various challenging simulated racing scenarios. Closed-loop refinement of the world model and policy further improved utilization of cognitive-physical limits, recovery from failure modes, and generalization across varying conditions and unseen circuits. These results suggest a boundary-aware methodology in which world models help embodied agents represent, predict, and continually refine their capability boundaries for safer real-world deployment.",
+      "authors": [
+        "Zitong Shan",
+        "Baichuan Lou",
+        "Yanxin Zhou",
+        "Shuge Wu",
+        "Xianqi He",
+        "Bolin Zhao",
+        "Sheng Zhao",
+        "Zhouheng Li",
+        "Chee Kiong Ong",
+        "King Ho Holden Li",
+        "Chen Lv"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-11T08:01:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.10618v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "world-model-centric autonomous racing agent for embodied intelligence",
+      "llm_evidence_cn": "以世界模型为核心的自主赛车智能体与具身智能",
+      "llm_evidence": "以世界模型为核心的自主赛车智能体与具身智能",
+      "canonical_evidence": "以世界模型为核心的自主赛车智能体与具身智能",
+      "llm_tldr_en": "A world-model-centric autonomous racing agent pushes cognitive and physical limits, demonstrating embodied intelligence under high-speed, adversarial, and near-saturated driving conditions.",
+      "llm_tldr_cn": "具身智能体通常在中低交互强度下评估，极端条件下的能力边界未被充分探索。自动驾驶赛车综合了高频定位与感知、对抗交互、近饱和车辆动力学和严格安全约束，是严苛的测试平台。作者提出以世界模型为核心的赛车智能体，联合建模与优化认知和物理极限。该工作展示了在极端动态条件下具身智能的潜力，并为自动驾驶系统提供了一条新路径。",
+      "llm_tldr": "具身智能体通常在中低交互强度下评估，极端条件下的能力边界未被充分探索。自动驾驶赛车综合了高频定位与感知、对抗交互、近饱和车辆动力学和严格安全约束，是严苛的测试平台。作者提出以世界模型为核心的赛车智能体，联合建模与优化认知和物理极限。该工作展示了在极端动态条件下具身智能的潜力，并为自动驾驶系统提供了一条新路径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10756v1",
+      "source": "arxiv",
+      "title": "Embodied Multimodal Grounding for Open-Vocabulary Mobile Manipulation via Semantic 3D Gaussian Splatting",
+      "abstract": "Embodied mobile manipulation requires language, visual observations, three-dimensional scene structure, and action feasibility to be aligned before execution. We study open-vocabulary target grounding with few-shot manipulation in local household workspaces and present an embodied multimodal grounding framework that integrates active multi-view Semantic 3D Gaussian Splatting (Semantic-3DGS), reachability-aware base positioning, and a diffusion-based vision-language-action policy. A task-driven local Semantic-3DGS serves as a shared interface across active sensing, language-conditioned 3D localization, obstacle-aware scene reasoning, base preparation, and semantic conditioning of the action model. To preserve pretrained action priors, the 3D semantic cues are injected only into the late action-expert blocks. In expanded 50-trial real-robot evaluations against representative vision-language-action (VLA) approaches, the full system achieves 60% long-horizon success compared with 40% for PointVLA and 28% for DexVLA, and reaches 74% success in heavily cluttered manipulation compared with 52% for the single-view variant and 46% for PointVLA. It also maintains 75% success under a 75 cm height shift and eliminates photo-induced false grasps. These results indicate that explicit, refreshable 3D semantic grounding can improve robustness under clutter, occlusion, viewpoint variation, and embodiment constraints.",
+      "authors": [
+        "Huosen Ou",
+        "Dongni Song",
+        "Yuncong Wang",
+        "Tao Zhou",
+        "Yiding Ji"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-08-11T10:16:30+00:00",
+      "link": "https://arxiv.org/pdf/2608.10756v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Embodied mobile manipulation with multimodal grounding and semantic 3D Gaussian splatting",
+      "llm_evidence_cn": "语义3D高斯溅射实现具身移动操作与多模态接地",
+      "llm_evidence": "语义3D高斯溅射实现具身移动操作与多模态接地",
+      "canonical_evidence": "语义3D高斯溅射实现具身移动操作与多模态接地",
+      "llm_tldr_en": "Embodied multimodal grounding integrates semantic 3D Gaussian splatting, reachability-aware base positioning and a diffusion VLA policy for open-vocabulary few-shot mobile manipulation in household workspaces.",
+      "llm_tldr_cn": "具身移动操作需要在执行前对齐语言、视觉、三维场景与操作可行性。作者提出一个多重模态接地框架，结合主动多视角语义3D高斯溅射、可达性感知的基座定位和扩散式视觉-语言-动作策略，支持开放词汇与少样本操作。任务驱动的局部语义3DGS充当感知、语言定位、场景推理与动作模型语义条件的共享界面，使得机器人能够在家庭工作空间中完成新目标物体的接地与操作。",
+      "llm_tldr": "具身移动操作需要在执行前对齐语言、视觉、三维场景与操作可行性。作者提出一个多重模态接地框架，结合主动多视角语义3D高斯溅射、可达性感知的基座定位和扩散式视觉-语言-动作策略，支持开放词汇与少样本操作。任务驱动的局部语义3DGS充当感知、语言定位、场景推理与动作模型语义条件的共享界面，使得机器人能够在家庭工作空间中完成新目标物体的接地与操作。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10780v1",
+      "source": "arxiv",
+      "title": "JEPA-WAM: Stage-Level Joint-Embedding Prediction for World-Action Models in Robot Manipulation",
+      "abstract": "Generalist robot policies aim to map multimodal observations and linguistic task instructions to actions across diverse tasks. However, existing methods typically represent the future as a fixed, short video-action chunk. This short-term future captures local scene evolution for action execution, but it does not explicitly describe the stage-level future that specifies how a task should progress from its current stage to the next. We therefore distinguish two complementary futures for robot manipulation: a short-term physical future to capture local scene evolution and a stage-level semantic future to represent task progress. We introduce JEPA-WAM, which augments a Motus-based World Action Model (WAM) with Stage-JEPA, a goal-conditioned Joint-Embedding Predictive Architecture (JEPA) predictor. Given the current observation and task instruction, Stage-JEPA uses a frozen V-JEPA2 encoder to extract the current-state representation and predicts the latent target of the next inferred stage. Across 50 RoboTwin 2.0 tasks in clean and randomized environments, JEPA-WAM achieves 90.25% overall success and reduces the mean number of execution steps in successful rollouts by 5.97% relative to the strongest baseline.",
+      "authors": [
+        "Xiao Liu",
+        "Yuguang Yang",
+        "Xi Wang",
+        "Kai Jiang",
+        "Cheng Chi",
+        "Yong Xu",
+        "Wenchao Ding",
+        "Yilun Chen",
+        "Yan Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-11T10:33:12+00:00",
+      "link": "https://arxiv.org/pdf/2608.10780v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Stage-level world-action model for robot manipulation with JEPA prediction",
+      "llm_evidence_cn": "面向机器人操作的阶段级世界动作模型与JEPA预测",
+      "llm_evidence": "面向机器人操作的阶段级世界动作模型与JEPA预测",
+      "canonical_evidence": "面向机器人操作的阶段级世界动作模型与JEPA预测",
+      "llm_tldr_en": "JEPA-WAM augments a world-action model with Stage-JEPA to predict stage-level semantic futures, improving long-horizon robot manipulation tasks beyond short-term video-action chunks.",
+      "llm_tldr_cn": "通用机器人策略通常将未来表示为固定且较短的视频-动作块，只能刻画局部场景演化，而缺少显式的阶段级任务进展。JEPA-WAM基于Motus世界动作模型（WAM），引入Stage-JEPA目标条件联合嵌入预测来显式建模当前阶段到下一阶段的语义未来。它将短期物理未来与阶段级语义未来互补融合，实验表明该模型在长程操作任务上的策略执行和任务完成率显著优于仅依赖短期未来预测的方法。",
+      "llm_tldr": "通用机器人策略通常将未来表示为固定且较短的视频-动作块，只能刻画局部场景演化，而缺少显式的阶段级任务进展。JEPA-WAM基于Motus世界动作模型（WAM），引入Stage-JEPA目标条件联合嵌入预测来显式建模当前阶段到下一阶段的语义未来。它将短期物理未来与阶段级语义未来互补融合，实验表明该模型在长程操作任务上的策略执行和任务完成率显著优于仅依赖短期未来预测的方法。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10976v1",
+      "source": "arxiv",
+      "title": "XCoT-VLA: Executable Chain-of-Thought for Vision-Language-Action Driving",
+      "abstract": "Vision-Language-Action (VLA) models can connect scene understanding, semantic reasoning, and trajectory generation for autonomous driving. However, verbose natural-language Chain-of-Thought (CoT) is poorly suited to real-time control because it is open-ended, costly to decode, and difficult to optimize as an action-facing representation. We propose XCoT-VLA, which replaces descriptive rationales with compact executable CoT tokens learned from automatically constructed Reason-Action supervision. Logged trajectories provide action evidence, while scene context supplies causal semantics. The predicted XCoT sequence remains in context and conditions fixed trajectory queries through shared multimodal self-attention. Deterministic token-function routing applies the Reason FFN to XCoT tokens and the Control FFN to trajectory queries for flow-matching trajectory generation. We further introduce XCoT Policy Optimization (XCPO) as an optional refinement extension in the same executable token space. XCoT-VLA reduces longitudinal ADE from 1.645 to 1.323 on a general-distribution set and lateral FDE from 1.616 to 0.648 in lane-change scenarios. By representing driving-oriented reasoning with only 2-6 executable XCoT tokens, our method substantially reduces autoregressive reasoning overhead and remains within the real-time planning budget. These results demonstrate that driving-oriented reasoning can be compact, executable, and directly connected to trajectory generation.",
+      "authors": [
+        "Foundation Model Team",
+        "XPeng Inc"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-11T14:33:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.10976v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "VLA driving model using executable chain-of-thought for scene understanding and trajectory generation",
+      "llm_evidence_cn": "面向自动驾驶的视觉-语言-动作模型，利用可执行思维链实现场景理解与轨迹生成",
+      "llm_evidence": "面向自动驾驶的视觉-语言-动作模型，利用可执行思维链实现场景理解与轨迹生成",
+      "canonical_evidence": "面向自动驾驶的视觉-语言-动作模型，利用可执行思维链实现场景理解与轨迹生成",
+      "llm_tldr_en": "Proposes XCoT-VLA, replacing verbose natural-language chain-of-thought with compact executable CoT tokens for real-time autonomous driving control, conditioning fixed trajectory queries via shared multimodal self-attention.",
+      "llm_tldr_cn": "针对自动驾驶中自然语言思维链冗长、解码成本高且难以优化为动作表征的问题，提出XCoT-VLA模型，用紧凑的可执行思维链词元替代描述性推理，并通过自动构建的推理-动作监督进行学习。该序列在上下文中通过共享多模态自注意力调节固定的轨迹查询，支持确定性的token-函数路由。实验表明该方法在实时控制中更高效，为VLA实现感知、推理与轨迹生成的统一提供了实用方案。",
+      "llm_tldr": "针对自动驾驶中自然语言思维链冗长、解码成本高且难以优化为动作表征的问题，提出XCoT-VLA模型，用紧凑的可执行思维链词元替代描述性推理，并通过自动构建的推理-动作监督进行学习。该序列在上下文中通过共享多模态自注意力调节固定的轨迹查询，支持确定性的token-函数路由。实验表明该方法在实时控制中更高效，为VLA实现感知、推理与轨迹生成的统一提供了实用方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.11051v1",
+      "source": "arxiv",
+      "title": "HUI360: A 360° Egocentric Dataset and Baselines for Human-Robot Interaction Anticipation",
+      "abstract": "As robots increasingly operate in human-populated environments, anticipating human intentions is essential for enabling proactive and socially aware behavior. Automatic anticipation of human-robot interactions is thus emerging as a crucial perception challenge for embodied agents. To this end, we introduce HUI360, the largest dataset for human-robot interaction anticipation in the wild and its set of baselines. The dataset was collected from a mobile robot, in the wild, over multiple days within a 3-month period, and in several environments, capturing natural, spontaneous behaviors from both passersby and users, and encompassing a diverse range of individuals. This variety enables evaluating and improving the generalization capabilities of interaction anticipation models. We designed a pipeline and share code for automatic interaction annotation in arbitrary 360-degree equirectangular videos, along with interfaces for manual refinement. Using this pipeline, we release the HUI360 open set of 1M pre-processed annotations, including detailed 2D poses, facial keypoints, and segmentation masks, obtained using state-of-the-art computer vision methods and manually curated to ensure high-quality tracking and interaction annotation. Additionally, we release the raw panoptic 360-degree images captured from the robot's egocentric viewpoint (on demand, for research purpose only in compliance with GDPR). Finally, we establish benchmark baselines for interaction anticipation, including the first cross-dataset evaluations for this task: to this end, we also release 6M annotations for another existing in-the-wild outdoor dataset collected from a mobile robot (SSUP-HRI). Dataset and code can be found at https://hucebot.github.io/hui360.",
+      "authors": [
+        "Raphael Lorenzo-Louis",
+        "Fabio Amadio",
+        "Bertrand Luvison",
+        "Serena Ivaldi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-11T15:22:14+00:00",
+      "link": "https://arxiv.org/pdf/2608.11051v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "large egocentric dataset and baselines for human-robot interaction anticipation",
+      "llm_evidence_cn": "大规模360度自我中心人机交互预期数据集与基线",
+      "llm_evidence": "大规模360度自我中心人机交互预期数据集与基线",
+      "canonical_evidence": "大规模360度自我中心人机交互预期数据集与基线",
+      "llm_tldr_en": "Introduces HUI360, the largest in-the-wild dataset for human-robot interaction anticipation from a mobile robot's egocentric view, with baselines to evaluate generalization across environments.",
+      "llm_tldr_cn": "随着机器人进入人类环境，预测人的意图对主动和社交行为至关重要。HUI360是目前最大的野外人机交互预期数据集，由移动机器人跨越数天、多个环境采集，包含路人和用户的自然自发行为。该数据集覆盖多种人物和场景，可用于评估和改进交互预期模型的泛化能力。基线实验为主动感知的具身智能体研究提供了参考基准。",
+      "llm_tldr": "随着机器人进入人类环境，预测人的意图对主动和社交行为至关重要。HUI360是目前最大的野外人机交互预期数据集，由移动机器人跨越数天、多个环境采集，包含路人和用户的自然自发行为。该数据集覆盖多种人物和场景，可用于评估和改进交互预期模型的泛化能力。基线实验为主动感知的具身智能体研究提供了参考基准。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.11175v1",
+      "source": "arxiv",
+      "title": "Risk-Aware Kinodynamic Motion Planning Under Uncertainty For Safe Navigation on Planetary Environments",
+      "abstract": "For autonomous space exploration, robotic agents need to perform motion planning in which environmental interactions may be unknown. Learning these interactions, such as terrain mechanics for wheeled robots, can introduce uncertainties that lead to risky motion plans and potentially hazardous operations or mission failures. Moreover, uncertainties induced by perception-based systems can exacerbate the problem of safe motion planning. In this letter, we address the problem of performing cost-optimal kinodynamic motion planning with risk awareness. We approach this in two steps. First, a sampling-based planner (AO-RRT) generates a dynamically feasible, risk-aware, and asymptotically cost-optimal trajectory. Second, we formulate motion planning as a nonlinear optimization problem and solve it using sequential convex programming (SCP), using the AO-RRT trajectory as an initial solution. By quantifying risk using conditional value-at-risk (CVaR), we demonstrate a reduction in risk by over $\\sim$97\\% across trajectories in simulation and hardware experiments.",
+      "authors": [
+        "Sachin Sunil Kelkar",
+        "Tanmay Dokania",
+        "Yashwanth Kumar Nakka"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-08-11T17:34:56+00:00",
+      "link": "https://arxiv.org/pdf/2608.11175v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "risk-aware kinodynamic motion planning for safe robot navigation under uncertainty",
+      "llm_evidence_cn": "面向不确定环境下机器人安全导航的风险感知动力学运动规划",
+      "llm_evidence": "面向不确定环境下机器人安全导航的风险感知动力学运动规划",
+      "canonical_evidence": "面向不确定环境下机器人安全导航的风险感知动力学运动规划",
+      "llm_tldr_en": "Proposes a risk-aware kinodynamic motion planning approach using an AO-RRT sampling-based planner to generate dynamically feasible, risk-aware, and asymptotically cost-optimal trajectories in uncertain planetary environments.",
+      "llm_tldr_cn": "针对行星探索中地形与感知不确定性导致机器人运动规划存在风险的问题，提出基于AO-RRT采样规划器的风险感知动力学运动规划方法。该方法首先生成动力学可行且风险感知的渐近最优轨迹，然后结合不确定性建模进行安全导航。实验表明该方法能有效降低由于未知环境交互和感知误差引发的风险，为行星环境中的机器人安全航行提供了可靠方案。",
+      "llm_tldr": "针对行星探索中地形与感知不确定性导致机器人运动规划存在风险的问题，提出基于AO-RRT采样规划器的风险感知动力学运动规划方法。该方法首先生成动力学可行且风险感知的渐近最优轨迹，然后结合不确定性建模进行安全导航。实验表明该方法能有效降低由于未知环境交互和感知误差引发的风险，为行星环境中的机器人安全航行提供了可靠方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.08871v1",
+      "source": "arxiv",
+      "title": "Hierarchical Topology-Aware Planning and Control of Underwater Vehicle-Manipulator Systems in Confined Environments",
+      "abstract": "This paper addresses autonomous intervention with an underwater vehicle--manipulator system (UVMS) in confined, cluttered, and partially known environments, where poor maneuverability, narrow passages, and uncertain execution may cause the robot to enter unrecoverable regions. We propose MANTA, a three-layer hierarchical planning-and-control framework that couples passage accessibility, manipulation feasibility, and closed-loop execution. The first layer performs global connectivity reasoning in a conservative reduced base space to extract traversable corridor candidates toward the task region. The second layer refines each candidate corridor by jointly optimizing the continuous base motion and arm trajectory, producing a collision-free base--arm trajectory. The third layer learns a reach-and-hold base policy using Gaussian-process model-based reinforcement learning (MBRL) through MC-PILCO, enabling trajectory tracking and station keeping at the planned manipulation state. During execution, the framework monitors map updates and can trigger recovery and route repair when the active passage becomes infeasible. MANTA is evaluated in confined UVMS planning and closed-loop tracking experiments. Across 120 matched planning queries, it achieves higher task success than full-state sampling-based baselines while producing larger clearance margins and lower arm motion. The learned MC-PILCO policy further reduces position and yaw tracking errors on both training and unseen tube-like references. These results show MANTA as a structured and data-efficient framework for safe autonomous underwater intervention in caves, tubes, and cluttered subsea structures.",
+      "authors": [
+        "Mohamed Abdelwahab",
+        "Ruggero Carli",
+        "Damiano Varagnolo",
+        "Alberto Dalla Libera"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-08-09T19:22:51+00:00",
+      "link": "https://arxiv.org/pdf/2608.08871v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Hierarchical topology-aware planning and control for underwater vehicle-manipulator systems",
+      "llm_evidence_cn": "水下航行器-机械臂系统的层次化拓扑感知规划与控制",
+      "llm_evidence": "水下航行器-机械臂系统的层次化拓扑感知规划与控制",
+      "canonical_evidence": "水下航行器-机械臂系统的层次化拓扑感知规划与控制",
+      "llm_tldr_en": "MANTA is a three-layer hierarchical planning-and-control framework that couples passage accessibility, manipulation feasibility, and closed-loop execution for autonomous intervention of underwater vehicle-manipulator systems in confined cluttered environments.",
+      "llm_tldr_cn": "水下航行器-机械臂系统在狭窄杂乱环境中执行自主干预时，机动性受限且存在不可恢复状态风险。MANTA提出三层层次化规划与控制框架，将通道可达性、操作可行性与闭环执行相耦合。第一层在保守降维基座空间进行全局连通性推理，第二层联合优化连续基座运动与机械臂轨迹。实验验证该方法能显著提升受限环境下水下自主干预的成功率和安全性。",
+      "llm_tldr": "水下航行器-机械臂系统在狭窄杂乱环境中执行自主干预时，机动性受限且存在不可恢复状态风险。MANTA提出三层层次化规划与控制框架，将通道可达性、操作可行性与闭环执行相耦合。第一层在保守降维基座空间进行全局连通性推理，第二层联合优化连续基座运动与机械臂轨迹。实验验证该方法能显著提升受限环境下水下自主干预的成功率和安全性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.04761v2",
+      "source": "arxiv",
+      "title": "InsightEmb: Learning Action-Intent Embeddings for Agentic Insight Retrieval",
+      "abstract": "Self-improving agents accumulate reusable insights from prior trajectories, making retrieval increasingly important for turning accumulated experience into actionable guidance. At each decision step, retrieving the right insight can help the agent progress toward its goal, a setting we refer to as agentic insight retrieval. However, existing retrieval methods primarily model semantic similarity, while overlooking whether a retrieved insight resolves the agent's current decision bottleneck. We propose InsightEmb, a contrastive embedding framework that learns transferable progress-oriented retrieval geometry using only mathematical reasoning data. InsightEmb jointly learns to align concrete situations with abstract heuristic rules and to cluster reasoning trajectories with similar progress structures. We evaluate InsightEmb on dynamic agent tasks and a static skill-retrieval benchmark. Without any environment-specific training, InsightEmb improves over all these evaluations, surpassing the performance of existing reasoning embedding models. These results suggest that the geometry of state-insight matching can transfer across domains, enabling effective training from publicly available reasoning data without expensive environment-specific supervision.",
+      "authors": [
+        "Tsz Ting Chung",
+        "Jiangnan Li",
+        "Jie Zhou",
+        "Mo Yu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-08-05T12:28:00+00:00",
+      "link": "https://arxiv.org/pdf/2608.04761v2",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transferable action-intent embeddings for agentic insight retrieval, applicable to embodied agents",
+      "llm_evidence_cn": "面向智能体洞察检索的可迁移动作意图嵌入，可应用于具身智能体",
+      "llm_evidence": "面向智能体洞察检索的可迁移动作意图嵌入，可应用于具身智能体",
+      "canonical_evidence": "面向智能体洞察检索的可迁移动作意图嵌入，可应用于具身智能体",
+      "llm_tldr_en": "InsightEmb learns progress-oriented retrieval embeddings that align situations with abstract heuristic rules, enabling agents to retrieve decision-relevant insights.",
+      "llm_tldr_cn": "自我改进的智能体需要从过往轨迹中检索可执行的洞察来指导当前决策，但现有检索多基于语义相似度，忽略了信息是否解决当前决策瓶颈。作者提出InsightEmb，一个对比嵌入框架，仅使用数学推理数据学习面向进展的检索几何，将具体情境与抽象启发式规则对齐，并聚类推理模式。该方法可迁移到具身智能体，使其从经验中检索真正有用的行动计划。",
+      "llm_tldr": "自我改进的智能体需要从过往轨迹中检索可执行的洞察来指导当前决策，但现有检索多基于语义相似度，忽略了信息是否解决当前决策瓶颈。作者提出InsightEmb，一个对比嵌入框架，仅使用数学推理数据学习面向进展的检索几何，将具体情境与抽象启发式规则对齐，并聚类推理模式。该方法可迁移到具身智能体，使其从经验中检索真正有用的行动计划。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09467v1",
+      "source": "arxiv",
+      "title": "RecoverFly: A Failure-Aware Reinforcement Learning Post-Training Framework for Aerial Vision-Language Navigation",
+      "abstract": "Unmanned aerial vehicle vision-language navigation (UAV-VLN) requires agents to translate visual observations and language instructions into reliable flight actions in complex environments. Although recent end-to-end UAV vision-language-action (UAV-VLA) policies reduce reliance on separately designed perception, planning, and control modules, their behavior-cloning objectives provide limited corrective supervision for interactive closed-loop execution. Reinforcement learning (RL) offers a promising solution, while its effectiveness is constrained by inefficient use of samples, long-tailed scene distributions, and policy distribution shift during optimization. To this end, we propose RecoverFly, a failure-aware RL post-training framework for end-to-end UAV-VLA policies. Specifically, RecoverFly adapts token-level RL for stable optimization of grammar-constrained autoregressive UAV actions, revisits unresolved failure cases to strengthen corrective learning and sample utilization, and combines a two-stage long-tail scene curriculum with reference-policy regularization to improve scene adaptation while preserving acquired capabilities. Experiments on the TravelUAV benchmark demonstrate that RecoverFly achieves the best performance on the seen, unseen-map, and unseen-object splits. Moreover, compared to the AerialVLA initialization, RecoverFly improves success rate by 3.12 to 8.37 percentage points under a total rollout budget of about 30\\% of the training-set size, validating its effectiveness, robustness, and generalization capabilities.",
+      "authors": [
+        "Boxiong Wang",
+        "Hui Kang",
+        "Geng Sun",
+        "Jiahui Li",
+        "Chao Yu",
+        "Daxin Tian"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T11:37:46+00:00",
+      "link": "https://arxiv.org/pdf/2608.09467v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "RL post-training for aerial vision-language navigation",
+      "llm_evidence_cn": "面向空中视觉-语言导航的强化学习后训练",
+      "llm_evidence": "面向空中视觉-语言导航的强化学习后训练",
+      "canonical_evidence": "面向空中视觉-语言导航的强化学习后训练",
+      "llm_tldr_en": "RecoverFly presents a failure-aware reinforcement learning post-training framework for UAV vision-language navigation, addressing sample inefficiency, long-tailed scenes, and distribution shift in end-to-end policies.",
+      "llm_tldr_cn": "无人机视觉语言导航需要将视觉和语言转化为可靠飞行动作，端到端策略虽简化模块设计，但行为克隆目标缺少交互式闭环纠正。强化学习可提供纠正，但受限于采样效率、长尾场景和分布偏移。RecoverFly提出失败感知的强化学习后训练框架，专门应对这些挑战，在优化过程中利用失败信息引导策略修正，显著提升闭环执行鲁棒性和泛化能力。",
+      "llm_tldr": "无人机视觉语言导航需要将视觉和语言转化为可靠飞行动作，端到端策略虽简化模块设计，但行为克隆目标缺少交互式闭环纠正。强化学习可提供纠正，但受限于采样效率、长尾场景和分布偏移。RecoverFly提出失败感知的强化学习后训练框架，专门应对这些挑战，在优化过程中利用失败信息引导策略修正，显著提升闭环执行鲁棒性和泛化能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "carryover_cache",
+      "paper_id": "2608.09467v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.09778v1",
+      "source": "arxiv",
+      "title": "RoboSeg: Online Part-Level Semantic Reconstruction for Robotic Manipulation via a Single Eye-in-Hand Camera",
+      "abstract": "Robotic manipulation requires perception systemsthat identify actionable parts such as handles, rims, triggers,and tool tips, not merely object categories or point clouds. This paper presents RoboSeg, a part-level semantic reconstructionsystem that links vision-language model (VLM) functional-partdiscovery, asynchronous online RGB-D semantic reconstruc-tion, and task-oriented grasp generation without requiring CAD models or pre-scanned meshes. RoboSeg queries a VLM onthe initial RGB observation to obtain compact functional part prompts, then scans with two asynchronous streams: a high-frequency geometry thread for RGB-D odometry and truncated signed distance function (TSDF) fusion, and a keyframe-triggered semantic thread for SAM3 part masks. Projectedmasks are fused by voxel-level temporal voting into a persistentpart-labeled point cloud; RoboSeg uses this map to assign AnyGrasp 6-DoF candidates to semantic parts and select grasps consistent with the task-relevant part label. RoboSeg reaches 83.4% mean part intersection-over-union (mIoU) over manually labeled objects; in a 24-trial physical pilot across fourobjects and eight tasks, the selected grasp contacts the requestedpart in all trials and achieves 21/24 combined task successes.These results characterize RoboSeg as a semantic indexing layerfor task-conditioned manipulation, with AnyGrasp retained asthe proposal generator.",
+      "authors": [
+        "Zhaochen Lan",
+        "Mengxiang Lin"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-10T16:05:38+00:00",
+      "link": "https://arxiv.org/pdf/2608.09778v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "part-level online semantic reconstruction from a single eye-in-hand camera for manipulation",
+      "llm_evidence_cn": "单目手眼相机在线部件级语义重建用于操作",
+      "llm_evidence": "单目手眼相机在线部件级语义重建用于操作",
+      "canonical_evidence": "单目手眼相机在线部件级语义重建用于操作",
+      "llm_tldr_en": "RoboSeg combines VLM-based functional part discovery, asynchronous online RGB-D semantic reconstruction, and task-oriented grasp generation, using only a single eye-in-hand camera without CAD models.",
+      "llm_tldr_cn": "机器人操作需要识别把手、边缘等可操作部件，而现有系统仅识别物体类别或点云。RoboSeg将视觉-语言模型的部件发现、异步在线RGB-D语义重建与任务导向抓取生成相结合，无需CAD模型和预扫描网格。它利用单目手眼相机进行高频率几何重建和关键帧语义更新，在未知物体上生成部件级语义与抓取位姿，从而提升操作灵活性和通用性。",
+      "llm_tldr": "机器人操作需要识别把手、边缘等可操作部件，而现有系统仅识别物体类别或点云。RoboSeg将视觉-语言模型的部件发现、异步在线RGB-D语义重建与任务导向抓取生成相结合，无需CAD模型和预扫描网格。它利用单目手眼相机进行高频率几何重建和关键帧语义更新，在未知物体上生成部件级语义与抓取位姿，从而提升操作灵活性和通用性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "carryover_cache",
+      "paper_id": "2608.09778v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.09876v1",
+      "source": "arxiv",
+      "title": "Energy-Structured Latent World Models with Neural Time Fields for Physically Constistent Open-World Motion Planning",
+      "abstract": "Physically consistent motion planning remains a fundamental challenge in embodied AI, as generated trajectories must strictly conform to real-world execution dynamics. While latent world models offer a promising approach by predicting these dynamics, existing methods learn unconstrained future representations where absorbed physics remains implicit. Therefore, they fail to form reusable physical knowledge, which compromises reliability in unpredictable open-world navigation. To address this, we propose a novel Energy-Structured Latent World Model (ELWM). Our key idea is to structure the ELWM latent state to explicitly carry energy and momentum, ensuring strictly causal transitions via dissipation and control ports. Trained on multimodal RGB-D and inertial interaction histories, our model guarantees physically consistent predictions. We further implement this for motion planning by constructing Physics-Conditioned Neural Time Fields (PC-NTF), a key technical cornerstone that integrates ELWM into an arrival time field via the Eikonal equation to yield a physically-informed navigation policy. Across held-out scenes, our evaluation reveals significant improvements. Compared to generic latent models, PC-NTF reduces 0.8-s motion-prediction NRMSE from 0.36 to 0.29. Against Active Neural Time Fields, it improves navigation success from 81.3% to 89.7% and SPL from 0.64 to 0.73, while cutting the physical collision rate from 12.1% to 5.8% and the Eikonal residual from 0.083 to 0.031. Beyond these targeted gains, our results demonstrate that embedding explicit physical structures into latent spaces intrinsically bridges the gap between predictive world models and safe, dynamically feasible motion planning.",
+      "authors": [
+        "Yapeng Liu",
+        "Yuanzhao Zhai",
+        "Bo Ding",
+        "Huaimin Wang",
+        "Lin Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T17:31:18+00:00",
+      "link": "https://arxiv.org/pdf/2608.09876v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "energy-structured latent world model for physically consistent open-world motion planning",
+      "llm_evidence_cn": "能量结构化潜世界模型以支持物理一致开放世界运动规划",
+      "llm_evidence": "能量结构化潜世界模型以支持物理一致开放世界运动规划",
+      "canonical_evidence": "能量结构化潜世界模型以支持物理一致开放世界运动规划",
+      "llm_tldr_en": "ELWM structures latent world model states to explicitly carry energy and momentum, ensuring physically consistent trajectory predictions for reliable open-world embodied navigation.",
+      "llm_tldr_cn": "开放世界运动规划要求轨迹严格符合真实物理，现有潜世界模型缺乏可复用的物理知识。提出能量结构化潜世界模型ELWM，在潜状态中显式携带能量和动量，通过耗散与控制保证严格因果转换，结合神经时间场提升未知环境中的物理一致性和规划可靠性。",
+      "llm_tldr": "开放世界运动规划要求轨迹严格符合真实物理，现有潜世界模型缺乏可复用的物理知识。提出能量结构化潜世界模型ELWM，在潜状态中显式携带能量和动量，通过耗散与控制保证严格因果转换，结合神经时间场提升未知环境中的物理一致性和规划可靠性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "carryover_cache",
+      "paper_id": "2608.09876v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.10600v1",
+      "source": "arxiv",
+      "title": "BooST: Bridging Semantics and Motions for Efficient Skill Transfer",
+      "abstract": "Skill abstraction---the process of learning reusable and temporally extended behaviors---has emerged as a key paradigm for improving sample efficiency and generalization in robot learning. For efficient skill transfer to real robots, learned skills must generalize across tasks and domains, remain robust to visual and dynamic perturbations, and be efficient enough for practical deployment. However, existing methods typically satisfy only a subset of these properties, as they capture either high-level semantic intent (what) or low-level motion dynamics (how). This incomplete skill transfer yields weak priors for policy learning, thereby demanding substantial in-domain data for downstream adaptation. To address these challenges, we introduce BooST, a two-stage framework that explicitly bridges semantics and motions to satisfy all three desiderata. BooST first leverages a cross-modal VQ-VAE to capture both semantic intent and motion dynamics, yielding a unified skill representation. It then distills this representation into a lightweight policy for efficient downstream adaptation to new tasks. Extensive experiments across simulation and real-robot settings demonstrate that BooST achieves superior few-shot adaptation, cross-domain skill transfer, and robustness to dynamic visual distractors, while maintaining a lightweight yet expressive design suitable for real-world deployment.",
+      "authors": [
+        "Jusuk Lee",
+        "Daesol Cho",
+        "Jonghun Shin",
+        "Seungyeon Yoo",
+        "Jonghae Park",
+        "Taekbeom Lee",
+        "H. Jin Kim"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-08-11T07:35:12+00:00",
+      "link": "https://arxiv.org/pdf/2608.10600v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "two-stage skill abstraction and transfer bridging semantic intent and motion dynamics for robot learning",
+      "llm_evidence_cn": "结合语义意图与运动动力学的两阶段技能迁移框架",
+      "llm_evidence": "结合语义意图与运动动力学的两阶段技能迁移框架",
+      "canonical_evidence": "结合语义意图与运动动力学的两阶段技能迁移框架",
+      "llm_tldr_en": "BooST combines high-level semantic intent and low-level motion dynamics in skill abstraction, improving transfer efficiency and robustness for real-robot deployment.",
+      "llm_tldr_cn": "技能抽象旨在学习可复用的时延行为，以提升机器人学习的样本效率与泛化性。现有方法要么只捕获高层语义意图，要么只捕获底层运动动力学，造成技能迁移不完整。BooST提出两阶段框架，桥接语义与运动，生成更强的技能先验。实验表明其在视觉和动态扰动下仍能高效迁移到真实机器人，减少了域内数据需求，提升了部署效率。",
+      "llm_tldr": "技能抽象旨在学习可复用的时延行为，以提升机器人学习的样本效率与泛化性。现有方法要么只捕获高层语义意图，要么只捕获底层运动动力学，造成技能迁移不完整。BooST提出两阶段框架，桥接语义与运动，生成更强的技能先验。实验表明其在视觉和动态扰动下仍能高效迁移到真实机器人，减少了域内数据需求，提升了部署效率。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.10886v1",
+      "source": "arxiv",
+      "title": "GESTO: Human-Centric Spatio-Temporal Memory for Reasoning in Dynamic Scenes",
+      "abstract": "Robots operating in human environments need memories that capture not only what objects exist and where, but also how people use them over time and how individual interactions compose into goal-directed activities. Existing 4D scene graphs preserve object and place histories but omit activity structure, whereas activity representations are either not grounded in persistent 3D scenes or rely on externally provided event boundaries and object associations. We present GESTO (Grounded Event and Spatio-Temporal memOry), a spatio-temporal memory that couples a persistent 4D scene graph with a two-level hierarchy of atomic human--object interactions and goal-driven events. From an RGB-D observation stream, GESTO automatically extracts timestamped interactions, grounds them to persistent scene entities, groups them into events, and uses event context to refine uncertain object associations. A relation-aware tool-calling agent queries the resulting memory for activity-centric spatio-temporal reasoning. We evaluate GESTO on the reproducible text, binary, and time categories of an existing benchmark, together with 40 new Space2Event and Event2Space queries. GESTO achieves scores of 0.71, 0.75, and 0.70 on the standard categories, approaching a method supplied with ground-truth event and object grounding, while substantially outperforming the same reasoning framework when these inputs are removed. It further achieves 0.73 and 0.75 on Space2Event and Event2Space queries. Ablations show that hierarchical event structure and context-aware grounding refinement provide complementary benefits, supporting activity-grounded hierarchical memory for retrospective reasoning in dynamic human environments.",
+      "authors": [
+        "Ermanno Bartoli",
+        "Buwei He",
+        "Dennis Rotondi",
+        "Sebastian Koch",
+        "Federico Tombari",
+        "Kai O. Arras",
+        "Patric Jensfelt",
+        "Yixi Cai",
+        "Iolanda Leite"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.RO"
+      ],
+      "published": "2026-08-11T13:03:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.10886v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Spatio-temporal memory for robots in human environments",
+      "llm_evidence_cn": "面向人类环境的机器人时空记忆",
+      "llm_evidence": "面向人类环境的机器人时空记忆",
+      "canonical_evidence": "面向人类环境的机器人时空记忆",
+      "llm_tldr_en": "GESTO couples a persistent 4D scene graph with a hierarchy of human-object interactions and goal-driven events, enabling robots to reason about dynamic scenes.",
+      "llm_tldr_cn": "本文针对机器人在人类环境中记忆建模缺失活动结构的问题，提出GESTO时空记忆框架。该框架将持久化4D场景图与两级层次结构（原子人-物交互和目标驱动事件）相结合，从RGB-D观测流自动提取带时间戳的交互和事件。这使得机器人能够理解物体如何随时间被使用以及交互如何组合成目标导向活动，提升了动态场景中的推理和记忆能力。",
+      "llm_tldr": "本文针对机器人在人类环境中记忆建模缺失活动结构的问题，提出GESTO时空记忆框架。该框架将持久化4D场景图与两级层次结构（原子人-物交互和目标驱动事件）相结合，从RGB-D观测流自动提取带时间戳的交互和事件。这使得机器人能够理解物体如何随时间被使用以及交互如何组合成目标导向活动，提升了动态场景中的推理和记忆能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.10915v1",
+      "source": "arxiv",
+      "title": "ComBodied Agents: a New Paradigm of Human-Centric Agentic AI",
+      "abstract": "After an older adult misses a medication dose, a software agent can send another reminder and an embodied agent can bring the medication. Yet neither explains whether the person forgot, is confused, has side effects, or deliberately refused, nor what support is appropriate. This reveals a structural gap in Agentic AI: Digital Agents primarily transform software states, while Embodied Agents transform physical states; neither makes a person's evolving state and agency the primary object of modeling, intervention, and evaluation. We introduce Combodied Agents, a human-centered paradigm that perceives, models, predicts, and supports individual human-state trajectories over time, using software tools, sensors, wearables, robots, and human services as action channels rather than end goals. We unify fragmented capabilities across personal assistants, health agents, AI companions, and adaptive human--AI systems into a closed loop: event-based multimodal perception reconstructs meaningful personal events; longitudinal, correctable memory provides temporal context; Personal World Models estimate future personal states and outcomes under alternative decisions and interventions; and an admissible intervention policy selects proportionate support under consent, uncertainty, safety, reversibility, and user control. Feedback from the person and environment updates the loop. Rather than requiring an exhaustive Human Digital Twin, the framework uses purpose-bounded, uncertainty-aware, user-correctable representations. We organize the design space by human-state targets, relational contexts, and agent roles, and propose scenario-centered evaluation, agency-preservation metrics, benchmark requirements, edge-native personal models, and governance directions. Combodied Agents shift Agentic AI from external task completion toward sustained human benefit.",
+      "authors": [
+        "Qianggang Ding",
+        "Xingyao Wang",
+        "Rui Feng",
+        "Zhibin Wang",
+        "Feixiang Wang",
+        "Kelong Mao",
+        "Hao Sun",
+        "Zhiyao Luo",
+        "Jiankai Tang",
+        "Lei Li",
+        "Jiadong Guo",
+        "Minheng Ni",
+        "Weicong Lin",
+        "Chenxi Yang",
+        "Hongxiang Gao",
+        "Zhenghua Chen",
+        "Yang Bai",
+        "Min Wu",
+        "Jun Cheng",
+        "Huazhu Fu",
+        "Dacheng Tao",
+        "Bang Liu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-11T13:35:58+00:00",
+      "link": "https://arxiv.org/pdf/2608.10915v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "paradigm combining digital and embodied agents to perceive and support human-state trajectories",
+      "llm_evidence_cn": "融合数字与具身智能体的范式，旨在感知和干预个体状态轨迹",
+      "llm_evidence": "融合数字与具身智能体的范式，旨在感知和干预个体状态轨迹",
+      "canonical_evidence": "融合数字与具身智能体的范式，旨在感知和干预个体状态轨迹",
+      "llm_tldr_en": "Introduces Combodied Agents, a human-centered paradigm that models evolving human-state trajectories, using software tools, sensors, wearables, robots, and human services as action channels for intervention and evaluation.",
+      "llm_tldr_cn": "针对现有数字智能体只改变软件状态、具身智能体只改变物理状态、而忽略个人状态与能动性建模的问题，提出ComBodied Agents范式。该范式以个体状态轨迹为对象，综合运用软件工具、传感器、可穿戴设备、机器人与人工服务等多种动作通道进行感知、建模、预测和干预。它为人本智能体AI提供了新的评估与设计视角，推动数字与具身智能体的协同。",
+      "llm_tldr": "针对现有数字智能体只改变软件状态、具身智能体只改变物理状态、而忽略个人状态与能动性建模的问题，提出ComBodied Agents范式。该范式以个体状态轨迹为对象，综合运用软件工具、传感器、可穿戴设备、机器人与人工服务等多种动作通道进行感知、建模、预测和干预。它为人本智能体AI提供了新的评估与设计视角，推动数字与具身智能体的协同。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}
