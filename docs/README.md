@@ -6,74 +6,64 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-12
-- 运行时间：2026-08-12 21:15:07 UTC
+- 最新运行日期：2026-08-13
+- 运行时间：2026-08-13 21:31:28 UTC
 - 运行状态：成功
-- 本次总论文数：18
-- 精读区：10
-- 速读区：8
+- 本次总论文数：14
+- 精读区：7
+- 速读区：7
 
 ### 今日简报（AI）
-今日精选18篇论文，精读10篇、速读8篇，重点关注具身智能与机器人控制前沿。最值得看的是容错运动控制与机器人价值模型两篇9.0分工作，以及水下系统、飞行导航、语义重建等8.0分速读方向。建议普通读者优先浏览高分精读摘要，再按兴趣速读其余论文。
-- 详情：[/202608/12/README](/202608/12/README)
+今日精读7篇、速读7篇，焦点集中在世界动作模型与自动驾驶安全强化学习。  
+最值得关注的两项高分工作：《SG-WAM》用文本与空间语义引导世界动作模型，《Threat-guided》以威胁感知场景扰动提升在线RL驾驶安全性。  
+建议优先精读这两篇，再浏览EgoTrack3D、Fast-Slow ReAct等速读论文，把握具身智能与机器人策略适应前沿。
+- 详情：[/202608/13/README](/202608/13/README)
 
 ### 精读区论文标签
-1. [Learning Fault-Tolerant Locomotion with Adaptive Gait Timing](/202608/12/2608.07328v1-learning-fault-tolerant-locomotion-with-adaptive-gait-timing)  
+1. [SG-WAM: Text-Grounded and Spatial-aware Semantic Guidance for World-Action Models](/202608/13/2608.08839v1-sg-wam-text-grounded-and-spatial-aware-semantic-guidance-for-world-action-models)  
    标签：评分：9.0/10、query:ad
-   evidence：面向腿足机器人容错运动的深度强化学习
-2. [RynnValue: Scaling Robotic Value Foundation Models with Temporal Distance](/202608/12/2608.09853v1-rynnvalue-scaling-robotic-value-foundation-models-with-temporal-distance)  
+   evidence：以文本锚定和空间语义引导增强机器人操作的世界-动作模型
+2. [Threat-guided Policy-aware Scene Perturbation for Safe Autonomous Driving with Online Reinforcement Learning](/202608/13/2608.10403v1-threat-guided-policy-aware-scene-perturbation-for-safe-autonomous-driving-with-online-reinforcement-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：以时序距离标签扩展的机器人操作开放价值基础模型
-3. [Dreamer-SAC: Off-Policy Learning in Latent World Models for Sample-Efficient Autonomous Driving](/202608/12/2608.10386v1-dreamer-sac-off-policy-learning-in-latent-world-models-for-sample-efficient-autonomous-driving)  
+   evidence：威胁引导且策略感知的场景扰动用于在线强化学习安全自动驾驶
+3. [Self-Evolving Embodied Agents via Skill-Harness Evolution](/202608/13/2608.11350v1-self-evolving-embodied-agents-via-skill-harness-evolution)  
    标签：评分：9.0/10、query:ad
-   evidence：基于潜在世界模型的自动驾驶样本高效强化学习
-4. [DriveVLA-M0: Failure-Aware Memory Augmentation for Autonomous Driving](/202608/12/2608.10413v1-drivevla-m0-failure-aware-memory-augmentation-for-autonomous-driving)  
+   evidence：自进化具身智能体通过目标环境中的技能与执行框架进化实现免训练适应
+4. [Herding End-to-End Autonomous Driving via Neuro-Symbolic Safety Guards](/202608/13/2608.11451v1-herding-end-to-end-autonomous-driving-via-neuro-symbolic-safety-guards)  
    标签：评分：9.0/10、query:ad
-   evidence：具有故障感知潜在记忆的检索增强VLA，用于端到端自动驾驶
-5. [Toward the Cognitive--Physical Limits of Embodied Intelligence through a World-Model-Centric Autonomous Racing Agent](/202608/12/2608.10618v1-toward-the-cognitive--physical-limits-of-embodied-intelligence-through-a-world-model-centric-autonomous-racing-agent)  
+   evidence：端到端自动驾驶安全护栏，神经符号约束
+5. [G0.5: One Autoregressive Stream for Robot Reasoning and Action](/202608/13/2608.11739v1-g05-one-autoregressive-stream-for-robot-reasoning-and-action)  
    标签：评分：9.0/10、query:ad
-   evidence：以世界模型为核心的自主赛车智能体与具身智能
-6. [Embodied Multimodal Grounding for Open-Vocabulary Mobile Manipulation via Semantic 3D Gaussian Splatting](/202608/12/2608.10756v1-embodied-multimodal-grounding-for-open-vocabulary-mobile-manipulation-via-semantic-3d-gaussian-splatting)  
+   evidence：统一的自动回归VLA流实现具身机器人推理与动作
+6. [Learning Loco-Manipulation From SMPC Demonstrations With Sparse Offline-to-Online RL](/202608/13/2608.12063v1-learning-loco-manipulation-from-smpc-demonstrations-with-sparse-offline-to-online-rl)  
    标签：评分：9.0/10、query:ad
-   evidence：语义3D高斯溅射实现具身移动操作与多模态接地
-7. [JEPA-WAM: Stage-Level Joint-Embedding Prediction for World-Action Models in Robot Manipulation](/202608/12/2608.10780v1-jepa-wam-stage-level-joint-embedding-prediction-for-world-action-models-in-robot-manipulation)  
+   evidence：基于SMPC演示和稀疏离线到在线强化学习，实现移动操作一体化
+7. [Learning-Based Behavior Planning for Automated Driving: Real-World Integration and Deployment](/202608/13/2608.12198v1-learning-based-behavior-planning-for-automated-driving-real-world-integration-and-deployment)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作的阶段级世界动作模型与JEPA预测
-8. [XCoT-VLA: Executable Chain-of-Thought for Vision-Language-Action Driving](/202608/12/2608.10976v1-xcot-vla-executable-chain-of-thought-for-vision-language-action-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶的视觉-语言-动作模型，利用可执行思维链实现场景理解与轨迹生成
-9. [HUI360: A 360° Egocentric Dataset and Baselines for Human-Robot Interaction Anticipation](/202608/12/2608.11051v1-hui360-a-360-egocentric-dataset-and-baselines-for-human-robot-interaction-anticipation)  
-   标签：评分：9.0/10、query:ad
-   evidence：大规模360度自我中心人机交互预期数据集与基线
-10. [Risk-Aware Kinodynamic Motion Planning Under Uncertainty For Safe Navigation on Planetary Environments](/202608/12/2608.11175v1-risk-aware-kinodynamic-motion-planning-under-uncertainty-for-safe-navigation-on-planetary-environments)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向不确定环境下机器人安全导航的风险感知动力学运动规划
+   evidence：自动驾驶系统的学习型行为规划
 
 ### 速读区论文标签
-1. [Hierarchical Topology-Aware Planning and Control of Underwater Vehicle-Manipulator Systems in Confined Environments](/202608/12/2608.08871v1-hierarchical-topology-aware-planning-and-control-of-underwater-vehicle-manipulator-systems-in-confined-environments)  
+1. [EgoTrack3D: A Modular Framework for Egocentric 3D Object Tracking](/202608/13/2608.08016v1-egotrack3d-a-modular-framework-for-egocentric-3d-object-tracking)  
    标签：评分：8.0/10、query:ad
-   evidence：水下航行器-机械臂系统的层次化拓扑感知规划与控制
-2. [RecoverFly: A Failure-Aware Reinforcement Learning Post-Training Framework for Aerial Vision-Language Navigation](/202608/12/2608.09467v1-recoverfly-a-failure-aware-reinforcement-learning-post-training-framework-for-aerial-vision-language-navigation)  
+   evidence：面向机器人和自主导航感知的自我中心3D目标跟踪
+2. [Hierarchical Fast--Slow ReAct Agent for Zero-Shot Object-Goal Navigation](/202608/13/2608.09816v1-hierarchical-fast--slow-react-agent-for-zero-shot-object-goal-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向空中视觉-语言导航的强化学习后训练
-3. [RoboSeg: Online Part-Level Semantic Reconstruction for Robotic Manipulation via a Single Eye-in-Hand Camera](/202608/12/2608.09778v1-roboseg-online-part-level-semantic-reconstruction-for-robotic-manipulation-via-a-single-eye-in-hand-camera)  
+   evidence：具身智能体在未知建筑中的零样本物体目标导航
+3. [Adaptation of Generalist Robot Policies with Minimal Data](/202608/13/2608.11363v1-adaptation-of-generalist-robot-policies-with-minimal-data)  
    标签：评分：8.0/10、query:ad
-   evidence：单目手眼相机在线部件级语义重建用于操作
-4. [Energy-Structured Latent World Models with Neural Time Fields for Physically Constistent Open-World Motion Planning](/202608/12/2608.09876v1-energy-structured-latent-world-models-with-neural-time-fields-for-physically-constistent-open-world-motion-planning)  
+   evidence：基于自主在线交互与稀疏奖励的机器人策略适应研究
+4. [HUGIN: Enhancing Vision-Language Planning for Autonomous Logistics Sorting](/202608/13/2608.11692v1-hugin-enhancing-vision-language-planning-for-autonomous-logistics-sorting)  
    标签：评分：8.0/10、query:ad
-   evidence：能量结构化潜世界模型以支持物理一致开放世界运动规划
-5. [BooST: Bridging Semantics and Motions for Efficient Skill Transfer](/202608/12/2608.10600v1-boost-bridging-semantics-and-motions-for-efficient-skill-transfer)  
+   evidence：以自主物流分拣为具身智能应用，使用VLM进行跨场景联合规划
+5. [D3D-GEN: Robot-Aware Domain-Grounded Interactive 3D World Generation for Social Robotics](/202608/13/2608.11876v1-d3d-gen-robot-aware-domain-grounded-interactive-3d-world-generation-for-social-robotics)  
    标签：评分：8.0/10、query:ad
-   evidence：结合语义意图与运动动力学的两阶段技能迁移框架
-6. [GESTO: Human-Centric Spatio-Temporal Memory for Reasoning in Dynamic Scenes](/202608/12/2608.10886v1-gesto-human-centric-spatio-temporal-memory-for-reasoning-in-dynamic-scenes)  
+   evidence：面向具身智能社交导航的交互式3D世界生成
+6. [HandEdit: A Unified Benchmark for Egocentric Human-to-Robot Dexterous Hand Image Editing](/202608/13/2608.12122v1-handedit-a-unified-benchmark-for-egocentric-human-to-robot-dexterous-hand-image-editing)  
    标签：评分：8.0/10、query:ad
-   evidence：面向人类环境的机器人时空记忆
-7. [ComBodied Agents: a New Paradigm of Human-Centric Agentic AI](/202608/12/2608.10915v1-combodied-agents-a-new-paradigm-of-human-centric-agentic-ai)  
-   标签：评分：8.0/10、query:ad
-   evidence：融合数字与具身智能体的范式，旨在感知和干预个体状态轨迹
-8. [InsightEmb: Learning Action-Intent Embeddings for Agentic Insight Retrieval](/202608/12/2608.04761v2-insightemb-learning-action-intent-embeddings-for-agentic-insight-retrieval)  
+   evidence：面向灵巧机器人操作数据的具身感知图像编辑基准
+7. [Efficient Reinforcement Learning for Long-Horizon Tool-Use Agentic Tasks](/202608/13/2608.10357v1-efficient-reinforcement-learning-for-long-horizon-tool-use-agentic-tasks)  
    标签：评分：6.0/10、query:ad
-   evidence：面向智能体洞察检索的可迁移动作意图嵌入，可应用于具身智能体
+   evidence：面向长时程工具使用智能体的模块化RL训练系统，可迁移到机器人控制
 
 
 <div class="dpr-home-promo-card">
