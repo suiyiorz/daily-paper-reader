@@ -1,0 +1,587 @@
+Title: FUSE: Active Functional Affordance Grounding through Adaptive Semantic-Geometric Evidence Acquisition
+
+URL Source: https://arxiv.org/pdf/2608.12683v1
+
+Published Time: Fri, 14 Aug 2026 00:21:37 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# FUSE: Active Functional Affordance Grounding through Adaptive Semantic–Geometric Evidence Acquisition 
+
+## Zhou Chen 1, Sathyanarayanan N. Aakur 1
+
+> 1
+
+CSSE Department Auburn University, Auburn, AL, 36849 {zzc0053,san0028}@auburn.edu 
+
+Abstract 
+
+Embodied agents must often identify and interact with objects based on their function rather than their identity, requiring them to actively acquire observations that reveal discrimina-tive functional evidence. Existing affordance grounding meth-ods operate from fixed viewpoints and lack mechanisms for deciding where to look when functional cues are occluded or incomplete. We introduce Active Functional Affordance Grounding , a new task in which an agent sequentially ex-plores a scene to identify and spatially ground an object satis-fying a functional query. To address this problem, we propose FUSE, an adaptive semantic–geometric evidence acquisition framework that combines explicit uncertainty-driven explo-ration with a learned amortized planner to efficiently select informative viewpoints. We further introduce a Habitat-based benchmark for evaluating active functional grounding. Exper-iments show that FUSE achieves the highest observed non-oracle grounding performance while reducing computation by 1.33 × relative to fully explicit exploration, and remains effective across multiple affordance knowledge sources. 
+
+## Introduction 
+
+Functional understanding of objects and their properties is central to embodied tasks such as long-horizon planning and problem solving (Ahn et al. 2022; Singh et al. 2023; Zhu et al. 2023; Zitkovich et al. 2023). A functional concept is not fully captured by recognizing a familiar object (Carion et al. 2025) or predicting a grasp from a fixed view (Mahler et al. 2017; Fang et al. 2020; Sundermeyer et al. 2021). Instead, the same intent must support several coupled capabilities: inferring what properties a suitable object should possess, identifying candidate objects in a partially observed scene, selecting ob-servations that resolve ambiguity, and producing a grounding that supports downstream interaction (Chen, Lin, and Aakur 2025; Chen et al. 2025b; Nguyen et al. 2020; Murali et al. 2020). As illustrated in Fig. 1, a request such as “cut a piece of rope” or “scoop food from a container” may generate several plausible functional hypotheses, while the evidence needed to distinguish among them may be occluded, poorly local-ized, or unavailable from the initial viewpoint. We term this task active functional affordance grounding : selecting sens-ing actions to determine and spatially ground which scene object satisfies a functional intent, without a predefined tar-get class or identity. Candidate labels are only query-induced hypotheses, not search targets; the grounded object must be Initial Observation  Functional Hypotheses  Premature    
+
+> Grounding
+> Multiple functional hypotheses Fixed observation Insufficient evidence to verify
+> Reliable Functional
+> Grounding
+> Resolve semantic–
+> geometric uncertainty
+> Initial observation Reliable functional
+> grounding
+> Functional Hypotheses Initial Observation
+> Passive Functional Grounding
+> Active Functional Grounding
+
+Figure 1: Active functional affordance grounding. Passive grounding predicts from a fixed observation and may commit before sufficient evidence is available. Active grounding ac-quires additional observations to reduce semantic–geometric uncertainty until a functionally suitable object is grounded. resolved from evidence acquired across viewpoints before physical execution and verification. This formulation places different requirements on percep-tion than existing active or affordance-centered tasks. Passive affordance grounding predicts task-relevant objects, parts, or interaction regions from the available observation and may therefore commit before sufficient evidence has been acquired (Chen, Lin, and Aakur 2025; Chen et al. 2025b; Sawatzky et al. 2019; Li et al. 2022). Active recognition and object search acquire additional observations, but typi-cally seek a predefined category or instance (Lei, Jiang, and Daniilidis 2026; Chaplot et al. 2020; Batra et al. 2020). Task-oriented view planning can improve visibility or grasp con-fidence, yet generally begins with an already selected target object or manipulation hypothesis (Shi et al. 2025; Tong et al. 2026). In contrast, active functional affordance grounding (illustrated in Fig. 1) requires the complete sensing process: forming candidate hypotheses, identifying which semantic and geometric evidence remains unresolved, and acquiring arXiv:2608.12683v1 [cs.RO] 13 Aug 2026 Outputs      
+
+> Inputs
+> Get something to
+> pour milk in
+> Initial Observation Functional Query
+> Reliable Functional Grounding
+> Candidate Object Hypothesis
+> Candidate Object
+> Hypotheses
+> Generated from query
+> Cup Bowl
+> Bottle Container
+> Semantic–Geometric Evidence
+> Semantic Evidence
+> (SAM3)
+> Geometric Evidence
+> (SSNR)
+> FUSE: Adaptive Evidence Acquisition
+> Amortized Planner
+> Acquire
+> Observation
+> Explicit Exploration
+> High
+> Confidence
+> Low
+> Confidence
+> Final Viewpoint
+> New observation
+> Planner
+> Conf.
+
+Figure 2: Overview of FUSE. A functional query is first converted into candidate object hypotheses and grounded using semantic (SAM3) and geometric (SSNR) evidence. FUSE adapts between fast amortized planning and explicit exploration to acquire informative observations until no further improvement is observed, returning the best reliable functional grounding. observations until a suitable target can be reliably grounded. To address this challenge, we introduce FUSE ( Functional Understanding through Semantic–Geometric Exploration ), an adaptive evidence-acquisition framework for active func-tional affordance grounding. FUSE is built on the principle that sensing should reduce the unresolved semantic and geo-metric evidence needed to ground a functional target, which we refer to as functional uncertainty . As illustrated in Fig. 2, FUSE combines two complementary planning modes: (1) an amortized planner that rapidly predicts which sensing action is most likely to reduce functional uncertainty, and (2) an ex-plicit planner that evaluates candidate actions using seman-tic and geometric predictions from an incrementally refined spatial scene representation. When the amortized predictions are confident, FUSE avoids costly search and representation updates; when candidate actions are ambiguous or the task evidence remains unresolved, it invokes explicit planning. By adaptively switching between fast prediction and deliberate search, FUSE preserves reliable functional grounding while reducing the computational cost of active perception. The contributions of this paper are four-fold: (i) we in-troduce, define, and formulate active functional affordance grounding as a new sequential perception task in which a functional query must guide target discovery and spa-tial grounding under partial observability; (ii) we develop and will release a Habitat-based benchmark and evalua-tion protocol that operationalizes the task through func-tional queries, controlled sensing trajectories, standardized stopping and success criteria, sensing budgets, oracle con-trols, and evaluation tracks spanning static, canonical-view, VLM-active, search-based, amortized, and adaptive meth-ods; (iii) we present FUSE, a confidence-gated adaptive evidence-acquisition framework that alternates between fast amortized planning and explicit semantic–geometric search over an incrementally refined spatial scene representation; and (iv) through controlled evaluations, we show that task-conditioned semantic–geometric evidence acquisition im-proves active grounding across knowledge sources. 
+
+## Related Work 
+
+Functional Affordance Grounding and Task-Oriented Manipulation. Recent work has increasingly focused on grounding functional language queries to objects, object parts, and grasp configurations for embodied manipula-tion. Neuro-symbolic affordance grounding methods such as CRAFT and CRAFT-E (Chen, Lin, and Aakur 2025; Chen et al. 2025b) combine visual perception with structured functional reasoning to identify objects satisfying task-level affordance queries from a single observation. Foundation-model-based approaches extend this capability using large vision–language models and multimodal reasoning (Yu et al. 2025; Ahn et al. 2022), while task-oriented grasping methods leverage affordance prediction to optimize grasp synthesis or next-best-view selection for manipulation (Zhang et al. 2023; Tong et al. 2026; Lei, Jiang, and Daniilidis 2026; Shi et al. 2025). These approaches have substantially improved functional reasoning from available observations; however, they generally assume that sufficient visual evidence has already been observed. In contrast, Active Functional Af-fordance Grounding explicitly addresses the preceding per-ception problem: determining what additional observations should be acquired before reliable functional grounding. 
+
+Active Recognition, Search, and Next-Best-View Per-ception. Active perception methods improve recognition, localization, and scene understanding by selecting informa-tive sensing actions. Prior work has explored active object recognition (Paletta and Pinz 2000), object search and nav-igation (Chaplot et al. 2020), next-best-view planning for reconstruction and inspection (Strong et al. 2024), and ac-tive grasping systems that reposition the camera to improve grasp estimation (Lei, Jiang, and Daniilidis 2026; Shi et al. 2025). More recently, spatial world models and 3D Gaussian Splatting have enabled active exploration through explicit scene representations (Kerbl et al. 2024; Chen et al. 2025a). These methods optimize sensing for a known recognition, lo-calization, reconstruction, or manipulation objective, where the target is specified a priori or the objective is generic (a) Input Observation (b) Semantic Evidence (c) Geometric Uncertainty (d) Fused Evidence Map 
+
+Figure 3: Visualization of FUSE’s semantic–geometric evidence acquisition. SAM3 highlights candidate functional objects, SSNR estimates geometric uncertainty, and their fusion produces the evidence map used to select the next viewpoint. scene coverage. In contrast, Active Functional Affordance Grounding must first infer candidate functional targets from a language query and then actively acquire observations until sufficient evidence has been accumulated for grounding. 
+
+Affordance-Guided Active Grasping and Adaptive Planning. Several works actively reposition the camera to improve grasp synthesis, manipulation success, or affordance estimation (Lei, Jiang, and Daniilidis 2026; Shi et al. 2025; Tong et al. 2026), while recent embodied systems com-bine learned policies with explicit planning or world mod-els to balance efficiency and accuracy during decision mak-ing (Chen et al. 2025a; Assran et al. 2023; Ha and Schmidhu-ber 2018). These approaches typically assume that the target object has already been identified and focus on improving its perception or selecting an appropriate manipulation strategy. In contrast, FUSE performs adaptive evidence acquisition before manipulation, using a confidence-gated combination of amortized planning and explicit semantic–geometric rea-soning to determine which candidate object satisfies the func-tional query and to continue exploration until grounded. 
+
+## Proposed Approach 
+
+Problem Formulation. Given a functional query ( q), an affordance-generation module first produces a set of can-didate object hypotheses Oq ={o1, . . . , o N } that may satisfy the requested function. Given an initially partial observa-tion ( x0) and a set of feasible sensing actions ( A), the goal of active functional affordance grounding is to identify and spatially ground an object o∗ ∈ O q without being given its identity in advance. At each step t, the agent selects an ac-tion at ∈ A , acquires a new observation xt+1 , and integrates the resulting evidence into its current scene state Bt+1 . This evidence may capture semantic compatibility, object local-ization, visibility, and geometric structure. The process ter-minates when a candidate object o∗ can be grounded with sufficient confidence under the task-specific grounding cri-terion V(o∗, Oq , BT ). We formulate sensing as minimizing unresolved functional uncertainty while accounting for the cost of active perception: 
+
+min   
+
+> T, a 1: T, o ∗
+
+Ufunc (Oq , BT ) + λ
+
+> T
+
+X
+
+> t=1
+
+C(at, Bt), (1) subject to V(o∗, Oq , BT ) ≥ τ . Here, Ufunc represents the un-resolved semantic and geometric evidence required to ground the functional hypotheses induced by q, C captures sens-ing and scene-representation update costs, and τ defines the required grounding confidence. Unlike next-best-view plan-ning, the objective is not to reconstruct the entire scene, but to acquire evidence for reliable functional grounding. 
+
+Functional Uncertainty In our framework, functional un-certainty is represented as a spatial field conditioned on the candidate object hypotheses Oq . Rather than assigning un-certainty to a predefined target object, the field identifies image regions in which the evidence required for grounding the functionally relevant candidates remains unresolved. This scene-centric formulation is appropriate because the target identity is not known in advance and must emerge through active evidence acquisition. At time t, we decompose the functional uncertainty into semantic-geometric components: 
+
+Ufunc  
+
+> t
+
+(Oq ) = Usem  
+
+> t
+
+(Oq ) + Ugeo  
+
+> t
+
+. (2) The semantic component captures where the current ob-servation provides insufficient grounding evidence for the candidate hypotheses. The object hypotheses Oq are supplied to SAM3 (Carion et al. 2025). For each candidate oi ∈ O q ,SAM3 predicts a mask mt,i with score st,i . The correspond-ing score is assigned to all pixels within the mask, and the candidate maps are aggregated to produce a dense semantic evidence map St(Oq ). After normalization to [0 , 1] , semantic uncertainty is estimated as Usem  
+
+> t
+
+(Oq ) = 1 − St(Oq ).The geometric component captures regions that are poorly explained by the current spatial scene representation. Given the observed image xt and the corresponding rendered im-age ˆxt, we compute a dense structural signal-to-noise ratio (SSNR) map from discrepancies between their image gra-dients. High SSNR indicates strong agreement between the observation and rendering, whereas low SSNR indicates in-complete or inaccurately modeled structure. We invert and normalize this map to obtain Ugeo  
+
+> t
+
+, assigning larger uncer-tainty to regions with weaker reconstruction agreement. The resulting map jointly localizes where candidate-relevant se-mantic evidence is weak and where additional geometric observation may be useful. Figure 3 illustrates this for a func-tional query “sip” where the target object is a cup. A sensing action is considered informative when the consequent obser-vation is expected to reduce this uncertainty while strength-ening the evidence needed for reliable functional grounding. 
+
+Spatial Evidence Representation. We instantiate the scene state Bt as a persistent 3D spatial evidence representation that accumulates observations acquired during exploration. Reli-able functional grounding requires evidence to be integrated across viewpoints in a common coordinate frame, rather than evaluated independently or retained only as an observation sequence. This spatial organization enables the agent to re-late task-relevant evidence across camera poses, reason about visibility and occlusion, predict observations from candidate viewpoints, and localize where geometric evidence remains incomplete. Its purpose is not complete scene reconstruction; instead, it retains the spatial information needed to support functional grounding and subsequent sensing decisions. We implement this representation using an incrementally refined 3D Gaussian Splatting (3DGS) model (Kerbl et al. 2023). The representation is initialized from a small set of seed observations registered through structure-from-motion. At time t, the current scene representation model ( Gt)encodes the scene using a set of 3D Gaussians with posi-tion, appearance, scale, orientation, and opacity parameters. Given a camera pose pt, the renderer produces a predicted observation ˆxt = R(Gt, p t), where R denotes differentiable Gaussian rendering. Comparing the predicted image ˆxt with the acquired observation xt yields the SSNR-based geomet-ric uncertainty used in the functional uncertainty map. After executing a sensing action and observing xt+1 , the new im-age is registered to the current representation and may be incorporated through incremental 3DGS refinement: 
+
+Dt+1 = Dt ∪ { (xt+1 , p t+1 )}; Gt+1 = Update( Gt, Dt+1 ),
+
+(3) where Dt+1 denotes all observations registered thus far. The updated representation improves predictions from nearby viewpoints and reduces uncertainty in newly observed re-gions. It provides the explicit spatial substrate needed to evaluate candidate viewpoints, compare predicted and ob-served evidence, and support subsequent sensing decisions. 
+
+Functional Evidence Exploration. Explicit evidence ex-ploration uses the semantic and geometric components of functional uncertainty to determine where the agent should observe next. At time t, the SAM3 semantic evidence map 
+
+St(Oq ) identifies regions likely to contain the candidate ob-jects associated with the functional query, while the SSNR-based geometric uncertainty map Ugeo  
+
+> t
+
+identifies regions that remain poorly explained by the current spatial evidence rep-resentation Gt. Although functional uncertainty is defined using low semantic confidence, action selection uses posi-tive semantic evidence to restrict exploration to candidate-relevant regions, while geometric uncertainty favors regions whose structure remains under-observed. We combine these maps to obtain a functional evidence-acquisition map: 
+
+Et(Oq ) = St(Oq )+1 −Norm 
+
+ ∥∇ xt∥2
+
+∥∇ xt − ∇ ˆxt∥2 + ϵ
+
+
+
+(4) where the gradient ratio is computed locally at each pixel and normalized spatially to [0 , 1] using Norm( ·), such that larger values of the inverted term indicate greater geometric un-certainty. Hence, Equation 4 acts as an acquisition surrogate that balances candidate relevance with geometric uncertainty to explore regions that are both semantically promising and geometrically under-observed. For each feasible sensing ac-tion a ∈ A t, we define an associated image region Ω( a)
+
+that the corresponding camera motion is expected to reveal more clearly. Horizontal actions use the corresponding left or right image half, while tilt actions use the upper or lower half, respectively. We evaluate each action by averaging the evidence-acquisition map over its associated region: 
+
+Qt(a; Oq ) = 1
+
+|Ω( a)|
+
+X
+
+> u∈Ω( a)
+
+Et(Oq )( u). (5) The explicit exploration policy then selects a∗ 
+
+> t
+
+=arg max a∈A t Qt(a; Oq ). This produces task-directed sens-ing: SAM3 evidence guides the agent toward regions as-sociated with functionally relevant object hypotheses, while SSNR uncertainty encourages views that improve incomplete or poorly modeled scene structure. After executing a∗ 
+
+> t
+
+, the agent acquires a new observation xt+1 and registers it to the spatial evidence representation. Gt is refined using the new view (Eqn. 3), after which the predicted observation, SSNR map, SAM3 evidence map, and evidence-acquisition map are recomputed. Updating the representation at every step is necessary for explicit exploration because the geometric un-certainty estimate must reflect all observations accumulated so far. Otherwise, regions that have already been sufficiently observed may remain uncertain and attract the policy. 
+
+Evidence accumulation and termination. At each visited viewpoint, we compute a fused target score rt,i = st,i + dt,i 
+
+for each candidate, where st,i is its SAM3 grounding score and dt,i is a mask-level depth-proximity score. We track the highest fused score rt = max i rt,i and its associated candi-date and viewpoint. If rt improves upon the best observed score, the best grounding is updated and the patience counter is reset; otherwise, the counter is incremented. Exploration terminates after K consecutive non-improving observations and returns the best grounding encountered. 
+
+Amortized Evidence Planning. Although explicit func-tional evidence exploration provides reliable sensing de-cisions, repeatedly refining the 3D spatial evidence repre-sentation, rendering candidate viewpoints, and recomputing semantic–geometric uncertainty incur substantial computa-tional cost. To reduce this overhead, we learn an amortized evidence planner that directly predicts the value of candidate sensing actions from the current observation, a candidate ob-ject hypothesis oi ∈ O q , and the candidate action, without explicitly updating the spatial representation. When multi-ple candidate hypotheses are available, the hypothesis whose text embedding is most compatible with the current image is selected as the object context for the planner. The planner is trained using sampled scene transitions labeled by the mea-sured change in SAM3 evidence, geometric uncertainty, vis-ibility, localization, and proximity after each action. During inference, it produces values for the feasible sensing actions in a single forward pass, approximating explicit evidence planning for faster sensing decision-making. 
+
+FUSE: Adaptive Evidence Acquisition. Explicit evidence exploration provides reliable sensing decisions but requires repeated spatial-representation refinement and uncertainty recomputation. Amortized evidence planning avoids this cost Method Success Rate ↑ Avg. IoU ↑ Avg. Steps ↓ Target Pixel Ratio ↑ Center Score ↑ Distance Score ↑ Final SAM3 Score ↑                                                        
+
+> Passive and Semi-Static Grounding
+> Static 42.00 41.25 0.00 17.21 40.85 24.11 48.20% Canonical View 32.00 31.36 1.00 22.83 29.91 51.13 28.22%
+> Active Baselines
+> Random Active 56.00 55.03 12.20 24.83 42.08 50.16 58.17% VLM Active †65.00 64.01 7.65 40.13 56.73 64.51 58.15%
+> Proposed Semantic–Geometric Planning Variants
+> Explicit Exploration 70.00 68.77 8.30 36.38 51.87 58.29 64.20% Amortized Planner 66.00 64.98 8.50 31.04 48.73 48.17 62.69% FUSE 72.00 70.91 9.32 34.96 49.52 56.97 66.61%
+> Oracle-Label Reference
+> Oracle-Label FUSE 77.00 75.86 9.98 39.72 51.70 59.91 72.36%
+
+Table 1: Active functional affordance grounding results . Unless otherwise stated, all methods use CRAFT-E as the affordance knowledge source. Best results in bold , and second-best underlined. †VLM receives the oracle object label and feasible actions. by directly predicting the values of feasible sensing actions, but its predictions may become ambiguous in unfamiliar or poorly observed states. FUSE combines both modes through confidence-gated adaptive evidence acquisition. At each step, the amortized planner predicts values ˆQt(a; oi) for the fea-sible actions and converts them into an action distribution whose entropy measures decision ambiguity. At each step, the current observation is registered with COLMAP. When en-tropy is below η, FUSE selects the highest-valued amortized action and defers refinement. Otherwise, it jointly refines the 3D spatial representation over all registered observations and invokes explicit semantic–geometric exploration using 
+
+Oq . This provides a lightweight fast–deliberative strategy in which routine sensing decisions use amortized inference, while uncertain decisions trigger more costly explicit eval-uation. Algorithm 1 summarizes the complete procedure. FUSE begins with a sparsely initialized 3DGS representa-tion and tracks the strongest semantic-depth-proximity score across Oq by balancing amortized and explicit planning un-til the grounding score fails to improve for K steps or the sensing budget T is exhausted. It then returns the grounding configuration and candidate label associated with the best viewpoint. 
+
+Implementation Details. The spatial evidence representa-tion is initialized from four seed RGB observations using COLMAP (Schonberger and Frahm 2016) followed by in-cremental 3D Gaussian Splatting optimization (Kerbl et al. 2023). Each functional query q is mapped to candidate hy-potheses Oq using neurosymbolic models, large language models, oracle object knowledge, or direct verb conditioning, and SAM3 provides pixel-level semantic masks and scores. For termination, each SAM3 score is summed with a mask-level depth-proximity score obtained by normalizing target depth between 0.3 m and 1.2 m, and exploration stops after 
+
+K consecutive non-improving fused scores. The amortized planner uses CLIP’s visual backbone followed by a three-layer MLP that combines the image feature with candidate-object and action embeddings to predict action values. The MLP is trained to predict measured post-action evidence gain (sum of normalized post-action changes in semantic ev-idence, geometric certainty, visibility, localization, and prox-imity), and action entropy (normalized by log |A t|) is com-puted from a unit-temperature softmax over predicted action values. It is trained on 416 trajectories from two scenes dis-joint from evaluation using Adam, learning rate 10 −3, batch size 64, and 20 epochs. η was set to 0.8 using a grid search over five randomly sampled development episodes. The stop-ping patience K = 5 and sensing budget T = 30 are fixed evaluation-protocol choices applied consistently to all active methods. Additional details are in the supplementary. 
+
+## Experimental Evaluation 
+
+Benchmark and Evaluation Setup. We construct aHabitat-based (Savva et al. 2019; Szot et al. 2021; Puig et al. 2023) benchmark for active functional affordance grounding using procedurally assembled tabletop scenes. The bench-mark evaluates 100 independently randomized scene in-stances drawn from six held-out scene configurations. In each episode, a target object and 7–14 distractors are ran-domly sampled and placed in the workspace, and the camera is initialized from a random viewpoint such that at least one valid target is partially occluded. The evaluation therefore varies target identity, distractor composition, object layout, occlusion, and initial viewpoint while testing on scene con-figurations disjoint from those used to train the amortized planner. For episodes with multiple valid targets, a predic-tion is considered correct if it satisfies the success criterion for any valid target; viewpoint-quality metrics are computed with respect to the matched target. The active sensing space is defined over a ring graph (with fixed elevation) with 36 dis-crete viewpoints, together with camera tilt-up and tilt-down actions. 3DGS-based methods are initialized from four fixed seed RGB observations. 
+
+Metrics and Evaluation Protocol. Each method returns the best viewpoint encountered during exploration together with its grounding prediction. We evaluate grounding accuracy using Success Rate , defined as the percentage of episodes in which the highest-scoring SAM3 mask at the returned viewpoint achieves an IoU greater than 0.5 with a valid ground-truth target. We also report Average IoU between Algorithm 1: FUSE: Adaptive Evidence Acquisition 
+
+Require: Query q, action set A, entropy threshold η, pa-tience K, maximum steps T
+
+Ensure: Best observed grounding, candidate label, and viewpoint 
+
+1: Generate candidate object hypotheses Oq from q
+
+2: Initialize G0 and registered seed-view set D0
+
+3: rbest ← −∞ , kfail ← 0
+
+4: for t = 0 to T − 1 do 
+
+5: Observe xt at viewpoint vt
+
+6: Register xt and Dt←D t−1∪{ (xt, v t)}
+
+7: Obtain SAM3 masks and scores {(mt,i , s t,i ): oi∈O q }
+
+8: Compute depth scores dt,i over each mask mt,i 
+
+9: rt,i ← st,i + dt,i 
+
+10: rt ← max oi∈O q rt,i and ot ← arg max oi∈O q rt,i 
+
+11: if rt > r best then 
+
+12: rbest ← rt
+
+13: obest ← ot, vbest ← vt
+
+14: kfail ← 0
+
+15: else 
+
+16: kfail ← kfail + 1 
+
+17: end if 
+
+18: if kfail ≥ K then break 
+
+19: Select object context ˜ot ∈ O q for amortized planning 
+
+20: Predict values ˆQt(a; ˜ ot) for a ∈ A t and compute action entropy Ht
+
+21: if Ht ≤ η then 
+
+22: at ← arg max a∈A t
+
+ˆQt(a; ˜ ot)
+
+23: else 
+
+24: Refine Gt jointly over Dt
+
+25: Compute Et(Oq ) and explicit scores Qt(a; Oq )
+
+26: at ← arg max a∈A t Qt(a; Oq )
+
+27: end if 
+
+28: Execute at
+
+29: end for 
+
+30: return grounding of obest at vbest 
+
+the predicted and target masks and Average Steps , defined as the number of active sensing actions executed after initial-ization. To measure viewpoint quality, we report four addi-tional metrics. Target Pixel Ratio is the min–max normalized target-pixel count at the returned viewpoint over all reachable viewpoints. Center Score is based on the normalized distance between the target-mask centroid and the image center, with 
+
+1 as perfect centering. Distance Score is the inverted, min– max normalized camera–target distance over the reachable viewpoints (larger values indicate a closer view). Final SAM3 Score, computed by querying with the ground-truth label, is reported as a secondary quality metric. 
+
+Baselines. All core baselines use CRAFT-E (Chen et al. 2025b) to generate candidate object hypotheses. Static per-forms grounding from the initial observation without camera motion. Canonical View executes one predefined motion to-ward the closest feasible bird’s-eye viewpoint and grounds from that observation. Random Active follows a random walk over the sensing graph, testing whether movement alone im-proves grounding. VLM Active provides Gemini (Comanici                                                   
+
+> Knowledge Source Success ↑IoU ↑Steps ↓Target Ratio ↑SAM3 Score ↑
+> CRAFT 53.00% 52.16% 9.99 36.78% 66.79% GPT 62.00% 61.06% 9.35 33.42% 61.44% LLAMA 62.00% 61.00% 9.7 34.63% 58.98% Qwen 64.00% 63.05% 9.89 37.44% 61.61% Sonnet 69.00% 67.94% 10.01 37.78% 66.76% Gemini 72.00% 70.86% 9.67 35.51% 69.26% CRAFTE 72.00% 70.91% 9.32 34.96% 66.61% Oracle-Label 77.00% 75.86% 9.98 39.72% 72.36%
+
+Table 2: Robustness to different knowledge sources. The planner, stopping rule, and sensing budget are held fixed. et al. 2025) with the current observation, oracle target label, and feasible actions, allowing the VLM to control the camera until termination. Explicit Exploration recomputes SAM3 semantic evidence and SSNR geometric uncertainty using an incrementally refined 3DGS representation at every step. 
+
+Amortized Planner selects actions using only the learned evi-dence planner. FUSE adaptively switches between amortized planning and explicit exploration according to action en-tropy. Finally, Oracle-Label FUSE supplies the ground-truth object label, isolating errors due to candidate-hypothesis generation when affordance-hypothesis generation is per-fect. We also evaluate with alternative affordance knowledge sources, including Gemini (Comanici et al. 2025), Llama 3.3 70B (Grattafiori et al. 2024), Qwen 3.6 Plus (Qwen Team 2026), GPT-5.4 (OpenAI 2025), Claude Sonnet 4.6 (An-thropic 2026), and CRAFT (Chen, Lin, and Aakur 2025). This analysis measures whether the benefits of adaptive semantic–geometric exploration persist across different up-stream functional-reasoning mechanisms. 
+
+Active Functional Grounding. Table 1 compares FUSE with passive, active, and oracle-assisted methods on the pro-posed active functional affordance grounding benchmark. We observe four main trends. First, active perception substan-tially improves functional grounding under partial observ-ability. Static grounding achieves only 42% success, while moving once to a canonical viewpoint reduces performance to 32%, indicating that no single predefined view consis-tently reveals the evidence needed for reliable grounding. Random Active improves success to 56% using 12.20 cam-era actions on average, showing that additional viewpoints are beneficial even without task-directed sensing. Second, task-relevant sensing is considerably more effective than un-guided exploration. Despite using more camera actions on average, Random Active remains 14 and 16 percentage points below Explicit Exploration and FUSE in success rate, re-spectively. VLM Active reaches 65% success using fewer actions and an oracle target label, demonstrating that a foun-dation model can perform coarse task-directed exploration. However, it still remains below FUSE despite this additional supervision. VLM Active obtains high Target Pixel Ratio and Center Score, but its Final SAM3 Score is nearly identical to Random Active (58.15% vs. 58.17%) and substantially be-low FUSE (66.61%). This suggests that moving toward and centering the target does not necessarily produce the seman-tic and geometric evidence required for reliable grounding. Third, the proposed planning variants provide complemen-tary accuracy–computation trade-offs. Explicit Exploration improves the success rate from 56% to 70% over Random Variant Success ↑ IoU ↑ Steps ↓ Target Ratio ↑ Center ↑                         
+
+> Random Active 56.00 55.03 12.20 24.83 42.08% Semantic Only 53.00 52.13 6.98 29.48 47.60% Geometry Only 65.00 63.95 15.36 32.48 45.57% Amortized Only 66.00 64.98 8.50 31.04 48.73% FUSE 72.00 70.91 9.32 34.96 49.52%
+
+Table 3: Ablation studies on semantic evidence, geometric uncertainty, and adaptive planning. All variants use the same affordance knowledge source and stopping criterion. Active, while requiring substantially fewer camera actions (8.30 vs. 12.20). This result supports the effectiveness of the proposed semantic– geometric acquisition surrogate. The Amortized Planner reaches 66% success with only 8.50 ac-tions and without repeated spatial-representation updates, showing that the sensing policy can be approximated ef-ficiently. FUSE adaptively combines these modes and ob-tains the highest observed non-oracle success rate (72%), IoU (70.91%), and Final SAM3 Score (66.61%). Finally, FUSE provides a favorable accuracy–computation trade-off relative to Explicit Exploration. On paired episodes, it pre-serves comparable grounding performance (72% vs. 70%; exact McNemar p=0 .688 ) while reducing end-to-end run-time by 1.33 ×. FUSE invokes explicit exploration for only 33.41% of decisions, requiring 2.97 3DGS refinements per episode on average; relative to Amortized Planning, this se-lective fallback improves success from 66% to 72% and IoU from 64.98% to 70.91%. Full paired statistics and stage-wise latency results are provided in the supplementary. 
+
+Robustness to Affordance Knowledge Sources. Table 2 evaluates FUSE while varying only the upstream knowl-edge source used to generate candidate object hypotheses. FUSE remains effective across symbolic, vision–language, and large language model sources, showing that its active evidence acquisition strategy is not tied to a particular affor-dance reasoner. CRAFT-E achieves 72% success, matching Gemini for the highest non-oracle success rate, while Claude Sonnet reaches 69%; the Oracle-label variant reaches 77%. CRAFT-E also obtains the strongest non-oracle IoU among the evaluated sources. Paired analysis shows that CRAFT-E significantly outperforms CRAFT and GPT, while its dif-ferences from Gemini, Sonnet, and the Oracle-label refer-ence are not statistically distinguishable. Performance varies more substantially for weaker knowledge sources. CRAFT achieves 53% success, while Llama, Qwen, and GPT ob-tain 62–64%. Because the planner, stopping criterion, and action budget are fixed, these differences primarily reflect whether the knowledge source proposes suitable functional hypotheses. Active exploration can improve the visibility and grounding of a proposed candidate, but it cannot recover a functionally appropriate target that is absent from or poorly represented in the hypothesis set. The two stages therefore play complementary roles: the knowledge source determines 
+
+what objects may satisfy the query, whereas FUSE deter-mines where to acquire evidence for grounding them. A high Final SAM3 Score does not necessarily imply correct func-tional grounding, since a visible and segmentable object may correspond to an incorrect functional hypothesis.                            
+
+> Component Variant Success ↑IoU ↑Steps ↓
+> Semantic Evidence CLIP (Patch-level) 34.00 32.67 17.11 SAM3 (Pixel-level) 70.00 68.84 8.35 Stopping Criterion SAM3 ( K= 3 )64.00 62.94 5.34 SAM3 ( K= 5 )70.00 68.84 8.35 SAM3+Depth Proximity ( K= 3 )69.00 67.94 6.30 SAM3+Depth Proximity ( K= 5 )72.00 70.91 9.32
+
+Table 4: Implementation ablations evaluating semantic evi-dence granularity and grounding-based stopping criteria. 
+
+Ablation Studies. Table 3 evaluates the individual contri-butions of semantic evidence, geometric uncertainty, and adaptive planning. Semantic evidence alone is insufficient for reliable active grounding: despite using only 6.98 camera actions on average, the SAM3-driven Semantic Only variant achieves 53% success, below Random Active (56%) and sub-stantially below FUSE (72%). Thus, the gains cannot be at-tributed to SAM3 alone; pixel-level semantic grounding must be combined with geometric exploration and uncertainty-aware planning. In contrast, Geometry Only improves suc-cess to 65% by actively revealing previously unseen regions, demonstrating that reducing geometric uncertainty provides a stronger exploration signal than semantic confidence alone. Combining semantic and geometric evidence improves suc-cess to 70% under Explicit Exploration, confirming their complementary roles during viewpoint selection. FUSE fur-ther increases success to 72% by adaptively invoking explicit reasoning when the amortized planner is uncertain. 
+
+Effect of Granularity and Termination Conditions. Ta-ble 4 evaluates key implementation choices in FUSE. Within the full semantic–geometric planning pipeline, replacing pixel-level SAM3 grounding with patch-level CLIP evidence reduces success from 70% to 34%. This result reflects the benefit of more precise semantic evidence when combined with geometric exploration; as shown in Table 3, SAM3-based semantic exploration alone reaches only 53% suc-cess. Incorporating depth proximity into the grounding-based stopping criterion further improves success by approximately 5 percentage points over using SAM3 alone. The depth-proximity term reduces premature termination at distant or weakly resolved views, complementing SAM3 by favoring observations with the target at a more useful distance. 
+
+## Conclusion and Future Work 
+
+We introduced Active Functional Affordance Grounding , a new embodied perception task that requires sequentially ac-quiring observations to identify and spatially ground objects satisfying a functional query. To address this challenge, we proposed FUSE, an adaptive semantic–geometric evidence acquisition framework that combines explicit uncertainty-driven exploration with a learned amortized planner. Exper-iments demonstrate improved grounding success over pas-sive, unguided-active, and VLM-controlled baselines while reducing computation relative to fully explicit exploration. Future work will validate FUSE on real robotic platforms and extend it to dynamic environments, richer manipulation tasks, and long-horizon agents that jointly learn functional reasoning, active perception, and action execution. Acknowledgement. This work was supported in part by the US NSF grants IIS 2348689, IIS 2348690, IIS 2615771, and the USDA award no. 2023-69014-39716. 
+
+## References 
+
+Ahn, M.; Brohan, A.; Brown, N.; Chebotar, Y.; Cortes, O.; David, B.; Finn, C.; Fu, C.; Gopalakrishnan, K.; Haus-man, K.; et al. 2022. Do As I Can, Not As I Say: Grounding Language in Robotic Affordances. arXiv preprint arXiv:2204.01691 .Anthropic. 2026. Claude 3.6 Sonnet Model. Web Release. Assran, M.; Duval, Q.; Misra, I.; Bojanowski, P.; Vincent, P.; Rabbat, M.; LeCun, Y.; and Ballas, N. 2023. Self-supervised learning from images with a joint-embedding predictive ar-chitecture. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 15619–15629. Batra, D.; Gokaslan, A.; Kembhavi, A.; Maksymets, O.; Mot-taghi, R.; Savva, M.; Toshev, A.; and Wijmans, E. 2020. Objectnav revisited: On evaluation of embodied agents nav-igating to objects. arXiv preprint arXiv:2006.13171 .Carion, N.; Gustafson, L.; Hu, Y.-T.; Debnath, S.; Hu, R.; Suris, D.; Ryali, C.; Alwala, K. V.; Khedr, H.; Huang, A.; et al. 2025. Sam 3: Segment anything with concepts. arXiv preprint arXiv:2511.16719 .Chaplot, D. S.; Gandhi, D. P.; Gupta, A.; and Salakhutdinov, R. R. 2020. Object Goal Navigation using Goal-Oriented Semantic Exploration. In Advances in Neural Information Processing Systems , volume 33, 4247–4258. Curran Asso-ciates, Inc. Chen, Z.; Kundu, S.; Baweja, H. S.; and Aakur, S. N. 2025a. EASE: Embodied Active Event Perception via Self-Supervised Energy Minimization. IEEE Robotics and Au-tomation Letters .Chen, Z.; Lin, J.; and Aakur, S. N. 2025. CRAFT: A Neuro-Symbolic Framework for Visual Functional Affor-dance Grounding. In 19th International Conference on Neu-rosymbolic Learning and Reasoning .Chen, Z.; Lin, J.; Bulgin, C.; and Aakur, S. N. 2025b. CRAFT-E: A Neuro-Symbolic Framework for Embodied Af-fordance Grounding. arXiv preprint arXiv:2512.04231 .Comanici, G.; Bieber, E.; Schaekermann, M.; Pasupat, I.; Sachdeva, N.; Dhillon, I.; Blistein, M.; Ram, O.; Zhang, D.; Rosen, E.; et al. 2025. Gemini 2.5: Pushing the fron-tier with advanced reasoning, multimodality, long context, and next generation agentic capabilities. arXiv preprint arXiv:2507.06261 .Fang, H.-S.; Wang, C.; Gou, M.; and Lu, C. 2020. GraspNet-1Billion: A Large-Scale Benchmark for General Object Grasping. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) .Grattafiori, A.; Dubey, A.; Jauhri, A.; Pandey, A.; Kadian, A.; Al-Dahle, A.; Letman, A.; Mathur, A.; Schelten, A.; Vaughan, A.; et al. 2024. The llama 3 herd of models. arXiv preprint arXiv:2407.21783 .Ha, D.; and Schmidhuber, J. 2018. World Models. Kerbl, B.; Kopanas, G.; Leimkühler, T.; and Drettakis, G. 2023. 3D Gaussian Splatting for Real-Time Radiance Field Rendering. ACM Transactions on Graphics , 42(4). Kerbl, B.; Meuleman, A.; Kopanas, G.; Wimmer, M.; Lan-vin, A.; and Drettakis, G. 2024. A hierarchical 3d gaussian representation for real-time rendering of very large datasets. 
+
+ACM Transactions On Graphics (TOG) , 43(4): 1–15. Lei, B.; Jiang, W.; and Daniilidis, K. 2026. ActiveG-rasp: Information-Guided Active Grasping with Calibrated Energy-based Model. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 42418–42429. Li, P.; Tian, B.; Shi, Y.; Chen, X.; Zhao, H.; Zhou, G.; and Zhang, Y.-Q. 2022. TOIST: Task Oriented Instance Seg-mentation Transformer with Noun-Pronoun Distillation. In Oh, A. H.; Agarwal, A.; Belgrave, D.; and Cho, K., eds., 
+
+Advances in Neural Information Processing Systems .Mahler, J.; Liang, J.; Niyaz, S.; Aubry, M.; Laskey, M.; Doan, R.; Liu, X.; Aparicio Ojea, J.; and Goldberg, K. 2017. Dex-Net 2.0: Deep Learning to Plan Robust Grasps with Synthetic Point Clouds and Analytic Grasp Metrics. In Robotics: Sci-ence and Systems XIII . Robotics: Science and Systems Foun-dation. Murali, A.; Liu, W.; Marino, K.; Chernova, S.; and Gupta, A. 2020. Same Object, Different Grasps: Data and Semantic Knowledge for Task-Oriented Grasping. In Conference on Robot Learning .Nguyen, T.; Gopalan, N.; Patel, R.; Corsaro, M.; Pavlick, E.; and Tellex, S. 2020. Robot Object Retrieval with Contex-tual Natural Language Queries. In Proceedings of Robotics: Science and Systems . Corvalis, Oregon, USA. OpenAI. 2025. GPT-5 System Card. Technical report, Ope-nAI. Paletta, L.; and Pinz, A. 2000. Active object recognition by view integration and reinforcement learning. Robotics and Autonomous Systems , 31(1-2): 71–86. Puig, X.; Undersander, E.; Szot, A.; Cote, M. D.; Partsey, R.; Yang, J.; Desai, R.; Clegg, A. W.; Hlavac, M.; Min, T.; Gervet, T.; Vondrus, V.; Berges, V.-P.; Turner, J.; Maksymets, O.; Kira, Z.; Kalakrishnan, M.; Malik, J.; Chaplot, D. S.; Jain, U.; Batra, D.; Rai, A.; and Mottaghi, R. 2023. Habitat 3.0: A Co-Habitat for Humans, Avatars and Robots. Qwen Team. 2026. Qwen3.6-Plus: Towards Real World Agents. Savva, M.; Kadian, A.; Maksymets, O.; Zhao, Y.; Wijmans, E.; Jain, B.; Straub, J.; Liu, J.; Koltun, V.; Malik, J.; Parikh, D.; and Batra, D. 2019. Habitat: A Platform for Embodied AI Research. In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) .Sawatzky, J.; Souri, Y.; Grund, C.; and Gall, J. 2019. What object should i use?-task driven object detection. In Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 7605–7614. Schonberger, J. L.; and Frahm, J.-M. 2016. Structure-from-motion revisited. In Proceedings of the IEEE/CVF Confer-ence on Computer Vision and Pattern Recognition , 4104– 4113. Shi, Y.; Wen, D.; Chen, G.; Welte, E.; Liu, S.; Peng, K.; Stiefelhagen, R.; and Rayyes, R. 2025. VISO-Grasp: vision-language informed spatial object-centric 6-DoF active view planning and grasping in clutter and invisibility. In 2025 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 14931–14938. IEEE. Singh, I.; Blukis, V.; Mousavian, A.; Goyal, A.; Xu, D.; Trem-blay, J.; Fox, D.; Thomason, J.; and Garg, A. 2023. Prog-Prompt: Generating Situated Robot Task Plans using Large Language Models. In 2023 IEEE International Conference on Robotics and Automation (ICRA) , 11523–11530. Strong, M.; Lei, B.; Swann, A.; Jiang, W.; Daniilidis, K.; and III, M. K. 2024. Next Best Sense: Guiding Vision and Touch with FisherRF for 3D Gaussian Splatting. arXiv .Sundermeyer, M.; Mousavian, A.; Triebel, R.; and Fox, D. 2021. Contact-GraspNet: Efficient 6-DoF Grasp Generation in Cluttered Scenes. In 2021 IEEE International Conference on Robotics and Automation (ICRA) , 13438–13444. Szot, A.; Clegg, A.; Undersander, E.; Wijmans, E.; Zhao, Y.; Turner, J.; Maestre, N.; Mukadam, M.; Chaplot, D.; Maksymets, O.; Gokaslan, A.; Vondrus, V.; Dharur, S.; Meier, F.; Galuba, W.; Chang, A.; Kira, Z.; Koltun, V.; Ma-lik, J.; Savva, M.; and Batra, D. 2021. Habitat 2.0: Training Home Assistants to Rearrange their Habitat. In Advances in Neural Information Processing Systems (NeurIPS) .Tong, Z.; Dong, W.; Zhang, C.; and Zhang, H. 2026. GCNGrasp-VP: Affordance-Guided View Plan-ning for Efficient Task-Oriented Grasping. arXiv preprint arXiv:2606.19091 .Yu, C.; Wang, H.; Shi, Y.; Luo, H.; Yang, S.; Yu, J.; and Wang, J. 2025. Seqafford: Sequential 3d affordance reason-ing via multimodal large language model. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 1691–1701. Zhang, X.; Wang, D.; Han, S.; Li, W.; Zhao, B.; Wang, Z.; Duan, X.; Fang, C.; Li, X.; and He, J. 2023. Affordance-Driven Next-Best-View Planning for Robotic Grasping. In 
+
+Conference on Robot Learning , 2849–2862. PMLR. Zhu, Y.; et al. 2023. Vima: General robot manipulation with multimodal prompts. In International Conference on Learning Representations (ICLR) .Zitkovich, B.; Yu, T.; Xu, S.; Xu, P.; Xiao, T.; Xia, F.; Wu, J.; Wohlhart, P.; Welker, S.; Wahid, A.; Vuong, Q.; Vanhoucke, V.; Tran, H.; Soricut, R.; Singh, A.; Singh, J.; Sermanet, P.; Sanketi, P. R.; Salazar, G.; Ryoo, M. S.; Reymann, K.; Rao, K.; Pertsch, K.; Mordatch, I.; Michalewski, H.; Lu, Y.; Levine, S.; Lee, L.; Lee, T.-W. E.; Leal, I.; Kuang, Y.; Kalashnikov, D.; Julian, R.; Joshi, N. J.; Irpan, A.; Ichter, B.; Hsu, J.; Herzog, A.; Hausman, K.; Gopalakrishnan, K.; Fu, C.; Florence, P.; Finn, C.; Dubey, K. A.; Driess, D.; Ding, T.; Choromanski, K. M.; Chen, X.; Chebotar, Y.; Car-bajal, J.; Brown, N.; Brohan, A.; Arenas, M. G.; and Han, K. 2023. RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control. In Proceedings of The 7th Conference on Robot Learning , volume 229 of Proceedings of Machine Learning Research , 2165–2183. PMLR. Method Success ↑ Wall Time (h) ↓ Speedup ↑         
+
+> Amortized Planner 66.00 3.95 2.57 ×
+> Explicit Exploration 70.00 10.17 1.00 ×
+> FUSE 72.00 7.62 1.33 ×
+
+Table 5: Accuracy–efficiency comparison over 100 CRAFT-E evaluation episodes. Speedup is measured relative to Ex-plicit Exploration under the same sensing budget and stop-ping criterion. 
+
+## Appendix 1 Computational Speed Up Analysis 
+
+Table 5 compares the grounding accuracy and wall-clock cost of the three semantic–geometric planning variants over 100 evaluation episodes. Explicit Exploration requires 10.17 hours because it repeatedly refines the 3DGS representation and recomputes semantic and geometric evidence at each sensing step. The Amortized Planner reduces evaluation time to 3.95 hours, providing a 2.57 × speedup, but its success rate decreases from 70% to 66%. This indicates that direct action-value prediction substantially reduces computation, but cannot fully reproduce explicit reasoning in ambiguous or poorly observed states. FUSE provides a more favorable accuracy–efficiency trade-off. It achieves 72% success while requiring 7.62 hours, reducing wall-clock cost by 25.1% relative to Explicit Ex-ploration and yielding a 1.33 × speedup. Importantly, this reduction is achieved while improving success by 5 percent-age points over explicit planning and 8 points over amortized planning. FUSE is slower than the fully amortized policy because uncertain decisions trigger 3DGS refinement and explicit semantic–geometric evaluation; however, these se-lective deliberative updates recover and exceed the accuracy of full explicit exploration without incurring its cost at every step. These results support the central design of FUSE: amor-tized inference efficiently handles routine sensing decisions, while explicit reasoning is reserved for states in which its additional computational cost provides the greatest benefit. 
+
+Efficiency Analysis 
+
+To identify the source of the computational savings, we additionally profiled FUSE over 800 sampled evaluation episodes. This profiling set is larger than the 100-episode paired benchmark and is used only for stage-wise latency and branch-frequency analysis. Calls per episode therefore need not match the camera-action averages in the main evaluation. All GPU timings were measured with device synchroniza-tion before and after each timed operation. Calls and latency were first accumulated per episode and then averaged over the profiling set. Table 6 shows that FUSE routes 66.59% of online planning decisions through the amortized branch and invokes explicit exploration for only 33.41%. Consequently, the spatial repre-sentation is refined only 2.97 ± 3.41 times per episode on av-erage, rather than at every online decision. This confirms that the entropy gate is actively reducing the frequency of costly spatial reasoning rather than merely adding an amortized predictor on top of an otherwise unchanged explicit pipeline. Amortized action prediction contributes only 0.01% of to-tal latency, with an average cost of 0.0027 seconds per call. The learned planner therefore introduces negligible compu-tational overhead. In contrast, SAM3 grounding is the domi-nant cost, accounting for 58.94% of total runtime, followed by view registration at 14.71%, explicit evidence computation at 13.32%, and 3DGS refinement at 8.16%. Initialization, depth-based stopping, and camera execution account for the remaining 4.87%. The latency breakdown also explains why FUSE can be faster than Explicit Exploration despite occa-sionally taking more sensing actions. FUSE does not primar-ily save time by shortening trajectories. Instead, it replaces most explicit planning decisions with a millisecond-scale amortized forward pass and refines the 3DGS representation only when action entropy indicates ambiguity. The resulting reduction in representation-update frequency produces the reported 1.33 × end-to-end speedup while retaining perfor-mance comparable to fully Explicit Exploration. 
+
+## Paired Statistical and Runtime Analysis 
+
+Paired Statistical Protocol 
+
+All planning variants were evaluated on the same 100 episode definitions, enabling paired comparisons at the episode level. For binary grounding success, we report the exact McNemar test, the paired success-rate difference, a 95% percentile-bootstrap confidence interval computed from 10,000 paired resamples, and the number of episodes uniquely solved by each method. For continuous metrics, we report the paired mean difference and its 95% paired-bootstrap confidence in-terval. We additionally use the two-sided Wilcoxon signed-rank test and apply Holm correction within each metric across the two comparisons: FUSE versus Explicit Exploration and FUSE versus Amor-tized Planning. The bootstrap intervals quantify effect size un-certainty, whereas the Wilcoxon tests assess paired distributional dif-ferences. We do not interpret an effect as statistically reliable solely from an uncorrected test. The logged steps_T values count online sensing actions. The four initialization actions required by 3DGS-based meth-ods are included in the total camera-action counts reported in the main paper. Adding the same four initialization actions to FUSE and Explicit Exploration does not alter their paired action difference. 
+
+Paired Grounding Success 
+
+Table 7 shows that FUSE preserves comparable ground-ing success relative to fully Explicit Exploration. FUSE solves four episodes that Explicit Exploration misses, while Explicit Exploration uniquely solves two, yielding a two-point paired difference whose confidence interval includes zero ( p = 0 .688 ). Thus, the current evaluation does not establish a statistically distinguishable success advantage over fully explicit reasoning. Instead, the primary bene-fit of FUSE in this comparison is computational: it re-tains comparable grounding performance while avoiding re-Table 6: FUSE latency and adaptive-planning statistics over 800 evaluation episodes with different knowledge sources. 
+
+Component Calls/Ep. Time/Call (s) Time/Ep. (s) Share (%) 
+
+Initialization 1.00 13.2707 13.2707 4.56 SAM3 grounding 9.74 17.6225 171.6019 58.94 Depth and stopping 9.74 0.0061 0.0598 0.02 Amortized planning 8.74 0.0027 0.0233 0.01 View registration 9.74 4.3974 42.8280 14.71 3DGS refinement 2.97 8.0051 23.7851 8.16 Explicit evidence computation 9.74 3.9826 38.7810 13.32 Camera execution 18.48 0.0444 0.8201 0.28 
+
+Total – – 291.1699 100 Amortized branch rate 66.59% Explicit branch rate 33.41% 3DGS refinements per episode 2.97 ± 3.41 
+
+Table 7: Paired grounding-success analysis over the shared 100 evaluation episodes. “FUSE only” and “Other only” count discordant episodes uniquely solved by each method. Confidence intervals are computed from 10,000 paired boot-strap resamples.                             
+
+> Comparison FUSE Other ∆95% CI FUSE only Other only McNemar p
+> Explicit Exploration 72% 70% +2 pp [−3,7] pp 420.688 Amortized Planning 72% 66% +6 pp [0 ,12] pp 820.109
+
+peated spatial-representation refinement. Relative to Amor-tized Planning, FUSE improves success by six percentage points and uniquely solves eight episodes, compared with two episodes uniquely solved by the amortized variant. The exact McNemar test is not significant at the conventional 0.05 level ( p = 0 .109 ), reflecting the small number of dis-cordant outcomes. Nevertheless, the four-to-one asymmetry in uniquely solved episodes is consistent with the intended role of explicit fallback: recovering difficult cases in which amortized action prediction alone is insufficient. 
+
+Paired Continuous-Metric Analysis 
+
+The continuous metrics reinforce the interpretation of the success results. Relative to Explicit Exploration, FUSE pro-duces similar IoU, target exposure, centering, and geometric quality: all corresponding confidence intervals include zero, and none of the adjusted tests is significant. FUSE does use 1.02 additional online actions on average ( pHolm = 0 .012 ). This does not contradict the measured runtime advantage because the additional decisions are predominantly handled through inexpensive amortized inference rather than costly 3DGS refinement. FUSE therefore trades a small increase in sensing actions for substantially lower representation-update cost. Relative to Amortized Planning, FUSE im-proves mean IoU by 0.059, with a paired-bootstrap interval of [0 .001 , 0.119] . The Holm-adjusted Wilcoxon result is not significant, so we treat this as suggestive rather than con-clusive evidence of an IoU improvement. More diagnostic viewpoint metrics show clearer gains. FUSE improves the ro-bust target exposure measure, Target Pixel Ratio 90 , by 0.082 (pHolm = 0 .032 ), and improves the geometric score by 0.088 (pHolm = 0 .004 ). These results indicate that the explicit fall-back helps FUSE acquire viewpoints with stronger target exposure and geometric evidence than the amortized planner alone. FUSE uses 0.82 additional online actions relative to Amortized Planning. Although the Wilcoxon test identifies a distributional difference, the paired-bootstrap interval for the mean difference includes zero. The combined evidence therefore suggests that FUSE occasionally explores longer, but uses those additional observations to improve geometric coverage and recover episodes that amortized planning alone fails to ground. The logged best_nav_score was con-stant at −1 for all methods and episodes and was therefore excluded from Table 8 and inferential analysis. 
+
+Paired Analysis of Functional Knowledge Sources We evaluate each knowledge source on the same 100 episodes while holding the FUSE planner, grounding model, stopping criterion, and action budget fixed. Table 9 reports paired success differences relative to CRAFT-E. Confidence inter-vals are obtained from 10,000 paired bootstrap resamples, and exact McNemar p-values are Holm-adjusted across all knowledge-source comparisons. CRAFT-E significantly im-proves success over CRAFT ( +19 pp, adjusted p=0 .002 )and GPT ( +10 pp, adjusted p=0 .038 ). Its observed im-provements over Llama and Qwen do not remain significant after correction, while its performance is statistically indis-tinguishable from Claude Sonnet, Gemini, and the Oracle-label reference. In particular, CRAFT-E and Gemini both achieve 72% success, whereas the Oracle reaches 77%. On-line sensing actions do not differ significantly across knowl-edge sources, indicating that the success differences primar-ily reflect candidate-hypothesis quality rather than unequal exploration budgets. 
+
+## Implementation Details 
+
+Environment and Evaluation Episodes 
+
+Experiments are implemented in Habitat-Sim v0.3.3 and Habitat-Lab v0.3.3, using the Habitat-compatible AI2-THOR (iTHOR) scene dataset. The benchmark uses six eval-uation scene configurations that are disjoint from the two configurations used to train the amortized planner. We eval-Table 8: Paired continuous-metric comparisons over 100 episodes. Differences are computed as FUSE minus the comparison method. For Online Actions, positive differences indicate that FUSE uses more sensing actions; for all other metrics, positive differences favor FUSE. The final column reports Holm-adjusted two-sided Wilcoxon signed-rank p-values.                                                                                             
+
+> Comparison Metric FUSE Other Paired ∆95% CI Holm p
+> Explicit Exploration IoU 0.709 0.688 +0 .021 [−0.026 ,0.071] 0.809 Online Actions 9.32 8.30 +1 .02 [0 .31 ,1.79] 0.012
+> Target Pixel Ratio 0.350 0.364 −0.014 [−0.065 ,0.035] 0.629 Target Pixel Ratio 90 0.561 0.547 +0 .014 [−0.050 ,0.078] 0.407 Best Target Score 0.586 0.564 +0 .022 [−0.011 ,0.056] 0.487 Center Score 0.495 0.519 −0.024 [−0.067 ,0.021] 0.628 Geometric Score 0.570 0.583 −0.013 [−0.073 ,0.045] 0.854 Amortized Planning IoU 0.709 0.650 +0 .059 [0 .001 ,0.119] 0.809 Online Actions 9.32 8.50 +0 .82 [−0.34 ,1.90] 0.020
+> Target Pixel Ratio 0.350 0.310 +0 .039 [−0.005 ,0.086] 0.076 Target Pixel Ratio 90 0.561 0.479 +0 .082 [0 .023 ,0.143] 0.032
+> Best Target Score 0.586 0.556 +0 .030 [−0.020 ,0.081] 0.167 Center Score 0.495 0.487 +0 .008 [−0.041 ,0.057] 0.628 Geometric Score 0.570 0.482 +0 .088 [0 .026 ,0.150] 0.004
+
+Table 9: Paired success analysis over the shared 100 episodes. CRAFT-E is the reference. ∆ denotes CRAFT-E minus the comparison source, and unique wins are reported as CRAFT-E/comparison.                                                        
+
+> Source Success ∆95% CI Unique wins Adj. p
+> CRAFT 53% +19 pp [10 ,28] 23/4 0.002
+> GPT 62% +10 pp [4 ,17] 11/1 0.038
+> Llama 62% +10 pp [3 ,18] 13/3 0.106 Qwen 64% +8 pp [1 ,15] 11/3 0.229 Claude Sonnet 69% +3 pp [−4,10] 8/5 1.000 Gemini 72% 0pp [−6,6] 5/5 1.000 Oracle label 77% −5pp [−11 ,1] 2/7 0.539
+
+uate all methods on the same fixed set of 100 episode defi-nitions. Each definition stores the scene configuration, func-tional query, valid target objects, distractor objects, object poses, initial camera pose, and random seed. Each episode contains one sampled target and 7–14 sampled distractors. Object layouts, including any additional object placements, are fixed within each scene configuration. 
+
+Camera and Action Space 
+
+For each scene configuration, we construct a scene-specific elliptical camera trajectory in the horizontal plane. The el-lipse is parameterized by a scene-dependent center and major and minor axes, selected to provide collision-free views of the workspace. Each trajectory is uniformly discretized into 36 camera positions at 10 ◦ angular intervals. Camera height is scene-specific and ranges from 1.4 to 1.6 m. At each posi-tion, the nominal camera orientation faces the ellipse center in the horizontal plane. The scene-specific trajectory param-eters are specified in the accompanying code submission. Each trajectory position is paired with three discrete down-ward pitch angles, {15 ◦, 30 ◦, 45 ◦}, yielding a discrete view-point state space. An action is represented by a joint dis-placement (∆ p, ∆r), where ∆p ∈ {− 2, −1, 0, +1 , +2 } de-notes motion along the elliptical trajectory in units of view-point nodes, and ∆r ∈ {− 1, 0, +1 } denotes a change in pitch level. The available actions comprise a no-op action, one- and two-node horizontal motions, one-level pitch ad-justments, and their horizontal–pitch combinations. Actions that would produce an invalid pitch level are masked. For explicit exploration, horizontal action components are associated with the corresponding left or right image region, whereas pitch-up and pitch-down components are associated with the upper and lower image regions, respectively. For coupled actions, we combine the evidence associated with their horizontal and vertical components. 
+
+3D Gaussian Splatting 
+
+For each episode, all 3DGS-based methods use the same four initialization observations and camera motions. These obser-vations are excluded from the online budget T , ineligible as returned output viewpoints, and are included in the reported end-to-end runtime. Camera poses and the initial sparse re-construction are obtained using COLMAP v3.13.0. For ini-tialization, we extract features from the initialization obser-vations, perform exhaustive matching, and run COLMAP’s incremental mapper. During mapping, focal length, principal point, and extra camera parameters are held fixed. For each subsequent observation, we extract features and apply sequential matching with an overlap of 10. We enable guided matching, set the maximum number of matches to 32,768, use a SIFT ratio threshold of 0.9, and set the max-imum SIFT descriptor distance to 0.8. The observation is registered into the existing sparse model, followed by point triangulation and bundle adjustment. The camera intrinsics remain fixed during incremental bundle adjustment; all other COLMAP settings use the defaults of v3.13.0. We use the official implementation of 3D Gaussian Splat-ting for Real-Time Radiance Field Rendering (Kerbl et al. 2023), commit 54c035f7834b . Initial optimization uses 1000 iterations. Incremental updates use 400 iterations after each explicit-planning observation. The main 3DGS settings are: • image resolution: 640 × 480 ;
+
+• spherical-harmonic degree: 3;
+
+• position learning rate: 1.6 × 10 −4 to 1.6 × 10 −6;
+
+• feature learning rate: 2.5 × 10 −3;
+
+• opacity learning rate: 2.5 × 10 −2;
+
+• scale learning rate: 5.0 × 10 −3;
+
+• rotation learning rate: 1.0 × 10 −3;
+
+• densification interval: 100 iterations; 
+
+• densification start/end iterations: 500 / 15 ,000 ;
+
+• opacity-reset interval: 3,000 iterations. FUSE does not update the 3DGS representation on amortized-planning steps. When explicit planning is invoked, optimization resumes from the most recently updated repre-sentation. 
+
+Semantic and Geometric Evidence 
+
+We use SAM3 with the sam3.pt checkpoint to obtain dense semantic evidence from 640 × 480 RGB observations. Given the candidate object labels for a functional query, SAM3 is applied independently to each label. For candidate label i,let mt,i,j and st,i,j denote the j-th predicted mask and its confidence score at time t, respectively. We construct the se-mantic evidence map by assigning each mask its confidence score and taking the pixelwise maximum over all candidate labels and predicted masks: 
+
+St(u) = max  
+
+> i,j
+
+st,i,j ⊮[u ∈ mt,i,j ].
+
+This preserves the strongest candidate-relevant semantic ev-idence at each pixel for subsequent viewpoint selection. To measure geometric uncertainty, we compare the current RGB observation with the corresponding rendering from the current 3DGS representation. Both images are converted to grayscale, and gradient magnitudes are computed using 3×3
+
+Sobel filters. Let It and Rt denote the observed and rendered images, respectively, and let N11 (u) denote an 11 × 11 local window centered at pixel u. We define 
+
+At(u) = X
+
+> v∈N 11 (u)
+
+∥∇ It(v)∥22.Bt(u) = X
+
+> v∈N 11 (u)
+
+(∥∇ It(v)∥2 − ∥∇ Rt(v)∥2)2 .
+
+The local structural signal-to-noise ratio is then 
+
+SSNR t(u) = 10 log 10 
+
+ At(u) + ϵBt(u) + ϵ
+
+
+
+, ϵ = 10 −8.
+
+We use reflection padding at image boundaries. We clip SSNR values to [−30 , 30] dB and linearly normalize them to 
+
+[0 , 1] . Geometric uncertainty is defined as 
+
+U geo  
+
+> t
+
+(u) = α
+
+
+
+1 − clip(SSNR t(u), −30 , 30) + 30 60 
+
+
+
+,
+
+where α = 0 .8 in all experiments. If either the observed image or its corresponding rendering is unavailable, we set the SSNR map to zero. We fuse semantic evidence and geometric uncertainty as 
+
+Et(u) = wsSt(u) + wg U geo  
+
+> t
+
+(u),
+
+where ws = wg = 1 in all experiments. 
+
+Depth-Proximity Stopping Rule 
+
+For each candidate region mt,i , we compute the mean of valid positive depth values within the region using the Habi-tat depth observation. Depth values are converted to meters using a scale factor of 1,000. A candidate region is con-sidered valid only if it contains at least 500 pixels. Let ¯zt,i 
+
+denote its mean depth. The depth-proximity score is 
+
+dt,i = 1 − clip 
+
+ ¯zt,i − 0.31.2 − 0.3 , 0, 1
+
+
+
+.
+
+If a candidate region contains no valid depth value, we set 
+
+dt,i = 0 .We combine semantic confidence and depth proximity as 
+
+rt,i = λsst,i + λddt,i ,
+
+where λs = 0 .7 and λd = 0 .3 in all experiments. We retain the viewpoint associated with the largest grounding score observed so far. Exploration terminates after K = 5 con-secutive observations that do not improve the best observed score, or after T = 30 online actions. 
+
+Amortized Planner Architecture 
+
+The planner uses the frozen CLIP ViT-B/16 image and text encoders. The RGB images are resized to 224 × 224 and processed using the standard CLIP normalization. The image and text encoders each produce 512-dimensional features. At each step, the object context is selected as the candidate label whose text embedding has the highest cosine similarity with the current image embedding. Actions are represented using 32-dimensional learned embeddings. The image, object, and action features are directly con-catenated. They are processed by a three-layer MLP with two hidden layers: 
+
+1056 → 512 → 512 → 1.
+
+The hidden layers use ReLU activations. CLIP remains frozen during training. 
+
+Planner Training Targets 
+
+We collect 416 trajectories from scene configurations dis-joint from evaluation, comprising 3479 transitions. Each tra-jectory is initialized from a randomly sampled viewpoint and follows a random rollout of 5–13 actions sampled uniformly from the discrete action set. We randomly split the resulting transitions into 90% training and 10% validation sets. For a transition (xt, a t, x t+1 ), we define the utility target as 
+
+yt = wsem ∆st +wunc ∆ut +wiou ∆qt +wvis ∆vt +wgeo ∆gt.
+
+Individual terms are defined as 
+
+∆st = st+1 − st, ∆ut = ut − ut+1 .
+
+∆qt = qt+1 − qt, ∆vt = vt+1 − vt.
+
+∆gt = gt+1 − gt.
+
+Here, st denotes the maximum SAM3 prompt confidence, 
+
+ut denotes the mean 3DGS uncertainty over the nonzero semantic-evidence region, qt denotes the IoU between the highest-confidence SAM3 region and the ground-truth target mask, vt denotes target visibility normalized by the scene-specific maximum target pixel count, and gt denotes normal-ized inverse camera-to-target distance. We use wsem = 1 .0,
+
+wunc = 0 .5, wiou = 1 .0, wvis = 0 .2, and wgeo = 1 .0.Targets are clipped to [−1, 1] .The planner is trained using mean-squared error and Adam for 20 epochs, with a learning rate 10 −3 and batch size 64. We use no weight decay or gradient clipping. We save the model after the final epoch; validation loss is monitored but is not used for checkpoint selection. 
+
+Confidence Gate 
+
+For predicted action values ˆQt(a), action probabilities are computed using a softmax with temperature τ = 0 .1. We use normalized entropy: 
+
+Ht = − 1log |A t|
+
+X
+
+> a∈A t
+
+pt(a) log pt(a).
+
+FUSE uses amortized planning when Ht ≤ 0.8 and ex-plicit exploration otherwise. The threshold was selected from 
+
+{0.6, 0.7, 0.8, 0.9} using 5 validation episodes from scene configurations disjoint from the evaluation set. Across the evaluation set, 66.59% of decisions use the amortized branch and 33.41% use explicit exploration. FUSE performs 2.97 3DGS updates per episode on average. 
+
+Baseline Settings 
+
+All methods use the same fixed episode definitions, candidate hypotheses, SAM3 model, stopping rule, and online action budget unless otherwise stated. 
+
+Random Active. Actions are sampled uniformly from the feasible action set. We use a base random seed of 2 and set the episode seed to 2 + e for episode e, which controls random action sampling and environment initialization. Results are reported over the same fixed set of evaluation episodes used for all methods. 
+
+Canonical View. Grounding is performed from a fixed top-down view located above and oriented toward the scene cen-ter. 
+
+VLM Active. We use Gemini-3.1-Flash-Lite with tem-perature 0 for active viewpoint selection. At each step, the model receives the current RGB observation and an aligned depth visualization, the candidate object labels associated with the target verb, the current discrete loop position and pitch, the feasible actions, and the six most recent action-state records. The camera moves on a discrete elliptical loop around the scene, with horizontal ac-tions {stay, move_left_10, move_right_10, move_left_20, move_right_20} and pitch actions 
+
+{pitch_keep, pitch_up, pitch_down} . The available downward pitch angles are 15 ◦, 30 ◦, and 45 ◦.The model returns a schema-constrained JSON decision specifying a stop/continue status, one horizontal action, one pitch action, and predicted target visibility, centering, and reachability. It is instructed to stop only when a candidate object is visible, centered, and sufficiently close for manipu-lation; otherwise, it continues searching or refining the view. An episode terminates when the model outputs stop while predicting that the target is visible, or after 30 decision steps. Grounding is then performed on the final RGB observation. Invalid or failed model responses trigger a conservative no-motion continue action. API latency is excluded from runtime. 
+
+Oracle-Label FUSE. Only the generated candidate set is replaced by the ground-truth object label. No oracle masks, poses, actions, or stopping signals are used. 
+
+Metric Computation 
+
+For each target object in each scene, we precompute statis-tics over the candidate camera viewpoints, including the maximum visible target-pixel count Pmax and the minimum and maximum camera-to-target distances, Dmin and Dmax .These statistics are used only for metric normalization. At the returned viewpoint, i.e., the highest-scoring view-point encountered during exploration, SAM3 is prompted with the candidate object set associated with the target verb. We select its highest-scoring predicted instance and compute IoU between its mask and the ground-truth semantic mask of the target object. Success is defined as IoU ≥ 0.5; if SAM3 returns no instance mask, IoU is set to zero. Target Pixel Ratio and Distance Score are computed as 
+
+PixelRatio = clip 
+
+ P − Pmin 
+
+Pmax − Pmin + ϵ , 0, 1
+
+
+
+,
+
+DistanceScore = clip 
+
+ Dmax − DDmax − Dmin + ϵ , 0, 1
+
+
+
+.
+
+where P is the target-mask pixel count and D is the Euclidean distance between the returned camera and target positions. Center Score is one minus the target-mask centroid’s dis-tance to the image center, normalized by the center-to-corner distance. Finally, Final SAM3 Score is the confidence of the highest-scoring SAM3 instance queried with the ground-truth object label. It is a secondary view-quality metric; Success and IoU use ground-truth semantic masks. 
+
+Runtime Protocol 
+
+Runtime is measured per episode and includes initialization-view acquisition, COLMAP initialization and incremental view registration, initial and incremental 3D Gaussian Splat-ting (3DGS) optimization, SAM3 inference, evidence com-putation, action selection, camera-pose execution, and final-view evaluation. For methods without 3D reconstruction, runtime includes their corresponding view-selection and grounding operations. Runtime excludes environment construction and scene loading, model loading, and external hosted-API latency. Episodes are executed sequentially on a single worker, and we report end-to-end runtime over the same 100 evaluation episodes. Hardware and Software 
+
+Experiments are conducted on a workstation with: 
+
+• CPU: AMD Ryzen Threadripper PRO 5995WX (64 cores); 
+
+• system memory: 503 GB; 
+
+• GPU: four NVIDIA RTX A5500 GPUs, each with 24 GB memory; 
+
+• operating system: Ubuntu 24.04.4 LTS; 
+
+• NVIDIA driver: 580.173.02; 
+
+• simulation stack: Habitat-Sim 0.3.3 and Habitat-Lab 0.3.3 (Python 3.9.23, PyTorch 2.5.1+cu121, CUDA 12.1); 
+
+• grounding stack: facebook/sam3 (Python 3.12.13, PyTorch 2.10.0+cu128, CUDA 12.8); 
+
+• reconstruction stack: COLMAP 3.13.0 (Python 3.8.20, PyTorch 2.1.2+cu118, CUDA 11.8). The amortized planner requires approximately 0.10 hours (6 minutes) to train and uses 0.46 GB peak GPU memory.
