@@ -1,0 +1,292 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-16T20:22:02.759203+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2608.13474v1",
+      "source": "arxiv",
+      "title": "Decoding Task Progress from VLA Representations",
+      "abstract": "Vision-language-action models (VLAs) are moving rapidly towards deployment as general-purpose manipulation policies, but we currently lack basic tools for understanding what these models represent internally or for monitoring them at runtime. Leveraging ideas from mechanistic interpretability, we probe the residual stream of $π_{0.5}$ and find that task progress, the normalized time remaining in a trajectory, is linearly readable from the activations. We find that this signal is present in the pretrained PaliGemma backbone prior to training on any robot-specific data. A single linear probe generalizes to unseen tasks and varies under language counterfactuals when trained on multi-prompt data, but does not enable meaningful steering of the policy. These properties make the signal directly useful for instrumenting deployed VLAs. We use the probe as a simple label-free OOD detector, which detects stalled task progress, and find it competitive with state-of-the-art methods. Our results suggest that VLAs have rich, linearly readable internal representations of semantic quantities like task progress, and that learning to read these signals offers a lightweight, interpretable path toward monitoring deployed visuomotor policies.",
+      "authors": [
+        "Atiksh Bhardwaj",
+        "Edward Weiyi Duan",
+        "Prithwish Dan",
+        "Wei-Chiu Ma",
+        "Preston Culbertson"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-13T16:58:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.13474v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Probes task progress from vision-language-action manipulation policies, directly relevant to robotic manipulation.",
+      "llm_evidence_cn": "从视觉-语言-动作操作策略中探测任务进度，与机器人操作直接相关。",
+      "llm_evidence": "从视觉-语言-动作操作策略中探测任务进度，与机器人操作直接相关。",
+      "canonical_evidence": "从视觉-语言-动作操作策略中探测任务进度，与机器人操作直接相关。",
+      "llm_tldr_en": "Using mechanistic interpretability, this work shows task progress is linearly readable from the residual stream of a pretrained VLA manipulation policy, generalizes to unseen tasks, and exists before robot-specific training, offering a monitoring tool.",
+      "llm_tldr_cn": "视觉-语言-动作模型（VLA）正被部署为通用操作策略，但缺乏内部表示理解与运行时监控工具。本文借鉴机械可解释性方法，探针π0.5模型的残差流，发现任务进度（轨迹归一化剩余时间）可从激活中线性读取。该信号在预训练PaliGemma骨干中已存在，且线性探针可泛化到未见任务，并在多提示训练下随语言反事实变化，但无法用来有效操控策略。这项工作为VLA操作策略的监控与安全部署提供了基础性理解工具。",
+      "llm_tldr": "视觉-语言-动作模型（VLA）正被部署为通用操作策略，但缺乏内部表示理解与运行时监控工具。本文借鉴机械可解释性方法，探针π0.5模型的残差流，发现任务进度（轨迹归一化剩余时间）可从激活中线性读取。该信号在预训练PaliGemma骨干中已存在，且线性探针可泛化到未见任务，并在多提示训练下随语言反事实变化，但无法用来有效操控策略。这项工作为VLA操作策略的监控与安全部署提供了基础性理解工具。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.08053v1",
+      "source": "arxiv",
+      "title": "PhysX-CoT: Structured Physical Reasoning from a Single Image to Simulation-Ready 3D Assets",
+      "abstract": "Simulation-ready 3D assets are central to robotics and embodied AI. Generating them from a single image is usually framed as a vision-language model that emits a serialized asset for a decoder to turn into geometry and physical fields, leaving the image-to-3D reasoning implicit. We argue the limiting factor is this output-centric view: part placement and local shape are entangled in one global-coordinate token stream, and the intermediate physical states are never exposed for supervision, conditioning, or verification. PhysX-CoT instead casts single-image asset generation as an explicit structured physical reasoning process, an ordered and machine-parseable trajectory of part-level states covering decomposition, 2D and 3D grounding, relations, coarse geometry, and surface cues that we separately supervise, use to condition geometry, and treat as reward targets. Geometry is factorized so that 3D boxes carry placement and local codes carry shape, and CoT-aligned GRPO optimizes parse validity, grounding, geometry, placement, and physical consistency. Under a unified protocol that retrains all learned baselines on the same backbone, data, and frozen decoder, PhysX-CoT outperforms the closest full-task baseline across geometry, scale, and physical-attribute metrics. Oracle, token-matched, and state-order controls show the explicit states are functional rather than cosmetic, and in Unreal Engine~5 the generated assets parse, collide, and articulate at high validity.",
+      "authors": [
+        "Jie Huang",
+        "Xiaohe Li",
+        "Jiahao Li",
+        "Fangli Mou",
+        "Chen Qian",
+        "Yuqiang Fang",
+        "Junhao Fan",
+        "Kaixin Zhang",
+        "Zide Fan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-08-08T10:39:09+00:00",
+      "link": "https://arxiv.org/pdf/2608.08053v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "physical reasoning for simulation-ready 3D assets in robotics/embodied AI",
+      "llm_evidence_cn": "面向机器人和具身智能的物理推理与3D资产生成",
+      "llm_evidence": "面向机器人和具身智能的物理推理与3D资产生成",
+      "canonical_evidence": "面向机器人和具身智能的物理推理与3D资产生成",
+      "llm_tldr_en": "PhysX-CoT generates simulation-ready 3D assets from a single image by explicitly reasoning over structured part-level physical states, improving physical plausibility and validation.",
+      "llm_tldr_cn": "从单张图像生成可仿真3D资产时，现有方法将图像到3D的推理隐式处理，部件位置和局部形状纠缠且中间物理状态不可验证。PhysX-CoT将资产生成建模为显式的结构化物理推理过程，输出有序的部件级状态序列，涵盖分解、2D和3D定位及物理属性。在生成任务中，该方法提升了资产的物理可仿真性和结构一致性。该工作为机器人和具身AI仿真提供了可解释的资产生成新途径。",
+      "llm_tldr": "从单张图像生成可仿真3D资产时，现有方法将图像到3D的推理隐式处理，部件位置和局部形状纠缠且中间物理状态不可验证。PhysX-CoT将资产生成建模为显式的结构化物理推理过程，输出有序的部件级状态序列，涵盖分解、2D和3D定位及物理属性。在生成任务中，该方法提升了资产的物理可仿真性和结构一致性。该工作为机器人和具身AI仿真提供了可解释的资产生成新途径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.11655v1",
+      "source": "arxiv",
+      "title": "Motion-as-Prompt: Enhancing Motion Reasoning in Multimodal Large Language Models via Motion-Guided Cross-Frame Visual Prompting",
+      "abstract": "Motion-centric video reasoning is fundamental to interactive applications such as robotic manipulation and autonomous navigation. However, multimodal large language models (MLLMs) typically process videos through sparse uniform sampling to control visual-token and attention costs. This strategy may discard critical transitions between sampled frames, limiting reasoning about object movement, collisions, and causal interactions. To mitigate this issue, we propose Motion-as-Prompt (MaP), a track-guided cross-frame visual prompting framework. MaP recovers dense point trajectories, selects motion-informative frames, and marks the trajectories accumulated between consecutive sampled frames directly onto the visual inputs, making otherwise hidden displacement, direction changes, and interactions observable to frozen MLLMs. Experiments on CLEVRER and Something-Something-v2 show that MaP consistently improves average motion-reasoning accuracy, yielding gains of 4.2% and 8.9% for GPT-5.5, respectively. Notably, these improvements are obtained without degrading non-motion understanding, highlighting the robustness of MaP. These results demonstrate that MaP provides a simple and effective solution for enhancing motion-centric video reasoning without model training or architectural modification. Project page:https://github.com/SunVictor23/MaP.",
+      "authors": [
+        "Xikai Sun",
+        "Kebin Liu",
+        "Haotian Wang",
+        "Li Liu",
+        "Xu Wang",
+        "Yunhao Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-12T04:54:32+00:00",
+      "link": "https://arxiv.org/pdf/2608.11655v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "motion reasoning method for embodied video understanding and navigation",
+      "llm_evidence_cn": "面向具身视频理解与导航的运动推理方法",
+      "llm_evidence": "面向具身视频理解与导航的运动推理方法",
+      "canonical_evidence": "面向具身视频理解与导航的运动推理方法",
+      "llm_tldr_en": "Motion-as-Prompt recovers dense trajectories and marks them across sampled frames as visual prompts, boosting motion reasoning in multimodal LLMs for applications like robot manipulation and autonomous navigation.",
+      "llm_tldr_cn": "多模态大模型通过稀疏采样处理视频时容易丢失运动关键转折，导致对物体运动、碰撞和因果交互的推理受限。本文提出Motion-as-Prompt框架，先稠密恢复跨帧点轨迹，再选择信息量高的帧并将轨迹直接标注在采样帧上作为提示。在相关基准上，该方法提升了运动推理性能。这种运动引导的跨帧视觉提示为具身智能与自动驾驶中的视频理解提供了新思路。",
+      "llm_tldr": "多模态大模型通过稀疏采样处理视频时容易丢失运动关键转折，导致对物体运动、碰撞和因果交互的推理受限。本文提出Motion-as-Prompt框架，先稠密恢复跨帧点轨迹，再选择信息量高的帧并将轨迹直接标注在采样帧上作为提示。在相关基准上，该方法提升了运动推理性能。这种运动引导的跨帧视觉提示为具身智能与自动驾驶中的视频理解提供了新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.13453v1",
+      "source": "arxiv",
+      "title": "UniTexture: Cross-Task Universal Adversarial Textures for Vision-Language-Action Models",
+      "abstract": "Vision-Language-Action (VLA) models have emerged as generalist robotic policies capable of following diverse language instructions and performing a wide range of manipulation tasks. However, their direct control over embodied agents also exposes them to adversarial interference that may cause unsafe physical behaviors. Existing attacks on robotic policies are typically optimized for a single task or instruction, leaving the cross-task vulnerabilities of multitask VLAs largely unexplored. We introduce UniTexture, a cross-task universal adversarial texture attack that uses a single textured 3D object to induce targeted deviations in VLA action predictions across multiple tasks. UniTexture backpropagates gradients from the policy's action outputs to surface texture parameters through a differentiable renderer. It jointly optimizes the shared texture over a distribution of tasks, instructions, states, and viewpoints using a targeted action-space objective, steering predicted actions toward attacker-defined targets without optimizing a separate texture for each task. We evaluate UniTexture on OpenVLA and $π_{0.5}$ across diverse manipulation tasks and multiple evaluation settings. UniTexture reduces the mean task success rate from 90.0% under benign conditions to 48.4% under attack, induces target-aligned action shifts, and further exhibits cross-suite and cross-model transfer without re-optimization. Together, these findings reveal shared cross-task vulnerabilities in multitask VLAs that can be systematically exploited through a single adversarial surface texture.",
+      "authors": [
+        "Yukun Dai",
+        "Mingzhe Dai",
+        "Tianshi Wang",
+        "Fengling Li",
+        "Jingjing Li",
+        "Lei Zhu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-13T16:38:57+00:00",
+      "link": "https://arxiv.org/pdf/2608.13453v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Cross-task universal adversarial textures for vision-language-action robotic policies",
+      "llm_evidence_cn": "面向视觉-语言-动作机器人策略的跨任务通用对抗纹理",
+      "llm_evidence": "面向视觉-语言-动作机器人策略的跨任务通用对抗纹理",
+      "canonical_evidence": "面向视觉-语言-动作机器人策略的跨任务通用对抗纹理",
+      "llm_tldr_en": "UniTexture creates a single textured 3D object that, when observed, induces targeted deviations in VLA action predictions across multiple manipulation tasks, exposing cross-task safety vulnerabilities of generalist robotic policies.",
+      "llm_tldr_cn": "针对多任务视觉-语言-动作(VLA)模型在机器人操作中的安全漏洞，提出UniTexture跨任务通用对抗纹理攻击，利用单个带纹理3D物体在多个任务上诱导策略产生目标动作偏差；通过从策略动作反向传播梯度优化纹理，证明了这类通用攻击可同时威胁多项操控任务，凸显了具身智能系统的安全隐患。",
+      "llm_tldr": "针对多任务视觉-语言-动作(VLA)模型在机器人操作中的安全漏洞，提出UniTexture跨任务通用对抗纹理攻击，利用单个带纹理3D物体在多个任务上诱导策略产生目标动作偏差；通过从策略动作反向传播梯度优化纹理，证明了这类通用攻击可同时威胁多项操控任务，凸显了具身智能系统的安全隐患。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.09166v1",
+      "source": "arxiv",
+      "title": "Particle-Based Conformal Prediction for Contact-Aware Uncertainty Calibration in Stratified Configuration Spaces",
+      "abstract": "Reliable uncertainty representation is essential for deploying autonomous systems that interact with their environment, as robots must reason about how uncertainty arising from both stochasticity and model mismatch is impacted by contacts with obstacles (e.g., when navigating through a cluttered environment or inserting a part into an assembly). We propose Calibrated Particle-sets for Trans-dimensional Uncertainty Representation (CaPTURe), a geometry-aware, conformal prediction-based algorithm that generates probabilistically valid prediction regions of the unknown future system configuration using particle-based models of arbitrary fidelity. While calibrated uncertainty predictions are essential for safe and efficient planning, analytical or learned motion models are often inaccurate - due to limited data, simplifying assumptions, unmodeled effects, etc. - which can lead to unsafe executions or task failure. Additionally, when a robot contacts an obstacle, the distribution of its future configurations can become multimodal or disjoint, or lie along manifolds of lower intrinsic dimension than the space of possible robot configurations. Our method uses a calibration dataset of system transitions to locally calibrate motion uncertainty estimates, constructing regions guaranteed to contain the future robot configuration at a user-set probability. Our calibration procedure captures how motion uncertainty varies between contact-rich and contactless motions, leading to sufficient coverage in both cases. We evaluate our method on two simulated planning tasks: controlling a marble around a labyrinth and performing tight-tolerance peg-in-hole insertion with a manipulator. Compared to relevant baselines, CaPTURe achieves the user-specified coverage requirement both in and out of contact and achieves up to a 30% absolute improvement in task success rate over the best baseline.",
+      "authors": [
+        "Luís Marques",
+        "Kristian Popov",
+        "Dmitry Berenson"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG",
+        "stat.ME"
+      ],
+      "published": "2026-08-10T06:22:10+00:00",
+      "link": "https://arxiv.org/pdf/2608.09166v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Contact-aware uncertainty calibration for robots navigating or assembling in cluttered environments",
+      "llm_evidence_cn": "接触感知的不确定性校准，适用于机器人导航和装配操作",
+      "llm_evidence": "接触感知的不确定性校准，适用于机器人导航和装配操作",
+      "canonical_evidence": "接触感知的不确定性校准，适用于机器人导航和装配操作",
+      "llm_tldr_en": "This paper presents CaPTURe, a geometry-aware conformal prediction algorithm that generates probabilistically valid uncertainty regions for future robot configurations under contacts, improving safety for navigation and assembly tasks.",
+      "llm_tldr_cn": "机器人与环境交互时，接触约束会显著影响不确定性传播，现有的不确定性估计难以保证有效性。CaPTURe利用几何感知的共形预测算法，在分层构型空间中生成具有概率保证的预测区域，支持任意保真度的粒子模型。实验表明该方法能提供校准良好的不确定性，从而提升机器人在复杂场景中导航和装配的安全性与可靠性。",
+      "llm_tldr": "机器人与环境交互时，接触约束会显著影响不确定性传播，现有的不确定性估计难以保证有效性。CaPTURe利用几何感知的共形预测算法，在分层构型空间中生成具有概率保证的预测区域，支持任意保真度的粒子模型。实验表明该方法能提供校准良好的不确定性，从而提升机器人在复杂场景中导航和装配的安全性与可靠性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.10330v1",
+      "source": "arxiv",
+      "title": "Hierarchical Compositionality for An Assistive AI Agent",
+      "abstract": "AI agents are increasingly being developed to assist humans in various applications, and Large Language Models and other deep network architectures are considered to be state of the art for such agents. These methods are impressive stochastic predictors, but they are resource-hungry, opaque, and known to make arbitrary decisions in novel situations due to the narrow set of underlying representation and processing choices. Our work seeks to explore the design of architectures for such AI agents based on core principles that can be traced back to the early pioneers of AI but are not fully utilized in modern AI methods. We do so in this paper in the context of the core problem of AI agents addressing ambiguity in the objects being referred to by the human participants. Humans address such ambiguity by heuristically leveraging compositional knowledge of domain context and the preferences of the other human participants. Drawing inspiration from this observation, we describe an architecture that embeds the principle of hierarchical compositionality and uses simple heuristics to achieve the desired disambiguation. Specifically, domain objects are represented in terms of primitive attributes drawn from human-validated semantic feature norms, and a hierarchical combination of attributes and concepts automatically identified from a limited observed history of interactions of an assistive agent with specific users. The assistive agent then achieves the desired disambiguation by reasoning with knowledge of this compositional hierarchy; axioms governing domain dynamics; and models of semantic compatibility, session salience, and user-specific thematic preference, requesting human clarification when necessary. Experiments show that our approach consistently outperforms state of the art data-driven baselines, supporting adaptation to specific user profiles.",
+      "authors": [
+        "Tianyi Fu",
+        "Mohan Sridharan"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-11T00:17:56+00:00",
+      "link": "https://arxiv.org/pdf/2608.10330v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Assistive AI agent design addressing object reference ambiguity in human interaction",
+      "llm_evidence_cn": "面向人机交互中物体指代歧义的辅助智能体架构设计",
+      "llm_evidence": "面向人机交互中物体指代歧义的辅助智能体架构设计",
+      "canonical_evidence": "面向人机交互中物体指代歧义的辅助智能体架构设计",
+      "llm_tldr_en": "Explores hierarchical compositionality for assistive AI agents, arguing current deep methods are opaque and arbitrary, and applies core AI principles to resolve ambiguity in human object references.",
+      "llm_tldr_cn": "论文反思现代深度AI智能体在资源消耗、可解释性和新场景决策上的不足，主张借鉴早期AI核心原则构建层次化组合架构，并以人机交互中物体指代消歧为具体问题展示该设计思路的可行性。",
+      "llm_tldr": "论文反思现代深度AI智能体在资源消耗、可解释性和新场景决策上的不足，主张借鉴早期AI核心原则构建层次化组合架构，并以人机交互中物体指代消歧为具体问题展示该设计思路的可行性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.12835v1",
+      "source": "arxiv",
+      "title": "AirForesight: Current-to-Future Spatial Map Imagination with Cross-Space Planning Consistency for UAV-VLN",
+      "abstract": "Unmanned Aerial Vehicle Vision-Language Navigation (UAV-VLN) requires agents to follow language instructions, infer spatial structure from sparse multi-view observations, and execute feasible 3D motion in complex outdoor environments. Despite recent progress with large language models, most existing methods still map vision-language inputs directly to actions, providing limited explicit scene grounding and future-aware spatial reasoning. We propose AirForesight, a current-to-future spatial map imagination framework for UAV-VLN. AirForesight first learns a structured current-map representation from multi-view observations. This representation is jointly supervised by current-map reconstruction and future-trajectory prediction, encouraging it to encode both present scene structure and future motion intent. Under structured causal attention, the current spatial knowledge is propagated to future-map reasoning, and the resulting current and future representations are aggregated to predict the next 3D waypoint. To make spatial imagination more relevant to navigation, we introduce a cross-space planning consistency loss that encourages directional agreement between the predicted map-space trajectory and the expert action direction derived from the ground-truth waypoint displacement. Experiments on OpenUAV and AerialVLN-S, together with extensive ablations, demonstrate strong performance and support the effectiveness and stability of the proposed framework.",
+      "authors": [
+        "Yutong Liu",
+        "Xiaojie Li",
+        "Mingzhu Xu",
+        "Jianlong Wu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-13T05:18:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.12835v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Embodied agent navigation, spatial map imagination, planning",
+      "llm_evidence_cn": "具身智能体导航，空间地图想象，规划",
+      "llm_evidence": "具身智能体导航，空间地图想象，规划",
+      "canonical_evidence": "具身智能体导航，空间地图想象，规划",
+      "llm_tldr_en": "AirForesight is a current-to-future spatial map imagination framework for UAV vision-language navigation. It learns a structured current-map representation from multi-view observations, jointly supervised by current-map reconstruction and future-trajectory prediction, enabling explicit scene grounding and future-aware spatial reasoning for feasible 3D motion.",
+      "llm_tldr_cn": "针对无人机视觉-语言导航中缺乏显式场景锚定和未来感知的空间推理问题，提出AirForesight框架，将多视角观测映射为结构化当前地图表征，并通过当前地图重建和未来轨迹预测进行联合监督。该方法使智能体在复杂室外环境中具备当前场景理解与未来空间推理能力，从而执行可行的三维运动，显著提升导航规划性能。",
+      "llm_tldr": "针对无人机视觉-语言导航中缺乏显式场景锚定和未来感知的空间推理问题，提出AirForesight框架，将多视角观测映射为结构化当前地图表征，并通过当前地图重建和未来轨迹预测进行联合监督。该方法使智能体在复杂室外环境中具备当前场景理解与未来空间推理能力，从而执行可行的三维运动，显著提升导航规划性能。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

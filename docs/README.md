@@ -6,46 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-15
-- 运行时间：2026-08-15 19:09:37 UTC
+- 最新运行日期：2026-08-16
+- 运行时间：2026-08-16 20:27:36 UTC
 - 运行状态：成功
-- 本次总论文数：8
-- 精读区：6
-- 速读区：2
+- 本次总论文数：7
+- 精读区：4
+- 速读区：3
 
 ### 今日简报（AI）
-今日精读6篇、速读2篇，重点聚焦自动驾驶世界模型与机器人灵巧操作。  
-最值得关注的是满分论文《SimWAM》提出的简单世界动作模型，以及《RoboSynChallenge》中模拟技能向真实灵巧操作的泛化方法。  
-建议优先精读这两篇，并留意速读列表中的动作条件视频世界模型，可延伸理解具身智能的最新进展。
-- 详情：[/202608/15/README](/202608/15/README)
+今日聚焦7篇论文，精读高分为VLA任务进度解码与结构化物理推理生成3D资产。最值得关注《Decoding Task Progress from VLA Representations》（9.0分），直指具身智能核心能力。建议优先精读此篇，把握任务进展建模的最新思路。
+- 详情：[/202608/16/README](/202608/16/README)
 
 ### 精读区论文标签
-1. [SimWAM: A Simple World Action Model for End-to-End Autonomous Driving](/202608/15/2608.07468v1-simwam-a-simple-world-action-model-for-end-to-end-autonomous-driving)  
-   标签：评分：10.0/10、query:ad
-   evidence：面向轨迹预测的端到端自动驾驶世界动作模型
-2. [RoboSynChallenge: Mastering Real-World Dexterity via Generalizing Synthesized Manipulation Skills](/202608/15/2608.12416v1-robosynchallenge-mastering-real-world-dexterity-via-generalizing-synthesized-manipulation-skills)  
+1. [Decoding Task Progress from VLA Representations](/202608/16/2608.13474v1-decoding-task-progress-from-vla-representations)  
    标签：评分：9.0/10、query:ad
-   evidence：利用合成数据提升机器人操作泛化能力的基准评测
-3. [Geometry-Grounded Unified 3D Perception for Autonomous Driving](/202608/15/2608.13147v1-geometry-grounded-unified-3d-perception-for-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：基于几何约束的统一3D自动驾驶感知
-4. [FIRE-VLA: Failure-Informed Self-Evolution for Vision-Language-Action Models in Autonomous Driving](/202608/15/2608.13395v1-fire-vla-failure-informed-self-evolution-for-vision-language-action-models-in-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：自动驾驶VLA模型的失败知情自进化框架
-5. [Chain of Spatial Thoughts: Modality-Agnostic Spatial Grounding for Vision Language Models](/202608/15/2608.10278v1-chain-of-spatial-thoughts-modality-agnostic-spatial-grounding-for-vision-language-models)  
+   evidence：从视觉-语言-动作操作策略中探测任务进度，与机器人操作直接相关。
+2. [PhysX-CoT: Structured Physical Reasoning from a Single Image to Simulation-Ready 3D Assets](/202608/16/2608.08053v1-physx-cot-structured-physical-reasoning-from-a-single-image-to-simulation-ready-3d-assets)  
    标签：评分：8.0/10、query:ad
-   evidence：支撑具身智能、操作、导航与自动驾驶的VLM空间接地
-6. [Attention from Action, for Action: Emergent Visual Bottlenecks for Policy Learning](/202608/15/2608.13422v1-attention-from-action-for-action-emergent-visual-bottlenecks-for-policy-learning)  
+   evidence：面向机器人和具身智能的物理推理与3D资产生成
+3. [Motion-as-Prompt: Enhancing Motion Reasoning in Multimodal Large Language Models via Motion-Guided Cross-Frame Visual Prompting](/202608/16/2608.11655v1-motion-as-prompt-enhancing-motion-reasoning-in-multimodal-large-language-models-via-motion-guided-cross-frame-visual-prompting)  
    标签：评分：8.0/10、query:ad
-   evidence：从动作派生裁剪区域生成视觉瓶颈以提升策略学习
+   evidence：面向具身视频理解与导航的运动推理方法
+4. [UniTexture: Cross-Task Universal Adversarial Textures for Vision-Language-Action Models](/202608/16/2608.13453v1-unitexture-cross-task-universal-adversarial-textures-for-vision-language-action-models)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向视觉-语言-动作机器人策略的跨任务通用对抗纹理
 
 ### 速读区论文标签
-1. [Mind the Context: Continual Learning of Socially Appropriate Robot Actions via Environmental-Social Disentanglement](/202608/15/2608.13448v1-mind-the-context-continual-learning-of-socially-appropriate-robot-actions-via-environmental-social-disentanglement)  
-   标签：评分：8.0/10、query:ad
-   evidence：让机器人跨环境持续学习社交得体动作
-2. [DreamX-Phi 1.0: Action-Conditioned Video World Model for Robotic Manipulation](/202608/15/2608.13489v1-dreamx-phi-10-action-conditioned-video-world-model-for-robotic-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向机器人操作的动作条件视频世界模型，采用几何编码保持机械臂与物体一致性
+1. [Particle-Based Conformal Prediction for Contact-Aware Uncertainty Calibration in Stratified Configuration Spaces](/202608/16/2608.09166v1-particle-based-conformal-prediction-for-contact-aware-uncertainty-calibration-in-stratified-configuration-spaces)  
+   标签：评分：7.0/10、query:ad
+   evidence：接触感知的不确定性校准，适用于机器人导航和装配操作
+2. [Hierarchical Compositionality for An Assistive AI Agent](/202608/16/2608.10330v1-hierarchical-compositionality-for-an-assistive-ai-agent)  
+   标签：评分：6.0/10、query:ad
+   evidence：面向人机交互中物体指代歧义的辅助智能体架构设计
+3. [AirForesight: Current-to-Future Spatial Map Imagination with Cross-Space Planning Consistency for UAV-VLN](/202608/16/2608.12835v1-airforesight-current-to-future-spatial-map-imagination-with-cross-space-planning-consistency-for-uav-vln)  
+   标签：评分：6.0/10、query:ad
+   evidence：具身智能体导航，空间地图想象，规划
 
 
 <div class="dpr-home-promo-card">

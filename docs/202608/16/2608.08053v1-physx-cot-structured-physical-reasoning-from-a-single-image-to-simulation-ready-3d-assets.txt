@@ -1,0 +1,359 @@
+Title: PhysX-CoT: Structured Physical Reasoning from a Single Image to Simulation-Ready 3D Assets
+
+URL Source: https://arxiv.org/pdf/2608.08053v1
+
+Published Time: Tue, 11 Aug 2026 00:36:18 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# PHYS X-C OT: S TRUCTURED PHYSICAL REASONING FROM A 
+
+# SINGLE IMAGE TO SIMULATION -R EADY 3D A SSETS 
+
+Jie Huang, Xiaohe Li ∗, Jiahao Li, Fangli Mou 
+
+the Key Laboratory of Target Cognition and Application Technology Aerospace Information Research Institute Chinese Academy of Sciences 
+
+lixiaohe@aircas.ac.cn 
+
+Chen Qian 
+
+School of Artificial Intelligence Shanghai Jiaotong University 
+
+qianc@sjtu.edu.cn 
+
+Yuqiang Fang 
+
+Space Engineering University 
+
+fangyuqiang@nudt.edu.cn 
+
+Junhao Fan, Kaixin Zhang, Zide Fan ∗
+
+the Key Laboratory of Target Cognition and Application Technology Aerospace Information Research Institute Chinese Academy of Sciences 
+
+fanzd@aircas.ac.cn 
+
+August 11, 2026 
+
+ABSTRACT 
+
+Simulation-ready 3D assets are central to robotics and embodied AI. Generating them from a single image is usually framed as a vision-language model that emits a serialized asset for a decoder to turn into geometry and physical fields, leaving the image-to-3D reasoning implicit. We argue the limiting factor is this output-centric view: part placement and local shape are entangled in one global-coordinate token stream, and the intermediate physical states are never exposed for supervision, conditioning, or verification. PhysX-CoT instead casts single-image asset generation as an explicit structured physical reasoning process, an ordered and machine-parseable trajectory of part-level states covering decomposition, 2D and 3D grounding, relations, coarse geometry, and surface cues that we separately supervise, use to condition geometry, and treat as reward targets. Geometry is factorized so that 3D boxes carry placement and local codes carry shape, and CoT-aligned GRPO optimizes parse validity, grounding, geometry, placement, and physical consistency. Under a unified protocol that retrains all learned baselines on the same backbone, data, and frozen decoder, PhysX-CoT outperforms the closest full-task baseline across geometry, scale, and physical-attribute metrics. Oracle, token-matched, and state-order controls show the explicit states are functional rather than cosmetic, and in Unreal Engine 5 the generated assets parse, collide, and articulate at high validity. 
+
+1 Introduction 
+
+Converting images into simulation-ready 3D assets could provide a scalable bridge from abundant visual data to interactive virtual worlds, with broad implications for robotics, embodied AI, and physical simulation. Neural and explicit scene representations, including neural radiance fields and 3D Gaussian splatting, have enabled high-fidelity reconstruction and rendering [31, 19], while generative models have learned to synthesize textured shapes and distill 2D diffusion priors into 3D [14, 32]. Together, these advances have made it possible to generate plausible 3D geometry from a single image within seconds: view-conditioned and multi-view diffusion models provide novel-view priors [27, 28], large feed-forward models reconstruct 3D assets in a single pass [16], and structured-latent generators scale image-conditioned synthesis [46]. However, visually plausible 3D content is not necessarily physically usable. Existing methods largely optimize how an object looks, leaving unresolved the metric scale, part hierarchy, physical materials, collision geometry, and articulation required for interaction in a physics engine. arXiv:2608.08053v1 [cs.RO] 8 Aug 2026 A PREPRINT - A UGUST 11, 2026 Input Image 2D&3D BBox Relation 
+
+> Cuboid Cylinder Sphere
+> or or
+
+Primitive 
+
+> Hardness Roughness Reflectivity
+> &&
+> Transparency
+> &
+
+Surface Physical Info. Absolute Scale 
+
+Affordance 
+
+> Material&Density
+
+Kinematics 
+
+Description 
+
+Coarse Geometry 
+
+# PhysX-CoT 
+
+> Decoder
+
+Mesh/URDF 
+
+Structured Physical Reasoning 
+
+CoT Physics Geometry GRPO 
+
+Figure 1: PhysX-CoT recasts single-image, simulation-ready 3D generation as a structured physical reasoning process: an ordered, inspectable chain of CoT states (2D/3D boxes, relations, primitives, surface cues) and object-level physical attributes (scale, material, affordance, kinematics), decoded into mesh/URDF assets that populate a simulation-ready scene (bottom). This gap matters for robotics and embodied AI, where assets must behave in a simulator, not merely look correct. Interactive environments rely on part-based, articulated assets with kinematic annotations [45], and even visually faithful reconstructions can topple or fall apart under gravity and contact once simulated [15]. In manipulation and policy learning, a wrong joint axis or an unstable contact can quietly invalidate an entire training rollout. Recent simulation-ready generators target this bar directly: PhysX-3D contributes physics-grounded annotations and a feed-forward generator [1], while PhysX-Anything uses a vision–language model (VLM) to produce geometry, articulation, and physical attributes from a single image [2]. These systems mark real progress, but they predict the physical outputs while leaving the reasoning that links image evidence to each part implicit. 2A PREPRINT - A UGUST 11, 2026 Two problems follow from this output-centric view. First, geometry is written in one shared, object-level coordinate frame, whether as global voxels or as serialized tokens, so the same tokens must specify both where a part sits and what shape it takes. We call this where–shape coupling: once a predicted position drifts, the shape decodes into the wrong region, and for thin or topologically complex parts the asset fractures, drifts, or collapses in simulation. Second, the grounding and relational states a human would reason through, such as which parts exist and how they connect and move, are neither represented, supervised, nor verified on their own. Language-model geometry serializers make this concrete, since emitting a mesh as one token stream couples structure with position and exposes no checkable intermediate state [41, 8, 51]. Simply prompting the VLM to name these fields changes little in our experiments: a chain of states helps only when it is supervised and verifiable, not a cosmetic prefix. Process supervision can improve reasoning by rewarding verifiable intermediate steps rather than only final outcomes [23], while grounded-reasoning work turns boxes, regions, and layouts into explicit structure [10, 13]. PhysX-CoT brings this view to asset generation. It exposes the VLM stage as an ordered, machine-parseable trajectory of part-level physical states that we separately supervise, use to condition local geometry, and optimize with process-level rewards through a parser and verifier, and it factorizes geometry so that a 3D box carries placement and a local-frame code carries shape. To isolate this interface, we reuse the downstream decoder and evaluation protocol of PhysX-Anything unchanged [2] and change only the VLM stage, probing the intermediate states directly with oracle and perturbation controls. Concretely (Figure 1), PhysX-CoT comprises a Structured Physical Chain-of-Thought over part states, Position-Factorized Local Geometry (a 3D box for placement, a local-frame code for shape), and CoT-aligned GRPO. Here CoT names this ordered, parseable state trajectory, not a natural-language rationale, and unlike staged bbox-then-shape decoding, the order itself is supervised and shown functional. The main contributions of this paper are as follows: • We introduce PhysX-CoT, which recasts single-image simulation-ready 3D generation as an explicit structured physical reasoning process: it exposes the VLM stage as an ordered, machine-parseable trajectory of part-level physical states that are separately supervised, condition geometry, and serve as reward targets. • We propose position-factorized local geometry, which separates a part’s placement from its local shape so that each is represented, supervised, and rewarded on its own, and CoT-aligned GRPO, which optimizes parse validity, grounding, local geometry, placement, and physical consistency through a parser and verifier. • We further design an evaluation that probes the reasoning process, not only the final assets: under the unified PhysX-CoTA protocol, oracle, perturbation, and state-order controls and a standardized Unreal Engine 5 benchmark show that the ordered states are functionally used rather than merely cosmetic. 
+
+2 Related Work 
+
+2.1 3D Generative Models 
+
+Research on 3D generation has advanced along a clear trajectory. Early models learned shape distributions with voxel, implicit, and GAN representations [44, 30, 14], and optimization-based text-to-3D later distilled 2D diffusion priors to reach far higher fidelity, at the cost of slow per-shape optimization [32, 24, 42]. To remove that cost, feed-forward and multi-view methods predict geometry directly: view-conditioned and multi-view diffusion enforce cross-view consistency [27, 28, 35], feed-forward reconstruction models map images directly to 3D representations [26, 16, 38, 47], and structured-latent generators support scalable image-conditioned 3D synthesis [46]. A parallel line lets autoregressive language models emit meshes as token sequences [36, 7, 8]. Throughout this progression the objective has stayed visual or geometric plausibility, not the physical structure a simulator consumes, so scale, articulation, and material properties are absent or deferred to post-processing. 
+
+2.2 Articulated and Physical 3D Asset Generation 
+
+Closing this gap has meant progressively raising what a generated asset must contain. Articulated modeling first added part- and interaction-aware structure: simulators and datasets such as SAPIEN supply part and kinematic annotations [45], and generators build movable objects or URDF descriptions from images, generated code, point clouds, or existing meshes [9, 25, 20, 22, 21]. Many of these introduce structured intermediates, such as part-connectivity graphs or generated code, yet use them inside a pipeline rather than as separately supervised, image-grounded states. Physical asset generation then extended the target beyond geometry to physical attributes: PhysX-3D grounds assets in scale, material, affordance, and kinematics [1], and PhysX-Anything produces simulation-ready geometry, articulation, and attributes from a single image with a VLM [2], while related work enforces static stability or plans an object-level physical blueprint before geometry [15, 50]. Complementary work addresses physically plausible composition and 3A PREPRINT - A UGUST 11, 2026 
+
+Figure 2: Overview of PhysX-CoT. Round 1 emits the structured physical CoT and object-level attributes; Rounds 2 . . . K emit per-part geometry; a frozen decoder yields the simulation-ready asset (mesh/URDF); CoT-aligned GRPO applies process-level rewards. (a) Structured Physical CoT : an ordered , parseable state trajectory 
+
+S = ( K, C, {sk}) (decompose, 2D/3D ground, relate, primitive, sense surface); each state is an SFT target, a geometry condition, and a reward target. (b) Position-Factorized Local Geometry : a 3D box carries where and a local-frame RLE carries shape , cropped, encoded, and placed back by the box, with separate local-shape and global-placement rewards. (c) CoT-aligned GRPO : parsed/verified candidates yield process-level rewards driving group-relative updates. stable scene reconstruction [49, 29], scalable simulation-ready assets and worlds [12, 39], and part-level or animatable modeling [6, 18]; SimuScene instead benchmarks code generation for physical-scenario simulation [40]. PhysX-Omni further unifies rigid, deformable, and articulated generation using an explicit template-based RLE representation for higher-resolution geometry and the broader PhysXVerse dataset [3]. In contrast, our focus is not broader asset coverage but an ordered image-to-asset state trajectory whose intermediate variables are separately supervised, evaluated, and optimized with process rewards. 
+
+2.3 VLM-based 3D Generation 
+
+Our approach sits at the intersection of this trajectory and a second one: the use of vision-language models for 3D. Language models first learned to emit geometry directly, serializing meshes or 3D tokens for generation and editing [41, 8, 11, 51], and PhysX-Anything carried this to simulation-ready assets through multi-round VLM prediction [2], with concurrent MLLM methods decomposing meshes into sim-ready articulated assets [52]. In parallel, 3D and point-cloud features were injected into LLMs for captioning, grounding, and question answering [17, 48, 33], and VLMs were given spatial, grounded reasoning over boxes, regions, layouts, and programs [4, 10, 13, 37]. Yet most of these systems either emit geometry directly or keep their reasoning as free-form language, so the intermediate states are rarely a fixed schema and almost never separately supervised, executed, or rewarded. Even where explicit rationales appear, as in multimodal chain-of-thought or 3D reasoning fine-tuning, they stay natural-language explanations rather than machine-checkable geometry [53, 5]. This progression connects explicit reasoning traces [43] with verifiable process supervision [23] and reward-based optimization through GRPO [34]. PhysX-CoT departs from it by making the VLM’s image-to-3D reasoning a supervised and verifiable object, so the reasoning itself, not only the final asset, is trained and checked. 4A PREPRINT - A UGUST 11, 2026 
+
+3 Method 
+
+3.1 Overview 
+
+Given a single RGB image I and prompt q, we generate a simulation-ready asset A. PhysX-CoT (Figure 2) modifies the VLM-stage representation, geometry tokenization, and training objective, reusing the downstream decoder unchanged. We write the VLM-stage output as 
+
+Y =  S, P, {Gk}K−1
+
+> k=0
+
+ , A = Dphys (Y, I ), (1) where S is the structured physical CoT, P the object-level physical description, Gk the local coarse-geometry sequence for part k, and Dphys the physical decoder. Generation uses a 1+ K-round decomposition: the first round predicts S and P , then part-specific prompts qk built from S generate each Gk in turn: 
+
+pθ (Y |I, q ) = pθ (S, P |I, q 0)
+
+> K−1
+
+Y
+
+> k=0
+
+pθ (Gk|I, q k, S, P, s k). (2) 
+
+3.2 Structured Physical CoT Schema 
+
+Structured Physical CoT organizes these intermediate variables into machine-parseable states: 
+
+S = ( K, C, {sk}K−1 
+
+> k=0
+
+), sk = ( B2Dk , B 3Dk , R k, H k, M k). (3) Here K and C are the part count and semantics, B2Dk and B3Dk the 2D and axis-aligned 3D boxes, Rk the inter-part relations, Hk a coarse-geometry prior, and Mk surface cues; object-level P holds global information (scale, category, density, joint grouping, function). S is the part-level interface that conditions Gk and receives rewards; full field definitions are in the appendix. In training, S comes from part annotations, projection/voxel boxes, and joint relations, and G from RLE-encoding cropped part voxels; open-ended fields are VLM-proposed and human-verified (appendix). 
+
+3.3 Position-Factorized Local Geometry 
+
+PhysX-CoT uses B3Dk for where and Gk for shape. We say factorized , not fully decoupled: local geometry is still conditioned on the predicted box, but placement and shape become separately supervised and rewarded. For the k-th part, 
+
+B3Dk = ( xk
+
+> min
+
+, x k
+
+> max
+
+, y k
+
+> min
+
+, y k
+
+> max
+
+, z k
+
+> min
+
+, z k
+
+> max
+
+) (4) is defined in a 32 3 object voxel grid. Each occupied voxel inside the box is mapped to a local linear index, and the sorted indices are RLE-compressed into Gk (wrapped by <geometry_l_k> ); the local index space adapts to each part’s dimensions rather than resampling to a common cube. The exact index map and parser validity rules are in the appendix. Local RLE describes only the shape inside the box, so geometry tokens no longer carry both localization and shape and are markedly more compact: under the same tokenizer they use about 58% fewer geometry tokens than the global encoding, freeing capacity for the structured states. At reconstruction, Gk is decoded and placed back via B3Dk ;overlapping boxes are resolved at the coarse-voxel stage by assigning each shared voxel to the higher-confidence part (physics-based resolution is future work). 
+
+3.4 CoT-Aligned Training 
+
+PhysX-CoT trains in two stages, SFT then GRPO [34]. SFT learns the mapping from the image to Y = ( S, P, {Gk}):
+
+LSFT = −
+
+> T
+
+X
+
+> t=1
+
+log pθ (yt|y<t , I, q ). (5) The loss covers CoT states, object-level descriptions, and local RLE tokens; targets B3D and G come from cropping and encoding part voxels, so supervision and rewards share one coordinate definition. PhysX-CoT is built on Qwen3-VL-8B-Instruct and trained on 4×A800 GPUs. The GRPO stage starts from the SFT checkpoint and tunes LoRA on the LM projections only (appendix). For each prompt we sample N =4 candidates, 5A PREPRINT - A UGUST 11, 2026                                                  
+
+> Methods Geometry Physical Attributes PSNR ↑CD ↓F-score ↑Absolute scale ↓Material ↑Affordance ↑Kinematic (VLM) ↑Description ↑
+> URDFormer 12.56 0.334 0.192 –––0.31 –Articulate-Anything 14.82 0.321 0.024 –––0.38 –PhysXGen 16.42 0.282 0.056 28.02 8.49 8.53 0.46 10.17 PhysX-Anything 19.10 0.095 0.256 12.43 14.00 15.17 0.53 18.12
+> PhysX-CoT (Ours) 21.33 0.041 0.480 6.57 17.09 17.69 0.73 21.80
+
+Table 1: Main results on the PhysX-CoTA test set. “–” indicates that a method does not directly output the corresponding capability and is not included in ranking or penalization for that metric. score each with a scalar sequence reward ri, and use the group-relative advantage Ai = ri − 1
+
+> N
+
+PNj=1 rj . The policy is updated with a clipped policy-ratio objective and a KL anchor to the frozen SFT reference πref :
+
+LGRPO = −Ei,t 
+
+ min( ρi,t Ai, clip( ρi,t , 1−ϵ, 1+ ϵ)Ai)
+
++ β D KL (πθ ∥ πref ), (6) where ρi,t is the token-level policy ratio and the sequence reward ri is assigned to all tokens of candidate i, with β=0 .02 
+
+and ϵ=0 .2. The scalar reward aggregates four process terms and a penalty, 
+
+ri = clip [−2,2] 
+
+ P   
+
+> m∈M λmRm
+> P
+> m∈M λm
+
+− λpen P
+
+
+
+, (7) where M collects the applicable reward terms scoring localization, coarse primitives, local/global voxel quality (the RL core), and physical/joint validity, and P penalizes format, range, and dependency violations. All rewards use only training-split annotations, and evaluation uses unseen objects and views (formulas in the appendix). 
+
+3.5 Inference and Asset Reconstruction 
+
+At inference the model generates S, P ; the parser extracts the states and boxes (rejecting or resampling invalid outputs), generates each Gk, maps it back via B3Dk , and feeds the result with P to the decoder for meshes, attributes, joints, and simulation-compatible structures. 
+
+4 Experiments 
+
+We report final-asset comparisons and module ablations under the standard protocol, process-level diagnostics (state accuracy, controlled interventions, and a CoT-state linkage), and in-the-wild and UE5 generalization. 
+
+4.1 Experimental Setup Dataset. PhysX-CoTA augments PhysXNet with Structured Physical CoT content (no new assets) [1]; splits are by object ID, giving 669 ,141 single-image samples over 32 ,047 objects. Open-ended fields are VLM-proposed, human-verified (appendix). 
+
+Baselines. URDFormer and Articulate-Anything (articulated), PhysXGen (PhysX-3D’s generator), and PhysX-Anything (closest full-task); ablations add PhysX-Anything+CoT Prompt. Unsupported fields are “–” (excluded from ranking). For fair attribution, all learned baselines are retrained under matched conditions (same backbone where applicable, same data and object-ID splits, same frozen decoder, matched budget), so only the VLM-stage representation and objective differ; reported numbers follow this normalized protocol and are not directly comparable across datasets. 
+
+Metrics. Geometry uses PSNR, CD, and F-score, with CD and F-score primary: CD on 10 ,000 samples, object-scale-normalized, without ICP; surface F-score at τ =0 .01 on the normalized post-decoder mesh; PSNR over multi-view renders. Scale is the relative dimension error (%). Adapted from PhysX-3D [1], Material is an MAE-based similarity between predicted and reference attributes, Affordance is an affordance-ranking score, and Description is a prompt cosine-similarity score; we report all three as higher-is-better similarities, with exact formulas and normalization in the appendix. Only Kinematic (joint type, axis, range) is VLM-judged, matching expert labels at Cohen’s κ=0 .79 on a human-annotated subset, and we additionally report the objective joint-axis error in Table 4; full definitions are in the appendix. 6A PREPRINT - A UGUST 11, 2026 PhysX-CoT 
+
+Coarse Mesh 
+
+PhysX-Anything 
+
+Coarse Mesh 
+
+Input Image 
+
+Affordance Description Material Absolute scale:45*45*90 
+
+Question:Find the main wood seat single surface of the Wooden Chair Physical Affordance Description Material Absolute scale:45*45*90 Question:Find the main wood seat surface of the Wooden Chair. Physical 
+
+Absolute scale:60*30*30 Question:Find the main nylon handle of the Duffel Bag. 
+
+Absolute scale:61*27*44 Question:Find the main nylon shoulder strap of the Shoulder Bag. 
+
+Absolute scale:60*60*85 Question:Find the main plastic and metal door of the Dishwasher. 
+
+Absolute scale:60*70*70 
+
+Question:Find the main plastic and metal door of the Dishwasher. Absolute scale:312*150*68 Question:Find the main wood board of the Table Tennis Table. 
+
+Absolute scale:274*152*76 Question:Find the main wood board of the Table Tennis Table. 
+
+PhysXGen 
+
+Mesh Physical 
+
+Affordance Description Material 
+
+Absolute scale:89.8*89.8*89.8 Question:One of the four wooden legs of the chair. 
+
+Absolute scale:84.3*44.6*44.6 Question:This is the handle of the duffel bag, made of nylon. 
+
+Absolute scale:77.8*81.8*81.8 Question:The outer structural casing of the dishwasher made of stainless steel. 
+
+Absolute scale:123*123*80 Question:A paddle used to hit the ping pong ball. 
+
+PhysX-CoT 
+
+Mesh Kinematic 
+
+Articulate-Anything 
+
+Mesh Kinematic 
+
+URDFormer 
+
+Mesh Kinematic 
+
+Figure 3: Main qualitative comparison on PhysX-CoTA across geometry, physical-property, and kinematic fields. Against PhysX-Anything, PhysXGen, Articulate-Anything, and URDFormer, PhysX-CoT recovers thin/small parts, absolute scale, and joint structure more reliably. Kinematic Kinematic 
+
+Question:Find the main foam and fabric seat surface of the Office Chair Absolute scale:70*70* 100 Question:Find the main foam and fabric seat surface of the Ergonomic Office Chair. Absolute scale:70*70* 120 Question:Find the main plastic with foam padding top band of the Over-Ear Headphones. Absolute scale:18*8*20 Question:Find the main plastic top band of the Over-Ear Headphones. Absolute scale:18* 15*8 
+
+Material Affordance 
+
+Voxel Mesh Voxel Mesh Affordance Material Description Affordance Material Description 
+
+PhysX-Anything 
+
+Affordance 
+
+Input Image PhysX-CoT 
+
+Description Description Kinematic Kinematic Material Coarse Coarse Voxel Voxel Mesh Mesh 
+
+Figure 4: In-the-wild generalization (qualitative): on real photographs, PhysX-CoT recovers parts, thin/small structures, scale, and joints under varied backgrounds and viewpoints. 
+
+4.2 Main Results on PhysX-CoTA 
+
+Table 1 reports the main comparison. Against the closest full-task baseline, PhysX-CoT achieves a moderate PSNR gain, substantially reduces CD and Scale, and improves F-score, Material, Affordance, Kinematic, and Description 7A PREPRINT - A UGUST 11, 2026 (a)Scene level : Assets collapse under strong wind      
+
+> Frame 1
+> (b)Object level : Robot searching for and taking headphones
+> Frame 5 Frame 7 Frame 9 Frame 1 Frame 7 Frame 9 Frame 11 Frame 4
+> Frame 11
+
+Figure 5: Simulation execution in Unreal Engine 5. (a) Scene level : under a strong wind field, multiple generated assets interact and topple as physical rigid bodies across frames. (b) Object level : a robot searches for and picks up a generated pair of over-ear headphones, showing the asset loads and is graspable. 
+
+Method Variant Geometry Physical Attributes PSNR ↑ CD ↓ F-score ↑ Absolute scale ↓ Material ↑ Affordance ↑ Kinematic (VLM) ↑ Description ↑
+
+PhysX-Anything 19.10 0.095 0.256 12.43 14.00 15.17 0.53 18.12 PhysX-Anything+CoT Prompt 19.47 0.088 0.261 10.77 14.03 15.96 0.53 18.22 PhysX-Anything+Local Geo. 20.11 0.059 0.352 10.68 14.08 16.66 0.59 18.22 PhysX-CoT-SFT 19.62 0.064 0.330 6.85 16.92 17.11 0.58 21.03 + Local Geo. 20.85 0.051 0.434 6.81 17.02 17.32 0.63 21.47 
+
++ GRPO (Full) 21.33 0.041 0.480 6.57 17.09 17.69 0.73 21.80 
+
+Table 2: Ablation study. All variants use the same simulation-ready asset evaluation metrics as the main experiments. 
+
+Reward CD ↓ F-sc. ↑ Scale ↓ Kin. ↑ Parse ↑
+
+Full GRPO 0.041 0.480 6.57 0.73 96.4 
+
+w/o Rloc 0.047 0.459 7.34 0.70 95.8 w/o Rdetail 0.054 0.441 6.78 0.68 95.6 w/o Rphys 0.044 0.472 7.09 0.62 95.7 w/o format penalty 0.049 0.451 6.91 0.67 87.1 
+
+Table 3: Reward ablation of CoT-aligned GRPO ( Parse : parse-valid rate, %); removing a term most hurts the metric it targets (worst per column underlined). 
+
+Method 3D IoU ↑ Rel. F1 ↑ Prim. ↑ Joint ↑ Axis ◦ ↓
+
+PhysX-Anything 0.37 0.39 0.48 0.53 35.6 +CoT Prompt 0.39 0.41 0.50 0.54 34.8 PhysX-CoT-SFT 0.56 0.60 0.68 0.65 24.9 
+
+Full PhysX-CoT 0.66 0.70 0.75 0.76 16.8 
+
+Table 4: Structured-state accuracy on the test split: the predicted intermediate states, not only final assets, improve from the baseline to the full model (full 9-metric version in the appendix). under the same protocol. These gains hold across object categories and part-count groups (largest on complex multi-part objects; appendix), but aggregate numbers alone do not isolate the role of CoT as a process state, which the following CoT-state linkage analysis and ablations address. Figure 3 confirms this qualitatively across headphones, chairs, bags, dishwashers, and table-tennis tables. 
+
+4.3 Simulation and Real-Image Generalization 
+
+On roughly 100 in-the-wild images per category, where no paired ground truth exists and the evaluation is therefore qualitative, PhysX-CoT still decomposes objects into reasonable parts and recovers thin or small structures, scale, and joints, suggesting that it transfers to real images (Figure 4). 8A PREPRINT - A UGUST 11, 2026 To assess simulation-readiness, we import the assets into Unreal Engine 5 (UE5) under a standardized per-asset protocol and report six validity dimensions, namely parse, collision, static rollout, joint validity, actuation, and grasp/lift; the full protocol is in the appendix. Full PhysX-CoT improves over PhysX-Anything on every dimension, reaching 94 .1% 
+
+parse, 96 .8% collision, and 92 .0% joint validity. Figure 5 shows two physics executions: rigid bodies toppling under a wind field and a robot grasping a generated headphone set. Remaining failures involve occlusion, transparent or reflective materials, and highly non-rigid topologies. 
+
+4.4 Process-Level Diagnostics 
+
+Beyond final-asset metrics, we directly score the predicted intermediate states against ground truth (Table 4). Every state improves from the baseline through structured supervision to the full model: prompt-only changes little, whereas training sharply improves 3D grounding, relations, and joint axis. Controlled interventions support a functional dependence that goes beyond correlation. Supplying oracle states improves every metric, raising the kinematic score from 0.73 to 0.92 and cutting scale error from 6.57 to 4.12, whereas perturbing the predicted 3D boxes degrades them and inflates scale error to 8.36. Shuffling, reversing, or removing the state order lowers quality monotonically, dropping 3D IoU from 0.660 to 0.542 and parse validity from 96.4 to 90.9, and the same degradation appears for token-matched unordered and parallel-head variants that retain the fields but discard the autoregressive chain. Together these indicate that the ordered chain, not the structured fields alone, is functional rather than merely cosmetic. A pre-decoding CoT score never used as a reward or final metric further correlates with asset quality at Spearman ρ=0 .455 across category, part-count, thin-part, and articulation groups. 
+
+4.5 Ablation Study 
+
+Table 2 ablates the four components against the closest full-task baseline: prompt-only CoT, structured-CoT supervision (PhysX-CoT-SFT), position-factorized local geometry, and process rewards (GRPO). Prompting the baseline for structured CoT fields barely changes the results, so prompt-only reasoning is insufficient, whereas structured-CoT supervision already improves most metrics. Position-factorized local geometry then sharpens geometry, and it helps both with and without structured CoT, so the where–shape factorization contributes independently of the structured CoT. Structured CoT and process rewards mainly firm up kinematic quality and parse validity rather than uniformly lifting every metric; the per-term reward ablation (Table 3) attributes each gain to the signal it targets. The full model is best or tied-best on every metric. 
+
+Reward ablation. Table 3 removes one process-reward term at a time. Each removal most hurts its targeted competence (geometry, scale, kinematics, or parse validity), supporting the reward design rather than a uniform RL gain. The format term penalizes malformed or inconsistent structured outputs; removing it drops parse validity from 96 .4 to 87 .1.
+
+Inference cost. Compact local RLE uses roughly 58% fewer geometry tokens and makes inference about 30% faster than the closest baseline despite the 1+ K rounds. 
+
+5 Conclusion 
+
+PhysX-CoT casts single-image simulation-ready 3D generation as an explicit, verifiable reasoning process. By exposing geometry and physical attributes before decoding, it links visual generation to executable assets through interpretable intermediate decisions. Final-asset metrics, state diagnostics, and Unreal Engine 5 execution confirm that its ordered states are functionally used. Current limitations are the fixed decoder, coarse voxelization, and transparent, reflective, or non-rigid objects; future work will pursue broader data and multi-view inputs. 
+
+References 
+
+[1] Ziang Cao, Zhaoxi Chen, Liang Pan, and Ziwei Liu. PhysX-3D: Physical-grounded 3d asset generation. In 
+
+Advances in Neural Information Processing Systems (NeurIPS) , volume 38, 2025. [2] Ziang Cao, Fangzhou Hong, Zhaoxi Chen, Liang Pan, and Ziwei Liu. PhysX-Anything: Simulation-ready physical 3d assets from single image. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , June 2026. [3] Ziang Cao, Yinghao Liu, Haitian Li, Runmao Yao, Fangzhou Hong, Zhaoxi Chen, Liang Pan, and Ziwei Liu. PhysX-Omni: Unified simulation-ready physical 3D generation for rigid, deformable, and articulated objects. 
+
+arXiv preprint arXiv:2605.21572 , 2026. 9A PREPRINT - A UGUST 11, 2026 [4] Boyuan Chen, Zhuo Xu, Sean Kirmani, Brian Ichter, Danny Driess, Pete Florence, Dorsa Sadigh, Leonidas Guibas, and Fei Xia. SpatialVLM: Endowing vision-language models with spatial reasoning capabilities. arXiv preprint arXiv:2401.12168 , 2024. [5] Chaoqi Chen, Qile Xu, Wenjun Zhou, and Hui Huang. PointLLM-R: Enhancing 3d point cloud reasoning via chain-of-thought. arXiv preprint arXiv:2605.22013 , 2026. [6] Minghao Chen, Roman Shapovalov, Iro Laina, Tom Monnier, Jianyuan Wang, David Novotny, and Andrea Vedaldi. PartGen: Part-level 3D generation and reconstruction with multi-view diffusion models. arXiv preprint arXiv:2412.18608 , 2024. [7] Sijin Chen, Xin Chen, Anqi Pang, Xianfang Zeng, Wei Cheng, Yijun Fu, Fukun Yin, Yanru Wang, Zhibin Wang, Chi Zhang, Jingyi Yu, Gang Yu, Bin Fu, and Tao Chen. MeshXL: Neural coordinate field for generative 3d foundation models. In Advances in Neural Information Processing Systems (NeurIPS) , 2024. [8] Yiwen Chen, Tong He, Di Huang, Weicai Ye, Sijin Chen, Jiaxiang Tang, Xin Chen, Zhongang Cai, Lei Yang, Gang Yu, Guosheng Lin, and Chi Zhang. Meshanything: Artist-created mesh generation with autoregressive transformers. arXiv preprint arXiv:2406.10163 , 2024. [9] Zoey Chen, Aaron Walsman, Marius Memmel, Kaichun Mo, Alex Fang, Karthikeya Vemuri, Alan Wu, Dieter Fox, and Abhishek Gupta. URDFormer: A pipeline for constructing articulated simulation environments from real-world images. arXiv preprint arXiv:2405.11656 , 2024. [10] An-Chieh Cheng, Hongxu Yin, Yang Fu, Qiushan Guo, Ruihan Yang, Jan Kautz, Xiaolong Wang, and Sifei Liu. SpatialRGPT: Grounded spatial reasoning in vision language models. In Advances in Neural Information Processing Systems (NeurIPS) , 2024. [11] Shuangkang Fang, I-Chao Shen, Yufeng Wang, Yi-Hsuan Tsai, Yi Yang, Shuchang Zhou, Wenrui Ding, Takeo Igarashi, and Ming-Hsuan Yang. MeshLLM: Empowering large language models to progressively understand and generate 3d mesh. In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) , pages 14061–14072, 2025. [12] Jiashi Feng, Xiu Li, Jing Lin, et al. Seed3D 1.0: From images to high-fidelity simulation-ready 3d assets. arXiv preprint arXiv:2510.19944 , 2025. [13] Weixi Feng, Wanrong Zhu, Tsu-jui Fu, Varun Jampani, Arjun Akula, Xuehai He, Sugato Basu, Xin Eric Wang, and William Yang Wang. LayoutGPT: Compositional visual planning and generation with large language models. In Advances in Neural Information Processing Systems (NeurIPS) , 2023. [14] Jun Gao, Tianchang Shen, Zian Wang, Wenzheng Chen, Kangxue Yin, Daiqing Li, Or Litany, Zan Gojcic, and Sanja Fidler. GET3D: A generative model of high quality 3d textured shapes learned from images. In Advances in Neural Information Processing Systems (NeurIPS) , 2022. [15] Minghao Guo, Bohan Wang, Pingchuan Ma, Tianyuan Zhang, Crystal Elaine Owens, Chuang Gan, Joshua B. Tenenbaum, Kaiming He, and Wojciech Matusik. Physically compatible 3d object modeling from a single image. 
+
+arXiv preprint arXiv:2405.20510 , 2024. [16] Yicong Hong, Kai Zhang, Jiuxiang Gu, Sai Bi, Yang Zhou, Difan Liu, Feng Liu, Kalyan Sunkavalli, Trung Bui, and Hao Tan. LRM: Large reconstruction model for single image to 3d. In International Conference on Learning Representations (ICLR) , 2024. [17] Yining Hong, Haoyu Zhen, Peihao Chen, Shuhong Zheng, Yilun Du, Zhenfang Chen, and Chuang Gan. 3d-llm: Injecting the 3d world into large language models. arXiv preprint arXiv:2307.12981 , 2023. [18] Yi-Hua Huang, Zi-Xin Zou, Yuting He, Chirui Chang, Cheng-Feng Pu, Ziyi Yang, Yuan-Chen Guo, Yan-Pei Cao, and Xiaojuan Qi. AniGen: Unified s3 fields for animatable 3D asset generation. arXiv preprint arXiv:2604.08746 ,2026. [19] Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, and George Drettakis. 3d gaussian splatting for real-time radiance field rendering. ACM Transactions on Graphics , 42(4), 2023. [20] Long Le, Jason Xie, William Liang, Hung-Ju Wang, Yue Yang, Yecheng Jason Ma, Kyle Vedder, Arjun Krishna, Dinesh Jayaraman, and Eric Eaton. Articulate-anything: Automatic modeling of articulated objects via a vision-language foundation model. arXiv preprint arXiv:2410.13882 , 2024. [21] Ruining Li, Yuxin Yao, Chuanxia Zheng, Christian Rupprecht, Joan Lasenby, Shangzhe Wu, and Andrea Vedaldi. PARTICULATE: Feed-forward 3d object articulation. arXiv preprint arXiv:2512.11798 , 2025. [22] Zhe Li, Xiang Bai, Jieyu Zhang, Zhuangzhe Wu, Che Xu, Ying Li, Chengkai Hou, and Shanghang Zhang. URDF-Anything: Constructing articulated objects with 3d multimodal language model. arXiv preprint arXiv:2511.00940 ,2025. 10 A PREPRINT - A UGUST 11, 2026 [23] Hunter Lightman, Vineet Kosaraju, Yura Burda, Harri Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. Let’s verify step by step. arXiv preprint arXiv:2305.20050 , 2023. [24] Chen-Hsuan Lin, Jun Gao, Luming Tang, Towaki Takikawa, Xiaohui Zeng, Xun Huang, Karsten Kreis, Sanja Fidler, Ming-Yu Liu, and Tsung-Yi Lin. Magic3D: High-resolution text-to-3d content creation. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2023. [25] Jiayi Liu, Denys Iliash, Angel X. Chang, Manolis Savva, and Ali Mahdavi-Amiri. SINGAPO: Single image controlled generation of articulated parts in objects. arXiv preprint arXiv:2410.16499 , 2024. [26] Minghua Liu, Chao Xu, Haian Jin, Linghao Chen, Mukund Varma T, Zexiang Xu, and Hao Su. One-2-3-45: Any single image to 3d mesh in 45 seconds without per-shape optimization. arXiv preprint arXiv:2306.16928 , 2023. [27] Ruoshi Liu, Rundi Wu, Basile Van Hoorick, Pavel Tokmakov, Sergey Zakharov, and Carl Vondrick. Zero-1-to-3: Zero-shot one image to 3d object. In IEEE/CVF International Conference on Computer Vision (ICCV) , 2023. [28] Xiaoxiao Long, Yuan-Chen Guo, Cheng Lin, Yuan Liu, Zhiyang Dou, Lingjie Liu, Yuexin Ma, Song-Hai Zhang, Marc Habermann, Christian Theobalt, and Wenping Wang. Wonder3d: Single image to 3d using cross-domain diffusion. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2024. [29] Xiaoxuan Ma, Jiashun Wang, Nicolás Ugrinovic, Yehonathan Litman, and Kris Kitani. REST3D: Reconstructing physically stable 3d scenes from a single image. arXiv preprint arXiv:2605.30338 , 2026. [30] Lars Mescheder, Michael Oechsle, Michael Niemeyer, Sebastian Nowozin, and Andreas Geiger. Occupancy networks: Learning 3d reconstruction in function space. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2019. [31] Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. NeRF: Representing scenes as neural radiance fields for view synthesis. In European Conference on Computer Vision (ECCV) , 2020. [32] Ben Poole, Ajay Jain, Jonathan T. Barron, and Ben Mildenhall. Dreamfusion: Text-to-3d using 2d diffusion. In 
+
+International Conference on Learning Representations (ICLR) , 2023. [33] Zhangyang Qi, Ye Fang, Zeyi Sun, Xiaoyang Wu, Tong Wu, Jiaqi Wang, Dahua Lin, and Hengshuang Zhao. GPT4Point: A unified framework for point-language understanding and generation. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2024. [34] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, and Daya Guo. DeepSeekMath: Pushing the limits of mathematical reasoning in open language models. arXiv preprint arXiv:2402.03300 , 2024. [35] Yichun Shi, Peng Wang, Jianglong Ye, Mai Long, Kejie Li, and Xiao Yang. MVDream: Multi-view diffusion for 3d generation. In International Conference on Learning Representations (ICLR) , 2024. [36] Yawar Siddiqui, Antonio Alliegro, Alexey Artemov, Tatiana Tommasi, Daniele Sirigatti, Vladislav Rosov, Angela Dai, and Matthias Nießner. MeshGPT: Generating triangle meshes with decoder-only transformers. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2024. [37] Dídac Surís, Sachit Menon, and Carl Vondrick. ViperGPT: Visual inference via python execution for reasoning. In IEEE/CVF International Conference on Computer Vision (ICCV) , 2023. [38] Jiaxiang Tang, Zhaoxi Chen, Xiaokang Chen, Tengfei Wang, Gang Zeng, and Ziwei Liu. LGM: Large multi-view gaussian model for high-resolution 3d content creation. In European Conference on Computer Vision (ECCV) ,2024. [39] Xinjie Wang, Liu Liu, Yu Cao, Ruiqi Wu, Wenkang Qin, Dehui Wang, Wei Sui, and Zhizhong Su. EmbodiedGen: Towards a generative 3D world engine for embodied intelligence. arXiv preprint arXiv:2506.10600 , 2025. [40] Yanan Wang, Renxi Wang, Yongxin Wang, Xuezhi Liang, Fajri Koto, Timothy Baldwin, Xiaodan Liang, and Haonan Li. SimuScene: Training and benchmarking code generation to simulate physical scenarios. arXiv preprint arXiv:2602.10840 , 2026. [41] Zhengyi Wang, Jonathan Lorraine, Yikai Wang, Hang Su, Jun Zhu, Sanja Fidler, and Xiaohui Zeng. LLaMA-Mesh: Unifying 3d mesh generation with language models. arXiv preprint arXiv:2411.09595 , 2024. [42] Zhengyi Wang, Cheng Lu, Yikai Wang, Fan Bao, Chongxuan Li, Hang Su, and Jun Zhu. Prolificdreamer: High-fidelity and diverse text-to-3d generation with variational score distillation. In Advances in Neural Information Processing Systems (NeurIPS) , 2023. [43] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc V. Le, and Denny Zhou. Chain-of-thought prompting elicits reasoning in large language models. In Advances in Neural Information Processing Systems (NeurIPS) , 2022. 11 A PREPRINT - A UGUST 11, 2026 [44] Jiajun Wu, Chengkai Zhang, Tianfan Xue, William T. Freeman, and Joshua B. Tenenbaum. Learning a probabilistic latent space of object shapes via 3d generative-adversarial modeling. In Advances in Neural Information Processing Systems , 2016. [45] Fanbo Xiang, Yuzhe Qin, Kaichun Mo, Yikuan Xia, Hao Zhu, Fangchen Liu, Minghua Liu, Hanxiao Jiang, Yifu Yuan, He Wang, Li Yi, Angel X. Chang, Leonidas J. Guibas, and Hao Su. SAPIEN: A simulated part-based interactive environment. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2020. [46] Jianfeng Xiang, Zelong Lv, Sicheng Xu, Yu Deng, Ruicheng Wang, Bowen Zhang, Dong Chen, Xin Tong, and Jiaolong Yang. Structured 3d latents for scalable and versatile 3d generation. arXiv preprint arXiv:2412.01506 ,2024. [47] Jiale Xu, Weihao Cheng, Yiming Gao, Xintao Wang, Shenghua Gao, and Ying Shan. Instantmesh: Effi-cient 3d mesh generation from a single image with sparse-view large reconstruction models. arXiv preprint arXiv:2404.07191 , 2024. [48] Runsen Xu, Xiaolong Wang, Tai Wang, Yilun Chen, Jiangmiao Pang, and Dahua Lin. PointLLM: Empowering large language models to understand point clouds. In European Conference on Computer Vision (ECCV) , 2024. [49] Han Yan, Mingrui Zhang, Yang Li, Chao Ma, and Pan Ji. PhyCAGE: Physically plausible compositional 3d asset generation from a single image. arXiv preprint arXiv:2411.18548 , 2024. [50] Yunhan Yang, Chunshi Wang, Junliang Ye, Yang Li, Zanxin Chen, Zehuan Huang, Yao Mu, Zhuo Chen, Chunchao Guo, and Xihui Liu. PhysForge: Generating physics-grounded 3d assets for interactive virtual world. In 
+
+Proceedings of the International Conference on Machine Learning (ICML) , 2026. [51] Junliang Ye, Zhengyi Wang, Ruowen Zhao, Shenghao Xie, and Jun Zhu. ShapeLLM-Omni: A native multimodal llm for 3d generation and understanding. arXiv preprint arXiv:2506.01853 , 2025. [52] Chuanrui Zhang, Minghan Qin, Yuang Wang, Baifeng Xie, Hang Li, and Ziwei Wang. SIMART: Decomposing monolithic meshes into sim-ready articulated assets via MLLM. arXiv preprint arXiv:2603.23386 , 2026. [53] Zhuosheng Zhang, Aston Zhang, Mu Li, Hai Zhao, George Karypis, and Alex Smola. Multimodal chain-of-thought reasoning in language models. arXiv preprint arXiv:2302.00923 , 2023. 12
