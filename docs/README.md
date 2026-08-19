@@ -6,107 +6,65 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-18
-- 运行时间：2026-08-18 20:53:54 UTC
+- 最新运行日期：2026-08-19
+- 运行时间：2026-08-19 19:34:22 UTC
 - 运行状态：成功
-- 本次总论文数：29
-- 精读区：18
-- 速读区：11
+- 本次总论文数：15
+- 精读区：6
+- 速读区：9
 
 ### 今日简报（AI）
-今日精读18篇、速读11篇，共完成29篇论文筛选，聚焦具身智能与机器人学习前沿。最值得关注的是通过未来视觉表示预测提升VLA模型测试时可靠性，以及人在回路的在线模仿学习新机制。建议下一步优先复现或跟踪这两项高评分工作，并延伸至力感知超声扫描等具身操作场景。
-- 详情：[/202608/18/README](/202608/18/README)
+今日精选15篇论文，聚焦机器人基础模型、长时程操作与VLM具身智能。精读推荐《τ0-VLA》分层世界模型引导推理与《PDDL-ART》自主符号抽象，均获9分高分。普通读者可优先关注视觉-语言-动作模型的推理期对齐与操作感知VQA两大前沿方向。
+- 详情：[/202608/19/README](/202608/19/README)
 
 ### 精读区论文标签
-1. [VANE: Reliable Test-Time Training for Vision-Language-Action Models via Future Visual Representation Prediction](/202608/18/2608.09448v2-vane-reliable-test-time-training-for-vision-language-action-models-via-future-visual-representation-prediction)  
+1. [$τ_0$-VLA: a Hierarchical Robot Foundation Model with World-Model-Guided Test-Time Computation](/202608/19/2608.16885v1-0-vla-a-hierarchical-robot-foundation-model-with-world-model-guided-test-time-computation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向VLA闭环操作的可信测试时训练方法
-2. [Max-Q Selective Imitation for Human-in-the-Loop Online Robot Learning](/202608/18/2608.15088v1-max-q-selective-imitation-for-human-in-the-loop-online-robot-learning)  
+   evidence：面向长时程机器人操作的分层VLA模型与测试时计算
+2. [PDDL-ART: Autonomous Symbolic Abstraction From Demonstration For Long-Horizon Robotic Manipulation Using Vision-Language Models](/202608/19/2608.17146v1-pddl-art-autonomous-symbolic-abstraction-from-demonstration-for-long-horizon-robotic-manipulation-using-vision-language-models)  
    标签：评分：9.0/10、query:ad
-   evidence：人在回路的在线强化学习与最大Q选择性模仿，用于真实机器人学习
-3. [StructRL: Structured Action-Space Exploration for Flow-Based VLAs](/202608/18/2608.15139v1-structrl-structured-action-space-exploration-for-flow-based-vlas)  
+   evidence：从示范自动生成PDDL以支持长视界操作
+3. [ORPA: Online Residual Policy Adaptation for Robot Manipulation Control with Human Feedback](/202608/19/2608.17323v1-orpa-online-residual-policy-adaptation-for-robot-manipulation-control-with-human-feedback)  
    标签：评分：9.0/10、query:ad
-   evidence：面向流程式视觉-语言-动作模型的在线强化学习结构化探索方法
-4. [Vision-Based Tactile Intelligence for Robotics: Sensing, Learning, and Embodied Manipulation](/202608/18/2608.15490v1-vision-based-tactile-intelligence-for-robotics-sensing-learning-and-embodied-manipulation)  
+   evidence：基于人类反馈的机器人操作在线残差策略适应
+4. [Embodied-Navigator: Point, Think, Memorize, and Align for Efficient Navigation](/202608/19/2608.17512v1-embodied-navigator-point-think-memorize-and-align-for-efficient-navigation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人的视觉触觉传感器综述，融合传感硬件、学习与具身操作。
-5. [ReForce: Learning Force-aware Retargeting for Dexterous Manipulation](/202608/18/2608.15560v1-reforce-learning-force-aware-retargeting-for-dexterous-manipulation)  
+   evidence：基于视觉语言大模型和像素到3D动作的高效具身导航
+5. [HODAgent: Towards On-Demand, Responsive Humanoids for Physical World Human Interaction](/202608/19/2608.17584v1-hodagent-towards-on-demand-responsive-humanoids-for-physical-world-human-interaction)  
    标签：评分：9.0/10、query:ad
-   evidence：面向灵巧操作的力感知重定向方法，将人类示教动作与力映射到机器人
-6. [Not All History Helps: Velocity-Aware Selective Memory for Long-Horizon End-to-End Autonomous Driving](/202608/18/2608.15573v1-not-all-history-helps-velocity-aware-selective-memory-for-long-horizon-end-to-end-autonomous-driving)  
+   evidence：面向物理世界人机交互的人形具身智能体
+6. [Iterative Grasp Pose Refinement: A Deep Reinforcement Learning Approach for 2D Vision](/202608/19/2608.17628v1-iterative-grasp-pose-refinement-a-deep-reinforcement-learning-approach-for-2d-vision)  
    标签：评分：9.0/10、query:ad
-   evidence：端到端自动驾驶中的长时程规划，利用速度感知的选择性记忆。
-7. [Robo-Dopamine 2.0: History-Conditioned and OOD-Aware Process Reward Modeling for Robotic Manipulation](/202608/18/2608.15680v1-robo-dopamine-20-history-conditioned-and-ood-aware-process-reward-modeling-for-robotic-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：基于历史条件和OOD感知的过程奖励建模用于机器人操作强化学习
-8. [GAINS: Leveraging Inconsistent Human Intervention Signals in Reinforcement Learning](/202608/18/2608.15707v1-gains-leveraging-inconsistent-human-intervention-signals-in-reinforcement-learning)  
-   标签：评分：9.0/10、query:ad
-   evidence：利用不一致人类干预信号的强化学习方法，用于真实机器人操作修正
-9. [GigaBrain-0.7: Scaling Embodied Foundation Models to Emergent Capabilities with a Three-System Architecture](/202608/18/2608.15875v1-gigabrain-07-scaling-embodied-foundation-models-to-emergent-capabilities-with-a-three-system-architecture)  
-   标签：评分：9.0/10、query:ad
-   evidence：跨多样机器人本体的具身基础模型，统一理解、预测与动作
-10. [RoboStriker: Latent-Space Strategic Games for Autonomous Humanoid Boxing](/202608/18/2608.16195v1-robostriker-latent-space-strategic-games-for-autonomous-humanoid-boxing)  
-   标签：评分：9.0/10、query:ad
-   evidence：多智能体强化学习实现人形机器人在接触丰富动态任务中的智能控制
-11. [Principled Authority Switching for Shared Autonomy in Human-Robot Teams](/202608/18/2608.16293v1-principled-authority-switching-for-shared-autonomy-in-human-robot-teams)  
-   标签：评分：9.0/10、query:ad
-   evidence：人机团队共享自主中的博弈论权威切换机制
-12. [HaReCAP: Habitual-action Grounding for Recursive Large Language Model Agents](/202608/18/2608.16447v1-harecap-habitual-action-grounding-for-recursive-large-language-model-agents)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向长时程具身任务的LLM智能体规划与动作落地
-13. [NebulaVLA: A Dual-Frequency Vision-Language-Action Model With Guide Action for Robotic Manipulation](/202608/18/2608.16503v1-nebulavla-a-dual-frequency-vision-language-action-model-with-guide-action-for-robotic-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：机器人操作视觉-语言-动作模型
-14. [Zetta $ζ$: An Efficient Closed-Loop Embodied Harness for Self-Evolving Physical Intelligence](/202608/18/2608.16590v1-zetta--an-efficient-closed-loop-embodied-harness-for-self-evolving-physical-intelligence)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向物理智能体自我演化的闭环具身框架，支持实时执行
-15. [The Ethical Decision Head: Operationalizing Normative Ethics in Autonomous Vehicles via Reinforcement Learning from Human Feedback](/202608/18/2608.16710v1-the-ethical-decision-head-operationalizing-normative-ethics-in-autonomous-vehicles-via-reinforcement-learning-from-human-feedback)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶汽车伦理决策的深度强化学习框架
-16. [Neurosymbolic Embodied Agents](/202608/18/2608.16794v1-neurosymbolic-embodied-agents)  
-   标签：评分：9.0/10、query:ad
-   evidence：神经符号具身智能体，结合符号规划处理长时家务任务
-17. [HAF: Adapting Generalist VLAs to Humanoid Whole-Body Loco-manipulation via Hierarchical Action Flow and Spectral Latent RL](/202608/18/2608.16837v1-haf-adapting-generalist-vlas-to-humanoid-whole-body-loco-manipulation-via-hierarchical-action-flow-and-spectral-latent-rl)  
-   标签：评分：9.0/10、query:ad
-   evidence：通过分层动作流和谱潜在强化学习实现人形机器人全身运动-操作
-18. [Don't Drop the BATON: Long-Horizon Robot Manipulation via Agentic Subtask Exploration and Transition-aware Memory](/202608/18/2608.16889v1-dont-drop-the-baton-long-horizon-robot-manipulation-via-agentic-subtask-exploration-and-transition-aware-memory)  
-   标签：评分：9.0/10、query:ad
-   evidence：基于LLM智能体子任务探索和转换感知记忆的长时程机器人操作
+   evidence：基于2D视觉的强化学习抓取位姿优化
 
 ### 速读区论文标签
-1. [ForceU-VLA: A Force-Aware Vision-Language-Action Model for Embodied Ultrasound Scanning](/202608/18/2608.15009v1-forceu-vla-a-force-aware-vision-language-action-model-for-embodied-ultrasound-scanning)  
+1. [Imagining Recovery: Inference-Time Counterfactual Realignment for Vision-Language-Action Models](/202608/19/2608.14822v1-imagining-recovery-inference-time-counterfactual-realignment-for-vision-language-action-models)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身自主超声扫描的力感知视觉-语言-动作模型，集成感知与执行。
-2. [PACE: Phase-Progress-Aware Credit for Long-Horizon Embodied Manipulation](/202608/18/2608.15026v1-pace-phase-progress-aware-credit-for-long-horizon-embodied-manipulation)  
+   evidence：视觉-语言-动作模型机器人操作恢复，反事实重对齐
+2. [HiPHI: A Large-Scale Benchmark for High-Precision Human Motion and Object-Interaction](/202608/19/2608.16222v1-hiphi-a-large-scale-benchmark-for-high-precision-human-motion-and-object-interaction)  
    标签：评分：8.0/10、query:ad
-   evidence：面向长时程具身操作的阶段进度感知信用分配方法
-3. [Accelerating Mixed Discrete-Continuous Motion Planning via Neural Graphs of Convex Sets](/202608/18/2608.15440v1-accelerating-mixed-discrete-continuous-motion-planning-via-neural-graphs-of-convex-sets)  
+   evidence：面向具身学习的大规模全身运动与物体交互基准
+3. [PROBE: Manipulation-Grounded Visual Question Answering with VLM Agents](/202608/19/2608.17129v1-probe-manipulation-grounded-visual-question-answering-with-vlm-agents)  
    标签：评分：8.0/10、query:ad
-   evidence：利用学习加速面向导航与操作的混合离散-连续运动规划
-4. [GUIDER: Evaluating Goal-Free Human Intent Inference for Teleoperated Manipulation on Real-Robot Data](/202608/18/2608.15446v1-guider-evaluating-goal-free-human-intent-inference-for-teleoperated-manipulation-on-real-robot-data)  
+   evidence：面向动态场景中机器人操作接地的视觉问答
+4. [Q-Learning With World Models](/202608/19/2608.17163v1-q-learning-with-world-models)  
    标签：评分：8.0/10、query:ad
-   evidence：遥操作中的人类意图推断
-5. [AlloEgo-VLM: Disambiguating Allocentric and Egocentric Reference Frames in Vision-Language Models](/202608/18/2608.15605v1-alloego-vlm-disambiguating-allocentric-and-egocentric-reference-frames-in-vision-language-models)  
+   evidence：结合世界模型的离策略强化学习用于真实世界机器人策略学习
+5. [Teach and Grow: An Agent-Centered Architecture for General Robot Learning](/202608/19/2608.17209v1-teach-and-grow-an-agent-centered-architecture-for-general-robot-learning)  
    标签：评分：8.0/10、query:ad
-   evidence：通过消除视觉-语言模型中空间参考系歧义，减少具身AI机器人的空间语义错误。
-6. [Algorithm-Architecture Co-Design for Efficient VLA Inference via Speculative Inference and Verification](/202608/18/2608.15636v1-algorithm-architecture-co-design-for-efficient-vla-inference-via-speculative-inference-and-verification)  
+   evidence：以技能块为中心的通用机器人学习架构
+6. [EATR-Stereo: Embodiment-Aware Routing of Paired Stereo Evidence for Humanoid Vision-Language-Action Control](/202608/19/2608.17453v1-eatr-stereo-embodiment-aware-routing-of-paired-stereo-evidence-for-humanoid-vision-language-action-control)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身AI VLA实时部署的硬件高效推测式推理
-7. [Unified Condition-Action Modeling for Accurate One-Step Action Generation](/202608/18/2608.16153v1-unified-condition-action-modeling-for-accurate-one-step-action-generation)  
+   evidence：面向人形机器人VLA控制的具身感知立体证据路由
+7. [Calibrated Predictive Safety for Heterogeneous Robots: An Action-Conditioned JEPA Framework with Model-Based Safety Shields](/202608/19/2608.17496v1-calibrated-predictive-safety-for-heterogeneous-robots-an-action-conditioned-jepa-framework-with-model-based-safety-shields)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人操作的一步动作生成统一条件-动作建模
-8. [Remember Smarter: Visual History Compressor and Hyperbolic Experience Space for Robotic Memory](/202608/18/2608.15269v1-remember-smarter-visual-history-compressor-and-hyperbolic-experience-space-for-robotic-memory)  
+   evidence：针对异构机器人的物理环境安全预测框架
+8. [Hydra-0: Action Flow for Generalist World Modeling and Control](/202608/19/2608.18077v1-hydra-0-action-flow-for-generalist-world-modeling-and-control)  
+   标签：评分：8.0/10、query:ad
+   evidence：基于动作流的通用世界模型，像素运动接口用于机器人控制
+9. [Co-design of Neural and Muscle Network based on Embodied Perceptron Representation](/202608/19/2608.16555v1-co-design-of-neural-and-muscle-network-based-on-embodied-perceptron-representation)  
    标签：评分：7.0/10、query:ad
-   evidence：面向长时程具身机器人策略的视觉历史压缩与经验记忆模块
-9. [EcoVLA: Energy-Efficient Device-Edge Co-Inference for Vision-Language-Action Models under Real-Time Constraints](/202608/18/2608.15502v1-ecovla-energy-efficient-device-edge-co-inference-for-vision-language-action-models-under-real-time-constraints)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向具身AI的VLA模型在实时约束下的能效设备-边缘协同推理。
-10. [Temporal Logic Guided Universal Task Representations for Reinforcement Learning](/202608/18/2608.15509v1-temporal-logic-guided-universal-task-representations-for-reinforcement-learning)  
-   标签：评分：7.0/10、query:ad
-   evidence：通用时序逻辑强化学习任务表示，可迁移至机器人强化学习控制
-11. [MistyPilot: Enabling Social-Robot Control through Multi-Agent LLM Skill Orchestration](/202608/18/2608.15549v1-mistypilot-enabling-social-robot-control-through-multi-agent-llm-skill-orchestration)  
-   标签：评分：7.0/10、query:ad
-   evidence：多智能体LLM框架根据自然语言指令编排社交机器人技能，实现人机交互控制。
+   evidence：基于具身感知表示的本体与控制器协同设计
 
 
 <div class="dpr-home-promo-card">
