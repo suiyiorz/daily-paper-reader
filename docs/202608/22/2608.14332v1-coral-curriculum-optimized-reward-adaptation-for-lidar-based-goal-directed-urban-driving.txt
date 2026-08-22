@@ -1,0 +1,1869 @@
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+1
+CORAL: Curriculum-Optimized Reward Adaptation
+for LiDAR-Based Goal-Directed Urban Driving
+Anisa Saleem and Duksu Kim
+Abstract—Reinforcement learning is promising for autonomous
+urban driving, but long-horizon goal-directed navigation asks
+a policy to acquire several competing behaviors at once—
+reaching a distant goal, tracking a route, avoiding obstacles,
+obeying signals—and a fixed objective gives no order in which
+to learn them. This paper presents CORAL, which advances
+two schedules together: a five-stage curriculum that progressively
+lengthens routes and tightens behavioral constraints, and a stage-
+aware reward whose component weights shift emphasis from
+mission progress toward route following, safety, smoothness, and
+rule compliance as the task hardens. The policy is a multi-stream
+actor–critic network trained with Proximal Policy Optimization
+(PPO) in CARLA on a compact 99-dimensional state pairing a
+polar LiDAR histogram with vehicle telemetry, ego-frame route
+geometry, and traffic-rule indicators—no point-cloud encoder, no
+bird’s-eye-view rasterization. Against two PPO baselines under
+an identical protocol, CORAL reaches the goal in all twenty
+evaluation episodes on the longest routes under the full set of
+behavioral constraints, where the baselines reach 5% and 10%;
+a factorial ablation shows that neither schedule alone matches
+their combination: removing either lowers both success and route
+completion, and disabling both drops success to 55%. Trained
+in one town, the policy transfers zero-shot to seven unseen
+towns, succeeding in 68–98% of episodes on routes of the same
+100–150 m length, with mean lateral deviation below 0.35 m.
+Scheduling the objective in step with task difficulty, on a compact
+state, is thus an effective basis for goal-directed urban driving
+without visual input or expert demonstrations.
+Index Terms—Autonomous driving, CARLA simulator, cur-
+riculum learning, LiDAR, reinforcement learning, reward shap-
+ing, route following.
+I. INTRODUCTION
+A
+UTONOMOUS driving in urban environments demands
+robust perception, long-horizon planning, and smooth
+continuous control amid diverse conditions [1]. Traditional
+imitation learning (IL) methods rely on expert demonstrations,
+which constrains generalization to novel scenarios or complex
+intersections [2]. Although IL performs well when expert data
+are abundant, it struggles under distribution shift, rare corner
+cases, and unseen road geometries where no demonstrations
+exist, making it insufficient for goal-directed navigation across
+diverse urban layouts.
+Reinforcement learning (RL) offers an alternative, allowing
+agents to learn driving behaviors through direct interaction
+in simulators such as CARLA [3]. RL is appealing because
+it avoids the need for expert labels and can optimize long-
+horizon objectives such as route completion and smooth
+control. However, model-free RL for realistic driving remains
+The authors are with the Department of Computer Engineering, Korea
+University of Technology and Education (KOREATECH) (e-mail: anisas-
+aleem@koreatech.ac.kr; bluekds@koreatech.ac.kr). (Corresponding author:
+Duksu Kim.)
+difficult, facing high-dimensional observations, sparse rewards,
+and training instability [1].
+A further key design choice in RL-based driving is the
+sensory modality. Vision-based approaches prevail in the lit-
+erature [4], but RGB inputs are vulnerable to illumination
+changes, occlusions, and adverse weather [5], [6], whereas
+LiDAR provides geometric measurements that are largely
+invariant to illumination—at the cost of computationally heavy
+raw point clouds or lossy bird’s-eye-view (BEV) rasterizations
+(Section II). These trade-offs motivate a compact, geometry-
+based LiDAR representation tailored for stable RL [7].
+To this end, we propose CORAL (Curriculum-Optimized
+Reward Adaptation for LiDAR-based goal-directed urban
+driving), whose central element is a training schedule that
+advances task difficulty and the reward objective together.
+CORAL runs on a compact route-aware observation (Sec-
+tion III-B): rather than raw point clouds or dense BEV maps,
+the agent acts on a low-dimensional state that combines a
+64-bin polar LiDAR histogram with vehicle telemetry, the
+upcoming route expressed in the ego frame, and traffic-rule
+signals, giving an efficient description of the driving scene at
+a fraction of the input dimension that learned perception front-
+ends require. This observation is processed by a multi-stream
+actor–critic network (Section III-C) trained with Proximal
+Policy Optimization (PPO).
+To stabilize learning over long horizons, that schedule cou-
+ples a five-stage curriculum (Section III-E), which lengthens
+routes and tightens behavioral constraints stage by stage, with
+a stage-aware reward formulation (Section III-D) that adapts
+the relative importance of mission progress, route following,
+safety, driving smoothness, and traffic-rule compliance in step
+with it. Advancing the two together is intended to keep the
+objectives from competing while the policy is still acquiring
+basic control; the factorial ablation of Section IV-C examines
+what the coupling is worth. In CARLA, CORAL outperforms
+two PPO baselines adapted from published end-to-end and
+curriculum-guided driving methods by a wide margin: under
+an identical protocol at the hardest curriculum stage, it reaches
+the goal in all twenty per-stage evaluation episodes while the
+baselines reach 5% and 10%. A factorial ablation over the two
+schedules shows that neither alone matches their combination:
+removing either lowers both success and route completion,
+and disabling both drops success to 55%. Moreover, despite
+training in a single town, the learned policy transfers zero-shot:
+with every mission kept at the hardest setting, the final policy
+succeeds in 68–98% of episodes across seven unseen towns,
+against 99.0% in the training town, and mean lateral deviation
+stays below 0.35 m. A leave-one-out test of the observation
+(Section IV-D) is reported alongside these results and is less
+arXiv:2608.14332v1  [cs.RO]  14 Aug 2026
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+2
+favorable: on this static benchmark the LiDAR histogram can
+be removed without a measurable loss, which we report as a
+limitation of the evaluation environment rather than a property
+of the representation.
+II. RELATED WORK
+Reinforcement learning for autonomous driving: Re-
+inforcement learning has attracted considerable attention in
+autonomous driving because it enables driving behavior to be
+learned through interaction with an environment rather than
+through manually designed control rules or expert demon-
+strations. Early studies applied value-based and actor–critic
+algorithms such as DQN [8] and A3C [9] to driving-related
+decision making from sensory observations. Later continuous-
+control algorithms, including DDPG [10] and SAC [11], made
+it practical to generate steering, throttle, and braking com-
+mands directly. The development of realistic simulators such
+as CARLA [3] further accelerated RL research by providing
+safe and scalable environments for training and evaluation.
+Despite these advances, learning stable driving policies for
+long-horizon urban navigation remains challenging due to
+exploration difficulty, training instability, and the need to
+simultaneously satisfy multiple driving objectives.
+Policy optimization for continuous control: PPO [12] has
+become one of the most widely adopted RL algorithms for
+autonomous driving because of its stable clipped objective
+and effectiveness in continuous-control tasks. PPO has been
+applied to vehicle control in simulated driving environments,
+including fully end-to-end formulations that map observations
+directly to continuous control commands [13]. More recently,
+curriculum-guided PPO approaches such as CuRLA [14]
+have combined PPO with a progressively harder training
+curriculum. Nevertheless, many PPO-based driving systems
+still pair PPO with a single fixed reward, which limits their
+effectiveness on tasks that must balance multiple competing
+driving objectives.
+State representation: State representation plays a critical
+role in RL-based autonomous driving because it directly
+affects learning efficiency, computational cost, and policy
+robustness. Vision-based approaches are widely used for the
+rich appearance and semantic content of camera imagery [4],
+[15], [16], but they typically require deep neural networks
+and large training datasets while remaining sensitive to illu-
+mination changes, weather conditions, and occlusions [17].
+LiDAR sensors provide geometric measurements that are
+largely independent of illumination. However, processing raw
+point clouds using architectures such as PointNet [18], Voxel-
+Net [19], and related methods introduces substantial computa-
+tional overhead [20], [21]. Alternative representations such as
+BEV maps reduce dimensionality but often require additional
+preprocessing and can discard fine geometric detail during
+projection [22].
+In addition to perception features, conditioning the policy on
+high-level navigational commands from a topological planner
+has been shown to make end-to-end driving directable toward
+a goal that the sensory input alone cannot disambiguate [16].
+Building on these observations, our agent operates on a single
+low-dimensional vector that pairs a compact polar LiDAR his-
+togram with ego-frame route geometry—lateral deviation and
+heading alignment relative to the planned route rather than a
+discrete turn command—integrating perception and navigation
+without a learned point-cloud encoder or a rasterized BEV
+map.
+Curriculum learning and reward design: Curriculum
+learning improves RL training by gradually increasing task
+difficulty, allowing agents to acquire fundamental skills be-
+fore confronting more challenging objectives [23], [24]. In
+autonomous driving, curriculum strategies have been applied
+through progressive route expansion, increasing traffic density,
+and staged scenario difficulty [25], [26]. Prior studies indicate
+that curriculum learning can improve exploration efficiency
+and policy robustness, particularly in long-horizon navigation
+tasks.
+Reward design is equally important because autonomous
+driving requires balancing multiple objectives, including nav-
+igation accuracy, safety, comfort, and traffic-rule compliance.
+Potential-based reward shaping is a well-established tech-
+nique for accelerating learning while provably leaving the
+optimal policy unchanged [27]. Early driving reward designs
+primarily relied on collision penalties and goal-reaching re-
+wards, whereas more recent ones incorporate comfort-aware
+and risk-aware objectives [28], [29]. Despite these advances,
+most existing RL-based driving systems employ fixed reward
+formulations throughout training. Such formulations may be-
+come suboptimal as the agent progresses from learning basic
+vehicle control to mastering complex navigation behaviors.
+Furthermore, curriculum learning and reward shaping are often
+investigated independently rather than as a unified training
+framework.
+In summary, unlike CuRLA [14], which combines a vision-
+based latent state, a traffic-density curriculum, and a reward
+that is fixed apart from a collision penalty added partway
+through training, our framework couples a compact polar
+LiDAR histogram observation and a route-distance curriculum
+with a reward whose component weights are scheduled across
+curriculum stages.
+III. METHODOLOGY
+This section presents the proposed curriculum-guided rein-
+forcement learning framework for goal-directed autonomous
+driving.
+A. System Overview
+We formulate goal-directed urban driving as a continuous-
+control reinforcement learning problem in which, at each
+timestep, the agent maps an observation of the driving scene
+to steering, throttle, and brake commands, and is trained in
+the CARLA simulator using PPO. Fig. 1 gives an overview of
+CORAL; this subsection walks through the end-to-end pipeline
+and points to the subsection that develops each component in
+detail.
+At learning time, the pipeline proceeds in three steps.
+Raw LiDAR point clouds are first reduced to a compact
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+3
+polar histogram that encodes obstacle proximity in the ego-
+vehicle frame. This histogram is then concatenated with ve-
+hicle telemetry, route-aware navigation features, and traffic-
+rule awareness signals to form a single low-dimensional ob-
+servation vector (Section III-B). Finally, a multi-stream actor–
+critic network maps this observation to the continuous driving
+commands (Section III-C).
+Training couples two mechanisms within a single process.
+A stage-aware reward shifts the relative importance of the
+driving objectives (Section III-D), while a curriculum extends
+route length and tightens behavioral constraints across stages
+(Section III-E). Because the reward priorities shift in step with
+curriculum difficulty, the agent acquires basic vehicle control
+before confronting the harder navigation behaviors.
+B. Observation Space
+The policy operates on a compact route-aware observation
+vector, defined at timestep t as
+ot =
+h
+otelemetry
+t
+, oroute
+t
+, orules
+t
+, olidar
+t
+i
+∈R99
+(1)
+where the four components provide complementary infor-
+mation for autonomous driving. Fig. 2 illustrates the structure
+of the proposed observation representation.
+Vehicle telemetry otelemetry
+t
+∈R4 consists of the normalized
+vehicle speed, steering, throttle, and brake commands. Route-
+aware navigation features oroute
+t
+∈R26 comprise the ego-
+frame offsets of the next ten route waypoints (20 values)
+together with six auxiliary quantities: lateral deviation from
+the reference route, the goal position projected into the ego
+frame and the normalized distance to the goal (three goal-
+relative values), heading alignment with the route direction,
+and local route curvature. These features provide both short-
+term trajectory guidance and long-horizon navigation context.
+Traffic-rule awareness signals orules
+t
+∈R5 consist of three
+binary traffic-light-state indicators (Ired, Iyellow, Igreen), the nor-
+malized distance to the traffic-light trigger region, and a red-
+light stop-zone indicator.
+Local obstacle geometry is encoded as a 64-bin polar
+LiDAR histogram olidar
+t
+∈R64. The forward-facing 180◦
+field of view (−90◦to +90◦relative to the ego vehicle) is
+uniformly divided into 64 angular sectors, and each bin stores
+the minimum obstacle distance within its sector, normalized by
+a maximum sensing range of 30 m. Smaller values therefore
+indicate nearby obstacles and larger values free space, yielding
+a compact directional encoding of obstacle proximity that
+avoids the cost of processing raw point clouds.
+The agent controls the vehicle through a continuous action
+at
+= [asteer
+t
+, athrottle
+t
+, abrake
+t
+], where asteer
+t
+∈[−1, 1] is the
+normalized steering angle and athrottle
+t
+, abrake
+t
+∈[0, 1] control
+acceleration and braking. The continuous formulation is well
+suited to policy-gradient optimization with PPO and yields
+smoother control than discrete action sets.
+C. Multi-Stream Actor–Critic Policy Network
+The proposed driving policy is parameterized by a multi-
+stream actor–critic neural network, shown in Fig. 3. The
+network receives the structured observation vector of Sec-
+tion III-B and processes each modality through an independent
+encoder before feature fusion, enabling modality-specific fea-
+ture extraction while reducing interference between heteroge-
+neous inputs such as vehicle dynamics, route geometry, traffic-
+rule signals, and obstacle observations.
+Each stream is projected into a compact latent representation
+by a lightweight multilayer perceptron (MLP): the telemetry
+(R4), route (R26), rule (R5), and LiDAR (R64) inputs are
+encoded into 32-, 64-, 32-, and 64-dimensional embeddings,
+respectively. These embeddings are concatenated into a 192-
+dimensional feature and passed through a shared fusion MLP
+with layer widths 192 →1024 →512 →256.
+Two task-specific heads, each with hidden layers 256 →
+128 →64, branch from the fused representation. The actor
+head parameterizes a diagonal Gaussian policy over the con-
+tinuous steering, throttle, and brake commands, while the critic
+head estimates the state value used for advantage estimation
+during PPO training; the two heads share the fused features
+but are otherwise independent.
+D. Stage-Aware Reward Design
+To guide policy learning in long-horizon urban navigation
+tasks, the proposed framework employs a multi-objective
+reward formulation that combines mission progress, route fol-
+lowing, safety, smoothness, and traffic-rule objectives. Rather
+than relying on a single sparse reward signal, the reward is
+decomposed into interpretable components corresponding to
+distinct driving behaviors.
+The reward at timestep t is defined as
+Rt = w(k)
+misRmis + w(k)
+rt Rrt + w(k)
+saf Rsaf + w(k)
+smoRsmo + w(k)
+ruleRrule,
+(2)
+where Rmis, Rrt, Rsaf, Rsmo, and Rrule denote the mission,
+route-following, safety, smoothness, and rule-compliance re-
+wards, respectively, and the weights w(k)
+·
+depend on the cur-
+riculum stage k ∈{0, . . . , 4}, allowing the learning objectives
+to evolve throughout training. The per-step reward is clipped
+to [−10, 10] to avoid destabilizing policy updates, and terminal
+events are handled separately (Eq. 13).
+The mission reward encourages continuous progress to-
+ward the destination while discouraging prolonged idling. Let
+∆dt = dt−1 −dt denote the reduction in the remaining route
+distance between consecutive timesteps. The progress incre-
+ment is normalized and clipped, which bounds the contribution
+of unusually large transitions:
+Rprog = clip
+∆dt
+¯d , −1, 1
+
+,
+(3)
+where ¯d is a normalization constant that scales the per-
+step displacement. To prevent reward accumulation while the
+vehicle is stationary, the progress term is suppressed when
+the vehicle speed falls below 0.2 m/s. A single idle penalty,
+applied in the mission reward and nowhere else, discourages
+prolonged unnecessary stopping. An idle counter N idle
+t
+is
+incremented whenever the speed falls below vidle = 0.6 m/s
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+4
+Telemetry
+speed, steer, throttle,
+brake
+4
+Route Features
+waypoints in ego
+frame,
+curvature, goal delta,
+26
+Rule Signals
+red-light flag,
+distance to traffic light
+5
+LiDAR Histogram
+64-bin polar histogram
+0–180°, 30 m range)
+64
+Obs.
+st
+action aₜ
+Policy Update
+reward rₜ
+next observation sₜ₊₁
+2. Observation Vector  sₜ  (99-D)
+1. Simulation Env. (CARLA)
+• Vehicle dynamics and ego 
+state
+• Route map and waypoints
+• Traffic rules signals
+3. Policy Network (PPO)
+Modality-Specific Feature 
+Projection
+MLP per modality → latent embedding
+Shared Feature Fusion
+concatenate → MLP
+Actor–Critic Heads
+𝐴𝑐𝑡𝑜𝑟 𝜋𝜃 (𝑎ₜ|𝑠ₜ) | 𝐶𝑟𝑖𝑡𝑖𝑐 𝑉𝜑(𝑠ₜ)
+Action Output
+aₜ = [δ, τ, b] ∈ ℝ³
+steer δ · throttle τ · brake b
+(continuous control)
+Parameter update (policy optimization)
+Environment  feedback
+b. Multi-Objective Reward Design (5 Components)
+Goal-Oriented
+progress 
+toward
+destination
+Safety
+collision
+avoidance
+Smoothness
+stable and
+comfortable
+control
+Route Following
+stay on lane
+and follow route
+Rule Compliance
+obey traffic
+rules and signals
+a. Curriculum Learning (Increasing Route Complexity)
+Progressively longer routes and stricter behavioral constraints
+(route length, rule constraints)
+Stage 0
+10–20 m
+Basic Motion
+Stage 1
+20–40 m
+Route 
+Following
+Stage 2
+40–70 m
+Route + Rules
+Stage 3
+70–100 m
+Long-horizon 
+Navigation
+Stage 4
+100–150 m
+Full Driving
+Fig. 1. Overview of the proposed framework: LiDAR, telemetry, route, and traffic-rule inputs form a compact observation that a multi-stream actor–critic
+policy maps to continuous control, trained with PPO under the coupled curriculum and stage-aware reward.
+4D
+26D
+Route Features
+5D
+64-D
+LiDAR Histogram
+Route Features
+3
+Rule Signals
+•
+Waypoint deltas (N=10): 20
+•
+Lateral deviation: 1
+•
+Goal direction (Δx, Δy, dist): 3
+•
+Heading alignment: 1
+•
+Route curvature: 1
+•
+Traffic-light state (3)
+: one-hot R/Y/G
+•
+Distance to light (1)
+•
+In stop zone (1): binary
+Telemetry
+Rule Signals
+4
+LiDAR Histogram
+•
+64-bin polar histogram
+•
+180° forward field of view
+•
+values in [0, 1], 1=far, 0= near
+2
+1
+Telemetry
+speed (m/s)
+         steering (rad)
+         
+         throttle [0, 1]
+         brake [0, 1]
+Fig. 2. Structure of the proposed 99-dimensional observation vector.
+throttle, 
+steer, 
+brake
+Modality 
+Encoders
+MLP
+MLP
+MLP
+MLP
+64D
+Observation 
+Space
+Polar LiDAR 
+Histogram
+Route 
+Features
+Rule Signals
+Telemetry
+64D
+26D
+5D
+4D
+64D
+32D
+32D
+Actor Head
+Policy π(a/s)
+[128, 64] · SiLU
+scalar 
+value
+Concatenate
+192
+Fusion MLP
+Linear
+192-1024
+Linear
+1024-512
+Linear
+512-256
+SiLU
+SiLU
+SiLU
+Shared 
+Feature
+(256D)
+Critic Head
+[128, 64] · SiLU
+Value Estimation 
+V(s)
+Fig. 3. Architecture of the proposed multi-stream actor–critic policy network.
+and is reset otherwise; once it exceeds a stage-dependent
+patience period Npat, the penalty is
+Ridle = −clip
+max(0, N idle
+t
+−Npat)
+80
+, 0, 1
+
+,
+(4)
+so that it grows linearly once patience is exhausted and
+saturates at −1 after a further 80 steps (4 s at 20 Hz), giving
+Ridle ∈[−1, 0]. Here Npat = 35 steps (1.75 s) for Stages 0–2
+and 25 steps (1.25 s) for Stages 3–4. The penalty is disabled
+while the vehicle is legitimately stopped at a red light within
+the 20 m stop zone. Separately, in Stages 1–4, the idle penalty
+is disabled during an initial warm-up of 80 steps (4 s). The
+idle-penalty saturation length and the initial warm-up are
+distinct implementation constants that happen to have the same
+value. The final mission reward is
+Rmis = Rprog + Ridle.
+(5)
+A terminal goal reward is assigned separately upon reaching
+the destination (Eq. 13).
+The route-following reward combines route alignment, way-
+point alignment, lateral path tracking, and heading-error min-
+imization:
+Ralign = β1Aroute + β2 cos(θwp),
+(6)
+Rpath = 1 −
+|elat
+t |
+0.5 Wlane
+−λh
+|θhead
+t
+|
+π/2 ,
+(7)
+Rrt = β3Ralign + β4Rpath,
+(8)
+where Aroute is the cosine alignment between the vehicle
+heading and the planned route direction, θwp is the angle to the
+next waypoint, elat
+t
+is the lateral deviation from the reference
+route, Wlane is the lane width, and θhead
+t
+is the heading error
+with respect to the route direction. The weights β1, β2 balance
+route and waypoint alignment, λh trades off lateral against
+heading error, and β3, β4 balance the alignment and path-
+tracking terms.
+The safety reward regulates speed according to route geom-
+etry. The absolute local curvature is first scaled and clipped
+to [0, 1], so that the target speed reaches its minimum on the
+tightest curves,
+ˆκt = clip(12|κt|, 0, 1) ,
+(9)
+where κt is the local path curvature in m−1, estimated from
+consecutive route segments, so that the gain of 12 m saturates
+ˆκt at an effective turn radius of about 12 m: corners tighter
+than that are all treated as maximally curved. The target speed
+is then interpolated between the minimum and the stage-
+dependent base speed,
+vtarget
+t
+= vmin + (vbase −vmin)(1 −ˆκt)2,
+(10)
+and the reward’s principal term penalizes departures from it,
+Rsaf = 1 −
+vt −vtarget
+t
+
+vtarget
+t
+.
+(11)
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+5
+Total Reward
+1
+Mission
+(Goal-Oriented)
+2
+Route
+(Path Following)
+3
+Safety
+(Collision Avoidance)
+4
+Smoothness
+(Control Smoothness)
+5
+Rules
+(Rule Compliance)
+Progress Reward
+Reward for moving 
+forward along route
+Idle Penalty
+Penalty for staying almost 
+stationary too long
+Route Alignment
+Reward for aligning with 
+reference route
+Path Following
+Penalty for lateral 
+deviation from path
+Heading Alignment
+Reward for matching 
+route direction
+Safe Velocity
+Penalty for deviating from 
+target speed
+Overspeed Penalty
+Penalty above stage limit
+Stability Penalty
+Penalty for instability
+Action smoothness
+Penalty for abrupt control 
+changes (Δacc/Δt)
+Steering Smoothness
+Penalty for large steering 
+changes
+Throttle-Brake Conflict
+Penalty for using throttle 
+and brake together
+Red-Light Violation
+Penalty for running red 
+light
+Correct Stop
+Reward for stopping 
+before stop line
+Green Resume
+Reward for continuing 
+after green
+Curriculum Aware Weighting
+Weights change across training stages to emphasize different objectives progressively
+Legend
+    Contribution to total reward
+      influenced by curriculum
+Fig. 4. Structure of the stage-aware reward: the five component rewards of Eq. 2 are combined with stage-dependent weights w(k) (Table I).
+Additional penalties discourage overspeeding and excessive
+combined steering and speed, while collisions are handled
+separately as terminal safety failures.
+The smoothness reward penalizes abrupt control changes,
+with ∆at = at −at−1 and steering δt:
+Rsmo = −αa ∥∆at∥2
+2 −αδ |δt −δt−1| −αtb Itb,
+(12)
+where Itb equals one when throttle and brake are simultane-
+ously applied above predefined thresholds and zero otherwise,
+and αa, αδ, and αtb weight the action-change, steering-change,
+and throttle–brake conflict penalties, respectively.
+The rule-compliance reward applies a large penalty Cred
+for crossing a red light and positive rewards for stopping
+correctly and resuming on green. It is activated from Stage 2
+and gradually ramped in.
+Terminal events are handled separately from the weighted
+step reward:
+Rterm =
+
+
+
+
+
+Rgoal,
+goal reached,
+Rcrash,
+collision,
+Rtimeout,
+time limit reached,
+(13)
+where the goal reward Rgoal = 100 sd sk is scaled by the initial
+route distance d0 through sd = max(0.75, d0/25) and by the
+curriculum stage k through sk = 1+0.4k, so that longer routes
+and later stages yield a proportionally larger completion bonus.
+An episode may also end when the vehicle is judged stuck,
+which carries no terminal reward: the idle penalty has been
+accumulating over the same interval already.
+The scalar coefficients (β1–β4, λh, αa, αδ, αtb, ¯d, vmin,
+the per-stage vbase, and Cred), together with the terminal
+magnitudes (Rcrash and Rtimeout), are hand-set implementation
+constants; their numerical values are listed in Table V.
+Unlike conventional fixed reward formulations, the proposed
+framework schedules these weights across the curriculum
+stages, as illustrated in Fig. 4; the per-stage values are listed
+with the curriculum stages in Table I, and the schedule itself
+is described in Section III-E.
+E. Curriculum-Guided Training Strategy
+Direct training on complex routes with strict behavioral
+constraints often leads to unstable optimization and ineffi-
+cient exploration. To address these challenges, the proposed
+framework employs a five-stage curriculum that progressively
+increases task difficulty throughout training.
+The curriculum is organized according to route distance
+and behavioral complexity, as summarized in Table I. Stage 0
+focuses on short-range navigation tasks (10–20 m), allowing
+the agent to acquire basic vehicle control and goal-directed
+motion. Subsequent stages gradually increase the route dis-
+tance, reaching 100–150 m at Stage 4.
+Beyond route length, the curriculum tightens the termination
+criteria themselves, listed in Table II: three of the five are
+inactive at Stage 0, and every tolerance shrinks thereafter. A
+sidewalk incursion that Stage 1 tolerates for 45 steps (2.25 s)
+therefore ends the episode within 14 steps (0.7 s) at Stage 4.
+Early stages accordingly leave room to recover from a mistake,
+whereas later ones hold the policy to the constraint.
+Stage advancement follows a fixed interaction budget rather
+than success-rate gating: the agent starts in Stage 0 and
+enters Stages 1–4 once the global step count reaches 60,000,
+150,000, 250,000, and 350,000, which allocates 60,000,
+90,000, 100,000, 100,000, and 150,000 of the 500,000-step
+budget to Stages 0–4, respectively. This deterministic schedule
+keeps the curriculum identical across runs, at the cost of not
+adapting to how quickly a given run masters each stage.
+This progression is tightly coupled with the stage-aware
+reward of Section III-D: the route-following weight rises
+sharply at Stage 1 (0.20 →0.50) and rule-compliance weights
+are ramped in from Stage 2 (Table I). Whether advancing the
+two together is worth more than advancing either alone is the
+question the factorial ablation of Section IV-C is designed to
+answer.
+IV. EXPERIMENTS AND RESULTS
+This section first describes the experimental setup—the
+simulation environment, training configuration, evaluation pro-
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+6
+TABLE I
+CURRICULUM STAGES, LEARNING OBJECTIVES, AND STAGE-AWARE REWARD WEIGHTS w(k)
+Stage k
+Route Distance
+Learning Objective
+Mission
+Route Foll.
+Safety
+Smooth.
+Rule Comp.
+0
+10–20 m
+Basic motion and goal seeking
+1.00
+0.20
+0.60
+0.10
+0.00
+1
+20–40 m
+Route-following introduction
+1.00
+0.50
+0.80
+0.15
+0.00
+2
+40–70 m
+Route adherence and rule awareness
+0.90
+0.80
+0.80
+0.20
+0.50
+3
+70–100 m
+Long-horizon navigation
+0.80
+0.90
+0.90
+0.25
+0.80
+4
+100–150 m
+Full autonomous driving task
+0.75
+1.00
+0.90
+0.30
+1.00
+TABLE II
+STAGE-DEPENDENT TERMINATION TOLERANCES USED DURING
+TRAINING. EACH ENTRY IS THE NUMBER OF CONSECUTIVE SIMULATION
+STEPS (20 HZ) A VIOLATION MAY PERSIST BEFORE THE EPISODE IS
+TERMINATED, AND – MARKS A CRITERION INACTIVE AT THAT STAGE. THE
+EVALUATION PROTOCOL OF SECTION IV APPLIES ITS OWN FIXED
+TERMINATION CRITERIA INSTEAD.
+Criterion
+Stage 0
+Stage 1
+Stage 2
+Stage 3
+Stage 4
+Sidewalk incursion
+–
+45
+40
+22
+14
+Off-road
+150
+90
+55
+28
+18
+Off-route
+–
+110
+65
+35
+32
+Opposite lane
+120
+80
+45
+22
+14
+Stuck
+–
+–
+260
+190
+130
+tocol and metrics, and baselines—and then reports the com-
+parative and generalization results, followed by two ablation
+studies.
+Simulation environment: All experiments use the CARLA
+simulator (v0.9.15) on a goal-directed navigation task, in
+which the agent drives from a randomly sampled start to a
+target destination while following a planned route and obeying
+traffic signals. The environment is static—no other vehicles or
+pedestrians—so the task isolates route following and traffic-
+signal compliance, with collisions arising only from fixed
+scene geometry. The policy is trained solely in Town05 and
+evaluated both there and in seven unseen towns spanning urban
+grids, curves, roundabouts, multi-lane roads, and complex
+intersections (Section IV-B). In the proposed configuration
+the ego vehicle carries a 30 m-range LiDAR whose point
+clouds form the 64-bin polar histogram of the 99-dimensional
+observation (Section III-B); the two baselines instead carry the
+front camera their original observations require. The simulator
+runs at a fixed time step and the policy issues one steering–
+throttle–brake command per step; an episode is truncated at the
+step limit, which triggers the timeout penalty Rtimeout. Table III
+summarizes the configuration.
+Training configuration: The policy is trained with PPO
+under the five-stage curriculum of Section III-E. The PPO
+hyperparameters are listed in Table IV, where GAE denotes
+generalized advantage estimation. Table V reports the scalar
+constants of the stage-aware reward of Section III-D: the mis-
+sion constants ( ¯d, vidle, Npat, and the idle-saturation and warm-
+up lengths), the route weights β1–β4 and λh, the smoothness
+coefficients αa, αδ, αtb, the speed bounds vmin and the per-
+stage vbase, the curvature gain, the red-light penalty Cred, and
+the terminal magnitudes.
+Evaluation
+protocol
+and
+metrics:
+The
+two
+main
+evaluations—the per-stage comparison and the cross-town
+TABLE III
+EXPERIMENTAL CONFIGURATION OF THE PROPOSED METHOD. THE
+BASELINES SHARE THE SIMULATOR, ROUTE PLANNER, TRAINING
+BUDGET, CURRICULUM, AND EVALUATION PROTOCOL; THEIR SENSING
+AND OBSERVATION DIFFER AS DESCRIBED UNDER BASELINE METHODS.
+Parameter
+Configuration
+Simulator
+CARLA 0.9.15
+Training Town
+Town05
+Evaluation Towns
+Town01–Town07, Town10
+Observation Dimension
+99
+Action Space
+Continuous
+Sensor Type
+LiDAR
+LiDAR Representation
+64-bin Polar Histogram
+RL Algorithm
+PPO
+Policy Network
+Multi-Stream Actor–Critic
+Observation Normalization
+Enabled
+Reward Normalization
+Enabled
+Curriculum Learning
+Enabled
+Simulation Time Step
+0.05 s (20 Hz)
+Episode Step Limit
+5000 steps (250 s)
+Training Timesteps
+500,000
+Route Planner
+GlobalRoutePlanner
+Framework
+Stable-Baselines3 [30]
+TABLE IV
+PPO TRAINING HYPERPARAMETERS
+Parameter
+Value
+Parameter
+Value
+Learning Rate
+1 × 10−4
+Clip Range
+0.2
+nsteps
+2048
+Entropy Coef.
+0.01
+Batch Size
+256
+Value Coef.
+0.5
+Epochs
+8
+Max Grad Norm
+0.5
+Discount γ
+0.99
+GAE λ
+0.95
+transfer—differ both in what is held fixed and in when they
+are measured. The per-stage comparison against the baselines
+(Section IV-A) stays in the training town, Town05, and sweeps
+the five curriculum stages, so route length and behavioral
+difficulty vary while the map does not; each of its cells
+aggregates 20 episodes recorded during training at that stage,
+and it therefore describes how each system behaves while it
+is acquiring the task. The stage boundaries of Section III-E
+delimit the same training-step windows for all three systems,
+so a given stage indexes the same interval of training in every
+row. The cross-town evaluation (Section IV-B) reverses what
+the per-stage comparison holds fixed: it fixes the mission at
+the Stage-4 setting—100–150 m routes—and varies the map,
+running 100 randomly sampled start–goal episodes in each
+of the eight towns. Every post-training evaluation—the cross-
+town runs and the two ablations of Sections IV-C and IV-D—
+evaluates the final checkpoint at the end of the 500,000-step
+budget, acting deterministically and without exploration noise.
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+7
+TABLE V
+REWARD FUNCTION CONSTANTS, GROUPED BY THE REWARD
+COMPONENTS OF SECTION III-D. THREE ENTRIES DEPEND ON THE
+CURRICULUM STAGE: THE FIVE vBASE VALUES CORRESPOND TO STAGES
+0–4, NPAT IS 35 STEPS FOR STAGES 0–2 AND 25 FOR STAGES 3–4, AND
+THE WARM-UP APPLIES ONLY IN STAGES 1–4. RGOAL ADDITIONALLY
+SCALES WITH ROUTE LENGTH AND STAGE THROUGH sd AND sk
+(SECTION III-D); ALL REMAINING NUMERICAL CONSTANTS ARE FIXED
+THROUGHOUT TRAINING.
+Mission
+¯d = 0.35 m, vidle = 0.6 m/s,
+Npat = 35/25 steps (1.75/1.25 s),
+idle saturation = 80 steps (4 s),
+warm-up = 80 steps (4 s)
+Route following
+(β1, . . . , β4) = (0.25, 0.75, 0.60, 0.40), λh = 0.25
+Safety
+vmin = 2.5 m/s, vbase = {4.0, 5.0, 5.5, 6.0, 6.5} m/s,
+curvature gain = 12 m
+Smoothness
+(αa, αδ, αtb) = (0.08, 0.05, 0.30)
+Rule compliance Cred = −8.0
+Terminal
+Rgoal = 100 sd sk, Rcrash = −60, Rtimeout = −10
+The post-training evaluations differ in how their episodes are
+drawn. The cross-town evaluation samples its 100 episodes
+independently in each town, since the towns share no common
+route set. Each ablation instead draws one list of 100 Stage-4
+Town05 start–goal pairs and replays it identically across the
+configurations it compares, so that differences within a table
+are differences between policies rather than between routes;
+the two ablations use separate lists, and no comparison is made
+across them.
+Evaluation episodes terminate under one of four conditions:
+(i) reaching the destination, (ii) collision, (iii) stuck-vehicle
+termination, or (iv) timeout. A stuck termination is triggered
+when the vehicle remains below 0.15 m/s for 600 consecutive
+simulation steps (30 s) while not legitimately waiting at a
+red traffic light. Episodes that reach the maximum duration
+of 5000 simulation steps (250 s) without satisfying another
+termination condition are classified as timeouts. Seven com-
+plementary metrics measure navigation success, safety, route-
+following accuracy, and traffic-rule compliance:
+• Psucc (%): success rate — episodes in which the vehicle
+came within 3.0 m of the final route waypoint.
+• Pcoll (%): collision rate — episodes terminated by a
+collision.
+• Poff (%): off-route rate — percentage of evaluation
+timesteps at which the vehicle deviates excessively from
+the reference route, judged by the route planner’s adap-
+tive distance criterion over the local lane width, route
+curvature, curriculum stage, and junctions. Moderate
+deviations count only after a stage-dependent patience
+threshold, whereas deviations beyond 1.5× the lane width
+count immediately. Because the criterion depends on
+the curriculum stage, Poff compares methods at a given
+stage rather than one stage against another; the towns of
+Table VII are all evaluated at the Stage-4 setting and so
+are mutually comparable.
+• ¯elat (m): lateral deviation — mean perpendicular dis-
+tance to the reference route, averaging the per-step elat
+t of
+Section III-D.
+• Plane (%): lane-invasion rate — number of detected lane-
+boundary invasion events normalized by the total number
+of evaluation timesteps.
+• Red Lights (E / V): red-light encounters and violations
+— E counts encounters and V violations. A violation
+is recorded when the vehicle crosses the stop line and
+enters an intersection while the corresponding traffic
+signal remains red.
+• Pcomp (%): route completion — 1−dfinal/d0, the fraction
+of the initial route distance d0 that has been covered when
+the episode ends at remaining distance dfinal. Unlike Psucc,
+which scores every unsuccessful episode alike, it gives
+partial credit on episodes that never reach the goal, and it
+is therefore reported only in the ablation of Section IV-C,
+where several configurations fail outright.
+Higher is better for Psucc and Pcomp and lower for the re-
+maining metrics; for Red Lights, E provides exposure context,
+so a lower V is preferable at a comparable E.
+Baseline methods: The framework is compared against two
+PPO-based autonomous driving baselines.
+• E2E PPO follows the end-to-end reinforcement learning
+framework of [13], which maps observations directly
+to continuous vehicle control actions using PPO under
+a reward centered on lane keeping, heading alignment,
+speed regulation, and collision avoidance. Its original
+observation is retained—front-camera images encoded
+by a pre-trained variational autoencoder (VAE), together
+with auxiliary vehicle states—and augmented with the
+complete 26-dimensional route block of Section III-B
+so that it addresses the same goal-directed task. It re-
+ceives neither the polar LiDAR histogram nor the traffic-
+rule signals; it is trained under the same route-distance
+curriculum as the other systems, with its reward left
+unchanged across stages.
+• CuRLA-Inspired PPO is derived from CuRLA [14],
+a curriculum-guided PPO method. Because the environ-
+ment used here contains no dynamic traffic participants,
+CuRLA’s traffic-density curriculum is not directly ap-
+plicable; this baseline therefore trains under the same
+route-distance curriculum as the other two systems, and
+what remains specifically CuRLA’s is its observation
+and reward. That observation is retained—a VAE-based
+visual representation with external state variables—and
+augmented with the same 26-dimensional route block;
+it receives neither the polar LiDAR histogram nor the
+traffic-rule signals, and its reward is CuRLA’s own formu-
+lation with none of the stage-aware reweighting applied.
+It should thus be read as an adaptation rather than a
+faithful reimplementation of CuRLA.
+For fairness, all three systems shared the same CARLA
+environment, PPO implementation, route planner, training bud-
+get, evaluation protocol, progressive route-distance curriculum,
+and 26-dimensional route observation. What the comparison
+varies is therefore the rest of the observation—the polar
+LiDAR histogram and the traffic-rule signals, which only the
+proposed method receives, against the VAE-encoded camera
+stream, which only the baselines do—and the reward: stage-
+aware weights against each baseline’s own fixed formulation.
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+8
+Section IV-C isolates the training-schedule factors and Sec-
+tion IV-D the LiDAR stream.
+A. Comparative Performance Evaluation
+Table VI compares the proposed framework against the
+two PPO baselines across the five curriculum stages, all three
+trained and evaluated in the training town, Town05.
+Because the stages form a difficulty ladder, a method that
+merely drives competently is not expected to hold its success
+rate across them. Whether a system holds up under that ladder
+is precisely what separates the three: the proposed policy stays
+at 100% in every stage but Stage 3 (95%), whereas both
+baselines lose most of their success as the horizon grows. The
+flatness of the proposed policy’s success rate across stages,
+rather than its value at any single stage, is the result of interest.
+Success and collision rates need not be complementary, be-
+cause collision is not the only unsuccessful outcome: episodes
+also end by timeout or stuck termination (Section IV), so a
+method can combine a low collision rate with a low success
+rate.
+The per-stage breakdown also localizes where the baselines
+fail, which a single aggregate number would hide. All three
+systems were given the same route guidance to follow, as
+a sequence of waypoints from the same planner, so the
+gap is not one of being told where to go. On the route
+information the difference is not in what reaches the policy
+but in what reaches its objective: all three receive the same
+route block, alignment, lateral error and curvature included,
+yet only the proposed method’s reward is defined against the
+planned route—the baselines score heading and lateral offset
+relative to the lane they occupy, not to the route they were
+given—so route following is something only that method is
+optimized for rather than merely pointed at. CuRLA-Inspired
+PPO completes every Stage 0 episode, demonstrating that its
+policy is capable of basic lane-level driving. However, its
+success rate drops to 30.0% at Stage 2 and 10.0% at Stage 4,
+indicating increasing difficulty in maintaining reliable route-
+following over longer navigation tasks. E2E PPO exhibits a
+different failure pattern. Its success rate is non-monotonic
+across the curriculum, increasing from 10.0% at Stage 0 to
+25.0% at Stages 2 and 3 before dropping to 5.0% at Stage 4.
+Examination of the evaluation logs shows that the poor Stage 0
+performance is not primarily caused by collisions. Only four
+of the twenty evaluation episodes ended in collision, whereas
+the remaining unsuccessful episodes consisted of eight stuck
+terminations and six timeouts. These results indicate that the
+policy frequently failed to make sufficient progress toward the
+destination despite avoiding collisions. As the route length
+increased, the policy occasionally completed the assigned
+route, but collision failures became increasingly dominant,
+resulting in the sharp performance degradation observed at
+Stage 4.
+On the remaining metrics the proposed policy is at or
+below both baselines at every stage, but the two baselines do
+not keep a fixed order between themselves: E2E PPO is the
+weaker of the two at the shortest routes and CuRLA-Inspired
+PPO from the middle stages onward on off-route rate, lane
+invasion and lateral deviation, while on collision rate the two
+exchange places twice. The proposed policy collides in one
+of the twenty Stage-3 episodes and in none of the others,
+and stays below 0.6% off-route at every stage, whereas from
+Stage 1 onward both baselines spend between 8% and 31% of
+their timesteps away from the planned route. Route-following
+accuracy separates the three systems by a factor of roughly
+three: averaged over the five stages, lateral deviation is 0.21 m
+for the proposed policy against 0.69 m for E2E PPO and
+0.70 m for CuRLA-Inspired PPO, and it never exceeds 0.27 m
+at any stage while the baselines reach 0.80 and 1.00 m. This
+is the narrowest of the margins in the table—collision and
+off-route rates separate the systems by more than an order of
+magnitude—but it is the one that speaks most directly to the
+mechanism: it is the quantity the stage-aware reward penalizes
+directly, as deviation from the planned route, whereas both
+baseline rewards penalize lateral deviation only from the lane
+center. It also explains why the baselines can stay on a road
+without staying on the route.
+Red-light behavior needs both counts to interpret, because
+a low violation count is equally consistent with a policy that
+stops reliably and one that rarely meets a red light. Traffic-
+light compliance enters the reward only from Stage 2 and is
+ramped in from there, and the counts follow that schedule:
+at Stage 1, before the term is active, all three encountered
+red lights are run, whereas from Stage 2 onward the violation
+share falls with continued exposure—15 of 21 encounters at
+Stage 2, 14 of 24 at Stage 3, and 14 of 30 at Stage 4—so
+the encounters rise by nearly half while the violations do not
+rise at all. Because these values are recorded during training,
+they trace the acquisition of the behavior rather than its final
+quality.
+The deterministic evaluation gives the latter. Across the
+eight towns of Table VII the fully trained policy encounters
+986 red lights and violates 347 of them, 35% overall, including
+71 of 176 in the training town itself. Fig. 5 shows the
+compliant behavior the policy has acquired, but the aggregate
+counts show that it does not yet apply it reliably. Red-light
+compliance is accordingly the behavior that most clearly
+separates what the stage-aware reward has improved from
+what it has solved. Neither baseline optimizes traffic-light
+compliance in its reward, so the column is left empty for them
+and no comparison is claimed on it.
+B. Generalization Performance
+To test transfer, the trained policy was evaluated in eight
+CARLA towns—the training environment (Town05) and seven
+previously unseen ones (Town01–Town04, Town06, Town07,
+Town10). Fig. 6 shows their layouts; Table VII summarizes
+the resulting performance.
+The policy transfers to layouts it never trained on: success
+ranges from 68.0% to 99.0% across the eight towns, reaching
+99.0% in the training environment Town05 and staying at
+or above 93.0% in Town01, Town03, Town06 and Town10.
+Route-following accuracy is preserved throughout: mean lat-
+eral deviation remains below 0.35 m in every town and lane-
+invasion rates below 1.5%, while the red-light encounter and
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+9
+TABLE VI
+PER-STAGE COMPARISON AGAINST THE PPO BASELINES IN THE TRAINING TOWN (TOWN05). EACH OF THE THREE SYSTEMS IS A SINGLE TRAINING
+RUN. EACH CELL AGGREGATES 20 EPISODES RECORDED during training AT THAT STAGE (10 AT ITS MIDPOINT, 10 AFTER ITS COMPLETION); METRICS
+ARE DEFINED IN SECTION IV, STAGE DIFFICULTY IN TABLE I. BOLDFACE MARKS THE PROPOSED METHOD, NOT THE BEST VALUE IN EACH COLUMN.
+Method
+Stage (route distance)
+Psucc (%)
+Pcoll (%)
+Poff (%)
+¯elat (m)
+Plane (%)
+Red Lights (E / V)
+E2E PPO [13]
+0 (10–20 m)
+10.0
+20.0
+38.47
+0.52
+2.76
+—
+1 (20–40 m)
+20.0
+40.0
+30.56
+0.67
+4.92
+—
+2 (40–70 m)
+25.0
+50.0
+13.93
+0.69
+5.00
+—
+3 (70–100 m)
+25.0
+60.0
+10.56
+0.76
+7.57
+—
+4 (100–150 m)
+5.0
+80.0
+12.13
+0.80
+3.87
+—
+CuRLA-Inspired PPO [14]
+0 (10–20 m)
+100.0
+0.0
+0.00
+0.13
+1.03
+—
+1 (20–40 m)
+80.0
+20.0
+8.29
+0.69
+5.29
+—
+2 (40–70 m)
+30.0
+70.0
+20.22
+0.72
+8.33
+—
+3 (70–100 m)
+20.0
+80.0
+19.37
+1.00
+9.63
+—
+4 (100–150 m)
+10.0
+75.0
+19.49
+0.95
+9.40
+—
+CORAL (ours)
+0 (10–20 m)
+100.0
+0.0
+0.00
+0.10
+0.33
+0/0
+1 (20–40 m)
+100.0
+0.0
+0.00
+0.23
+0.61
+3/3
+2 (40–70 m)
+100.0
+0.0
+0.18
+0.27
+0.68
+21/15
+3 (70–100 m)
+95.0
+5.0
+0.08
+0.27
+0.67
+24/14
+4 (100–150 m)
+100.0
+0.0
+0.59
+0.19
+0.36
+30/14
+(a) Approaching on red
+(b) Held at the stop line
+(c) Resuming on green
+(d) Clear of the intersection
+Fig. 5. Traffic-light-compliant behavior of the proposed policy, in temporal
+order. The signal governing the ego vehicle is circled in the first three frames;
+in (d) the intersection has been cleared.
+TABLE VII
+TRANSFER ACROSS THE EIGHT EVALUATION TOWNS, WITH EVERY
+MISSION FIXED AT THE STAGE-4 SETTING (100–150 M ROUTES) AND 100
+EPISODES PER TOWN. TOWN05 IS THE TRAINING TOWN; THE REMAINING
+SEVEN ARE UNSEEN. METRICS ARE DEFINED IN SECTION IV; RATES ARE
+PERCENTAGES, ¯eLAT IS IN METERS, AND THE LAST COLUMN GIVES
+RED-LIGHT ENCOUNTERS AND VIOLATIONS AS COUNTS.
+Town
+Psucc Pcoll Poff
+¯elat
+Plane Red (E / V)
+Town01 93.0
+7.0
+0.17 0.23 0.41
+121/55
+Town02 83.0
+16.0 0.31 0.27 0.46
+185/28
+Town03 94.0
+5.0
+1.65 0.28 0.61
+111/58
+Town04 68.0
+25.0 2.47 0.26 0.70
+179/59
+Town05 99.0
+1.0
+0.10 0.19 0.37
+176/71
+Town06 98.0
+2.0
+0.04 0.17 1.37
+24/7
+Town07 78.0
+22.0 2.11 0.34 1.44
+77/31
+Town10 97.0
+3.0
+0.83 0.32 0.64
+113/38
+violation counts show that traffic-signal compliance varies
+across maps and exposure levels.
+Collisions, however, are the dominant failure mode rather
+than a negligible one. The collision rate ranges from 1.0%
+in Town05 to 25.0% in Town04, reaching 16.0% in Town02
+and 22.0% in Town07. In five of the eight towns it is exactly
+the complement of the success rate, indicating that every
+unsuccessful episode there terminates through collision with a
+static obstacle, since the environment contains no other traffic.
+Town02, Town03 and Town04 are the exceptions, where the
+remaining 1%, 1% and 7% of episodes terminate due to
+timeout.
+Difficulty is not uniform across the evaluated towns.
+Town04 is the most challenging environment, with the lowest
+success rate (68.0%), the highest collision rate (25.0%) and
+the highest off-route rate (2.47%); Town07 is next, at 78.0%
+success, 22.0% collisions and 2.11% off-route. Off-route be-
+havior concentrates in three towns—Town04, Town07 and
+Town03, at 2.47%, 2.11% and 1.65%—while the remaining
+five stay at or below 0.83%. The two rankings do not coincide,
+however: Town03 is third on off-route yet among the strongest
+on success (94.0%), and Town02 is third worst on success
+(83.0%) with an off-route rate of only 0.31%. Failing often
+and wandering off route are therefore separate phenomena in
+this evaluation. The layouts differ visibly in geometry and
+intersection type (Fig. 6), but this paper defines no measure
+of layout dissimilarity, so the spread is not attributed to a
+structural cause.
+That a policy trained in one town holds at or above 68%
+success in all seven unseen towns indicates that it has learned
+transferable behavior rather than memorizing a single layout.
+Which part of the design produces that transfer is not resolved
+here: the ablations of Sections IV-C and IV-D vary one factor
+at a time but do so entirely within Town05, and the baselines
+were never run cross-town.
+C. Ablation: Reward and Distance Schedules
+This subsection isolates the two halves of the training
+schedule, which Section IV-A cannot separate: the distance
+schedule is shared with both baselines there, and the reward
+schedule varies only as one part of an integrated system.
+Section III-E couples two mechanisms: a reward schedule,
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+10
+Town01
+Town02
+Town03
+Town04
+Town05
+Town06
+Town07
+Town10
+Fig. 6. Top-down layouts of the eight CARLA [3] towns used for evaluation, each scaled individually to a common box. The policy is trained only in Town05
+(bold); the other seven are unseen at training time.
+which advances the per-stage reward weights of Table I, and a
+distance schedule, which expands the sampled route distance.
+Because the claim is that the two should advance together,
+removing one at a time is not enough—that measures only
+what each is worth in the presence of the other, never what
+either does alone. We therefore run the complete 2×2 factorial,
+whose fourth cell—neither schedule—supplies the missing
+comparison.
+Table VIII lists the four configurations: the full schedule,
+which is the proposed method; the two single-factor variants;
+and a no-curriculum control. Turning a schedule off means
+holding everything it controls at its Stage-4 value for the
+whole run—the stage-dependent terms of the reward function
+in one case, the sampled route distance and the behavioral
+constraints that tighten with it in the other—so all four runs
+are asked to solve the same terminal task and differ only in
+how they are led to it. The terminal goal reward continues
+to scale with the sampled initial route length through the
+distance factor sd (Section III-D), so configurations trained on
+longer routes receive proportionally larger terminal rewards
+even when the reward schedule is held fixed. All share the
+network of Section III-C, the observation of Section III-B, the
+hyperparameters of Table IV, the constants of Table V, and a
+500,000-step budget, which fixes the number of PPO updates
+identically across cells, though not the number of episodes:
+long routes consume more steps than short ones, so the cells
+whose distance schedule is active complete more of them. The
+two contrasts that isolate the reward schedule hold the route-
+length distribution fixed and are unaffected by this.
+Two scores are reported because success alone cannot carry
+the comparison: success measures how often the goal is
+reached, while route completion, defined for every episode
+(Section IV), gives partial credit for how much of the route is
+covered when it is not.
+The full schedule is the best of the four on both scores,
+TABLE VIII
+FACTORIAL ABLATION OF THE TRAINING SCHEDULE. EACH
+CONFIGURATION IS A SINGLE TRAINING RUN, EVALUATED WITH ITS FINAL
+CHECKPOINT ON ONE LIST OF 100 STAGE-4 TOWN05 START–GOAL PAIRS
+REPLAYED IDENTICALLY ACROSS THE FOUR. ✓: THE SCHEDULE
+ADVANCES THROUGH THE CURRICULUM STAGES; –: HELD AT ITS STAGE-4
+SETTING THROUGHOUT. PCOMP: ROUTE COMPLETION (SECTION IV).
+Curriculum
+Configuration
+Reward
+Distance
+Psucc (%)
+Pcomp (%)
+Full (CORAL)
+✓
+✓
+99.0
+96.40
+Distance only
+–
+✓
+72.0
+89.82
+Reward only
+✓
+–
+90.0
+90.19
+No curriculum
+–
+–
+55.0
+87.10
+at 99.0% success and 96.40% completion, and removing
+either schedule costs on both. The two removals are not
+equally expensive on success—dropping the reward schedule
+costs 27.0 points against the distance schedule’s 9.0—but on
+completion they cost almost the same, 6.58 and 6.21 points.
+Neither single-factor configuration approaches the pair: the
+better of the two reaches 90.0% success against the full
+schedule’s 99.0%.
+Read within each level of the other factor, the two schedules
+are not interchangeable. The reward schedule is worth 35.0
+points of success when the distance schedule is off and 27.0
+when it is on; the distance schedule is worth 17.0 points
+with the reward schedule off and 9.0 with it on. The reward
+schedule is thus the larger contributor in both, by a factor of
+two to three. Its effect also falls disproportionately on success
+rather than on completion—+35.0 against +3.09 points with
+the distance schedule off—so what it supplies is not more of
+the route traveled but the behavior needed to finish it. That
+is what the two mechanisms are designed to do respectively:
+expanding the sampled distance lets the policy reach full route
+length in graduated steps rather than face it from the first
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+11
+episode, whereas advancing the reward weights tightens the
+behavior required to complete it once the policy is there—the
+coordinated scheduling argued for in Section III-E.
+Table VIII reports the end of training only, and an end-
+point cannot distinguish a configuration that converged to a
+low score from one that was still improving when the budget
+ran out. One thing can be said about the no-curriculum control
+without appealing to its learning curve: it is not short of
+practice at the mission it is judged on. With the distance
+schedule disabled it trains at the Stage-4 setting for all 500,000
+steps, whereas the full schedule reaches that setting only for
+its last 150,000 (Section III-E), so the control’s lower score is
+not explained by less exposure to the evaluated task. Whether
+it had also stopped improving is not established here.
+D. Ablation: The LiDAR Observation
+The polar histogram raises two questions that the rest of the
+paper takes for granted: whether the LiDAR stream contributes
+at all, and how finely it has to be resolved. Both lie on one axis,
+and Table IX sweeps it. The histogram divides a 180◦field of
+view into equal sectors, so the bin count fixes both the angular
+resolution and the size of the observation: 5.6◦per bin and
+a 67-dimensional state at 32 bins, 2.8◦and 99 dimensions at
+64, and 1.4◦and 163 dimensions at 128. Removing the stream
+altogether leaves the 35 dimensions of telemetry (4), route (26)
+and rule signals (5), and shrinks the fused feature from 192
+to 128. The framework was retrained at every setting with all
+else held fixed—network depth, PPO hyperparameters, reward
+constants, curriculum schedule and training budget—and each
+configuration is evaluated on this subsection’s own list of 100
+Stage-4 Town05 episodes (Section IV).
+Among the three resolutions, navigation performance is
+insensitive to the choice. The table reports 100, 99 and 96
+successes out of 100 episodes for 32, 64 and 128 bins—a
+fourfold change in angular resolution for a spread of four
+episodes—and no pair of these rates is distinguishable at this
+sample size (Fisher’s exact test: p = 1.00 for 32 versus 64
+bins, 0.37 for 64 versus 128, and 0.12 for 32 versus 128),
+so the ordering of the three rows is not a ranking. Because
+each configuration is a single training run, the test bounds the
+evaluation sampling error only and does not account for seed-
+to-seed variation in PPO, which can only widen the intervals.
+We attribute this insensitivity to the benchmark rather than
+to the representation. The evaluation environment is static,
+so every obstacle the policy must avoid is a fixed element
+of the road scene whose angular extent at the distances that
+matter is wide and whose bearing changes only with the ego
+vehicle’s own motion. A 5.6◦sector already resolves structure
+of that kind, and subdividing it supplies no distinction the task
+rewards. The picture is expected to change under dynamic
+traffic, where what must be resolved is the angular extent and
+closing bearing of another vehicle—often only a few degrees
+wide at the range where a yielding or lane-change decision
+has to be made—and where a bin wide enough to merge that
+vehicle into the background behind it would discard precisely
+the cue the decision rests on.
+The same table answers the prior question that insensitivity
+raises: if the resolution does not matter, does the stream? Re-
+TABLE IX
+ABLATION OF THE LIDAR OBSERVATION. THE FIRST ROW REMOVES THE
+POLAR HISTOGRAM ENTIRELY; THE REMAINING THREE VARY ITS
+ANGULAR RESOLUTION (180◦DIVIDED BY THE BIN COUNT). EACH ROW
+IS A SEPARATE TRAINING RUN, EVALUATED WITH ITS FINAL CHECKPOINT
+ON ONE LIST OF 100 STAGE-4 TOWN05 START–GOAL PAIRS REPLAYED
+IDENTICALLY ACROSS THE FOUR ROWS.
+Bins
+Ang. Res.
+Obs. Dim.
+Psucc (%)
+Pcoll (%)
+¯elat (m)
+None
+—
+35
+98.0
+2.0
+0.15
+32
+5.6◦
+67
+100.0
+0.0
+0.19
+64
+2.8◦
+99
+99.0
+1.0
+0.19
+128
+1.4◦
+163
+96.0
+4.0
+0.35
+moving the histogram entirely leaves success at 98.0% against
+99.0% with it, a difference of one episode in a hundred that the
+sample cannot resolve (Fisher’s exact test, p = 1.00), with two
+collisions against one and a marginally lower lateral deviation.
+We therefore do not claim that the histogram contributes to
+the results reported in this paper, and the reason is the one
+that also makes the bin count irrelevant: the environment is
+static and the reference route runs along clear roadway, so an
+episode can be completed without ever localizing an obstacle.
+Establishing what the histogram is worth requires a benchmark
+on which an episode cannot be completed without it. The
+same result bounds what the comparison of Section IV-A can
+be credited to: with the histogram removed, success stays at
+98.0%, so the margin over the baselines is not carried by the
+LiDAR stream but by the traffic-rule signals, the stage-aware
+reward, and the difference in state representation itself, which
+this study does not separate. What the results do establish
+about the observation is sufficiency at this input dimension—
+a 99-dimensional state carries the success rates and the zero-
+shot transfer reported above with no images, no point-cloud
+encoder and no BEV rasterization.
+Within the three resolutions, one column does move: mean
+lateral deviation rises from 0.19 m at 32 and 64 bins to
+0.35 m at 128. A reading consistent with the rest of the
+table is capacity rather than information—128 bins enlarge
+the observation by 64 dimensions without supplying obstacle
+detail this task appears to need, and the policy is given the
+same 500,000-step budget in which to learn the larger input—
+but this remains a hypothesis consistent with the ordering
+rather than a demonstrated mechanism. We therefore retain
+64 bins for the results reported elsewhere in this paper as the
+middle setting of the range tested, not as a measured optimum:
+the evidence above is that no optimum is identifiable in a static
+environment, and the 2.8◦sectors it preserves are the ones the
+dynamic setting described above would call for.
+V. CONCLUSION
+This paper presented CORAL, which trains a goal-directed
+urban driving policy by advancing a five-stage route-distance
+curriculum and a stage-aware reward together, on a compact
+99-dimensional route-aware observation that needs neither
+high-dimensional visual input nor expert demonstrations. In
+CARLA, CORAL outperformed both PPO baselines by a wide
+margin at the hardest curriculum stage, reaching the goal in
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+12
+all twenty per-stage evaluation episodes against the baselines’
+5% and 10%. Transferred zero-shot to seven towns it never
+trained in, the final policy succeeded in 68–98% of episodes on
+routes of the same 100–150 m length—at or above 93% in four
+of the seven—against 99.0% in the training town, with mean
+lateral deviation below 0.35 m. The factorial ablation shows
+that neither schedule alone matches the full configuration; with
+both disabled, success falls to 55%.
+Several limitations bound these results. The evaluation envi-
+ronment is static, and a leave-one-out test removing the LiDAR
+histogram leaves success at 98.0% against 99.0% with it, so
+this study does not establish that the histogram contributes
+to the results above: the benchmark can be solved without
+ever using the obstacle channel. What these results do estab-
+lish is that a 99-dimensional state suffices, with no learned
+perception front-end. That single evaluation setting—static,
+and with no variation in weather or lighting—also means the
+safety behavior shown here concerns fixed obstacles rather
+than interaction with other vehicles, and leaves untested the
+illumination and weather robustness that motivates a LiDAR
+observation in the first place, an argument inherited from
+the literature rather than shown here. Transfer beyond this
+simulator and sensor model likewise remains to be shown.
+Traffic-signal compliance is the weakest behavior reported: the
+policy stops correctly at a growing share of the red lights it
+meets as the curriculum proceeds, but still runs about a third
+of them. Every system and configuration reported here is a
+single training run; in particular, we cannot demonstrate that
+the no-curriculum control had converged rather than merely
+run out of budget.
+Evaluating in an environment with obstacles on the route
+and with dynamic traffic is therefore the most immediate
+direction, since it addresses those limitations at once, followed
+by making red-light compliance reliable, quantifying the run-
+time advantage that the fixed low-dimensional observation is
+expected to confer, and repeating the study across multiple
+seeds. Richer semantic scene understanding and multimodal
+language-model-based driving assistance are natural longer-
+term extensions.
+REFERENCES
+[1] E. Delavari, F. K. Khanzada, and J. Kwon, “A comprehensive review of
+reinforcement learning for autonomous driving in the CARLA simula-
+tor,” arXiv preprint arXiv:2509.08221, 2025.
+[2] Y. Lu, J. Fu, G. Tucker, X. Pan, E. Bronstein, R. Roelofs, B. Sapp,
+B. White, A. Faust, S. Whiteson et al., “Imitation is not enough: Ro-
+bustifying imitation with reinforcement learning for challenging driving
+scenarios,” in IEEE/RSJ International Conference on Intelligent Robots
+and Systems (IROS), 2023, pp. 7553–7560.
+[3] A. Dosovitskiy, G. Ros, F. Codevilla, A. Lopez, and V. Koltun,
+“CARLA: An open urban driving simulator,” in Conference on Robot
+Learning.
+PMLR, 2017, pp. 1–16.
+[4] L. Chen, P. Wu, K. Chitta, B. Jaeger, A. Geiger, and H. Li, “End-to-end
+autonomous driving: Challenges and frontiers,” IEEE Transactions on
+Pattern Analysis and Machine Intelligence, 2024.
+[5] Y. Li, J. Moreau, and J. Ibanez-Guzman, “Emergent visual sensors for
+autonomous vehicles,” IEEE Transactions on Intelligent Transportation
+Systems, vol. 24, no. 5, pp. 4716–4737, 2023.
+[6] Y. Zhang, A. Carballo, H. Yang, and K. Takeda, “Perception and sensing
+for autonomous vehicles under adverse weather conditions: A survey,”
+ISPRS Journal of Photogrammetry and Remote Sensing, vol. 196, pp.
+146–177, 2023.
+[7] P. Cai, S. Wang, H. Wang, and M. Liu, “CARL-Lead: LiDAR-based
+end-to-end autonomous driving with contrastive deep reinforcement
+learning,” arXiv preprint arXiv:2109.08473, 2021.
+[8] V. Mnih, K. Kavukcuoglu, D. Silver, A. A. Rusu, J. Veness, M. G.
+Bellemare, A. Graves, M. Riedmiller, A. K. Fidjeland, G. Ostrovski
+et al., “Human-level control through deep reinforcement learning,”
+Nature, vol. 518, no. 7540, pp. 529–533, 2015.
+[9] V. Mnih, A. P. Badia, M. Mirza, A. Graves, T. Lillicrap, T. Harley,
+D. Silver, and K. Kavukcuoglu, “Asynchronous methods for deep rein-
+forcement learning,” in International Conference on Machine Learning.
+PMLR, 2016, pp. 1928–1937.
+[10] T. P. Lillicrap, J. J. Hunt, A. Pritzel, N. Heess, T. Erez, Y. Tassa,
+D. Silver, and D. Wierstra, “Continuous control with deep reinforcement
+learning,” arXiv preprint arXiv:1509.02971, 2015.
+[11] T. Haarnoja, A. Zhou, K. Hartikainen, G. Tucker, S. Ha, J. Tan, V. Ku-
+mar, H. Zhu, A. Gupta, P. Abbeel et al., “Soft actor-critic algorithms
+and applications,” arXiv preprint arXiv:1812.05905, 2018.
+[12] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Prox-
+imal policy optimization algorithms,” arXiv preprint arXiv:1707.06347,
+2017.
+[13] J. Zhao, Y. Zhao, W. Li, and C. Zeng, “End-to-end autonomous driving
+algorithm based on PPO and its implementation,” in 2024 IEEE 13th
+Data Driven Control and Learning Systems Conference (DDCLS).
+IEEE, 2024, pp. 1852–1858.
+[14] B. Uppuluri, A. Patel, N. Mehta, S. Kamath, and P. Chakraborty,
+“CuRLA: Curriculum learning based deep reinforcement learning for
+autonomous driving,” arXiv preprint arXiv:2501.04982, 2025.
+[15] M. Bojarski, D. Del Testa, D. Dworakowski, B. Firner, B. Flepp,
+P. Goyal, L. D. Jackel, M. Monfort, U. Muller, J. Zhang et al., “End
+to end learning for self-driving cars,” arXiv preprint arXiv:1604.07316,
+2016.
+[16] F. Codevilla, M. M¨uller, A. L´opez, V. Koltun, and A. Dosovitskiy,
+“End-to-end driving via conditional imitation learning,” in 2018 IEEE
+International Conference on Robotics and Automation (ICRA).
+IEEE,
+2018, pp. 4693–4700.
+[17] S. Grigorescu, B. Trasnea, T. Cocias, and G. Macesanu, “A survey
+of deep learning techniques for autonomous driving,” Journal of Field
+Robotics, vol. 37, no. 3, pp. 362–386, 2020.
+[18] C. R. Qi, H. Su, K. Mo, and L. J. Guibas, “PointNet: Deep learning on
+point sets for 3D classification and segmentation,” in IEEE Conference
+on Computer Vision and Pattern Recognition (CVPR), 2017, pp. 652–
+660.
+[19] Y. Zhou and O. Tuzel, “VoxelNet: End-to-end learning for point cloud
+based 3D object detection,” in Proceedings of the IEEE Conference on
+Computer Vision and Pattern Recognition, 2018, pp. 4490–4499.
+[20] Y. Guo, H. Wang, Q. Hu, H. Liu, L. Liu, and M. Bennamoun, “Deep
+learning for 3D point clouds: A survey,” IEEE Transactions on Pattern
+Analysis and Machine Intelligence, vol. 43, no. 12, pp. 4338–4364, 2021.
+[21] S. Y. Alaba and J. E. Ball, “A survey on deep-learning-based LiDAR
+3D object detection for autonomous driving,” Sensors, vol. 22, no. 24,
+p. 9577, 2022.
+[22] K. Chen, R. Oldja, N. Smolyanskiy, S. Birchfield, A. Popov, D. Wehr,
+I. Eden, and J. Pehserl, “MVLidarNet: Real-time multi-class scene
+understanding for autonomous driving using multiple views,” in 2020
+IEEE/RSJ International Conference on Intelligent Robots and Systems
+(IROS).
+IEEE, 2020, pp. 2288–2294.
+[23] Y. Bengio, J. Louradour, R. Collobert, and J. Weston, “Curriculum
+learning,” in Proceedings of the 26th Annual International Conference
+on Machine Learning, 2009, pp. 41–48.
+[24] S. Narvekar, B. Peng, M. Leonetti, J. Sinapov, M. E. Taylor, and P. Stone,
+“Curriculum learning for reinforcement learning domains: A framework
+and survey,” Journal of Machine Learning Research, vol. 21, no. 181,
+pp. 1–50, 2020.
+[25] Z. Qiao, K. Muelling, J. M. Dolan, P. Palanisamy, and P. Mudalige,
+“Automatically generated curriculum based reinforcement learning for
+autonomous vehicles in urban environment,” in 2018 IEEE Intelligent
+Vehicles Symposium (IV).
+IEEE, 2018, pp. 1233–1238.
+[26] L. Anzalone, S. Barra, and M. Nappi, “Reinforced curriculum learn-
+ing for autonomous driving in CARLA,” in 2021 IEEE International
+Conference on Image Processing (ICIP).
+IEEE, 2021, pp. 3318–3322.
+[27] A. Y. Ng, D. Harada, and S. Russell, “Policy invariance under reward
+transformations: Theory and application to reward shaping,” in Proceed-
+ings of the 16th International Conference on Machine Learning (ICML),
+1999, pp. 278–287.
+[28] Y. Lin, J. McPhee, and N. L. Azad, “Anti-jerk on-ramp merging
+using deep reinforcement learning,” in 2020 IEEE Intelligent Vehicles
+Symposium (IV).
+IEEE, 2020, pp. 7–14.
+
+
+SALEEM AND KIM: CORAL—CURRICULUM-OPTIMIZED REWARD ADAPTATION FOR LIDAR-BASED URBAN DRIVING
+13
+[29] L.-C. Wu, Z. Zhang, S. Haesaert, Z. Ma, and Z. Sun, “Risk-aware reward
+shaping of reinforcement learning agents for autonomous driving,” in
+IECON 2023-49th Annual Conference of the IEEE Industrial Electronics
+Society.
+IEEE, 2023, pp. 1–6.
+[30] A. Raffin, A. Hill, A. Gleave, A. Kanervisto, M. Ernestus, and N. Dor-
+mann, “Stable-Baselines3: Reliable reinforcement learning implementa-
+tions,” Journal of Machine Learning Research, vol. 22, no. 268, pp. 1–8,
+2021.

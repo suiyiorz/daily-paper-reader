@@ -1,0 +1,69 @@
+{
+  "label": "2026-08-22",
+  "date": "2026-08-22",
+  "generated_at": "2026-08-22T19:19:42",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202608/22/2608.14332v1-coral-curriculum-optimized-reward-adaptation-for-lidar-based-goal-directed-urban-driving",
+      "section": "deep",
+      "title_en": "CORAL: Curriculum-Optimized Reward Adaptation for LiDAR-Based Goal-Directed Urban Driving",
+      "authors": "Anisa Saleem, Duksu Kim",
+      "date": "2026-08-14",
+      "pdf": "https://arxiv.org/pdf/2608.14332v1",
+      "score": "9.0",
+      "evidence": "面向自动驾驶城市道路的强化学习，利用LiDAR感知、课程学习与奖励自适应实现长程目标导航。",
+      "tldr": "长时目标导向城市驾驶要求策略同时学习寻路、避障、信号灯遵守等多种竞争行为，固定奖励难以决定学习顺序。CORAL提出五阶段课程与阶段感知奖励联合调度，逐步延长路线并收紧约束，同时让奖励权重从进度转向安全与规则。在CARLA中，该方法在最长路线和全部约束下达到100%成功率，远超基线，消融证明两者缺一不可。仅单城镇训练即可零样本迁移到七个未见城镇，展示了面向现实部署的潜力。",
+      "tags": "query:ad",
+      "abstract_en": "Reinforcement learning is promising for autonomous urban driving, but long-horizon goal-directed navigation asks a policy to acquire several competing behaviors at once--reaching a distant goal, tracking a route, avoiding obstacles, obeying signals--and a fixed objective gives no order in which to learn them. This paper presents CORAL, which advances two schedules together: a five-stage curriculum that progressively lengthens routes and tightens behavioral constraints, and a stage-aware reward whose component weights shift emphasis from mission progress toward route following, safety, smoothness, and rule compliance as the task hardens. The policy is a multi-stream actor-critic network trained with Proximal Policy Optimization (PPO) in CARLA on a compact 99-dimensional state pairing a polar LiDAR histogram with vehicle telemetry, ego-frame route geometry, and traffic-rule indicators--no point-cloud encoder, no bird's-eye-view rasterization. Against two PPO baselines under an identical protocol, CORAL reaches the goal in all twenty evaluation episodes on the longest routes under the full set of behavioral constraints, where the baselines reach 5% and 10%; a factorial ablation shows that neither schedule alone matches their combination: removing either lowers both success and route completion, and disabling both drops success to 55%. Trained in one town, the policy transfers zero-shot to seven unseen towns, succeeding in 68-98% of episodes on routes of the same 100-150 m length, with mean lateral deviation below 0.35 m.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/22/2608.17027v1-fetchman-learning-visual-humanoid-loco-manipulation-policies-from-simulated-experiences",
+      "section": "deep",
+      "title_en": "FetchMan: Learning Visual Humanoid Loco-Manipulation Policies from Simulated Experiences",
+      "authors": "Omar Rayyan, Zhi Li, Max Argus, Yuxin Jiang, Chang Yu, Chenfanfu Jiang, Yuchen Cui",
+      "date": "2026-08-17",
+      "pdf": "https://arxiv.org/pdf/2608.17027v1",
+      "score": "9.0",
+      "evidence": "基于模拟经验与强化学习精炼的视觉人形移动操作",
+      "tldr": "针对人形机器人视觉移动操作数据稀缺、泛化难的问题，提出从模拟经验端到端学习。通过行为克隆初始化与Flow-GRPO强化学习，突破克隆性能瓶颈。在15万模拟场景上训练FetchMan，零样本部署真实Unitree G1，单物体抓取成功率73.3%。并扩展多物体训练，向通用移动操作策略迈出一步。",
+      "tags": "query:ad",
+      "abstract_en": "Visual loco-manipulation policies that can generalize to novel scenes and objects have long been a goal of robotics research. However, today's data-hungry algorithms make collecting sufficient demonstrations a struggle for tabletop manipulation, and even more so for humanoids that must also walk and balance. Learning from simulated data and transferring that behavior to the real world, as is commonly done in locomotion, sidesteps this struggle, so we replicate that recipe for loco-manipulation. In doing so, we find that cloning synthetic demonstrations results in a low performance ceiling no matter the amount of training data. Reinforcement learning breaks through it, and refining the cloned policy with Flow-GRPO on a single sparse reward yields performance that synthetic behavior cloning cannot match. Together, these stages form our end-to-end sim-to-real pipeline spanning more than 150,000 scenes, which we use to train FetchMan. We evaluate it on FetchMan-Bench, a simulation benchmark we release, and deploy it zero-shot on a real Unitree G1, where our single-object reach-and-pick policy walks to and grasps a target across unseen scenes at 73.3% success. Finally, we extend this recipe to multi-object training, a first step toward loco-manipulation generalist policies at this data scale.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/22/2608.19574v1-hitac-wam-a-hierarchical-tactile-world-action-model-for-contact-rich-robot-manipulation",
+      "section": "deep",
+      "title_en": "HiTac-WAM: A Hierarchical Tactile World Action Model for Contact-Rich Robot Manipulation",
+      "authors": "Chao Xue, Chaofan Zhang, Wenxuan Ma, Guocai Yao, Shaowei Cui, Shuo Wang",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.19574v1",
+      "score": "9.0",
+      "evidence": "面向接触丰富操作预测的分层触觉世界模型",
+      "tldr": "现有触觉世界模型缺乏对接触状态、变形和滑移等物理依赖的层次化建模，导致预测精度不足。HiTac-WAM提出分层触觉世界动作模型，按接触→变形→滑移的因果关系预测未来触觉状态，并结合有向注意力与重规划机制。在位移误差和滑移预测上显著优于基线，真实机器人成功率从31.1%提升至72.2%，验证了层次化触觉建模对接触操作的贡献。",
+      "tags": "query:ad",
+      "abstract_en": "World action models jointly predict future visual observations and actions, whereas existing tactile-aware variants typically represent future touch as an image or latent stream without modeling the physical dependencies that organize tactile states hierarchically. We present HiTac-WAM, a hierarchical tactile world action model that forecasts a sequence of future tactile states for each candidate action chunk before execution. The forecast factorizes into contact state, a 3D deformation field, and slip risk, organized as a directed hierarchy in which each downstream stage is conditioned on stop-gradient signals from preceding stages. A directed attention mask allows tactile queries to attend to the video-action context of each candidate while preventing video and action queries from attending to tactile tokens. For planning, HiTac-WAM ranks candidate action chunks using tactile forecasts and task-progress estimates. For execution, the selected tactile forecast is retained as a reference; persistent discrepancies between predicted and observed tactile states trigger corrective replanning. HiTac-WAM achieves a mean contact F1 of 0.921; under matched training budgets, the directed hierarchy reduces 3D displacement L2 error by 17.6% relative to the deformation-only predictor and improves slip AUPRC by 60.4% relative to the slip-only predictor. Across chip grasping, blackboard erasing, and USB insertion, selection guided by the hierarchical forecasts increases the average real-robot success rate from 31.1% to 61.1%, while the full system attains 72.2%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/22/2608.18227v1-revisiting-the-push-t-robot-manipulation-task-with-agentic-robotics",
+      "section": "quick",
+      "title_en": "Revisiting the \"Push-T\" Robot Manipulation Task with Agentic Robotics",
+      "authors": "Shuangyu Xie, Kaiyuan Chen, Ken Goldberg",
+      "date": "2026-08-18",
+      "pdf": "https://arxiv.org/pdf/2608.18227v1",
+      "score": "7.0",
+      "evidence": "用LLM编码智能体无示范数据解决Push-T机器人操作基准任务",
+      "tldr": "Push-T是模仿学习任务，传统方法需要大量人工演示。本文利用LLM编码代理Claude Code自动编写算法策略，无需演示数据，通过在线模拟实验迭代优化推动机制。在基准上实现100%成功率且步数比扩散策略减少46%，并自生成课程扩展到全部字母及多种机器人模拟。该工作展示了Agentic Robotics在策略学习中的潜力。",
+      "tags": "query:ad",
+      "abstract_en": "Push-T is an iconic benchmark for learning manipulation policies from human demonstrations. The robot must use a single point of contact to push a T-shaped block into a target pose. In this short paper, we revisit the Push-T task in the context of emerging advances in Agentic Robotics where an LLM coding agent -- Claude Code with Fable 5 -- is prompted to create an algorithmic solution that does not require any demonstration data. We study how effective the agentic coding loop can solve the Push-T task, and compare the resulting code as policy with the visuomotor imitation learning policy. Results suggest that the agent found the 2D gym simulation online, and used sim experiments to learn push mechanics, iteratively optimizing to achieve 100% success rate using 46% fewer steps than the best diffusion policy trained with 200 human demonstrations. The coding agent also solve extensions from T to the full alphabet (Push-A to Push-Z) using a self generated curriculum and generated simulation code for the Franka and UR5 robot arms in 3D cross-embodiment simulations with visual feedback. Videos, policies and details will be posted online.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
