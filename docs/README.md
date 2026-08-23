@@ -6,32 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-22
-- 运行时间：2026-08-22 19:19:36 UTC
+- 最新运行日期：2026-08-23
+- 运行时间：2026-08-23 20:26:44 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：3
-- 速读区：1
+- 本次总论文数：6
+- 精读区：4
+- 速读区：2
 
 ### 今日简报（AI）
-今日共处理4篇论文，精读3篇、速读1篇；最值得关注的是9分高分的CORAL（基于LiDAR的城市驾驶奖励优化）与FetchMan（仿真驱动的视觉人形操控）两篇精读工作。两者分别突破了端到端驾驶决策和复杂操控学习瓶颈，建议优先精读原文。后续可留意它们是否提供开放代码或基准，便于在仿真环境中复现验证。
-- 详情：[/202608/22/README](/202608/22/README)
+今日精读聚焦机器人长程操作与策略执行，速读覆盖压缩与智能体安全。最值得关注：3D高斯场景记忆提升长程操作能力，以及开放循环策略向反应式高性能方向的突破。建议普通读者优先了解机器人记忆机制与执行策略的互补价值，并留意多模态压缩与安全风险。
+- 详情：[/202608/23/README](/202608/23/README)
 
 ### 精读区论文标签
-1. [CORAL: Curriculum-Optimized Reward Adaptation for LiDAR-Based Goal-Directed Urban Driving](/202608/22/2608.14332v1-coral-curriculum-optimized-reward-adaptation-for-lidar-based-goal-directed-urban-driving)  
+1. [GaussMemory: Task-Driven 3D Gaussian Scene Memory for Long-Horizon Robotic Manipulation](/202608/23/2608.14986v1-gaussmemory-task-driven-3d-gaussian-scene-memory-for-long-horizon-robotic-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶城市道路的强化学习，利用LiDAR感知、课程学习与奖励自适应实现长程目标导航。
-2. [FetchMan: Learning Visual Humanoid Loco-Manipulation Policies from Simulated Experiences](/202608/22/2608.17027v1-fetchman-learning-visual-humanoid-loco-manipulation-policies-from-simulated-experiences)  
+   evidence：面向长时程机器人操作的任务驱动三维高斯场景记忆
+2. [Revisiting Open-Loop Execution in Robotics: Toward Reactive, Higher-Performing Policies](/202608/23/2608.15938v2-revisiting-open-loop-execution-in-robotics-toward-reactive-higher-performing-policies)  
    标签：评分：9.0/10、query:ad
-   evidence：基于模拟经验与强化学习精炼的视觉人形移动操作
-3. [HiTac-WAM: A Hierarchical Tactile World Action Model for Contact-Rich Robot Manipulation](/202608/22/2608.19574v1-hitac-wam-a-hierarchical-tactile-world-action-model-for-contact-rich-robot-manipulation)  
+   evidence：面向机器人操作的模仿学习中动作分块机制研究
+3. [Exposing the Long-tail in Embodied Urban Navigation via Scalable Learning from In-the-Wild Videos](/202608/23/2608.16476v1-exposing-the-long-tail-in-embodied-urban-navigation-via-scalable-learning-from-in-the-wild-videos)  
    标签：评分：9.0/10、query:ad
-   evidence：面向接触丰富操作预测的分层触觉世界模型
+   evidence：利用野外视频学习具身城市导航策略，训练视觉-语言-动作模型进行可解释导航规划。
+4. [Prism-GRPO: Faster VLA Policy Optimization via Splitting Same-outcome Groups](/202608/23/2608.17423v1-prism-grpo-faster-vla-policy-optimization-via-splitting-same-outcome-groups)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向视觉-语言-动作机器人策略的强化学习优化
 
 ### 速读区论文标签
-1. [Revisiting the "Push-T" Robot Manipulation Task with Agentic Robotics](/202608/22/2608.18227v1-revisiting-the-push-t-robot-manipulation-task-with-agentic-robotics)  
+1. [UniTAC: Universal Task-Aware Compression via Weighted Distortion Measures](/202608/23/2608.16696v1-unitac-universal-task-aware-compression-via-weighted-distortion-measures)  
    标签：评分：7.0/10、query:ad
-   evidence：用LLM编码智能体无示范数据解决Push-T机器人操作基准任务
+   evidence：面向自动驾驶车辆和机器人的通用任务感知压缩方法
+2. [When State Becomes an Attack Surface: State-Semantic Injection in LLM-Driven Embodied Agents](/202608/23/2608.16806v1-when-state-becomes-an-attack-surface-state-semantic-injection-in-llm-driven-embodied-agents)  
+   标签：评分：6.0/10、query:ad
+   evidence：针对LLM驱动的具身智能体的状态语义注入攻击与安全风险
 
 
 <div class="dpr-home-promo-card">
