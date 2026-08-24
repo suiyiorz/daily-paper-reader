@@ -6,38 +6,60 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-23
-- 运行时间：2026-08-23 20:26:44 UTC
+- 最新运行日期：2026-08-24
+- 运行时间：2026-08-24 20:27:35 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：4
-- 速读区：2
+- 本次总论文数：12
+- 精读区：8
+- 速读区：4
 
 ### 今日简报（AI）
-今日精读聚焦机器人长程操作与策略执行，速读覆盖压缩与智能体安全。最值得关注：3D高斯场景记忆提升长程操作能力，以及开放循环策略向反应式高性能方向的突破。建议普通读者优先了解机器人记忆机制与执行策略的互补价值，并留意多模态压缩与安全风险。
-- 详情：[/202608/23/README](/202608/23/README)
+今日精读12篇论文，聚焦自动驾驶控制与驾驶世界模型两大方向。
+
+最值得关注的是混合控制架构（SAC+MPC）实现安全横向控制，以及决策对齐的驾驶世界模型DA-WAM，均获9.0高分。
+
+建议优先阅读这两篇精读论文，兼顾算法创新与工程落地，速读可关注轮腿机器人地形规划。
+- 详情：[/202608/24/README](/202608/24/README)
 
 ### 精读区论文标签
-1. [GaussMemory: Task-Driven 3D Gaussian Scene Memory for Long-Horizon Robotic Manipulation](/202608/23/2608.14986v1-gaussmemory-task-driven-3d-gaussian-scene-memory-for-long-horizon-robotic-manipulation)  
+1. [A Hybrid End-to-End and Modular Control Architecture Toward Safe Vehicle Lateral Control: Combining Soft Actor-Critic with Model Predictive Control](/202608/24/2608.17258v1-a-hybrid-end-to-end-and-modular-control-architecture-toward-safe-vehicle-lateral-control-combining-soft-actor-critic-with-model-predictive-control)  
    标签：评分：9.0/10、query:ad
-   evidence：面向长时程机器人操作的任务驱动三维高斯场景记忆
-2. [Revisiting Open-Loop Execution in Robotics: Toward Reactive, Higher-Performing Policies](/202608/23/2608.15938v2-revisiting-open-loop-execution-in-robotics-toward-reactive-higher-performing-policies)  
+   evidence：结合SAC与MPC实现自动车辆安全横向控制
+2. [DA-WAM: Decision-Aligned Future Latents for Driving World Models](/202608/24/2608.19085v2-da-wam-decision-aligned-future-latents-for-driving-world-models)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作的模仿学习中动作分块机制研究
-3. [Exposing the Long-tail in Embodied Urban Navigation via Scalable Learning from In-the-Wild Videos](/202608/23/2608.16476v1-exposing-the-long-tail-in-embodied-urban-navigation-via-scalable-learning-from-in-the-wild-videos)  
+   evidence：面向自动驾驶的决策对齐世界模型，统一未来预测与轨迹评分
+3. [Natural Sit-to-Stand Motion Synthesis For Humanoids via Guided Assistance Curricula and Staged Rewards](/202608/24/2608.20823v1-natural-sit-to-stand-motion-synthesis-for-humanoids-via-guided-assistance-curricula-and-staged-rewards)  
    标签：评分：9.0/10、query:ad
-   evidence：利用野外视频学习具身城市导航策略，训练视觉-语言-动作模型进行可解释导航规划。
-4. [Prism-GRPO: Faster VLA Policy Optimization via Splitting Same-outcome Groups](/202608/23/2608.17423v1-prism-grpo-faster-vla-policy-optimization-via-splitting-same-outcome-groups)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向视觉-语言-动作机器人策略的强化学习优化
+   evidence：用强化学习合成类人坐起动作，属于机器人运动控制
+4. [A Collaborative Multi-Modality Interaction for VLA-based End-to-End Autonomous Driving](/202608/24/2608.20890v1-a-collaborative-multi-modality-interaction-for-vla-based-end-to-end-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：VLA框架下多模态交互实现端到端自动驾驶
+5. [WA-JEPA: Rethinking the Video JEPA Paradigm for World-Action Modeling in Autonomous Driving](/202608/24/2608.20974v1-wa-jepa-rethinking-the-video-jepa-paradigm-for-world-action-modeling-in-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：基于V-JEPA的世界-动作模型用于自动驾驶面向未来的规划
+6. [Roadside-Cooperative Autonomous Driving: From Data Platform to Vision-Language End-to-End Reasoning](/202608/24/2608.21032v1-roadside-cooperative-autonomous-driving-from-data-platform-to-vision-language-end-to-end-reasoning)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向V2X协同自动驾驶的视觉-语言端到端推理与闭环评测平台
+7. [SRL-MPC: Shape-Aware Reinforcement Learned Model Predictive Control](/202608/24/2608.21175v1-srl-mpc-shape-aware-reinforcement-learned-model-predictive-control)  
+   标签：评分：9.0/10、query:ad
+   evidence：强化学习模型预测控制用于稠密人群中机器人队列的形状感知导航
+8. [Beyond Imitation: Self-Improving Robot Policies via Off-Policy Q-Planning](/202608/24/2608.21204v1-beyond-imitation-self-improving-robot-policies-via-off-policy-q-planning)  
+   标签：评分：9.0/10、query:ad
+   evidence：离策略Q规划为大规模视觉运动模仿策略赋予基于强化学习的自我改进能力，用于机器人操作
 
 ### 速读区论文标签
-1. [UniTAC: Universal Task-Aware Compression via Weighted Distortion Measures](/202608/23/2608.16696v1-unitac-universal-task-aware-compression-via-weighted-distortion-measures)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向自动驾驶车辆和机器人的通用任务感知压缩方法
-2. [When State Becomes an Attack Surface: State-Semantic Injection in LLM-Driven Embodied Agents](/202608/23/2608.16806v1-when-state-becomes-an-attack-surface-state-semantic-injection-in-llm-driven-embodied-agents)  
+1. [Robot-Body-Aware Traversal Risk Graph Planning for Wheeled-Legged Robots in Complex Terrain](/202608/24/2608.16433v1-robot-body-aware-traversal-risk-graph-planning-for-wheeled-legged-robots-in-complex-terrain)  
+   标签：评分：8.0/10、query:ad
+   evidence：轮腿机器人在复杂地形中的运动规划
+2. [tinyDSM: A Framework for Skill Modeling and Development for Resource-Constrained Millirobots](/202608/24/2608.17596v1-tinydsm-a-framework-for-skill-modeling-and-development-for-resource-constrained-millirobots)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向毫机器人的内在动机与强化学习技能发展框架
+3. [PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration](/202608/24/2608.21031v1-physcap-grounding-code-as-policy-agent-with-physics-informed-exploration)  
+   标签：评分：8.0/10、query:ad
+   evidence：物理信息驱动的探索实现机器人操作中的主动感知，通过交互推断物体潜在物理属性
+4. [UniTAC: Universal Task-Aware Compression via Weighted Distortion Measures](/202608/24/2608.16696v1-unitac-universal-task-aware-compression-via-weighted-distortion-measures)  
    标签：评分：6.0/10、query:ad
-   evidence：针对LLM驱动的具身智能体的状态语义注入攻击与安全风险
+   evidence：面向自动驾驶和机器人物理AI系统的通用任务感知压缩编码器，可在运行时无重训练地重新定向
 
 
 <div class="dpr-home-promo-card">
