@@ -1,178 +1,62 @@
 {
-  "generated_at": "2026-08-26T21:21:52.164940+00:00",
-  "updated_date": "20260826",
+  "generated_at": "2026-08-28T02:29:31.340469+00:00",
+  "updated_date": "20260828",
   "carryover_days": 9,
   "tag_states": {
     "ad": {
-      "updated_date": "20260826",
+      "updated_date": "20260828",
       "carryover_days": 9,
       "items": [
         {
-          "id": "2608.23650v1",
+          "id": "2608.26239v1",
           "source": "arxiv",
-          "title": "Concept-Guided Exploration: Building Persistent, Actionable Scene Graphs",
-          "abstract": "The perception of 3D space by mobile robots is rapidly moving from flat metric grid representations to hybrid metric-semantic graphs built from human-interpretable concepts. While most approaches first build metric maps and then add semantic layers, we explore an alternative, concept-first architecture in which spatial understanding emerges from asynchronous concept agents that directly instantiate and manage semantic entities. Our robot employs two spatial concepts (room and door), implemented as autonomous processes within a cognitive distributed architecture. These concept agents cooperatively build a shared scene graph representation of indoor layouts through active exploration and incremental validation. The key architectural principle is hierarchical constraint propagation: Room instantiation provides geometric and semantic priors to guide and support door detection within wall boundaries. The resulting structure is maintained by a complementary functional principle based on prediction-matching loops. This approach is designed to yield an actionable, human-interpretable spatial representation without relying on any pre-existing global metric map, supporting scalable operation and persistent, task-relevant understanding in structured indoor environments.",
+          "title": "WALL-SS: Scaling Long-horizon World Models via Next-Scale Autoregression",
+          "abstract": "Generative world models provide robots with predictive models of how the world evolves under interaction, with growing potential for simulation, planning, policy evaluation, and robot learning. Beyond clip-level future prediction, a unified generative formulation should relate actions to consequences, support flexible horizons and continuous interaction, and enable reward-driven optimization. We introduce WALL-SS, a world model that generates visual futures through Scale-wise autoregressive Scaling, enabling action-controllable and long-horizon robotic simulation. WALL-SS represents embodied trajectories as causal sequences of temporally interleaved observations and actions, making action-dependent state transitions explicit while naturally supporting variable-length generation, streaming extension through reusable causal states, and direct optimization through sequence probabilities. To make this formulation effective over long horizons, we generate each future observation in a coarse-to-fine manner and develop three complementary components within the same hierarchy. Action-conditioned next-scale prediction injects scale-aligned action representations to improve action-future coupling and model both successful and failed behaviors. Scale-compressed long-horizon memory retains recent interactions at fine resolution while compressing distant observations and actions, with scale-wise dream forcing enhancing robustness to self-generated context. Finally, on-policy alignment optimizes autoregressive visual dynamics with action-following and long-term consistency rewards while preserving the pretrained visual distribution. Experiments show that WALL-SS improves action following and trajectory accuracy, supports coherent minute-long streaming rollout under bounded memory, and consistently benefits from on-policy alignment in reducing action drift and long-horizon inconsistency.",
           "authors": [
-            "Noé Zapata",
-            "Gerardo Pérez",
-            "Alejandro Torrejón",
-            "Pedro Núñez",
-            "Pablo Bustos"
+            "Maeve Zhang",
+            "Rain Sun",
+            "Xiang Wang",
+            "Cyril Zhang",
+            "Shalfun Li",
+            "Meng Cao",
+            "Howard Lu",
+            "Ethan Chen",
+            "Harry Jhou",
+            "KZ Zheng",
+            "Lights Shi",
+            "Regis Cheng",
+            "Lorenzin",
+            "Robert Wang",
+            "Victor Yao",
+            "Gody Li",
+            "Elise Mon",
+            "Yohann Tang",
+            "Ryan Yu",
+            "PS Zhang",
+            "Vincent Chen",
+            "Hang Su",
+            "Roy Gan",
+            "Hao Wang",
+            "Qian Wang"
           ],
           "primary_category": "cs.RO",
           "categories": [
             "cs.RO"
           ],
-          "published": "2026-08-24T10:08:48+00:00",
-          "link": "https://arxiv.org/pdf/2608.23650v1",
+          "published": "2026-08-26T17:57:12+00:00",
+          "link": "https://arxiv.org/pdf/2608.26239v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "Active scene graph perception for mobile robots",
-          "llm_evidence_cn": "移动机器人的主动场景图感知与语义建图",
-          "llm_evidence": "移动机器人的主动场景图感知与语义建图",
-          "canonical_evidence": "移动机器人的主动场景图感知与语义建图",
-          "llm_tldr_en": "Concept-Guided Exploration presents a concept-first architecture where asynchronous concept agents build shared scene graphs of indoor layouts through active exploration, providing persistent, actionable metric-semantic perception for mobile robots.",
-          "llm_tldr_cn": "针对移动机器人环境感知中先建度量图再加语义层的传统流程，论文提出概念优先的架构，让异步概念智能体直接实例化并管理房间、门等语义实体，通过主动探索与增量验证协同构建共享场景图。该架构强调分层原则，使空间理解直接面向可操作的语义信息。实验表明其能够在室内布局中构建持久且可用的场景图，提升了语义感知的效率和可操纵性。",
-          "llm_tldr": "针对移动机器人环境感知中先建度量图再加语义层的传统流程，论文提出概念优先的架构，让异步概念智能体直接实例化并管理房间、门等语义实体，通过主动探索与增量验证协同构建共享场景图。该架构强调分层原则，使空间理解直接面向可操作的语义信息。实验表明其能够在室内布局中构建持久且可用的场景图，提升了语义感知的效率和可操纵性。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robot perception visual and tactile sensing",
-          "matched_requirement_id": "req-5",
-          "selection_source": "carryover_cache",
-          "paper_id": "2608.23650v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2608.23927v1",
-          "source": "arxiv",
-          "title": "GlanceWAM: Sparse Test-Time Imagination for World-Action Models",
-          "abstract": "Video generative models provide rich physical priors for robot learning, yet existing world-action models (WAMs) face a fundamental trade-off: synchronous video generation at control rate is latency-prohibitive, while abandoning test-time visual imagination sacrifices task success. We show that visual imagination achieves both real-time inference and superior success rates when generated asynchronously off the critical path and consumed directly in latent space. We introduce GlanceWAM, which decouples imagination from control within a single video DiT: an asynchronous proposer glances ahead on a slow clock to imagine a single lookahead frame seconds into the future in the background, while an action head decodes action chunks at control rate (48 ms) purely in latent space without blocking. Enabled by a non-interfering attention mask that isolates video representations and staleness-robust horizon training that accommodates asynchronous lookahead aging, GlanceWAM breaks the speed-success dilemma. Trained purely on demonstrations, it attains 72.2% on the 24-task RoboCasa kitchen benchmark (surpassing synchronous Cosmos Policy at 67.1% and imagination-free co-training at 64.4%) and 99.0% on LIBERO, executing at 48 ms per chunk on an NVIDIA A100 GPU (24x faster than synchronous baselines). Code is available at https://github.com/linhanwang/GlanceWAM.",
-          "authors": [
-            "Linhan Wang",
-            "Zijian An",
-            "Mingyuan Zhang",
-            "Chen Dai",
-            "Yi Xu",
-            "Can Cui",
-            "Zichong Yang",
-            "Yinlin Chen",
-            "Lifeng Zhou",
-            "Chang-Tien Lu"
-          ],
-          "primary_category": "cs.CV",
-          "categories": [
-            "cs.CV"
-          ],
-          "published": "2026-08-25T00:19:09+00:00",
-          "link": "https://arxiv.org/pdf/2608.23927v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "world-action models for robot control with asynchronous visual imagination",
-          "llm_evidence_cn": "异步视觉想象的世界动作模型用于机器人控制",
-          "llm_evidence": "异步视觉想象的世界动作模型用于机器人控制",
-          "canonical_evidence": "异步视觉想象的世界动作模型用于机器人控制",
-          "llm_tldr_en": "Introduces GlanceWAM, which decouples asynchronous video imagination from real-time action decoding within a video diffusion transformer, allowing world-action models to run at control rate with improved task success.",
-          "llm_tldr_cn": "世界动作模型常需同步视频生成，导致控制延迟或必须放弃想象而降低成功率。GlanceWAM在视频DiT内将异步视觉想象与控制解耦，后台生成单张前瞻帧并在隐空间直接消费，动作头以48ms控制率解码动作块。实验显示该方法同时实现实时推理和更高任务成功率，为机器人学习提供高效交互方案。",
-          "llm_tldr": "世界动作模型常需同步视频生成，导致控制延迟或必须放弃想象而降低成功率。GlanceWAM在视频DiT内将异步视觉想象与控制解耦，后台生成单张前瞻帧并在隐空间直接消费，动作头以48ms控制率解码动作块。实验显示该方法同时实现实时推理和更高任务成功率，为机器人学习提供高效交互方案。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2608.23927v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2608.24882v1",
-          "source": "arxiv",
-          "title": "Latent Action as Intention Enables Efficient Future Imagination for World Action Models",
-          "abstract": "World action models (WAMs) improve robot control by modeling how observations evolve, but generating future observations at test time incurs substantial latency. Fast-WAM removes this process for efficiency; however, our matched implementations show lower generalization for Fast-WAM than for future-aware alternatives, especially with scarce robot demonstrations and in out-of-distribution scenarios. To bridge this gap, we introduce **LAWA**, a WAM architecture that uses compact latent actions as an operational representation of future intentions, enabling efficient test-time future imagination without generating future observations. Specifically, a discrete tokenizer enhanced by action-free pre-training produces manipulation-centric codebook targets. LAWA jointly denoises a continuous latent state anchored to these targets with executable action chunks while omitting the future-video branch at inference. On RoboCasa, LAWA achieves state-of-the-art average success rates of 65.6% and 80.8% in the few-shot and full data settings, improving over the matched Fast-WAM baseline by 9.6 and 4.5 points, respectively. It also preserves the performance level of the matched Joint-WAM variant while requiring 42.9% lower inference latency. LAWA also demonstrates competitive zero-shot robustness on LIBERO-Plus and superior performance on real-world tasks. These results show that future imagination need not be discarded: retaining it with compact latent actions yields an effective trade-off among performance, generalization, and latency. Code and models will be released.",
-          "authors": [
-            "Xiang Li",
-            "Yupeng Zheng",
-            "Songen Gu",
-            "Huailiang Ma",
-            "Feng Yu",
-            "Xian Nie",
-            "Shanshuai Yuan",
-            "Yujie Zang",
-            "Weize Li",
-            "Shuai Tian",
-            "Moyang Liu",
-            "Ya-Qin Zhang",
-            "Wenchao Ding"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-08-25T17:59:03+00:00",
-          "link": "https://arxiv.org/pdf/2608.24882v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "world action model with latent actions for efficient future imagination in robot control",
-          "llm_evidence_cn": "基于潜在动作意图的高效未来想象世界动作模型",
-          "llm_evidence": "基于潜在动作意图的高效未来想象世界动作模型",
-          "canonical_evidence": "基于潜在动作意图的高效未来想象世界动作模型",
-          "llm_tldr_en": "World action models generate future observations at test time causing latency; LAWA uses compact latent actions as intentions to enable efficient future imagination without generating future observations, improving generalization under scarce demonstrations.",
-          "llm_tldr_cn": "世界动作模型提升机器人控制能力，但测试时生成未来观测带来显著延迟，而省略未来生成又会降低泛化性。LAWA用紧凑的潜在动作作为未来意图表示，搭配动作无关预训练增强的离散分词器，在测试时无需实际生成未来观测即可高效想象未来。该方法在演示稀缺和分布外场景下比加速方案Fast-WAM具有更好的泛化性能，为机器人控制中的高效世界模型提供新思路。",
-          "llm_tldr": "世界动作模型提升机器人控制能力，但测试时生成未来观测带来显著延迟，而省略未来生成又会降低泛化性。LAWA用紧凑的潜在动作作为未来意图表示，搭配动作无关预训练增强的离散分词器，在测试时无需实际生成未来观测即可高效想象未来。该方法在演示稀缺和分布外场景下比加速方案Fast-WAM具有更好的泛化性能，为机器人控制中的高效世界模型提供新思路。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2608.24882v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2608.24212v1",
-          "source": "arxiv",
-          "title": "NeoWorld-Pro: Programming Interactive Scenes from Monocular Images for Embodied Simulation",
-          "abstract": "The advancement of Embodied AI necessitates high-quality simulation assets that faithfully mirror the real world. However, transforming raw visual observations into simulation-ready scenes remains challenging due to the lack of physical grounding and scene-level interactivity in current image-to-URDF methods. We propose NeoWorld-Pro, a framework that reformulates monocular scene reconstruction as procedural programming for interactive 3D environments. Leveraging the zero-shot reasoning and code synthesis capabilities of MLLMs, NeoWorld-Pro converts a single RGB image into executable programs specifying object geometry, articulation, and physical properties. A physics-in-the-loop mechanism then iteratively refines the generated programs by validating their execution in a physics engine, enforcing physically plausible articulations, valid object compositions and interactions, and accurate spatial relationships. Experiments show that NeoWorld-Pro outperforms open-loop and prior monocular reconstruction methods, while enabling complex downstream tasks such as stable stacking and fine-grained manipulation.",
-          "authors": [
-            "Yumeng He",
-            "Yichen Song",
-            "Xiaotian Yang",
-            "Weijia Zhang",
-            "Zanwei Zhou",
-            "Junru Gong",
-            "Xiaokang Yang",
-            "Yunbo Wang"
-          ],
-          "primary_category": "cs.CV",
-          "categories": [
-            "cs.CV"
-          ],
-          "published": "2026-08-25T08:19:39+00:00",
-          "link": "https://arxiv.org/pdf/2608.24212v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "procedural generation of interactive simulation scenes from monocular images for embodied AI",
-          "llm_evidence_cn": "从单目图像程序化生成交互式仿真场景，支撑具身智能研究",
-          "llm_evidence": "从单目图像程序化生成交互式仿真场景，支撑具身智能研究",
-          "canonical_evidence": "从单目图像程序化生成交互式仿真场景，支撑具身智能研究",
-          "llm_tldr_en": "NeoWorld-Pro converts a single RGB image into executable programs specifying object geometry, articulation, and physical properties, with physics-in-the-loop refinement to build simulation-ready interactive scenes for embodied AI.",
-          "llm_tldr_cn": "具身AI依赖高质量仿真场景，但从原始视觉重建为可交互仿真环境仍缺乏物理接地和场景级交互性。NeoWorld-Pro将单目场景重建重构为程序化编程问题，利用多模态大模型的零样本推理与代码生成，从RGB图像输出对象几何、关节和物理属性程序，并通过物理在环迭代优化。该方法提升了仿真场景的物理合理性与可交互性，为具身智能训练提供高效资产生成途径。",
-          "llm_tldr": "具身AI依赖高质量仿真场景，但从原始视觉重建为可交互仿真环境仍缺乏物理接地和场景级交互性。NeoWorld-Pro将单目场景重建重构为程序化编程问题，利用多模态大模型的零样本推理与代码生成，从RGB图像输出对象几何、关节和物理属性程序，并通过物理在环迭代优化。该方法提升了仿真场景的物理合理性与可交互性，为具身智能训练提供高效资产生成途径。",
+          "llm_evidence_en": "generative world model for action-controllable long-horizon embodied robot simulation",
+          "llm_evidence_cn": "支持动作可控长视界具身机器人仿真的生成式世界模型",
+          "llm_evidence": "支持动作可控长视界具身机器人仿真的生成式世界模型",
+          "canonical_evidence": "支持动作可控长视界具身机器人仿真的生成式世界模型",
+          "llm_tldr_en": "WALL-SS is a world model that generates visual futures via scale-wise autoregressive scaling, enabling action-controllable long-horizon robotic simulation, planning, and policy evaluation from embodied trajectories.",
+          "llm_tldr_cn": "生成式世界模型能让机器人预测交互后的世界演化，但现有方法往往难以支持长视界连续交互。WALL-SS将具身轨迹编码为时间上交替的观测与动作序列，引入逐尺度自回归缩放来生成视觉未来，实现动作可控的长期仿真。该方法支持灵活的视界和基于奖励的优化，可用于仿真、规划、策略评估与机器人学习，为长视界世界建模提供了可扩展方案。",
+          "llm_tldr": "生成式世界模型能让机器人预测交互后的世界演化，但现有方法往往难以支持长视界连续交互。WALL-SS将具身轨迹编码为时间上交替的观测与动作序列，引入逐尺度自回归缩放来生成视觉未来，实现动作可控的长期仿真。该方法支持灵活的视界和基于奖励的优化，可用于仿真、规划、策略评估与机器人学习，为长视界世界建模提供了可扩展方案。",
           "llm_tags": [
             "query:ad"
           ],
@@ -180,41 +64,80 @@
           "matched_query_text": "embodied intelligence agents in physical environments",
           "matched_requirement_id": "req-3",
           "selection_source": "carryover_cache",
-          "paper_id": "2608.24212v1",
+          "paper_id": "2608.26239v1",
           "carry_days": 1
         },
         {
-          "id": "2608.24101v1",
+          "id": "2608.26190v1",
           "source": "arxiv",
-          "title": "TrAct: Bridging Robot Control and Visual Prediction with Visual Tracks",
-          "abstract": "Robot actions are inherently embodiment-specific and only weakly aligned with image-space visual changes, limiting their effectiveness as conditioning signals for robot world models. In contrast, visual tracks provide an embodiment-agnostic representation of how task-relevant points move through a scene, offering dense image-space guidance for accurate and spatially precise future video prediction. Building on this observation, we propose TrAct, a world-model-based robot decision-making framework that uses visual tracks as an intermediate interface between control and prediction. TrAct consists of three components: a Vision-Language-Action-and-Track model (VLAT) that jointly predicts candidate actions and corresponding visual tracks from the current observation and language instruction; a track-conditioned world model (TWM) that predicts future visual outcomes conditioned on the proposed tracks; and a vision-language reward model (VLAC) that scores the predicted outcomes. At inference time, VLAT generates candidate action-track pairs, TWM rolls out their visual consequences, and VLAC selects the track whose predicted outcome best satisfies the instruction; the action paired with the selected track is then executed by the robot. Experiments on the proposed LIBERO-INTEGRAL benchmark and real-world Franka manipulation show that TrAct improves success rates from 27% to 55% in simulation and from 49% to 76% on real-world tasks compared with the strong VLA baseline $π_{0.5}$. Furthermore, TWM consistently improves video prediction quality over the action-conditioned world model (AWM). These results demonstrate that visual tracks provide an effective shared interface between robot control and visual prediction, enabling more accurate world modeling and stronger robot generalization.",
+          "title": "Predicting Consequences and Reinforcing Navigation Policies with Latent World Models",
+          "abstract": "World models enable agents to reason about future outcomes and learn policies from their knowledge of state transition, but existing approaches primarily focus on reconstructing future observations or features, which introduces unnecessary complexity and limits their effectiveness for decision making. In this work, we propose a compatibility prediction Latent World Model (LWM) for robot navigation that predicts action-conditioned latent feature compatibility rather than reconstructing observations. Our key insight is that spatial proximity correlates with latent feature similarity, enabling action consequences to be evaluated directly in latent space. To support counterfactual training, our model leverages action sequences sampled across trajectories and learns to predict which sequences lead closer to the goal. Furthermore, we demonstrate how the learned world model can supervise policy learning from unlabeled video data and further improve policies through reinforcement learning entirely within the world model. This imagination-driven framework eliminates the need for action annotations and additional environment interaction. Extensive experiments on multiple real-world robot navigation datasets show that our approach significantly outperforms prior world model and imitation learning methods in prediction accuracy, policy learning, and real-world navigation performance. The code, pretrained models, and additional materials are available at https://wzm206.github.io/latent-world-model-nav.",
           "authors": [
-            "Zhi Cao",
-            "Howard Ji",
-            "Kevin Zhang",
-            "Kuangzhi Ge",
-            "Li Fei-Fei",
-            "Jiajun Wu",
-            "Huang Huang"
+            "Zengmao Wang",
+            "Wei Gao",
+            "Shuhan Shen"
           ],
-          "primary_category": "cs.RO",
+          "primary_category": "cs.AI",
           "categories": [
-            "cs.RO"
+            "cs.AI"
           ],
-          "published": "2026-08-25T06:00:01+00:00",
-          "link": "https://arxiv.org/pdf/2608.24101v1",
+          "published": "2026-08-23T11:58:42+00:00",
+          "link": "https://arxiv.org/pdf/2608.26190v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "World-model-based robot decision-making with visual tracks",
-          "llm_evidence_cn": "基于视觉轨迹的世界模型机器人决策",
-          "llm_evidence": "基于视觉轨迹的世界模型机器人决策",
-          "canonical_evidence": "基于视觉轨迹的世界模型机器人决策",
-          "llm_tldr_en": "TrAct uses visual tracks as an embodiment-agnostic interface between robot control and visual prediction, with a Vision-Language-Action-and-Track model for spatially precise future video prediction and decision-making.",
-          "llm_tldr_cn": "机器人动作具有本体特异性，难以作为世界模型的有效条件信号，而视觉轨迹以与本体无关的方式刻画场景中任务相关点的运动。TrAct提出以视觉轨迹作为控制与视觉预测之间的中间接口，构建联合预测候选动作与轨迹的VLAT模型，并用轨迹约束未来视频预测。这种设计能在图像空间提供密集且空间精确的引导，提升世界模型对机器人决策的支持能力。该方法为机器人控制与视觉预测的桥接提供了一种通用表示，有望改善空间精度与泛化。",
-          "llm_tldr": "机器人动作具有本体特异性，难以作为世界模型的有效条件信号，而视觉轨迹以与本体无关的方式刻画场景中任务相关点的运动。TrAct提出以视觉轨迹作为控制与视觉预测之间的中间接口，构建联合预测候选动作与轨迹的VLAT模型，并用轨迹约束未来视频预测。这种设计能在图像空间提供密集且空间精确的引导，提升世界模型对机器人决策的支持能力。该方法为机器人控制与视觉预测的桥接提供了一种通用表示，有望改善空间精度与泛化。",
+          "llm_evidence_en": "latent world model for robot navigation improving decision-making policies",
+          "llm_evidence_cn": "面向机器人导航的隐空间世界模型，通过预测兼容性来改进决策",
+          "llm_evidence": "面向机器人导航的隐空间世界模型，通过预测兼容性来改进决策",
+          "canonical_evidence": "面向机器人导航的隐空间世界模型，通过预测兼容性来改进决策",
+          "llm_tldr_en": "Proposes a compatibility prediction latent world model for robot navigation that predicts action-conditioned latent feature compatibility instead of reconstructing observations, enabling counterfactual training and policy reinforcement.",
+          "llm_tldr_cn": "现有世界模型多依赖重建未来观测或特征，复杂且不利于决策。本文提出面向机器人导航的兼容性预测隐空间世界模型（LWM），利用空间邻近性与隐特征相似性的关系，在隐空间中直接评估动作后果，并借助动作序列进行反事实训练。实验表明该模型能有效强化导航策略，提升决策质量。",
+          "llm_tldr": "现有世界模型多依赖重建未来观测或特征，复杂且不利于决策。本文提出面向机器人导航的兼容性预测隐空间世界模型（LWM），利用空间邻近性与隐特征相似性的关系，在隐空间中直接评估动作后果，并借助动作序列进行反事实训练。实验表明该模型能有效强化导航策略，提升决策质量。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+          "matched_requirement_id": "req-8",
+          "selection_source": "carryover_cache",
+          "paper_id": "2608.26190v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2608.26788v1",
+          "source": "arxiv",
+          "title": "Decoupling Planning and Control for Instructable Agents",
+          "abstract": "Recent work shows that pre-trained, instruction-tuned vision-language models (VLMs) perform well at mapping from instructions and observations to high-level plans, but struggle to realize such plans as reliable low-latency action sequences in unfamiliar environments. At the same time, world-model controllers excel at fast observation-to-action control, but lack open-ended task guidance. In this work, we combine these strengths into a single system, Instruct-to-Act, where we train a world-model controller to act autonomously at high frequency when conditioned on sparse, higher-latency, and high-level text instructions generated by a VLM planner. To train controllers to be language-instructable, we relabel segments of controller policy rollouts with synthetic instructions and jointly optimize a behavior-cloning objective along with existing reward-maximizing and world-modeling objectives. We evaluate our proposed approach across seven embodied environments, including three multi-agent environments where VLM planners coordinate through language while trained controllers serve as their actuators. Under matched observation and action spaces, our decoupled approach consistently outperforms controller-only and direct VLM action-generation variants, preserves fast control, and lets us swap in different pretrained VLM planners without fine-tuning, while remaining competitive with strong vision-language-action and multi-agent RL baselines on six of seven tasks.",
+          "authors": [
+            "Zineng Tang",
+            "Kelsey R. Allen",
+            "Sjoerd van Steenkiste",
+            "Ishita Dasgupta",
+            "Alane Suhr"
+          ],
+          "primary_category": "cs.AI",
+          "categories": [
+            "cs.AI",
+            "cs.CL",
+            "cs.MA",
+            "cs.RO"
+          ],
+          "published": "2026-08-27T08:17:58+00:00",
+          "link": "https://arxiv.org/pdf/2608.26788v1",
+          "tags": [
+            "keyword:ad",
+            "query:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "combines vision-language model planning with world-model control for instruction-following embodied agents",
+          "llm_evidence_cn": "结合视觉语言模型规划与世界模型控制，构建可指令跟随的具身智能体",
+          "llm_evidence": "结合视觉语言模型规划与世界模型控制，构建可指令跟随的具身智能体",
+          "canonical_evidence": "结合视觉语言模型规划与世界模型控制，构建可指令跟随的具身智能体",
+          "llm_tldr_en": "Instruct-to-Act couples a VLM high-level planner with a fast world-model controller to enable instruction-following embodied agents with low-latency reliable actions in unfamiliar environments.",
+          "llm_tldr_cn": "针对预训练视觉语言模型生成的高层规划难以在陌生环境中转化为可靠低延迟动作序列的问题，提出Instruct-to-Act系统，将VLM规划器与高频世界模型控制器结合，并通过合成指令重标注训练控制器遵循语言指令。该方法兼顾开放任务引导与快速闭环控制，能够在推理延迟下保持自主行动，提升具身智能体在陌生环境中执行指令的可靠性和效率。",
+          "llm_tldr": "针对预训练视觉语言模型生成的高层规划难以在陌生环境中转化为可靠低延迟动作序列的问题，提出Instruct-to-Act系统，将VLM规划器与高频世界模型控制器结合，并通过合成指令重标注训练控制器遵循语言指令。该方法兼顾开放任务引导与快速闭环控制，能够在推理延迟下保持自主行动，提升具身智能体在陌生环境中执行指令的可靠性和效率。",
           "llm_tags": [
             "query:ad"
           ],
@@ -222,48 +145,7 @@
           "matched_query_text": "embodied intelligence agents in physical environments",
           "matched_requirement_id": "req-3",
           "selection_source": "carryover_cache",
-          "paper_id": "2608.24101v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2608.24111v1",
-          "source": "arxiv",
-          "title": "Trajectory-Level Continuous Action Representation for Robotic Manipulation",
-          "abstract": "We propose CAT, a trajectory-level continuous action representation framework for robotic manipulation. Existing visuomotor systems often entangle action representation with control frequency or rely on fixed temporal parameterizations. This leads to representational redundancy at high sampling rates and limits the modeling of critical motion. CAT instead encodes action trajectories within a fixed real-time interval into a set of continuous latent tokens. To ensure temporal consistency across varying control frequencies, we further incorporate a frequency-aware positional encoding that establishs a shared temporal coordinate system. Trajectory-level regularization further stabilizes the latent representation. This approach prevents representation growth with timestep density and avoids reliance on predefined temporal parameterizations. Extensive system-level evaluations on LIBERO, MimicGen, and real-world long-horizon manipulation tasks demonstrate that CAT-based policies consistently outperform both competitive VQ-based and continuous visuomotor baselines under matched training settings. Across various model backbones and control frequencies, CAT consistently improves success rates. These results highlight the advantages of trajectory-level continuous action modeling for scalable robotic manipulation across varying control rates.",
-          "authors": [
-            "Tong Yang",
-            "Jingkai Jia",
-            "Yuecheng Xu",
-            "Xueyao Chen",
-            "Chi Zhang",
-            "Wenqiang Zhang"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-08-25T06:19:00+00:00",
-          "link": "https://arxiv.org/pdf/2608.24111v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "Trajectory-level action representation for robotic manipulation",
-          "llm_evidence_cn": "用于机器人操作的轨迹级连续动作表示",
-          "llm_evidence": "用于机器人操作的轨迹级连续动作表示",
-          "canonical_evidence": "用于机器人操作的轨迹级连续动作表示",
-          "llm_tldr_en": "CAT encodes action trajectories into continuous latent tokens with frequency-aware positional encoding and trajectory-level regularization, preventing representational redundancy and improving manipulation modeling across control frequencies.",
-          "llm_tldr_cn": "现有视觉运动系统常将动作表示与控制频率绑定或采用固定时间参数化，导致高采样率下表示冗余且难以建模关键运动。CAT在固定时间段内把动作轨迹编码为一组连续潜记，并加入频率感知位置编码以统一不同控制频率的时间坐标。轨迹级正则化进一步稳定潜表示，避免冗余并增强时间一致性。该方法为机器人操作动作表示提供更紧凑、频率鲁棒的方案，有助于提升多频控制下的操作学习性能。",
-          "llm_tldr": "现有视觉运动系统常将动作表示与控制频率绑定或采用固定时间参数化，导致高采样率下表示冗余且难以建模关键运动。CAT在固定时间段内把动作轨迹编码为一组连续潜记，并加入频率感知位置编码以统一不同控制频率的时间坐标。轨迹级正则化进一步稳定潜表示，避免冗余并增强时间一致性。该方法为机器人操作动作表示提供更紧凑、频率鲁棒的方案，有助于提升多频控制下的操作学习性能。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2608.24111v1",
+          "paper_id": "2608.26788v1",
           "carry_days": 1
         }
       ]
