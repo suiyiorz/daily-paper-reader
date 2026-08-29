@@ -1,80 +1,59 @@
 {
   "mode": "standard",
-  "generated_at": "2026-08-29T03:02:10.286489+00:00",
+  "generated_at": "2026-08-29T22:15:56.943376+00:00",
   "stats": {
     "mode": "standard",
     "tag_count": 1,
-    "deep_divecandidates": 7,
+    "deep_divecandidates": 9,
     "deep_cap": 6,
     "deep_selected": 6,
-    "quick_candidates": 6,
+    "quick_candidates": 11,
     "quick_skim_target": 11,
-    "quick_selected": 6
+    "quick_selected": 11
   },
   "deep_dive": [
     {
-      "id": "2608.26739v1",
+      "id": "2608.21550v1",
       "source": "arxiv",
-      "title": "Residual Deep Reinforcement Learning-Based Computed Torque Control for a Cable-Driven Lower-Limb Rehabilitation Robot under Disturbances and Parametric Uncertainties",
-      "abstract": "Accurate trajectory tracking in cable-driven lower-limb rehabilitation robots is challenging because model uncertainty, external disturbances, joint constraints, and pull-only cable actuation can degrade nominal control performance. Conventional model-based controllers provide an interpretable control structure but remain sensitive to model mismatch, whereas fully learning-based control can reduce transparency and complicate constraint-aware operation. This study proposes a residual deep reinforcement learning-enhanced computed torque control framework in which computed torque control generates the nominal command and a bounded Deep Deterministic Policy Gradient policy supplies only an additional compensating torque. The approach is evaluated in simulation under nominal, uncertain, disturbed, combined, and generalization conditions, together with trajectory-tracking, joint-limit, cable-demand, workspace-feasibility, and cable-Jacobian diagnostics. Across the evaluated conditions, the residual controller improves tracking and disturbance rejection relative to computed torque control while preserving the interpretable model-based command structure and satisfying the reported feasibility checks in the representative evaluation. Broader tests indicate that tracking improvements can persist beyond the representative case while also exposing trajectory-dependent constraint limitations. These results support bounded residual learning as a practical robustness-enhancement strategy for simulation-based rehabilitation robot control and motivate further constraint-aware and experimental validation.",
+      "title": "GOLEM: Modular Humanoid Autonomy Towards Electric Vehicle Battery Disassembly",
+      "abstract": "Disassembling end-of-life electric vehicle (EV) battery packs is dull and dangerous work, performed almost entirely by humans. We present GOLEM (Generalized Open Library of Embodied Modules), an end-to-end, open-source system architecture for EV battery disassembly with the Unitree H1-2 humanoid robot in which walking, manipulation, dynamic stability, navigation, and spatial memory are independent modules with abstract interfaces, so that methods are easily developed, interchanged, and compared. GOLEM is deployed as a Docker-based ROS 2 abstraction in which MuJoCo and IsaacLab digital twins expose interfaces matching the physical robot. GOLEM's composability and per-module customization enable development and demonstration of humanoid EV battery disassembly, from simulation to reality. GOLEM provides fair comparison between humanoid modules, enabling evaluation as a capability ladder, in which one module is characterized at a time and added as a rung: LiDAR-inertial navigation places the robot within 13.0cm of a 6m goal; a learned standing controller recovers from external disturbances that sampling-based lower-body MPC does not; and grasping loosened fasteners from a real Hyundai Ioniq 5 pack degrades from 97% tethered to 87% free-standing to 37% under navigation-induced pose variance. Source code is available at the project page https://golem-humanoid.github.io",
       "authors": [
-        "Mohammad-Hossein Fakouri",
-        "Ali Keymasi-Khalaji"
-      ],
-      "primary_category": "cs.RO",
-      "categories": [
-        "cs.RO",
-        "eess.SY"
-      ],
-      "published": "2026-08-27T07:29:50+00:00",
-      "link": "https://arxiv.org/pdf/2608.26739v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 9.0,
-      "llm_evidence_en": "residual deep reinforcement learning control for rehabilitation robot under disturbances",
-      "llm_evidence_cn": "扰动下康复机器人的残差深度强化学习控制",
-      "llm_evidence": "扰动下康复机器人的残差深度强化学习控制",
-      "canonical_evidence": "扰动下康复机器人的残差深度强化学习控制",
-      "llm_tldr_en": "Proposes a residual deep reinforcement learning-enhanced computed torque control framework for cable-driven lower-limb rehabilitation robots, improving trajectory tracking under disturbances and parametric uncertainties.",
-      "llm_tldr_cn": "针对绳驱动下肢康复机器人在外部扰动和参数不确定性下轨迹跟踪性能下降的问题，提出残差深度强化学习增强的计算力矩控制框架。该方法由计算力矩控制器生成名义命令，再用有界DDPG残差修正，兼顾了可解释性与鲁棒性。实验表明该框架在约束条件下能显著提高轨迹跟踪精度。",
-      "llm_tldr": "针对绳驱动下肢康复机器人在外部扰动和参数不确定性下轨迹跟踪性能下降的问题，提出残差深度强化学习增强的计算力矩控制框架。该方法由计算力矩控制器生成名义命令，再用有界DDPG残差修正，兼顾了可解释性与鲁棒性。实验表明该框架在约束条件下能显著提高轨迹跟踪精度。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "intelligent control reinforcement learning for robots",
-      "matched_requirement_id": "req-6",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2608.21676v1",
-      "source": "arxiv",
-      "title": "Lifelong Robot Recomposition via Persistent Categorical Modeling for Unified Task-Driven Co-Design, Verification, and Planning",
-      "abstract": "Robotic systems are traditionally designed and deployed in static configurations, with assumptions made at design-time becoming immutable constraints during runtime. This design-then-deploy paradigm produces performant systems under narrow operating conditions, but renders robots brittle when qualities of themselves, their tasks, or their environments unexpectedly change. We address this challenge with a compositional framework that formalizes robotic systems as abstract circuits within a strict symmetric monoidal category, in which design and runtime composition of hardware, software, and behavior are synthesized simultaneously via an SMT-based solver, with monoidal functors projecting the system into lifecycle-specific views and free symbolic variables simultaneously solving for parameters and entire component specifications within larger compositions. This persistent model also supports queries a long-lived system needs beyond plan existence across its entire lifecycle, including mapping Pareto fronts over candidate compositions, diagnosing why a composition has become infeasible, finding its minimal restoration, and reconfiguring with limited change to the deployed system. We evaluate against official implementations of optimal numeric, stream-based, and SMT-based planners all measured onboard a deployed robot and demonstrate the approach end-to-end in a search-and-rescue scenario in which the robot recognizes when it has become unfit and synthesizes and assumes new holistic configurations to restore operation. We release our solver and supporting software open-source.",
-      "authors": [
-        "Steven Swanbeck",
-        "Mitch Pryor"
+        "Max Conway",
+        "William Xie",
+        "Allen Devaraj",
+        "Yutong Zhang",
+        "Niraj Pudasaini",
+        "Mateo Feit",
+        "Adam Abid",
+        "Zachary Allen",
+        "Chen Liu",
+        "Xuan Tan",
+        "Jensen Lavering",
+        "Jason Chen",
+        "Lyle Antieau",
+        "Anthony Von Pischke",
+        "Alessandro Roncone",
+        "Zachary Sunberg",
+        "Nikolaus Correll"
       ],
       "primary_category": "cs.RO",
       "categories": [
         "cs.RO"
       ],
-      "published": "2026-08-21T22:46:37+00:00",
-      "link": "https://arxiv.org/pdf/2608.21676v1",
+      "published": "2026-08-21T18:38:20+00:00",
+      "link": "https://arxiv.org/pdf/2608.21550v1",
       "tags": [
         "keyword:ad",
         "query:ad"
       ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "categorical modeling for lifelong robot co-design, verification, and planning",
-      "llm_evidence_cn": "范畴建模用于终身机器人协同设计、验证与规划",
-      "llm_evidence": "范畴建模用于终身机器人协同设计、验证与规划",
-      "canonical_evidence": "范畴建模用于终身机器人协同设计、验证与规划",
-      "llm_tldr_en": "A compositional framework formalizes robotic systems as abstract circuits in a symmetric monoidal category, synthesizing hardware, software, and behavior at design and runtime via an SMT solver, enabling lifelong adaptivity to changes.",
-      "llm_tldr_cn": "传统机器人系统采用设计后部署的静态范式，运行时难以应对自身、任务或环境的变化。本文提出一种组合式框架，将机器人系统抽象为严格对称幺半群范畴中的电路，通过基于SMT的求解器在设计和运行时同时综合硬件、软件与行为，并利用幺半群函子进行系统抽象。该方法支持持久范畴建模，实现终身机器人重组，提升系统对变化的自适应能力。",
-      "llm_tldr": "传统机器人系统采用设计后部署的静态范式，运行时难以应对自身、任务或环境的变化。本文提出一种组合式框架，将机器人系统抽象为严格对称幺半群范畴中的电路，通过基于SMT的求解器在设计和运行时同时综合硬件、软件与行为，并利用幺半群函子进行系统抽象。该方法支持持久范畴建模，实现终身机器人重组，提升系统对变化的自适应能力。",
+      "llm_score": 9.0,
+      "llm_evidence_en": "humanoid locomotion and manipulation for EV battery disassembly",
+      "llm_evidence_cn": "人形机器人运动与操作实现电动汽车电池拆解",
+      "llm_evidence": "人形机器人运动与操作实现电动汽车电池拆解",
+      "canonical_evidence": "人形机器人运动与操作实现电动汽车电池拆解",
+      "llm_tldr_en": "GOLEM is an open-source modular architecture for humanoid EV battery disassembly, integrating walking, manipulation, navigation, and spatial memory as independent modules with abstract interfaces, running in Docker/ROS2 with MuJoCo and IsaacLab digital twins.",
+      "llm_tldr_cn": "电动汽车电池包拆解枯燥且危险，目前几乎完全依赖人工。GOLEM提出端到端开源系统架构，将Unitree H1-2人形机器人的行走、操作、动态稳定、导航与空间记忆作为独立模块，通过抽象接口实现易于开发、替换和比较的模块化设计。基于Docker的ROS 2抽象让MuJoCo与IsaacLab数字孪生暴露与物理机器人一致的接口。该系统展示了模块化组合在真实人形机器人工业任务中的可行性，加速电池拆解自主化。",
+      "llm_tldr": "电动汽车电池包拆解枯燥且危险，目前几乎完全依赖人工。GOLEM提出端到端开源系统架构，将Unitree H1-2人形机器人的行走、操作、动态稳定、导航与空间记忆作为独立模块，通过抽象接口实现易于开发、替换和比较的模块化设计。基于Docker的ROS 2抽象让MuJoCo与IsaacLab数字孪生暴露与物理机器人一致的接口。该系统展示了模块化组合在真实人形机器人工业任务中的可行性，加速电池拆解自主化。",
       "llm_tags": [
         "query:ad"
       ],
@@ -84,36 +63,36 @@
       "selection_source": "fresh_fetch"
     },
     {
-      "id": "2608.25585v1",
+      "id": "2608.25284v1",
       "source": "arxiv",
-      "title": "RA-VLA: Retrieval-Augmented VLA for Test-Time Adaptation",
-      "abstract": "Vision-Language-Action (VLA) models provide a versatile foundation for general robotic manipulation, yet they exhibit significant brittleness when confronted with novel task distributions. While In-Context Imitation Learning (ICIL) offers a training-free alternative, existing frameworks suffer from an adaptation bottleneck that hinders the effective translation of expert context to executable actions. This failure originates from superficial retrieval mechanisms and an inherent behavioral inertia that anchors the policy to its pre-trained priors. To address these limitations, we present RA-VLA, a retrieval-augmented VLA framework that integrates behavior-aligned context retrieval with a grounded execution pipeline. By enforcing faithful adherence to functional cues within a scalable architecture, RA-VLA facilitates seamless task adaptation while preserving inference efficiency. Our empirical evaluations across the LIBERO benchmark and a real-world UR5e environment demonstrate that RA-VLA achieves superior success rates and computational efficiency, establishing a robust framework for training-free robotic adaptation.",
+      "title": "Generative Action-Chunk Sampling for Adaptive Stiffness Control in Physical Human-Robot Collaboration",
+      "abstract": "Physical human-robot collaboration requires a robot to provide assistance when human intention is clear while remaining compliant when several future motions are plausible. We present an adaptive stiffness framework based on generative action-chunk sampling. Conditioned on an RGB image and external joint-torque estimates, the policy samples multiple future action chunks from an observation-conditioned prior. Variation among the sampled action chunks is used to continuously adapt joint stiffness and damping. Greater variation makes the robot more compliant to facilitate human guidance, whereas lower variation provides firmer assistance. In a real-world collaborative transport task with four possible directions, the proposed method achieved an average success rate of 0.95, compared with 0.83 for a fixed-stiffness ablation and 0.69 for a deterministic baseline. Near direction determination, variation among the sampled action chunks increased and the controller accordingly reduced stiffness. These results suggest that variation among actions sampled by a generative policy can serve as an online control signal for balancing assistance and compliance in physical human-robot interaction.",
       "authors": [
-        "Sanghwan Jang",
-        "Minjin Jeon",
-        "Minsoo Kim",
-        "Seongjin Choi",
-        "Dongha Kim",
-        "Hwanjo Yu"
+        "Aoi Otake",
+        "Ferdinand Hartmann",
+        "Ko Igari",
+        "Shingo Murata"
       ],
       "primary_category": "cs.RO",
       "categories": [
-        "cs.RO"
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
       ],
-      "published": "2026-08-26T09:52:30+00:00",
-      "link": "https://arxiv.org/pdf/2608.25585v1",
+      "published": "2026-08-26T01:44:11+00:00",
+      "link": "https://arxiv.org/pdf/2608.25284v1",
       "tags": [
         "keyword:ad",
         "query:ad"
       ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "retrieval-augmented VLA for robotic manipulation, test-time adaptation, grounding",
-      "llm_evidence_cn": "检索增强VLA进行机器人操作，测试时自适应，行为对齐检索",
-      "llm_evidence": "检索增强VLA进行机器人操作，测试时自适应，行为对齐检索",
-      "canonical_evidence": "检索增强VLA进行机器人操作，测试时自适应，行为对齐检索",
-      "llm_tldr_en": "RA-VLA improves VLA manipulation at test time by retrieving behavior-aligned context and grounding execution, overcoming adaptation bottleneck and behavioral inertia.",
-      "llm_tldr_cn": "VLA模型在遇到新任务分布时表现脆弱，而现有上下文模仿学习存在适应瓶颈。RA-VLA提出检索增强的VLA框架，通过行为对齐的上下文检索和落地执行管线，强制策略遵循功能线索，缓解预训练先验的惯性。实验表明该方法能显著提升VLA在测试时对新任务分布的适应能力，为通用机器人操作提供高效的测试时适应手段。",
-      "llm_tldr": "VLA模型在遇到新任务分布时表现脆弱，而现有上下文模仿学习存在适应瓶颈。RA-VLA提出检索增强的VLA框架，通过行为对齐的上下文检索和落地执行管线，强制策略遵循功能线索，缓解预训练先验的惯性。实验表明该方法能显著提升VLA在测试时对新任务分布的适应能力，为通用机器人操作提供高效的测试时适应手段。",
+      "llm_score": 9.0,
+      "llm_evidence_en": "adaptive stiffness control via generative action-chunk sampling in physical human-robot collaboration",
+      "llm_evidence_cn": "基于生成式动作块采样的物理人机协作自适应刚度控制",
+      "llm_evidence": "基于生成式动作块采样的物理人机协作自适应刚度控制",
+      "canonical_evidence": "基于生成式动作块采样的物理人机协作自适应刚度控制",
+      "llm_tldr_en": "An adaptive stiffness framework for physical human-robot collaboration samples future action chunks conditioned on RGB images and external joint torques, using variation among chunks to adjust joint stiffness and damping for compliant or firm assistance.",
+      "llm_tldr_cn": "针对物理人机协作中机器人需在意图明确时提供助力和动作不明确时保持柔顺的问题，提出自适应刚度框架，基于RGB图像和外部关节力矩采样多个未来动作块，并通过动作块间的方差连续调整关节刚度与阻尼。在真实世界四方协作运输任务中，该方法使机器人既能提供稳定帮助又能顺应人类引导，提升了肢体交互的柔顺性和安全性。",
+      "llm_tldr": "针对物理人机协作中机器人需在意图明确时提供助力和动作不明确时保持柔顺的问题，提出自适应刚度框架，基于RGB图像和外部关节力矩采样多个未来动作块，并通过动作块间的方差连续调整关节刚度与阻尼。在真实世界四方协作运输任务中，该方法使机器人既能提供稳定帮助又能顺应人类引导，提升了肢体交互的柔顺性和安全性。",
       "llm_tags": [
         "query:ad"
       ],
@@ -142,14 +121,14 @@
         "keyword:ad",
         "query:ad"
       ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "Latent world model for action consequence prediction and RL-based navigation policy learning",
-      "llm_evidence_cn": "利用潜在世界模型预测动作后果并强化导航策略",
-      "llm_evidence": "利用潜在世界模型预测动作后果并强化导航策略",
-      "canonical_evidence": "利用潜在世界模型预测动作后果并强化导航策略",
-      "llm_tldr_en": "Proposes a compatibility-prediction latent world model for robot navigation, enabling RL policies to evaluate action consequences directly in latent space.",
-      "llm_tldr_cn": "现有世界模型常通过重建未来观测来学习状态转移，复杂度高且不利于决策。本文提出兼容性预测潜在世界模型LWM，预测动作条件下的潜在特征兼容性而非重建观测，利用空间邻近与特征相似相关性，在潜在空间直接评估动作后果。配合反事实训练，可有效强化导航策略，为机器人导航提供了更高效的决策建模方式。",
-      "llm_tldr": "现有世界模型常通过重建未来观测来学习状态转移，复杂度高且不利于决策。本文提出兼容性预测潜在世界模型LWM，预测动作条件下的潜在特征兼容性而非重建观测，利用空间邻近与特征相似相关性，在潜在空间直接评估动作后果。配合反事实训练，可有效强化导航策略，为机器人导航提供了更高效的决策建模方式。",
+      "llm_score": 9.0,
+      "llm_evidence_en": "Latent world model for navigation policy reinforcement",
+      "llm_evidence_cn": "用于导航策略强化的潜在世界模型",
+      "llm_evidence": "用于导航策略强化的潜在世界模型",
+      "canonical_evidence": "用于导航策略强化的潜在世界模型",
+      "llm_tldr_en": "Latent world models reconstructing future observations add complexity. The proposed LWM predicts action-conditioned latent feature compatibility for navigation, enabling consequence evaluation in latent space and counterfactual training to reinforce policies efficiently.",
+      "llm_tldr_cn": "现有世界模型多聚焦于重建未来观测，复杂且低效。论文提出兼容性预测潜在世界模型，使代理直接预测动作条件下的潜在特征兼容性，从而评估行动后果。结合反事实训练，模型可有效强化导航策略。这一思路简化了世界模型在决策中的使用方式，提升了机器人导航的RL效率。",
+      "llm_tldr": "现有世界模型多聚焦于重建未来观测，复杂且低效。论文提出兼容性预测潜在世界模型，使代理直接预测动作条件下的潜在特征兼容性，从而评估行动后果。结合反事实训练，模型可有效强化导航策略。这一思路简化了世界模型在决策中的使用方式，提升了机器人导航的RL效率。",
       "llm_tags": [
         "query:ad"
       ],
@@ -157,6 +136,471 @@
       "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
       "matched_requirement_id": "req-8",
       "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.26788v1",
+      "source": "arxiv",
+      "title": "Decoupling Planning and Control for Instructable Agents",
+      "abstract": "Recent work shows that pre-trained, instruction-tuned vision-language models (VLMs) perform well at mapping from instructions and observations to high-level plans, but struggle to realize such plans as reliable low-latency action sequences in unfamiliar environments. At the same time, world-model controllers excel at fast observation-to-action control, but lack open-ended task guidance. In this work, we combine these strengths into a single system, Instruct-to-Act, where we train a world-model controller to act autonomously at high frequency when conditioned on sparse, higher-latency, and high-level text instructions generated by a VLM planner. To train controllers to be language-instructable, we relabel segments of controller policy rollouts with synthetic instructions and jointly optimize a behavior-cloning objective along with existing reward-maximizing and world-modeling objectives. We evaluate our proposed approach across seven embodied environments, including three multi-agent environments where VLM planners coordinate through language while trained controllers serve as their actuators. Under matched observation and action spaces, our decoupled approach consistently outperforms controller-only and direct VLM action-generation variants, preserves fast control, and lets us swap in different pretrained VLM planners without fine-tuning, while remaining competitive with strong vision-language-action and multi-agent RL baselines on six of seven tasks.",
+      "authors": [
+        "Zineng Tang",
+        "Kelsey R. Allen",
+        "Sjoerd van Steenkiste",
+        "Ishita Dasgupta",
+        "Alane Suhr"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.MA",
+        "cs.RO"
+      ],
+      "published": "2026-08-27T08:17:58+00:00",
+      "link": "https://arxiv.org/pdf/2608.26788v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "planning and control decoupling for instructable embodied agents",
+      "llm_evidence_cn": "面向可指令具身代理的规划与控制解耦",
+      "llm_evidence": "面向可指令具身代理的规划与控制解耦",
+      "canonical_evidence": "面向可指令具身代理的规划与控制解耦",
+      "llm_tldr_en": "VLMs plan well but cannot produce low-latency actions; world-model controllers act fast but lack task guidance. Instruct-to-Act trains a world-model controller conditioned on sparse high-level text from a VLM planner, decoupling planning and control.",
+      "llm_tldr_cn": "预训练的视觉-语言模型擅长生成高层计划，但难以在陌生环境中输出低延迟动作；世界模型控制器能快速响应却缺乏开放任务指导。Instruct-to-Act将二者结合，用VLM规划器产生稀疏的高层文本指令，训练世界模型控制器据此进行高频自主控制，并通过合成指令重标注控制器策略轨迹来实现语言可指导性。该工作有效解耦了规划与控制，兼具语义灵活性与实时控制能力，可用于可指令具身代理。",
+      "llm_tldr": "预训练的视觉-语言模型擅长生成高层计划，但难以在陌生环境中输出低延迟动作；世界模型控制器能快速响应却缺乏开放任务指导。Instruct-to-Act将二者结合，用VLM规划器产生稀疏的高层文本指令，训练世界模型控制器据此进行高频自主控制，并通过合成指令重标注控制器策略轨迹来实现语言可指导性。该工作有效解耦了规划与控制，兼具语义灵活性与实时控制能力，可用于可指令具身代理。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.27225v1",
+      "source": "arxiv",
+      "title": "STEP: State-Aware Task Estimation and Planning with Multi-Modal LLMs for Human-Robot Collaboration",
+      "abstract": "Effective human-robot collaboration in industrial settings requires robots to understand human intentions and assist with task planning, reducing workload. Recent works have explored the use of Multi-modal Large Language Models (MM-LLMs) for task planning in such data-scarce scenarios, leveraging in-context learning to interpret user actions and generate long-horizon action plans in natural language. However, MM-LLMs inherently lack an understanding of system states and do not track state transitions, often leading to hallucinated actions that deviate from the intended goal. Additionally, generating action plans in natural language tends to limit the generated plans to a high level, introducing ambiguity in action execution. To address these limitations, we propose the State-aware Task Estimator and Planner (STEP), which prompts a MM-LLM to explicitly estimate the state of the system and predict the state transitions resulting from executed actions. By forecasting future states alongside actions, STEP ensures task-convergent planning while also providing additional assistance parameters necessary for executing the predicted actions. We evaluate STEP in a simulated environment using a robot assembly task. Our approach outperforms the state-of-the-art by 32.8% in action executability and 14.8% in final-state error.",
+      "authors": [
+        "Maitrey Gramopadhye",
+        "Prakash Baskaran",
+        "Xiao Liu",
+        "Songpo Li",
+        "Soshi Iba"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-08-27T15:08:36+00:00",
+      "link": "https://arxiv.org/pdf/2608.27225v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "human-robot collaboration task planning with state-aware MM-LLM",
+      "llm_evidence_cn": "基于状态感知多模态大模型的人机协作任务规划",
+      "llm_evidence": "基于状态感知多模态大模型的人机协作任务规划",
+      "canonical_evidence": "基于状态感知多模态大模型的人机协作任务规划",
+      "llm_tldr_en": "STEP proposes state-aware task estimation and planning with MM-LLMs to track state transitions and decompose long-horizon plans for human-robot collaboration.",
+      "llm_tldr_cn": "针对多模态大语言模型在工业人机协作中缺乏系统状态理解、容易产生幻觉动作且规划粒度粗的问题，提出STEP，在上下文中显式估计并跟踪任务状态，结合人机协作场景生成可执行的长程行动计划。实验证明状态感知规划能减少动作偏差并提升协作效率，为人机共融任务规划提供新思路。",
+      "llm_tldr": "针对多模态大语言模型在工业人机协作中缺乏系统状态理解、容易产生幻觉动作且规划粒度粗的问题，提出STEP，在上下文中显式估计并跟踪任务状态，结合人机协作场景生成可执行的长程行动计划。实验证明状态感知规划能减少动作偏差并提升协作效率，为人机共融任务规划提供新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.27371v1",
+      "source": "arxiv",
+      "title": "Embodied Scene Rearrangement Planning",
+      "abstract": "This paper introduces Embodied Scene Rearrangement Planning (ESRP), a novel task requiring embodied agents to rearrange furniture in 3D scenes to match a target configuration using only egocentric observations and a top-down target layout. Unlike prior rearrangement tasks, ESRP precludes global state access and introduces mutual object occlusions, reflecting the practical constraints of real-world robotic deployment. These factors make aligning partial egocentric observations with the global target layout particularly challenging for long-horizon planning. To facilitate research, we present ESRP-Bench, a comprehensive benchmark built on OmniGibson featuring over 5,400 scene pairs and 8,200 objects. We define three multi-level metrics to evaluate rearrangement quality and provide four baselines: a hierarchical task-and-motion planning method, a vision-language-model-based method, and two learning-based approaches (IL and RL). Experimental results demonstrate that current methods struggle to complete the task efficiently, highlighting ESRP as a challenging frontier for embodied agents in scene understanding and long-horizon task planning. This work serves as a stepping stone toward deploying intelligent agents in real-world scenarios. Project page: https://pie-lab.cn/ESRP/.",
+      "authors": [
+        "Canzhi Chen",
+        "Zan Wang",
+        "Siqi Zhu",
+        "Qi Wu",
+        "Yixuan Li",
+        "Wei Liang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-27T17:08:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.27371v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "embodied agents for scene rearrangement planning",
+      "llm_evidence_cn": "具身代理的场景重排规划",
+      "llm_evidence": "具身代理的场景重排规划",
+      "canonical_evidence": "具身代理的场景重排规划",
+      "llm_tldr_en": "ESRP introduces a new embodied task: rearranging furniture to match a target layout using only egocentric views and a top-down map. It provides ESRP-Bench with 5400 scene pairs and 8200 objects, plus multi-level metrics for long-horizon planning evaluation.",
+      "llm_tldr_cn": "现有三维场景重排任务通常假设全局状态可访问，与真实机器人部署不符。本文提出具身场景重排规划（ESRP），要求智能体仅凭自我中心观察和俯视目标布局在三维场景中重新排列家具，同时引入相互遮挡等现实约束。ESRP-Bench基于OmniGibson构建，包含5400多对场景与8200个物体，并定义多层次评估指标。该基准为长时程具身规划研究提供了更具挑战性的标准平台。",
+      "llm_tldr": "现有三维场景重排任务通常假设全局状态可访问，与真实机器人部署不符。本文提出具身场景重排规划（ESRP），要求智能体仅凭自我中心观察和俯视目标布局在三维场景中重新排列家具，同时引入相互遮挡等现实约束。ESRP-Bench基于OmniGibson构建，包含5400多对场景与8200个物体，并定义多层次评估指标。该基准为长时程具身规划研究提供了更具挑战性的标准平台。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.22028v1",
+      "source": "arxiv",
+      "title": "Design of a Human-Assistance Robot System with Contextual Action Recognition",
+      "abstract": "This paper presents a conceptual design for a proactive human assisting robot system capable of recognizing human activities and responding proactively. The system leverages contextual human activity recognition to interpret human actions across diverse contexts, while behavior trees are utilized to define dynamic and interpretable robot behaviors. We outline the system architecture, incorporating contextual human action recognition (HAR), behavior trees (BTs), and ROS, using the Spot robot platform as a representative example. We explain how HAR enables the robot to provide proactive assistance, discuss its limitations, and introduce methodologies for contextual HAR to address these limitations, thereby enhancing the robot's decision-making in complex human activity scenarios.",
+      "authors": [
+        "Amanuel Ergogo",
+        "Teresa Zielińska"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-22T16:13:18+00:00",
+      "link": "https://arxiv.org/pdf/2608.22028v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "human-robot interaction; proactive assistance with activity recognition",
+      "llm_evidence_cn": "人机交互；基于活动识别的主动辅助",
+      "llm_evidence": "人机交互；基于活动识别的主动辅助",
+      "canonical_evidence": "人机交互；基于活动识别的主动辅助",
+      "llm_tldr_en": "A conceptual human-assistance robot uses contextual activity recognition and behavior trees on ROS/Spot to proactively interpret actions, improving decision-making across diverse contexts.",
+      "llm_tldr_cn": "人助机器人需要根据人类活动主动提供帮助，但现有行为识别往往忽略上下文而导致决策受限。本文给出一种概念性设计，将情境人类活动识别与行为树结合，并在ROS框架下应用于Spot机器人平台。通过情境化活动识别解释人的行为，行为树提供动态且可解释的机器人行为。文章还讨论了该方法的局限及改进方向，为构建更主动、更可靠的人助机器人系统提供了架构参考。",
+      "llm_tldr": "人助机器人需要根据人类活动主动提供帮助，但现有行为识别往往忽略上下文而导致决策受限。本文给出一种概念性设计，将情境人类活动识别与行为树结合，并在ROS框架下应用于Spot机器人平台。通过情境化活动识别解释人的行为，行为树提供动态且可解释的机器人行为。文章还讨论了该方法的局限及改进方向，为构建更主动、更可靠的人助机器人系统提供了架构参考。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.20948v1",
+      "source": "arxiv",
+      "title": "Neural-Primitive: An Efficient End-to-end Local Planner with Primitive-based Imitation Learning for Autonomous Flight",
+      "abstract": "Autonomous flight in unknown cluttered environments is hindered by the computation-quality-memory trilemma of onboard trajectory generation. In this paper, we propose an efficient end-to-end local planner via imitation learning. A lightweight offline-primitive-based dataset collection framework is designed to produce safe and high-quality trajectory primitives in non-convex environments. A compact neural network directly maps sensory inputs to polynomial coefficients that inherently encode higher-order dynamical information. The learned policy generates smooth, empirically collision-free and dynamically feasible trajectories in real time without back-end solving. It achieves ultra-fast computation (below 1ms on a standard desktop and average 3.68ms during onboard flight), while maintaining low onboard memory requirements (less than 1.5MiB). Extensive simulation benchmarks demonstrate superiority in both planning latency and target-reaching progress quality. Zero-shot deployment in real-world experiments further validates the robust sim-to-real transfer capability of the proposed method.",
+      "authors": [
+        "Zhitao Liu",
+        "Guangtong Xu",
+        "Zihan Wang",
+        "Jialiang Hou",
+        "Chao Xu",
+        "Fei Gao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-08-21T10:13:44+00:00",
+      "link": "https://arxiv.org/pdf/2608.20948v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "perception-to-control local planning for autonomous vehicles, transferable to autonomous driving",
+      "llm_evidence_cn": "面向自主飞行器的感知-规划-控制方法，可迁移至自动驾驶",
+      "llm_evidence": "面向自主飞行器的感知-规划-控制方法，可迁移至自动驾驶",
+      "canonical_evidence": "面向自主飞行器的感知-规划-控制方法，可迁移至自动驾驶",
+      "llm_tldr_en": "Proposes an end-to-end local planner using primitive-based imitation learning to map sensory inputs directly to polynomial trajectory coefficients for fast collision-free autonomous flight; method is transferable to autonomous driving planning.",
+      "llm_tldr_cn": "针对自主飞行在未知杂乱环境中机载轨迹生成的算力-质量-内存三难问题，提出基于基元模仿学习的端到端局部规划器。该方法用轻量级离线基元数据构建安全轨迹基元，并通过紧凑神经网络将感知输入直接映射为多项式系数，无需后端求解即可实时生成平滑且动力学可行的无碰撞轨迹。实验表明计算极快且具有良好泛化性，可为自动驾驶等自主系统的规划控制提供可迁移方案。",
+      "llm_tldr": "针对自主飞行在未知杂乱环境中机载轨迹生成的算力-质量-内存三难问题，提出基于基元模仿学习的端到端局部规划器。该方法用轻量级离线基元数据构建安全轨迹基元，并通过紧凑神经网络将感知输入直接映射为多项式系数，无需后端求解即可实时生成平滑且动力学可行的无碰撞轨迹。实验表明计算极快且具有良好泛化性，可为自动驾驶等自主系统的规划控制提供可迁移方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.24877v1",
+      "source": "arxiv",
+      "title": "From Seeing to Acting: Smart Glasses as First-Person Intelligence Platforms",
+      "abstract": "Smart glasses are evolving from capture and display accessories into first-person intelligence platforms that connect human perception, persistent context, and digital or physical action. Their on-body viewpoint aligns with the wearer's vision, audition, motion, and hand-object interaction, but must operate under tight energy, thermal, privacy, and feedback constraints. Despite rapid progress in augmented reality, egocentric vision, multimodal models, human-computer interaction, and embodied intelligence, the literature remains fragmented across devices, tasks, and benchmarks. \\textit{The key challenge is not whether a model can recognize, answer, remember, or act in isolation, but whether a complete system can sustain a reliable, temporally valid, correctable, and governable perception-state-interaction-action loop.} This survey is \\textit{the \\textbf{first} to systematically study smart glasses through such a unified framework}. We formalize first-person data flow and constrained task utility, characterize devices along eight verifiable hardware capability axes, organize the literature around seven interdependent foundational capabilities, and introduce an L0-L5 framework spanning capture, reactive perception, contextual assistance, persistent state, governed action, and embodied coupling. Across nine application scenes, we connect tasks with datasets, systems, products, stakeholders, failure consequences, and evidence gaps. We further present a nine-dimensional deployment framework, a claim-conditioned evaluation protocol, and an evidence ladder from controlled measurement to longitudinal field validation and audit. Together, these elements make smart glasses more comparable, deployable, and reproducibly evaluated, while outlining a roadmap toward trustworthy first-person intelligence.",
+      "authors": [
+        "Jiangning Zhang",
+        "Haojun Chen",
+        "Yong Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-25T17:56:54+00:00",
+      "link": "https://arxiv.org/pdf/2608.24877v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "First-person intelligence platforms for embodied action in real-world settings",
+      "llm_evidence_cn": "面向真实世界具身行动的第一人称智能平台",
+      "llm_evidence": "面向真实世界具身行动的第一人称智能平台",
+      "canonical_evidence": "面向真实世界具身行动的第一人称智能平台",
+      "llm_tldr_en": "Reviews the potential of smart glasses as first-person intelligence platforms that connect perception, context, and action under tight constraints, highlighting the need for complete reliable systems over isolated capabilities.",
+      "llm_tldr_cn": "智能眼镜正从采集/显示配件演进为第一人称智能平台，将人的感知、持续上下文与数字及物理行动相连，但受能量、热、隐私和反馈约束。当前文献在设备、任务与基准上仍较分散，关键在于是否能在真实世界持续维持可靠、时间有效的完整系统。本文系统梳理了这一新兴领域的挑战与前景，为将感知转化为行动的具身智能设备提供了整合视角。",
+      "llm_tldr": "智能眼镜正从采集/显示配件演进为第一人称智能平台，将人的感知、持续上下文与数字及物理行动相连，但受能量、热、隐私和反馈约束。当前文献在设备、任务与基准上仍较分散，关键在于是否能在真实世界持续维持可靠、时间有效的完整系统。本文系统梳理了这一新兴领域的挑战与前景，为将感知转化为行动的具身智能设备提供了整合视角。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.23452v1",
+      "source": "arxiv",
+      "title": "Reward-Free Continual Adaptation for Resilient Space Robots",
+      "abstract": "Space robots operate in extreme environments where hardware degradation can critically compromise traditional control strategies. While continual reinforcement learning offers a promising mechanism for online adaptation, it inherently requires access to a reward signal during deployment. However, precise reward computation in space is often infeasible due to the lack of external tracking systems and the overall complexity of the environment. To address the challenge of unobservable rewards, we introduce a reward-free continual learning framework that leverages latent-state world models. By pre-training a model-based agent across diverse simulations, the world model learns a robust predictor of the reward structure within its latent space. Upon deployment to an environment with severe hardware degradation, we freeze the observation encoder and reward predictor to update only the transition dynamics of the world model through unsupervised rollouts. By training the policy entirely on imagined trajectories generated by this updated world model, the agent adapts to altered dynamics without receiving new rewards. We demonstrate our approach across simulated planetary traversal, orbital navigation, and precision assembly tasks subjected to severe morphological failures.",
+      "authors": [
+        "Andrej Orsula",
+        "Miguel Olivares-Mendez",
+        "Carol Martinez"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-08-24T16:23:36+00:00",
+      "link": "https://arxiv.org/pdf/2608.23452v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "reward-free continual RL with latent world models for robot adaptation",
+      "llm_evidence_cn": "面向空间机器人的无奖励持续强化学习与潜在世界模型适配",
+      "llm_evidence": "面向空间机器人的无奖励持续强化学习与潜在世界模型适配",
+      "canonical_evidence": "面向空间机器人的无奖励持续强化学习与潜在世界模型适配",
+      "llm_tldr_en": "Proposes a reward-free continual learning framework using pre-trained latent world models so robots can adapt online without external reward signals in space.",
+      "llm_tldr_cn": "针对空间机器人在部署时因缺乏外部测量而无法计算精确奖励的问题，提出无奖励持续学习框架，通过预训练的潜在状态世界模型预测奖励结构，在部署时仅根据观测完成在线适应。仿真与实验表明该方法能在未知环境下保持控制韧性，为极端环境中的机器人自适应控制提供了不使用奖励信号的可行路径。",
+      "llm_tldr": "针对空间机器人在部署时因缺乏外部测量而无法计算精确奖励的问题，提出无奖励持续学习框架，通过预训练的潜在状态世界模型预测奖励结构，在部署时仅根据观测完成在线适应。仿真与实验表明该方法能在未知环境下保持控制韧性，为极端环境中的机器人自适应控制提供了不使用奖励信号的可行路径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.21676v1",
+      "source": "arxiv",
+      "title": "Lifelong Robot Recomposition via Persistent Categorical Modeling for Unified Task-Driven Co-Design, Verification, and Planning",
+      "abstract": "Robotic systems are traditionally designed and deployed in static configurations, with assumptions made at design-time becoming immutable constraints during runtime. This design-then-deploy paradigm produces performant systems under narrow operating conditions, but renders robots brittle when qualities of themselves, their tasks, or their environments unexpectedly change. We address this challenge with a compositional framework that formalizes robotic systems as abstract circuits within a strict symmetric monoidal category, in which design and runtime composition of hardware, software, and behavior are synthesized simultaneously via an SMT-based solver, with monoidal functors projecting the system into lifecycle-specific views and free symbolic variables simultaneously solving for parameters and entire component specifications within larger compositions. This persistent model also supports queries a long-lived system needs beyond plan existence across its entire lifecycle, including mapping Pareto fronts over candidate compositions, diagnosing why a composition has become infeasible, finding its minimal restoration, and reconfiguring with limited change to the deployed system. We evaluate against official implementations of optimal numeric, stream-based, and SMT-based planners all measured onboard a deployed robot and demonstrate the approach end-to-end in a search-and-rescue scenario in which the robot recognizes when it has become unfit and synthesizes and assumes new holistic configurations to restore operation. We release our solver and supporting software open-source.",
+      "authors": [
+        "Steven Swanbeck",
+        "Mitch Pryor"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-21T22:46:37+00:00",
+      "link": "https://arxiv.org/pdf/2608.21676v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "lifelong robot recomposition and planning via categorical modeling",
+      "llm_evidence_cn": "通过持久范畴建模实现机器人重构与任务驱动规划",
+      "llm_evidence": "通过持久范畴建模实现机器人重构与任务驱动规划",
+      "canonical_evidence": "通过持久范畴建模实现机器人重构与任务驱动规划",
+      "llm_tldr_en": "Categorical compositional framework for lifelong robot recomposition that jointly synthesizes hardware, software, and behavior via SMT solving, enabling task-driven co-design, verification, and planning under change.",
+      "llm_tldr_cn": "传统机器人采用设计后部署的静态配置，在自身、任务或环境发生意外变化时表现脆弱。本文提出一种持久范畴建模的组合化框架，将机器人的软硬件与行为表示为对称幺半范畴中的抽象电路，并通过SMT求解器在运行期同时进行任务驱动的协同设计、验证与规划。该方法能够根据变化条件对机器人进行重构，使系统在更广操作条件下保持可靠。其意义在于将可验证的组合化设计延伸到终身运行场景。",
+      "llm_tldr": "传统机器人采用设计后部署的静态配置，在自身、任务或环境发生意外变化时表现脆弱。本文提出一种持久范畴建模的组合化框架，将机器人的软硬件与行为表示为对称幺半范畴中的抽象电路，并通过SMT求解器在运行期同时进行任务驱动的协同设计、验证与规划。该方法能够根据变化条件对机器人进行重构，使系统在更广操作条件下保持可靠。其意义在于将可验证的组合化设计延伸到终身运行场景。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.25163v1",
+      "source": "arxiv",
+      "title": "Bayesian Flow Networks for Offline Trajectory Planning",
+      "abstract": "Offline reinforcement learning (RL) leverages static datasets to learn decision policies without real-time environment interaction. While recent sequence-modeling approaches rely on continuous diffusion models for trajectory synthesis, applying these methods to discrete planning tasks requires a categorical formulation rather than the standard Gaussian construction. We present BFN-RL, a unified generative modeling framework for offline RL based on Bayesian Flow Networks (BFNs). By iteratively evolving distribution parameters rather than noisy data instances, BFN-RL natively models both discrete and continuous trajectory spaces within a single probabilistic formulation. The categorical planner generates future state sequences, and a learned inverse-dynamics model converts consecutive generated states into actions. Evaluations in discrete planning and continuous control show that BFN-RL can generate effective trajectories across both categorical and continuous state spaces. Our results establish BFNs as a versatile generative foundation for offline trajectory planning across data modalities.",
+      "authors": [
+        "Ludvig Killingberg",
+        "Helge Langseth"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-25T21:19:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.25163v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "offline reinforcement learning for trajectory planning",
+      "llm_evidence_cn": "面向轨迹规划的离线强化学习",
+      "llm_evidence": "面向轨迹规划的离线强化学习",
+      "canonical_evidence": "面向轨迹规划的离线强化学习",
+      "llm_tldr_en": "Offline RL trajectory planning often uses continuous diffusion, unsuitable for discrete tasks. BFN-RL applies Bayesian Flow Networks to model discrete and continuous trajectories jointly, with a categorical planner and learned inverse dynamics for unified offline RL.",
+      "llm_tldr_cn": "离线强化学习中的轨迹规划通常依赖连续扩散模型，难以有效处理离散规划任务。BFN-RL基于贝叶斯流网络，通过迭代演化分布参数而非噪声数据实例，在统一概率框架下同时建模离散和连续轨迹空间。分类规划器负责生成未来状态序列，学习得到的逆动力学模型将规划结果转换为可执行动作。该方法为离线RL提供了一种灵活而统一的生成式建模范式，有望提升混合离散或连续场景下的规划表现。",
+      "llm_tldr": "离线强化学习中的轨迹规划通常依赖连续扩散模型，难以有效处理离散规划任务。BFN-RL基于贝叶斯流网络，通过迭代演化分布参数而非噪声数据实例，在统一概率框架下同时建模离散和连续轨迹空间。分类规划器负责生成未来状态序列，学习得到的逆动力学模型将规划结果转换为可执行动作。该方法为离线RL提供了一种灵活而统一的生成式建模范式，有望提升混合离散或连续场景下的规划表现。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.23776v1",
+      "source": "arxiv",
+      "title": "Disentangled Skill Representations for Predictive Human Modeling",
+      "abstract": "Understanding human skill is important for AI systems that collaborate with, coach, or assist people. Unlike typical latent variable estimation problems which rely on single observations, skill is a persistent, compositional, and behaviorally grounded construct that must be inferred from patterns over time. We introduce Skill Abstraction with Interpretable Latents (SAIL), a method for modeling human skill as an interpretable, multi-dimensional construct inferred from naturalistic behavior. Our approach produces a skill embedding that is robust to transient performance fluctuations and learns a transferable representation of human subskills. Furthermore, SAIL supports skill-informed behavior prediction that generalizes across a variety of in-domain contexts. We represent each individual with a persistent skill embedding that controls a blend between expert and novice bases and is trained using counterfactual subskill swaps for disentanglement. This design encourages representations that are both robust to performance variation and structured for interpretability. We demonstrate across racing and baseball that SAIL achieves strong predictive performance and consistently improves behaviorally grounded disentanglement over the evaluated baselines, while also improving downstream AI coaching performance.",
+      "authors": [
+        "Mariah Schrum",
+        "Deepak Gopinath",
+        "Srijan Srivatsa",
+        "Guy Rosman",
+        "Tiffany Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-24T19:13:47+00:00",
+      "link": "https://arxiv.org/pdf/2608.23776v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Interpretable skill representation for human-robot collaborative predictive modeling",
+      "llm_evidence_cn": "面向人机协作预测的可解释人类技能建模",
+      "llm_evidence": "面向人机协作预测的可解释人类技能建模",
+      "canonical_evidence": "面向人机协作预测的可解释人类技能建模",
+      "llm_tldr_en": "Human skill is a persistent, compositional construct not inferable from single observations. SAIL learns an interpretable multi-dimensional skill embedding from naturalistic behavior, robust to transient fluctuations, and supports skill-informed behavior prediction across contexts for assistive AI.",
+      "llm_tldr_cn": "人类技能建模对协作与辅助AI至关重要，但传统方法难以从单次观测刻画其持久与组合性。SAIL从自然行为序列中推断可解释的多维技能表征，并利用该表征进行行为预测。该技能嵌入对瞬时表现波动鲁棒，且能迁移到多种情境。这一方法为预测性人类建模提供了可解释且可迁移的表示工具。",
+      "llm_tldr": "人类技能建模对协作与辅助AI至关重要，但传统方法难以从单次观测刻画其持久与组合性。SAIL从自然行为序列中推断可解释的多维技能表征，并利用该表征进行行为预测。该技能嵌入对瞬时表现波动鲁棒，且能迁移到多种情境。这一方法为预测性人类建模提供了可解释且可迁移的表示工具。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.25299v1",
+      "source": "arxiv",
+      "title": "PointRL: Learning Point-Level Vision-Language Grounding from Verifiable Annotation Evidence",
+      "abstract": "Vision-language models (VLMs) increasingly rely on point coordinates as a compact and executable interface for visual grounding in GUI interaction, robotic manipulation, and interactive visual systems. However, learning reliable pointing behavior remains difficult because the supervision space is inherently non-unique: many coordinates may be valid within the same target region, while multi-instance instructions require target coverage, count consistency, and duplicate suppression. This work presents PointRL, a verifiable reinforcement learning framework that learns point-level grounding from existing heterogeneous annotation evidence. PointRL converts bounding boxes, masks, and instance labels into pointing instructions, while retaining their target supports, instance membership, and set constraints as hidden verifier evidence, i.e., annotations kept outside the prompt and used by a deterministic checker to score predictions. The proposed reward evaluates parseability, point validity, instance coverage, cardinality consistency, and redundant or missing predictions. On PointArena, PointRL improves the overall accuracy of Qwen3.5-4B from 56.11% to 65.58%. Further evaluations on RoboSpatial, BLINK, and Ref-Adv show same-backbone gains on the evaluated external benchmarks, suggesting that verifiable point-level feedback may benefit spatial grounding in these settings.",
+      "authors": [
+        "Jingyang Su",
+        "Pu Cao",
+        "Xiuze Jin",
+        "Longyue Zhang",
+        "Qing Song",
+        "Lu Yang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-26T02:10:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.25299v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "RL-based visual grounding that can support robot perception and manipulation",
+      "llm_evidence_cn": "基于强化学习的视觉定位，可支持机器人感知与操作",
+      "llm_evidence": "基于强化学习的视觉定位，可支持机器人感知与操作",
+      "canonical_evidence": "基于强化学习的视觉定位，可支持机器人感知与操作",
+      "llm_tldr_en": "PointRL is a verifiable RL framework that learns point-level vision-language grounding from existing annotations, converting boxes/masks/labels into pointing instructions and handling multi-instance coverage and duplicate suppression.",
+      "llm_tldr_cn": "点坐标成为视觉定位中的紧凑接口，但点级监督非唯一且多实例指令复杂，使可靠指点学习困难。为此，PointRL提出可验证强化学习框架，把边界框、掩码和实例标签等异质标注转换为指点指令，并通过可验证奖励进行学习。该方法能够应对目标覆盖、计数一致与重复抑制等要求。它可用于GUI交互与机器操作，为点级视觉-语言接地提供更可扩展的学习范式。",
+      "llm_tldr": "点坐标成为视觉定位中的紧凑接口，但点级监督非唯一且多实例指令复杂，使可靠指点学习困难。为此，PointRL提出可验证强化学习框架，把边界框、掩码和实例标签等异质标注转换为指点指令，并通过可验证奖励进行学习。该方法能够应对目标覆盖、计数一致与重复抑制等要求。它可用于GUI交互与机器操作，为点级视觉-语言接地提供更可扩展的学习范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.25572v1",
+      "source": "arxiv",
+      "title": "ConfAL-WM: Confidence-Guided Active Learning for Action-Conditioned World Models",
+      "abstract": "Action-conditioned world models have become an important foundation for embodied prediction, planning, and synthetic data generation, but their errors under new task and scene distributions are often concentrated in localized spatiotemporal regions such as robot arms, manipulated objects, contact areas, and occluded objects. This paper presents ConfAL-WM, a confidence-guided active learning framework for post-training embodied world models. Built upon EVAC, we attach a lightweight confidence probe to UNet decoder features and predict dense confidence maps in the latent space. These maps are aggregated into task-, frame-, and patch-level scores, enabling both efficient data selection and localized training enhancement. Our pipeline first retrains the confidence probe and warms up EVAC with a small subset of target-domain data, then performs task-level prescreening to allocate sampling budgets, and finally applies selected-data retraining with optional frame or patch weighted data enhancement. Experiments on RoboTwin2.0 show that confidence-guided selection improves post-training efficiency, while dense frame and patch weighting further enhances prediction quality and embodied trajectory consistency compared with scalar reward, progress, and judge-based scoring baselines. A quick visual overview of this work is available at https://ConfAL-WM.github.io.",
+      "authors": [
+        "Xiang Liu",
+        "Sen Cui",
+        "Changshui Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-08-26T09:29:08+00:00",
+      "link": "https://arxiv.org/pdf/2608.25572v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Confidence-guided active learning for embodied world models",
+      "llm_evidence_cn": "面向具身智能环境模型的置信度引导主动学习",
+      "llm_evidence": "面向具身智能环境模型的置信度引导主动学习",
+      "canonical_evidence": "面向具身智能环境模型的置信度引导主动学习",
+      "llm_tldr_en": "ConfAL-WM uses confidence-guided active learning to improve action-conditioned world models for embodied prediction and planning, focusing data selection and training on localized spatiotemporal error regions like robot arms and contact areas.",
+      "llm_tldr_cn": "面向具身预测与规划的行动条件世界模型在新任务和场景分布下误差常集中在机器人手臂、操作物体和接触区域等局部时空区域。提出ConfAL-WM置信度引导主动学习框架，在UNet解码器特征上附加轻量置信度探针，预测潜在空间稠密置信图，并聚合成任务、帧、块级评分以选择数据和局部强化训练。该工作提高了世界模型在具身场景中的数据效率和泛化性，为机器人规划与合成数据生成提供支撑。",
+      "llm_tldr": "面向具身预测与规划的行动条件世界模型在新任务和场景分布下误差常集中在机器人手臂、操作物体和接触区域等局部时空区域。提出ConfAL-WM置信度引导主动学习框架，在UNet解码器特征上附加轻量置信度探针，预测潜在空间稠密置信图，并聚合成任务、帧、块级评分以选择数据和局部强化训练。该工作提高了世界模型在具身场景中的数据效率和泛化性，为机器人规划与合成数据生成提供支撑。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
     },
     {
       "id": "2608.26239v1",
@@ -200,296 +644,58 @@
         "keyword:ad",
         "query:ad"
       ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "Action-controllable long-horizon world models for embodied robot simulation and planning",
-      "llm_evidence_cn": "面向具身机器人仿真与规划的动态可控长程世界模型",
-      "llm_evidence": "面向具身机器人仿真与规划的动态可控长程世界模型",
-      "canonical_evidence": "面向具身机器人仿真与规划的动态可控长程世界模型",
-      "llm_tldr_en": "WALL-SS is a generative world model that produces action-controllable visual futures through scale-wise autoregressive scaling, enabling long-horizon embodied robot simulation, planning, and policy evaluation.",
-      "llm_tldr_cn": "生成式世界模型为机器人提供交互后果预测，是仿真、规划与策略评估的重要基础。WALL-SS提出尺度式自回归生成方法，将具身轨迹表示为观测与动作交织的因果序列，实现动作可控、支持灵活时域和连续交互的长程视觉未来生成。该方法显式建模动作依赖的状态转移，为长期机器人学习与规划提供了统一生成式框架。",
-      "llm_tldr": "生成式世界模型为机器人提供交互后果预测，是仿真、规划与策略评估的重要基础。WALL-SS提出尺度式自回归生成方法，将具身轨迹表示为观测与动作交织的因果序列，实现动作可控、支持灵活时域和连续交互的长程视觉未来生成。该方法显式建模动作依赖的状态转移，为长期机器人学习与规划提供了统一生成式框架。",
+      "llm_score": 7.0,
+      "llm_evidence_en": "Generative world models for embodied agents",
+      "llm_evidence_cn": "面向具身智能体的生成式世界模型",
+      "llm_evidence": "面向具身智能体的生成式世界模型",
+      "canonical_evidence": "面向具身智能体的生成式世界模型",
+      "llm_tldr_en": "Presents WALL-SS, a world model that generates action-controllable visual futures via next-scale autoregression, enabling long-horizon embodied simulation and reward-driven optimization.",
+      "llm_tldr_cn": "生成式世界模型为机器人提供了对世界演化的预测能力，但现有方法多局限于片段级预测且难以支持长视界控制。WALL-SS将具身轨迹表示为观测与动作交替的因果序列，通过尺度级自回归逐级生成视觉未来，支持灵活视界和连续交互。该方法在长视界机器人模拟中验证了动作可控性与仿真保真度，为策略评估和规划提供了可扩展的世界模型基础。",
+      "llm_tldr": "生成式世界模型为机器人提供了对世界演化的预测能力，但现有方法多局限于片段级预测且难以支持长视界控制。WALL-SS将具身轨迹表示为观测与动作交替的因果序列，通过尺度级自回归逐级生成视觉未来，支持灵活视界和连续交互。该方法在长视界机器人模拟中验证了动作可控性与仿真保真度，为策略评估和规划提供了可扩展的世界模型基础。",
       "llm_tags": [
         "query:ad"
       ],
       "matched_query_tag": "query:ad",
       "matched_query_text": "embodied intelligence agents in physical environments",
       "matched_requirement_id": "req-3",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2608.26589v1",
-      "source": "arxiv",
-      "title": "DPA-I2P: Depth-Guided Projective Alignment for Image-to-Point-Cloud Registration in Autonomous Driving",
-      "abstract": "Image-to-Point Cloud Registration aims to estimate the camera pose of a given image within a 3D scene point cloud, which is a fundamental task in autonomous driving and large-scale outdoor localization. Recent implicit correspondence learning methods have improved registration performance by learning cross-modal alignment in an end-to-end framework, leading to more accurate camera pose estimation. However, due to the inherent modality discrepancy between images and sparse LiDAR point clouds, reliable cross-modal correspondence learning remains challenging. To address this issue, we propose Depth-Guided Projective Alignment for Image-to-Point-Cloud Registration (DPA-I2P). Unlike naive depth or feature concatenation, Ray-Conditioned Metric Depth Encoding (RMDE) and Projection-Consistent Vision Lifting (PVL) exploit depth and visual cues in a structured, geometry-aware manner. In addition, Cross-Modal Query Pruning (CQP) suppresses unreliable queries during early refinement to improve matching stability. Experiments on KITTI and nuScenes demonstrate the effectiveness of the proposed method. On KITTI, DPA-I2P reduces RTE and RRE by 45.0% and 55.6% over the strongest implicit baseline, respectively. On nuScenes, DPA-I2P also improves registration accuracy over the evaluated baselines, suggesting better transferability to different driving scenes.",
-      "authors": [
-        "Wenxin Zhang",
-        "Hang Li",
-        "Zhiwei Xu",
-        "Qiankun Dong",
-        "Gang Wang",
-        "Tao Li"
-      ],
-      "primary_category": "cs.CV",
-      "categories": [
-        "cs.CV"
-      ],
-      "published": "2026-08-27T04:01:15+00:00",
-      "link": "https://arxiv.org/pdf/2608.26589v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "image-to-point-cloud registration for autonomous driving sensor fusion",
-      "llm_evidence_cn": "面向自动驾驶的图像与点云配准，支持多传感器融合定位",
-      "llm_evidence": "面向自动驾驶的图像与点云配准，支持多传感器融合定位",
-      "canonical_evidence": "面向自动驾驶的图像与点云配准，支持多传感器融合定位",
-      "llm_tldr_en": "DPA-I2P proposes depth-guided projective alignment for image-to-point-cloud registration, addressing cross-modal discrepancy in autonomous driving localization.",
-      "llm_tldr_cn": "图像到点云配准是自动驾驶大规模室外定位中的基础任务，但图像与稀疏LiDAR之间的模态差异使跨模态对应学习困难。提出深度引导的投影对齐方法DPA-I2P，利用深度信息进行投影对齐，提升相机位姿估计精度。在户外定位基准上验证了方法优于现有隐式对应学习方法。该工作为自动驾驶多传感器融合定位提供了更鲁棒的配准方案。",
-      "llm_tldr": "图像到点云配准是自动驾驶大规模室外定位中的基础任务，但图像与稀疏LiDAR之间的模态差异使跨模态对应学习困难。提出深度引导的投影对齐方法DPA-I2P，利用深度信息进行投影对齐，提升相机位姿估计精度。在户外定位基准上验证了方法优于现有隐式对应学习方法。该工作为自动驾驶多传感器融合定位提供了更鲁棒的配准方案。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "self-driving vehicles sensor fusion decision making",
-      "matched_requirement_id": "req-4",
-      "selection_source": "fresh_fetch"
-    }
-  ],
-  "quick_skim": [
-    {
-      "id": "2608.27225v1",
-      "source": "arxiv",
-      "title": "STEP: State-Aware Task Estimation and Planning with Multi-Modal LLMs for Human-Robot Collaboration",
-      "abstract": "Effective human-robot collaboration in industrial settings requires robots to understand human intentions and assist with task planning, reducing workload. Recent works have explored the use of Multi-modal Large Language Models (MM-LLMs) for task planning in such data-scarce scenarios, leveraging in-context learning to interpret user actions and generate long-horizon action plans in natural language. However, MM-LLMs inherently lack an understanding of system states and do not track state transitions, often leading to hallucinated actions that deviate from the intended goal. Additionally, generating action plans in natural language tends to limit the generated plans to a high level, introducing ambiguity in action execution. To address these limitations, we propose the State-aware Task Estimator and Planner (STEP), which prompts a MM-LLM to explicitly estimate the state of the system and predict the state transitions resulting from executed actions. By forecasting future states alongside actions, STEP ensures task-convergent planning while also providing additional assistance parameters necessary for executing the predicted actions. We evaluate STEP in a simulated environment using a robot assembly task. Our approach outperforms the state-of-the-art by 32.8% in action executability and 14.8% in final-state error.",
-      "authors": [
-        "Maitrey Gramopadhye",
-        "Prakash Baskaran",
-        "Xiao Liu",
-        "Songpo Li",
-        "Soshi Iba"
-      ],
-      "primary_category": "cs.RO",
-      "categories": [
-        "cs.RO",
-        "cs.AI"
-      ],
-      "published": "2026-08-27T15:08:36+00:00",
-      "link": "https://arxiv.org/pdf/2608.27225v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "State-aware task estimation and planning with MM-LLMs for human-robot collaboration",
-      "llm_evidence_cn": "利用多模态大语言模型实现状态感知的任务估计与规划，提升人机协作",
-      "llm_evidence": "利用多模态大语言模型实现状态感知的任务估计与规划，提升人机协作",
-      "canonical_evidence": "利用多模态大语言模型实现状态感知的任务估计与规划，提升人机协作",
-      "llm_tldr_en": "STEP uses multi-modal LLMs with state tracking to generate executable long-horizon action plans for effective human-robot collaboration.",
-      "llm_tldr_cn": "多模态大语言模型在数据稀缺场景下可辅助人机协作任务规划，但缺乏系统状态理解，容易产生幻觉动作。本文提出STEP，通过状态感知的任务估计与规划，利用多模态模型跟踪状态转换并生成可执行的长时程动作计划，减少自然语言计划中的歧义。该方法提升了工业场景中人机协作的准确性与可执行性。",
-      "llm_tldr": "多模态大语言模型在数据稀缺场景下可辅助人机协作任务规划，但缺乏系统状态理解，容易产生幻觉动作。本文提出STEP，通过状态感知的任务估计与规划，利用多模态模型跟踪状态转换并生成可执行的长时程动作计划，减少自然语言计划中的歧义。该方法提升了工业场景中人机协作的准确性与可执行性。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-      "matched_requirement_id": "req-2",
       "selection_source": "fresh_fetch",
-      "quick_tier": "8plus"
+      "quick_tier": "7"
     },
     {
-      "id": "2608.26571v1",
+      "id": "2608.27259v1",
       "source": "arxiv",
-      "title": "Arrive and Survive: Scaling Safe Goal-Conditioned Policy Learning from One-Bit Failure Signals",
-      "abstract": "Contrastive reinforcement learning (CRL) scales effectively in goal-conditioned tasks by casting policy learning into a self-supervised contrastive objective. However, in a failure-terminated Markov decision process, established CRL considers pre-failure future goals only when constructing positive samples, without accounting for the probability mass removed by failure termination. Our theoretical analysis shows that this omission induces a systematic overestimation bias in goal-reaching values. Consequently, near-failure trajectories provide disproportionately strong supervision of success despite retaining little future occupancy. Unsafe actions can thereby be reinforced through catastrophic failure bootstrapping, leading to failed policy learning and unsustainable goal-reaching behaviours. To address this problem, we introduce two minimal yet strong corrections: mass-weighted InfoNCE corrects the overweighting of short surviving futures in critic learning, and a log-survival-mass score restores the missing survival mass in policy optimization. The resulting method, Safe Contrastive Reinforcement Learning (Safe-CRL), requires only the one-bit signal provided by failure termination to scale safe goal-conditioned policy learning. Across twelve failure-prone robot navigation and locomotion tasks, Safe-CRL consistently improves survival and substantially outperforms the Scaling-CRL baseline in goal-reaching performance. Additionally, deep Safe-CRL policies exhibit complex failure-avoidance behaviours. This study completes the CRL theory under failure termination and provides a scalable safe RL framework. The code is available via https://github.com/RomainLITUD/safe-crl.",
+      "title": "Making Latent Evolution Explicit: Operator-Structured Transitions for World Action Models",
+      "abstract": "World Action Models (WAMs) augment robot policies by predicting how task-relevant scene states may evolve under interaction. Recent WAMs increasingly perform such prediction in latent representation spaces, avoiding full appearance-level generation while preserving control-relevant information. Yet latent transitions are commonly realized with Transformer-based predictors whose inductive structure is centered on token interaction rather than temporal evolution. We study transition realization as an architectural choice distinct from predictive representation and prediction-policy coupling. We introduce the Latent Evolution Operator Network (LEON), which models latent evolution in a learned observable space through context-modulated operator-based propagation and additive forcing. Grounded in the controlled Koopman generator view of evolution, LEON organizes context-dependent transition variation around a shared evolution-operator structure while retaining a complementary path for additive change. Controlled dynamical systems verify the resulting evolution-specific inductive bias and the complementary roles of operator propagation and forcing. Across two WAM formulations that integrate latent prediction into the policy differently, LEON improves closed-loop performance and robustness while remaining effective under full transition replacement. These results establish transition realization as a consequential architectural choice in latent WAMs.",
       "authors": [
-        "Guopeng Li",
-        "Yiyang Duan",
-        "Yiru Jiao",
-        "Chengcheng Xu"
+        "Xiaoxiao Lu",
+        "Yunlong Dong",
+        "Jiahao Shi",
+        "Ye Yuan"
       ],
       "primary_category": "cs.LG",
       "categories": [
-        "cs.LG",
-        "cs.RO"
+        "cs.LG"
       ],
-      "published": "2026-08-27T03:24:56+00:00",
-      "link": "https://arxiv.org/pdf/2608.26571v1",
+      "published": "2026-08-27T15:43:44+00:00",
+      "link": "https://arxiv.org/pdf/2608.27259v1",
       "tags": [
         "keyword:ad",
         "query:ad"
       ],
       "llm_score": 7.0,
-      "llm_evidence_en": "goal-conditioned RL and safety in failure-terminated MDPs",
-      "llm_evidence_cn": "失败终止MDP中的目标条件强化学习与安全性",
-      "llm_evidence": "失败终止MDP中的目标条件强化学习与安全性",
-      "canonical_evidence": "失败终止MDP中的目标条件强化学习与安全性",
-      "llm_tldr_en": "Current contrastive RL in failure-terminated MDPs overestimates goal-reaching values due to ignoring removed probability mass. This paper analyzes the bias and proposes an approach to scale safe goal-conditioned policy learning from one-bit failure signals.",
-      "llm_tldr_cn": "在失败终止的马尔可夫决策过程中，现有对比强化学习仅利用失败前的未来目标构造正样本，忽略失败终止剔除的概率质量，导致目标达成价值被系统性高估。本文从理论上分析该偏差，并在此基础上提出利用单比特失败信号扩展安全目标条件策略学习的方法。该方法为在存在失败风险的机器人控制任务中学习安全策略提供了理论支撑与实践途径。",
-      "llm_tldr": "在失败终止的马尔可夫决策过程中，现有对比强化学习仅利用失败前的未来目标构造正样本，忽略失败终止剔除的概率质量，导致目标达成价值被系统性高估。本文从理论上分析该偏差，并在此基础上提出利用单比特失败信号扩展安全目标条件策略学习的方法。该方法为在存在失败风险的机器人控制任务中学习安全策略提供了理论支撑与实践途径。",
+      "llm_evidence_en": "operator-structured latent transitions for world action models in robot policies",
+      "llm_evidence_cn": "机器人策略中世界行动模型的操作符结构潜转移",
+      "llm_evidence": "机器人策略中世界行动模型的操作符结构潜转移",
+      "canonical_evidence": "机器人策略中世界行动模型的操作符结构潜转移",
+      "llm_tldr_en": "LEON redesigns latent transitions in world action models using operator-structured networks with context-modulated evolution in a learned observable space, improving prediction of task-relevant scene dynamics for robot policies.",
+      "llm_tldr_cn": "针对世界行动模型中Transformer潜转移结构侧重token交互而非时间演化的问题，LEON将潜转移实现与预测表征解耦，提出潜演化操作符网络，在可观测空间中用上下文调制操作符建模潜状态演化。该方法增强了机器人策略对任务相关场景动态的预测能力，为世界行动模型的架构设计提供了新的选择。",
+      "llm_tldr": "针对世界行动模型中Transformer潜转移结构侧重token交互而非时间演化的问题，LEON将潜转移实现与预测表征解耦，提出潜演化操作符网络，在可观测空间中用上下文调制操作符建模潜状态演化。该方法增强了机器人策略对任务相关场景动态的预测能力，为世界行动模型的架构设计提供了新的选择。",
       "llm_tags": [
         "query:ad"
       ],
       "matched_query_tag": "query:ad",
       "matched_query_text": "intelligent control reinforcement learning for robots",
       "matched_requirement_id": "req-6",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "7"
-    },
-    {
-      "id": "2608.23030v1",
-      "source": "arxiv",
-      "title": "Artificial Empathy: Towards a Framework for Unsupervised Agency Detection and Policy Reconstruction",
-      "abstract": "We study how an AI system can identify and model other agents in its environment from observation alone, which is a capability necessary for cooperative behaviour in the real world. This problem is less constrained than inverse reinforcement learning and remains largely unexplored. We propose a framework that uses a reinforcement learning agent, trained on an independent task as a prior about agentic dynamics, to perform agency detection and policy reconstruction.",
-      "authors": [
-        "Peter Kuhn",
-        "Chris Pang",
-        "Sonakshi Chauhan"
-      ],
-      "primary_category": "cs.AI",
-      "categories": [
-        "cs.AI"
-      ],
-      "published": "2026-08-24T09:34:17+00:00",
-      "link": "https://arxiv.org/pdf/2608.23030v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 6.0,
-      "llm_evidence_en": "unsupervised agency detection and policy reconstruction for cooperative behavior",
-      "llm_evidence_cn": "无监督智能体检测与策略重建，用于协作行为",
-      "llm_evidence": "无监督智能体检测与策略重建，用于协作行为",
-      "canonical_evidence": "无监督智能体检测与策略重建，用于协作行为",
-      "llm_tldr_en": "A framework using a reinforcement learning agent trained on an independent task as a prior about agentic dynamics to detect other agents and reconstruct their policies from observation alone, supporting cooperative AI in real-world settings.",
-      "llm_tldr_cn": "现实世界中的AI系统需要从观察中识别并建模其他智能体，以支持协作行为，但该问题比逆强化学习约束更弱且研究较少。提出一个框架：利用在独立任务上训练的强化学习智能体作为关于智能体动力学的先验，执行智能体检测与策略重建。通过观察数据发现并重建他人策略，该框架为无监督协作智能体的建模提供了可行途径。",
-      "llm_tldr": "现实世界中的AI系统需要从观察中识别并建模其他智能体，以支持协作行为，但该问题比逆强化学习约束更弱且研究较少。提出一个框架：利用在独立任务上训练的强化学习智能体作为关于智能体动力学的先验，执行智能体检测与策略重建。通过观察数据发现并重建他人策略，该框架为无监督协作智能体的建模提供了可行途径。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "embodied intelligence agents in physical environments",
-      "matched_requirement_id": "req-3",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "6"
-    },
-    {
-      "id": "2608.26788v1",
-      "source": "arxiv",
-      "title": "Decoupling Planning and Control for Instructable Agents",
-      "abstract": "Recent work shows that pre-trained, instruction-tuned vision-language models (VLMs) perform well at mapping from instructions and observations to high-level plans, but struggle to realize such plans as reliable low-latency action sequences in unfamiliar environments. At the same time, world-model controllers excel at fast observation-to-action control, but lack open-ended task guidance. In this work, we combine these strengths into a single system, Instruct-to-Act, where we train a world-model controller to act autonomously at high frequency when conditioned on sparse, higher-latency, and high-level text instructions generated by a VLM planner. To train controllers to be language-instructable, we relabel segments of controller policy rollouts with synthetic instructions and jointly optimize a behavior-cloning objective along with existing reward-maximizing and world-modeling objectives. We evaluate our proposed approach across seven embodied environments, including three multi-agent environments where VLM planners coordinate through language while trained controllers serve as their actuators. Under matched observation and action spaces, our decoupled approach consistently outperforms controller-only and direct VLM action-generation variants, preserves fast control, and lets us swap in different pretrained VLM planners without fine-tuning, while remaining competitive with strong vision-language-action and multi-agent RL baselines on six of seven tasks.",
-      "authors": [
-        "Zineng Tang",
-        "Kelsey R. Allen",
-        "Sjoerd van Steenkiste",
-        "Ishita Dasgupta",
-        "Alane Suhr"
-      ],
-      "primary_category": "cs.AI",
-      "categories": [
-        "cs.AI",
-        "cs.CL",
-        "cs.MA",
-        "cs.RO"
-      ],
-      "published": "2026-08-27T08:17:58+00:00",
-      "link": "https://arxiv.org/pdf/2608.26788v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 7.0,
-      "llm_evidence_en": "Decoupled VLM planning and world-model control for instruction-following embodied agents",
-      "llm_evidence_cn": "将VLM高层规划与世界模型控制器解耦，用于可指令的具身智能体",
-      "llm_evidence": "将VLM高层规划与世界模型控制器解耦，用于可指令的具身智能体",
-      "canonical_evidence": "将VLM高层规划与世界模型控制器解耦，用于可指令的具身智能体",
-      "llm_tldr_en": "Instruct-to-Act combines a VLM planner with a high-frequency world-model controller trained via instruction relabeling for reliable instruction following in unfamiliar environments.",
-      "llm_tldr_cn": "已有视觉语言模型擅长从指令生成高层规划，但难以快速输出可靠动作；世界模型控制器擅长反应式控制但缺乏开放任务指导。本文提出Instruct-to-Act系统，将VLM规划器生成的稀疏高层文本指令作为条件，训练世界模型控制器以高频自主执行。通过指令重标注实现语言可控训练，在低频规划与高频控制之间取得平衡，提升了陌生环境下的任务执行可靠性。",
-      "llm_tldr": "已有视觉语言模型擅长从指令生成高层规划，但难以快速输出可靠动作；世界模型控制器擅长反应式控制但缺乏开放任务指导。本文提出Instruct-to-Act系统，将VLM规划器生成的稀疏高层文本指令作为条件，训练世界模型控制器以高频自主执行。通过指令重标注实现语言可控训练，在低频规划与高频控制之间取得平衡，提升了陌生环境下的任务执行可靠性。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "embodied intelligence agents in physical environments",
-      "matched_requirement_id": "req-3",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "7"
-    },
-    {
-      "id": "2608.27371v1",
-      "source": "arxiv",
-      "title": "Embodied Scene Rearrangement Planning",
-      "abstract": "This paper introduces Embodied Scene Rearrangement Planning (ESRP), a novel task requiring embodied agents to rearrange furniture in 3D scenes to match a target configuration using only egocentric observations and a top-down target layout. Unlike prior rearrangement tasks, ESRP precludes global state access and introduces mutual object occlusions, reflecting the practical constraints of real-world robotic deployment. These factors make aligning partial egocentric observations with the global target layout particularly challenging for long-horizon planning. To facilitate research, we present ESRP-Bench, a comprehensive benchmark built on OmniGibson featuring over 5,400 scene pairs and 8,200 objects. We define three multi-level metrics to evaluate rearrangement quality and provide four baselines: a hierarchical task-and-motion planning method, a vision-language-model-based method, and two learning-based approaches (IL and RL). Experimental results demonstrate that current methods struggle to complete the task efficiently, highlighting ESRP as a challenging frontier for embodied agents in scene understanding and long-horizon task planning. This work serves as a stepping stone toward deploying intelligent agents in real-world scenarios. Project page: https://pie-lab.cn/ESRP/.",
-      "authors": [
-        "Canzhi Chen",
-        "Zan Wang",
-        "Siqi Zhu",
-        "Qi Wu",
-        "Yixuan Li",
-        "Wei Liang"
-      ],
-      "primary_category": "cs.RO",
-      "categories": [
-        "cs.RO"
-      ],
-      "published": "2026-08-27T17:08:40+00:00",
-      "link": "https://arxiv.org/pdf/2608.27371v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 7.0,
-      "llm_evidence_en": "embodied scene rearrangement planning benchmark with egocentric observations",
-      "llm_evidence_cn": "基于第一视角观察的具身场景重排规划任务与基准",
-      "llm_evidence": "基于第一视角观察的具身场景重排规划任务与基准",
-      "canonical_evidence": "基于第一视角观察的具身场景重排规划任务与基准",
-      "llm_tldr_en": "ESRP introduces a rearrangement planning task requiring embodied agents to reorganize furniture from egocentric observations, with a comprehensive benchmark on OmniGibson.",
-      "llm_tldr_cn": "针对真实机器人部署中无法获取全局状态且存在物体相互遮挡的问题，提出具身场景重排规划（ESRP）任务，智能体仅依靠第一视角观察和俯视目标布局进行长期重排规划。构建了基于OmniGibson的大规模基准ESRP-Bench，包含五千余场景对和八千余物体，并定义多层次评估指标。该基准为研究部分观察下的长期规划提供了标准化平台。",
-      "llm_tldr": "针对真实机器人部署中无法获取全局状态且存在物体相互遮挡的问题，提出具身场景重排规划（ESRP）任务，智能体仅依靠第一视角观察和俯视目标布局进行长期重排规划。构建了基于OmniGibson的大规模基准ESRP-Bench，包含五千余场景对和八千余物体，并定义多层次评估指标。该基准为研究部分观察下的长期规划提供了标准化平台。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "embodied intelligence agents in physical environments",
-      "matched_requirement_id": "req-3",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "7"
-    },
-    {
-      "id": "2608.27406v1",
-      "source": "arxiv",
-      "title": "CLAP: Cross-Embodiment Video World Models are Zero-Shot Physical Simulators",
-      "abstract": "State-of-the-art action-conditioned video models are typically restricted to a single robot embodiment, preventing them from leveraging the vast corpus of heterogeneous video data that contains rich signals for learning generalizable physics. To bridge this gap, we introduce CLAP, a framework for cross-embodiment action-conditioned video generation capable of being trained on diverse, internet-scale videos across human and robotic agents. CLAP is grounded in the insight that universal physical laws govern spatiotemporal dynamics regardless of the actor. However, cross-embodiment learning is non-trivial because action representations vary sharply across robot platforms and are typically absent in human videos. CLAP addresses this fundamental challenge through the following core contributions. First, CLAP reconciles disparate action spaces using end-effector poses, language instructions, and latent actions. Second, to resolve their individual limitations, CLAP introduces a curriculum-based cross-embodiment learning recipe that first learns foundational physical priors across unlabeled video data using latent actions and subsequently grounds them in end-effector action spaces for zero-shot deployment to real-world tasks. Crucially, CLAP approaches or surpasses state-of-the-art single-embodiment video models in challenging environments like DROID. These performance advantages compound via few-shot adaptation to establish a novel paradigm for training single-embodiment video world models. Ultimately, CLAP delivers the most comprehensive suite of action-conditioned video world models to date - spanning diverse action-conditioning spaces (end-effector, language, and latent) and robot morphologies (including cross-embodiment, DROID, Bridge, bimanual YAM robots, and G1 humanoids). We open-source all code and models. Project Website at https://omni-clap.github.io .",
-      "authors": [
-        "Kechen Liu",
-        "Ola Shorinwa"
-      ],
-      "primary_category": "cs.RO",
-      "categories": [
-        "cs.RO",
-        "cs.AI",
-        "cs.CV"
-      ],
-      "published": "2026-08-27T17:35:10+00:00",
-      "link": "https://arxiv.org/pdf/2608.27406v1",
-      "tags": [
-        "keyword:ad",
-        "query:ad"
-      ],
-      "llm_score": 7.0,
-      "llm_evidence_en": "Cross-embodiment video world model for zero-shot physical simulation, trained on diverse human and robot videos",
-      "llm_evidence_cn": "跨具身视频世界模型用于零样本物理模拟，利用人类和机器人视频训练",
-      "llm_evidence": "跨具身视频世界模型用于零样本物理模拟，利用人类和机器人视频训练",
-      "canonical_evidence": "跨具身视频世界模型用于零样本物理模拟，利用人类和机器人视频训练",
-      "llm_tldr_en": "CLAP trains a cross-embodiment action-conditioned video model on internet-scale human and robot videos, achieving zero-shot physical simulation across embodiments by learning universal physical dynamics.",
-      "llm_tldr_cn": "现有视频模型通常固定于单一机器人本体，无法利用互联网上海量异构人类与机器人视频。CLAP框架提出跨具身动作条件视频生成技术，在多样异构视频上训练统一的物理世界模型，借助物理规律的跨主体一致性实现零样本动力学模拟。该方法有效规避了动作表示差异问题，为具身智能体在真实场景中的学习和规划提供了通用仿真基础，有望显著提升策略学习的泛化能力。",
-      "llm_tldr": "现有视频模型通常固定于单一机器人本体，无法利用互联网上海量异构人类与机器人视频。CLAP框架提出跨具身动作条件视频生成技术，在多样异构视频上训练统一的物理世界模型，借助物理规律的跨主体一致性实现零样本动力学模拟。该方法有效规避了动作表示差异问题，为具身智能体在真实场景中的学习和规划提供了通用仿真基础，有望显著提升策略学习的泛化能力。",
-      "llm_tags": [
-        "query:ad"
-      ],
-      "matched_query_tag": "query:ad",
-      "matched_query_text": "embodied intelligence agents in physical environments",
-      "matched_requirement_id": "req-3",
       "selection_source": "fresh_fetch",
       "quick_tier": "7"
     }
