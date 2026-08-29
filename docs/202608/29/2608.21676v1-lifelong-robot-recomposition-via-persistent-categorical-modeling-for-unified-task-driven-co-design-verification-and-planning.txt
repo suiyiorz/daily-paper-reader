@@ -1,0 +1,815 @@
+Title: Lifelong Robot Recomposition via Persistent Categorical Modeling for Unified Task-Driven Co-Design, Verification, and Planning
+
+URL Source: https://arxiv.org/pdf/2608.21676v1
+
+Published Time: Tue, 25 Aug 2026 00:22:52 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+> 1
+
+# Lifelong Robot Recomposition via Persistent Categorical Modeling for Unified Task-Driven Co-Design, Verification, and Planning 
+
+Steven Swanbeck and Mitch Pryor 
+
+Abstract —Robotic systems are traditionally designed and deployed in static configurations, with assumptions made at design-time becoming immutable constraints during runtime. This design-then-deploy paradigm produces performant systems under narrow operating conditions, but renders robots brittle when qualities of themselves, their tasks, or their environments unexpectedly change. We address this challenge with a compo-sitional framework that formalizes robotic systems as abstract circuits within a strict symmetric monoidal category, in which design and runtime composition of hardware, software, and behavior are synthesized simultaneously via an SMT-based solver, with monoidal functors projecting the system into lifecycle-specific views and free symbolic variables simultaneously solving for parameters and entire component specifications within larger compositions. This persistent model also supports queries a long-lived system needs beyond plan existence across its entire lifecy-cle, including mapping Pareto fronts over candidate compositions, diagnosing why a composition has become infeasible, finding its minimal restoration, and reconfiguring with limited change to the deployed system. We evaluate against official implementations of optimal numeric, stream-based, and SMT-based planners all measured onboard a deployed robot and demonstrate the approach end-to-end in a search-and-rescue scenario in which the robot recognizes when it has become unfit and synthesizes and assumes new holistic configurations to restore operation. We release our solver and supporting software open-source 1.
+
+I. I NTRODUCTION 
+
+# ROBOTIC system integration is a notoriously difficult problem. Modern robots are composed of heterogeneous mechanical, electrical, and software subsystems that must be carefully orchestrated to achieve high-level goals [1]. Due to this complexity, ad hoc practices dominate the integration process, leading to monolithic designs that are brittle and resistant to change [2]. Traditionally, the lifecycle of robotic systems is partitioned into discrete, disconnected phases, which are broadly categorized into design and deploy stages. For a system integrated using this conventional approach, its physical morphology and software stack are fixed during design time, and, once deployed, it is expected to remain in this fixed state for its entire operational lifespan with the exception of occasional manual software updates and online high-level task-planning [3], [4]. Even these routine tasks, let alone substantial upgrades, are completed by robotic experts in the lab. While this design-then-deploy paradigm produces reliable and performant systems for narrow applications, it imposes critical limitations. First, a robot with a static configuration 
+
+The authors are with Texas Robotics and the Walker Department of Mechanical Engineering, The University of Texas at Austin, Austin, TX 78712, USA [stevenswanbeck, mpryor]@utexas.edu 
+
+> 1
+
+Link will be provided in the final manuscript. RGB Thermal 
+
+Software Behavior 
+
+Hardware 
+
+> Functionality Resources Unified Abstraction Co-Design Runtime Recomposition
+
+Fig. 1. Informal graphical illustration of lifelong robot recomposition. Via unified compositional abstraction, hardware, software, and behavior modules can be consistently reasoned over and composed. This process extends beyond pre-deployment co-design to also support recomposition of the system during runtime in response to unexpected changes in system capabilities, mission requirements, or the environment. 
+
+may not be able to gracefully adapt when its mission changes or its fitness for that mission deteriorates based on qualities of itself or its environment, such as an unexpected failure in a mission-critical sensor or software module or an unanticipated requirement to navigate an inaccessible type of terrain [5], [6]. Second, because the design of the robot’s hardware, software, and eventual task execution are performed by different actors, the resulting system is often a suboptimal compromise rather than a task-aligned optimal solution [7], [8]. Finally, the integration process is fragmented, both between domains and even within the same domain. Integration of a new sensor to a robot poses separate challenges from the integration of a new software module, for example. And integrating that sensor to an open-world robot is a significantly different process than doing so on a robot designed for a factory setting. To combat these challenges, abstractions such as standardized mechanical and electrical interfaces, middleware, and component-based software architectures already support composition in some domains [2], [3], [9]. While such abstractions exist to support many of the subsystems that contribute to a robot, the lack of a higher-level abstraction to reason across subsystems means top-level system integration remains a fragmented, ad hoc process for every new configuration. Closely tied to the idea of abstraction is compositionality ,which describes the ability to recursively reason about alarger system’s behavior based on the behaviors and inter-actions of its constituent parts [10]. The recursive property of compositional reasoning is made possible by treating the constituent parts as black boxes with well-defined interfaces ,arXiv:2608.21676v1 [cs.RO] 21 Aug 2026 2
+
+which allows for the construction of larger systems without requiring knowledge of the internal workings of each part. This is the abstraction underlying extensive recent work in co-design [10]–[12], which aims to jointly optimize subsystems including hardware morphology, sensing, and control to pro-duce more performant and effective task-driven autonomy. In co-design literature, the interfaces of each part are expressed as the resources they require and the functionalities they provide, which can be supplied or consumed by other parts in the system [11]. Abstracted components with standardized interfaces enable the cross-domain reasoning required in co-design, but also have broader implications for the accessibility of robotic system integration. Recent work in online system reconfigu-ration has demonstrated how systems can reliably integrate new capabilities discovered during runtime with no prior knowledge via compositional abstractions [13], [14]. While the reconfiguration in these works enables a system to in-tegrate new capabilities, the integration process, including deciding which modules to integrate to the system at which times, is still performed by a human operator, with only high-level task-planning being performed autonomously. So, although abstractions enable new capabilities to be integrated reliably, they have not yet been generalized to enable the high-level cross-domain reasoning required for autonomous online system integration that subsumes design-time co-design and runtime task-planning. Building on these existing efforts, we propose a new ap-proach we term recompositional robotics, where a system is composed of heterogeneous hardware, software, and behavior modules that can be dynamically reconfigured throughout the system’s operational lifespan. In this view, the distinct problems of design-time co-design and runtime task-planning are unified into a single, continuous optimization problem, with all capabilities that are typically captured in the design stage or the deploy stage becoming mutable throughout the system’s lifespan. In addition to solving for optimal system compositions, there are several other questions a long-lived system must answer, including why a configuration has be-come infeasible, what its minimal restoration is, and to what extent the deployed system must change to restore operation. We demonstrate that these questions can all be answered as a family of queries over a persistent categorical model of the system that is continuously updated and reevaluated as the system evolves, and argue that the boundary drawn between design-time and runtime integration is an artifact of engineering practice rather than a fundamental limitation of the problem itself. The main contributions of this paper are as follows:  
+
+> •
+
+A category-theoretic [15] modeling framework in which hardware, software, and behavior components are all morphisms in a free strict symmetric monoidal category and system compositions can be formed and interrogated as categorical circuits.  
+
+> •
+
+A translation of this categorical model into a satisfiability modulo theories (SMT) formulation that enables real-time synthesis of optimal compositions that can also include free parametric and structural variables repre-senting unknown values and entire missing components, simultaneously solved in a single process.  
+
+> •
+
+An extension of this formulation to support lifelong queries over the same model including diagnosing infea-sibility, generating minimal relaxations, and reconfiguring with minimal change to the deployed system.  
+
+> •
+
+Applications spanning the lifecycle of a real robotic sys-tem, from design-time Pareto-optimal component design to runtime recomposition during a search-and-rescue de-ployment in which the robot synthesizes and assumes new configurations online in response to changing conditions.  
+
+> •
+
+An evaluation of the above against optimal numeric, stream-based, and SMT-based planners, measured on-board a deployed robot. II. R ELATED WORKS 
+
+The challenges of integrating hardware design, software composition, and task planning have traditionally been ad-dressed in a compartmentalized manner. While recent research efforts have moved toward unified frameworks for simulta-neous optimization of diverse subsystems, most approaches remain confined to specific stages of the robot’s lifecycle. 
+
+A. Modular, Reconfigurable, and Self-Reconfigurable Systems 
+
+A large body of work studies robots whose morphologies 
+
+can change. These robots assemble a target structure from joinable hardware modules, with self-reconfigurable systems coordinating their own docking, actuation, and motion plan-ning to assume new configurations [16]–[18]. Many modular systems can recognize when their topologies change and regenerate kino-dynamic and geometric models automatically when modules are mated [19], and some approaches can even be provided a task and asked which feasible morphology best suits it [20]. Across this literature, it is assumed that reconfig-uration is morphological, where the degrees of freedom con-sidered in the reconfiguration process correspond to physical connections between modules and their relative positions and orientations, and adaptation is achieved by rearranging known modules into a new structure. These approaches can propagate the updated structure to downstream motion planning and control, but more general capabilities afforded by a new configuration or interactions with other subsystems beyond kino-dynamics are not captured. Broader notions of adaptive robotics still frame adaption primarily around control and behavior rather than the holistic system [21], while other work investigates behavioral response to physical damage [5], drawing inspiration from how animals can recognize injuries and adjust their actions accordingly. Extensive work in Plug-and-Produce methodologies within the manufacturing space addresses a similar need by treating reconfigurability as a property designed into workcells so that operational flexibility and efficiency are preserved as requirements and technologies evolve [22]. In our setting, the components are heterogeneous and span layers that include electromechanical hardware modules, soft-ware stacks, and behavior-based task execution. The result is that physical morphology is only one axis along which a 3
+
+system can be reconfigured, and it is often not the cheapest option. For example, swapping out a sensor driver or re-parameterizing a behavior tree may restore operation and likely can be performed more quickly and autonomously than exchanging a physical sensor. Accordingly, the configurations generated by our approach are not physical structures, but rather heterogeneous compositions of black-boxed modules defined only by their interface obligations. Morphology can be captured within these compositions, but it is treated as one class of variable among many. Because the term “modular” is so strongly tied to morphological reconfiguration and often also implies self-reconfiguration from homogeneous units in the existing literature, we describe this broader class as recom-positional . This notion aligns naturally with the compositional, categorical approach motivated in the remainder of this section and described in Section IV, where every system modification, physical or otherwise, is a morphism in one shared category. 
+
+B. Self-Adaptation and Models at Runtime 
+
+Automatic and self-adaptive computing has established the pattern of a system maintaining a runtime model of itself and closing an iterative monitor-analyze-plan-execute cycle over it [23], [24]. The models@run.time approach treats the model itself as the adaptation artifact [25], [26], and similar work in robotics reconfigures ROS-based architectures when com-ponents degrade [27]. More broadly, software reconfiguration at runtime has been explored extensively in robotics, though techniques beyond parameter reconfiguration remain rare in practice [4]. We share the premise of a live self-model, but differ in what that model can generate. The adaptation space in these frameworks is a space of software architecture variants enumerated at design time. Ours synthesizes configurations spanning hardware, software, and behavior that are not drawn from a predefined or enumerated set of candidates, can include values outside a modeled or enumerated vocabulary, and exposes the model as a logical artifact that can answer queries about why it is infeasible and how much it needs to change rather than only providing an updated configuration. 
+
+C. Categorical and Compositional Modeling 
+
+One of the core challenges in robotics and embodied autonomy is describing the complex interactions between heterogeneous components that impose vastly different con-straints. Category theory [15] has emerged as a prominent tool for formalizing similar interactions in engineering and sciences through compositionality [10], [28], [29]. Specifi-cally, resource theories provide a way to reason over how different inputs are transformed into outputs [30] and work on the mathematical frameworks for composing wiring diagrams has been demonstrated in applications such as plug-and-play circuits and dynamic systems analysis [31], [32]. Previous robot-aligned categorical solutions include efforts in co-design [11], which are discussed further in the following subsection, and frameworks for translating high-level specifications into action that is interoperable between systems and contexts [33], [34]. Although these efforts formalize compositional reasoning and interoperability, leveraging such structure to enable autonomous re-synthesis of embodied configurations under changing constraints remains an unexplored problem. 
+
+D. Task-Driven and Computational Co-Design 
+
+The joint optimization of hardware and software has been rigorously addressed through Censi’s mathematical theory of co-design [11]. Based on monotone co-design problems (MCDPs), this approach models design as a monotone fea-sibility relation between functionality and resources, solving for Pareto-optimal solutions that maximize functionality for given resources or minimize resources to achieve a desired functionality. This work has been expanded in many subse-quent publications, including optimizing drone hardware and control policies [35] and self-driving vehicle stacks [12], [36]. The primary artifact these methods report is the Pareto front over design candidates. In our approach, Pareto fronts are generated in one query (Section V-A) over the same model that also performs synthesis and runtime adaptation, rather than requiring a dedicated design-time tool. A related thread of work is computational co-design, which explores similar design questions [37] and has been demon-strated for structural design and simultaneous design of mor-phology and control over continuous or grammar-generated spaces [38], [39]. This thread makes similar assumptions about the scope of configuration as the modular robotics literature, searching a space generated by a fixed vocabulary of physical primitives and fixing the granularity at which the system is described to typically that of individual physical modules. Searching within that scope is powerful when the objective is a novel morphology, but it limits the result to a detailed physical model with no natural expression of software or behavior. We instead reason over black-boxed components described only by the interfaces they require and provide, which is what admits heterogeneous components into a single search. Both co-design threads target design-time, solving for an optimal configuration within a fixed operational envelope, but not providing a mechanism for the robot to autonomously re-synthesize its configuration during runtime when internal or external constraints change. 
+
+E. Formal Verification 
+
+Verification focuses on the correctness of system compo-sitions, which is especially critical in reconfigurable robots where a specific configuration may be untested prior to de-ployment [40], [41]. Outside of robotics, solution approaches such as mapping to satisfiability problems [48] have become longstanding successful approaches for reasoning over systems with a large parameter space, and extensions beyond the Boolean satisfiability (SAT) problem to satisfiability mod-ulo theory (SMT) problems have enabled reasoning over more complex formulas that can include arithmetic datatypes, strings, quantifiers, and more [49]. Previous works have ex-plored verification of factors including gravitational stability, self-collision, and respecting actuator force limits in modular systems [40], while other work has emphasized verification of robotic software architectures based on ROS using timed-automata [50] and assume-guarantee reasoning [41]. However, 4
+
+TABLE I. Positioning of this work against the threads of Section II. Components is what the method has agency over; lifecycle describes the stage during which each tool is used; configuration space is the set from which a configuration is drawn; queries answered are the questions the method can pose over its own model. •◦ = supported, ◦ = supported in a restricted form (see notes), × = not supported, – = not applicable. The separation is structural, as the component and query blocks are satisfied by disjoint sets of rows. Diagnosis, relaxation, and stability are mature capabilities over plans and planning domains, not over deployed systems, while methods that do reconfigure heterogeneous systems support no queries beyond the configurations they produce. 
+
+Components Lifecycle Configuration Space Queries Answered Thread & Representative Work HW SW Behavior Exist. Opt. Diag. Relax Stab. Pareto Modular/self-reconfigurable robots [17], [18] •◦ × × Runtime Unit lattice •◦ ◦a × × ◦b ×
+
+Plug-and-produce/reconfigurable manufacturing [22] •◦ ◦ × Both Device catalog •◦ ◦ × × × ×
+
+Self-adaptation, models@run.time [24], [25], [27] × •◦ ◦ Runtime Enum. variants •◦ ◦c ◦d × ◦e ×
+
+Categorical/compositional modeling [10], [29], [33] ◦ ◦ ◦ Both – – – – – – –Task-driven co-design (MCDP) [11], [12] •◦ •◦ ◦ Design Design catalog •◦ •◦ × × × •◦
+
+Computational co-design [38], [39] •◦ ◦f × Design Grammar / cont. •◦ •◦ × × × ◦
+
+Formal verification [40], [41] × × × Both Given × × ◦g × × ×
+
+Task planning, PDDL/TAMP [42] × × •◦ Runtime Enum. / disc. •◦ •◦ × × × ×
+
+Task planning, SMT backend [43], [44] × × •◦ Runtime Exact numeric •◦ ×h × × × ×
+
+Diagnosis, repair, plan stability [45]–[47] × × ◦i Runtime Given plan – – •◦ •◦ •◦ ×
+
+Ours •◦ •◦ •◦ Both Synthesized •◦ •◦ •◦ •◦ •◦ •◦         
+
+> aMinimizes reconfiguration moves or actuation cost, not a task-level objective. bMinimal-move self-reconfiguration captures churn but is confined to morphology.
+> cUtility-based selection over an enumerated variant set. dFunctional-level degradation diagnosis; no minimal set of constraints that failed. eAdaptation cost and hysteresis are weighed, but the deployed configuration is not a first-class constraint. fControl policy is co-optimized; the software stack itself is not a design variable. gCounterexample traces explain violations of a checked property, not infeasibility of a composition. hSatisficing: the SMT backend binds continuous parameters exactly but no objective is optimized. iOperates on the plan or the planning domain, never on the deployed system.
+
+while many works have identified the need for verification in compositional systems, they have not captured the full scope of system-level configuration, which requires simultaneous reasoning over the complex interactions between hardware and software subsystems, actions performed by the resulting system, and the environment, meaning they do not generalize to our recompositional robotics setting. 
+
+F. Task Planning 
+
+Task planning focuses on the scheduling and utilization of available resources during deployment to achieve a provided task. Traditional approaches, such as PDDL-based planning [42], treat the system as a black box with fixed capabilities captured via a set of high-level actions. Prior works have introduced category theory to planning, including categorical expression of PDDL plans, interoperability in robot program-ming, and translation of task plans between domains [33], [34], [51]. Other works have mapped the planning problem to SAT or SMT instances [43], [52], with [43] specifically mapping PDDL instances into SMT, and SMTPlan+ [44] compiling PDDL+ hybrid domains to SMT for iterative-deepening satisficing search. While these works help solve the task-planning problem, they struggle to express problems in runtime coordination between components and system design prior to deployment without significant manual alignment to a specific problem. Frequent manual re-expression limits autonomy and responsiveness in the recompositional robotics setting, where a long-lived system must answer various queries about its state and capabilities that change over time. In our approach, we treat the task planning problem as part of the larger recomposition problem, expanding its scope beyond composing high-level actions to jointly consider the hardware and software components that enable or contribute to the capa-bilities of the actions. We use SMT as our planning backend, and evaluate the ability of our approach to express problems relevant to the recompositional robotics setting against other planning mechanisms, including those backed by SMT, in Section VI. 
+
+G. Diagnosis, Repair, and Plan Stability 
+
+Explaining infeasibility via minimal unsatisfiable subsets and restoring it via minimal correction sets is well-studied in constraint satisfaction and SAT/SMT solving [45], [53]. In planning, related threads generate excuses for unsolvable tasks [46] or repair the domain model directly when no plan can be generated [54], while work on plan stability generates successor plans that minimally perturb the current plan when it becomes invalidated [47]. The threads operate in isolation on the plan or in the planning domain, but each of these capabilities is useful in a long-lived, persistent system that is expected to adapt to change during operation. Because our formulation generates the joint hardware–software–behavior composition rather than a standalone task plan, the same machinery acquires broader system-level meaning, allowing the robot to explain its infeasibility, generate a relaxation for a concrete resource that would restore feasibility, and prioritize stability to minimize change to the incumbent composition rather than re-solving from scratch. These capabilities are discussed in Section IV-D. 
+
+H. Positioning 
+
+In the context of the recompositional robotics problem, the primary limitation across these threads is that the stages remain decoupled: co-design optimizes the robot within a fixed oper-ational envelope, planning then treats the resulting capabilities as a fixed constraint, and verification acts as an external check on an existing configuration that can signal when it is violated, but cannot directly guide the re-synthesis because it uses independent machinery. That is, because the stages are mathe-matically and operationally separate, a planning failure cannot trigger a hardware or software reconfiguration, and the system is brittle to any violation of its design-time assumptions. A 5
+
+framework that unifies these domains and approaches them using the same formulation can instead resolve failures by holistically re-synthesizing its own structure and capabilities, remaining viable under shifting environments, internal changes such as hardware failures, or entirely new task objectives. Unification also enables the diagnosis, relaxation, stability, and design-space queries that the above threads develop separately, each against its own restricted model, as a single set of queries over one shared model of the whole system. Our positioning to prior work is summarized in Table I. III. P RELIMINARIES 
+
+This section establishes the mathematical foundations of our framework prior to Section IV, which presents our approach. We first introduce the categorical structures later used to model robot compositions and then define the state transition system used for planning. For a deeper discussion of these topics, we refer the reader to [10], [29], [55]. 
+
+A. Monoidal Category Theory 
+
+A category C is a collection of objects Ob( C) and mor-phisms Hom( C) that map between objects. A morphism f :
+
+A → B represents a transformation from an input type A to an output type B. The following must hold in C: 
+
+> •
+
+Identity: For every A ∈ Ob( C), there is a morphism id A :
+
+A → A that preserves the object.  
+
+> •
+
+Sequential Composition: The binary composition opera-tion ◦ is applied to morphisms when the codomain of the first morphism equals the domain of the second: 
+
+f : A → B, g : B → Cg ◦ f : A → C. (1) The composition is associative 
+
+h : C → Dh ◦ (g ◦ f ) = ( h ◦ g) ◦ f, (2) and respects identity 
+
+id B ◦ f = f = f ◦ id A. (3) These properties of C are illustrated graphically in the following diagrams: 
+
+ABCfgg ◦ f
+
+id A
+
+fgABC
+
+= g ◦ fAC
+
+On the left, a commutative diagram expresses these algebraic relationships. The right shows these same relationships in a string diagram , which depicts morphisms as boxes and objects as wires. We prefer string diagrams throughout this work as they provide an intuitive topological representation of system connectivity, where wires correspond to physical or informational resource flows and boxes represent the processes that transform them. A monoidal category extends this basic structure with paral-lel composition via the tensor product bifunctor ⊗ : C ×C → C 
+
+and a unit object I. The tensor product allows for grouping of objects (A ⊗ B) and the simultaneous application of morphisms: 
+
+f ⊗ h : A ⊗ C → B ⊗ D. (4) We assume C is strict , meaning the structural isomorphisms for associativity and units are treated as equalities: 
+
+A ⊗ (B ⊗ C) = ( A ⊗ B) ⊗ CI ⊗ A = A = A ⊗ I. (5) These monoidal properties are summarized in the following string diagrams: 
+
+f ⊗ hA CB DρA
+
+I AA
+
+The compatibility between serial and parallel compositions is governed by the interchange law :
+
+k : D → E
+
+(g ◦ f ) ⊗ (k ◦ h) = ( g ⊗ k) ◦ (f ⊗ h), (6) which is expressed in the following string diagrams: 
+
+fghkACCE
+
+=
+
+f ⊗ hg ⊗ kA CC E
+
+B. State Transition Systems 
+
+To bridge the gap from abstract structure to autonomous reasoning, we ground our categorical model in a planning state transition model [55]. A state transition system is defined as a tuple Σ = ⟨S , A, γ ⟩, where:  
+
+> •
+
+S is the set of all possible system states;  
+
+> •
+
+A is the set of all possible actions that transition one state into another, and;  
+
+> •
+
+γ is a transition function γ : S × A → S that maps a state and action to another state. A planning problem is expressed as P = (Σ , s init , Sgoal ), and a plan π = ⟨a0, a 1, a 2, . . . ⟩, a i ∈ A is a sequence of actions. 
+
+π is a solution to P if it transitions the initial state sinit into a valid goal state sgoal ∈ S goal , or sgoal ⊆ γ(sinit , π ).IV. A PPROACH 
+
+We propose a compositional framework that treats robotic system integration as a single, continuous synthesis problem. By modeling the robot as an abstract circuit within a strict symmetric monoidal category, we can reason over heteroge-neous mechanical, electrical, software, and behavioral subsys-tems in a unified manner. This section details the mapping of resources to categorical objects, the use of functors to project the system into specific lifecycle views, the translation of this structure into an SMT-based optimization problem, and the family of lifelong queries that the resulting formulation supports. 6
+
+A. The Robot-Circuit Model 
+
+We define our domain C as the free strict symmetric monoidal category generated by a set of atomic resource types R. This allows us to represent the robot’s state as a string diagram capturing the consumption and production of resources through state transitions. 
+
+1) Composite Resource Strings as Objects: Following the definitions in Section III, objects Ob( C) represent the states of our system. Specifically, a state is the tensor product of atomic resources s = r1 ⊗ r2 ⊗ · · · ⊗ rn where ri ∈ R . While a key contribution of this work is the uniform treatment of all system components as undifferentiated categorical structures, representing every atomic resource individually would render diagrams unwieldy. Therefore, for visual and conceptual clar-ity in this paper, we group resources into four broad partial states:  
+
+> •
+
+Electromechanical:  
+
+> EM
+
+= Hardware ⊗ Power ⊗ Ports ⊗ . . . (7)  
+
+> •
+
+Computational:  
+
+> Compute
+
+= CPU ⊗ GPU ⊗ Disk ⊗ RAM ⊗ . . . 
+
+(8)  
+
+> •
+
+Informational:  
+
+> Info
+
+= ROS ⊗ BT.CPP ⊗ Wi-Fi ⊗ . . . (9)  
+
+> •
+
+External:  
+
+> External
+
+= Cost ⊗ Time ⊗ Environment ⊗ . . . 
+
+(10) The complete system state s is then expressed as the tensor product of these partial states: 
+
+s = EM ⊗ Compute ⊗ Info ⊗ External 
+
+. (11) Notably, because C is symmetric, the ordering of these atomic resources within s does not affect the representation. 
+
+2) State Transitions as Morphisms: Morphisms Hom( C)
+
+a : sin → sout constitute the action space A within our state transition system. This generalizes the many types of system mutations that could be expected in a reconfigurable robot, including changes to physical hardware, running software, and plan execution, into a unified definition.                
+
+> CameraDriver
+> Preconditions
+> •Hardware ∋Camera
+> •RAM ≥RAM req
+> • . . .
+> Postconditions
+> •RAM := RAM −RAM req
+> •ROS := ROS ∪ { ImageTopic }
+> • . . .
+
+(12) As expressed in (12), each morphism may contain a set of preconditions that query the input resources and must hold for the morphism to be applicable at that state, and a set of postconditions that produce updated system resources if that morphism is applied. Composite systems are formed by applying serial ( a2 ◦ a1) and parallel ( a1 ⊗ a2) compositions of atomic morphisms indexed by discrete steps t1, . . . , t n:
+
+> Camera CameraDriver TakePhoto
+
+t1
+
+t2
+
+t3
+
+> Port Legend
+> Precondition Postcondition Free Parameters within Conditions
+
+(13) We use port symbols shown in (13) to indicate whether a morphism imposes preconditions and/or postconditions on an input or output resource in the remaining string diagrams in this paper. The presence of free parameters within precondi-tions and postconditions is further discussed in Section IV-C. 
+
+3) Planning Objective: With the states and actions in our state transition system mapped to categorical representations, the objective becomes to find a valid composition of mor-phisms from A using ◦ and ⊗ that transforms an initial state 
+
+sinit into a goal state sgoal ∈ S goal . Formally stated, we solve if 
+
+∃π ∈ ⟨A⟩ ◦,⊗ s.t. π : sinit → sgoal ∈ S goal . (14) 
+
+B. Contextual Reasoning via Projection Functors 
+
+While it is powerful to capture the robot’s entire complex state in a unified representation, it is often practical to consider only some reduced version of that state that removes elements unnecessary for the current analysis. For example, considering the available hardware interfaces on a robot is critical for physical reconfiguration, but is unnecessary when solving for a new software state over a fixed physical morphology. We formalize this “view-switching” using monoidal functors 
+
+Fview : C → C view that project the overall system category C
+
+into view-specific categories Cview .Let view be a specific lifecycle stage (e.g. software instal-lation). If a resource r (like available hardware interfaces) is irrelevant to that stage, the functor Fview maps it to the monoidal unit I: Fview (r) = I. Because s = I ⊗ r2 = r2 from (5), this effectively removes the resource r1 and its associated constraints from s without altering the underlying topological structure of the composition.   
+
+> Robot Robot
+
+(15) This allows the same high-level system model to be solved, verified, or optimized against multiple distinct views by simply swapping the projection functor. While our approach is capable of solving for the entire end-to-end system composition, these functors allow the state to be collapsed into any subset of 7
+
+desired resources. This effectively allows the framework to emulate traditionally decoupled stages, such as hardware de-sign, software integration, or behavior planning, by narrowing the focus of the solver to only the resources relevant during each stage. 
+
+C. Mapping to Satisfiability with Free Variable Synthesis 
+
+To generate a valid planning solution π, we map the categorical model to an SMT problem. 
+
+1) The Logic Formula: An initial state sinit is parame-terized by a set of literals l ∈ sinit . Likewise, the space of possible goal states is parameterized by l ∈ S goal . For each morphism a ∈ A , we capture the atomic literals within its preconditions l ∈ Pre a and postconditions l ∈ Post a. Let the Boolean domain be B := {0, 1}. Over a planning horizon k,we search for an assignment to Boolean activation variables 
+
+b ∈ B where B ∈ B|A|× k within the formula 
+
+T (t) = ^
+
+> a∈A
+
+ba(t) ⇒ ^
+
+> l∈Pre a
+
+l(t) ∧ ^
+
+> l∈Post a
+
+l(t + 1) 
+
+!! 
+
+Φ = ^
+
+> l∈sinit
+
+l(0) ∧ ^
+
+> 0≤t<k
+
+T (t) ∧ ^
+
+> l∈S goal
+
+l(k)
+
+(16) such that the resulting formula is satisfied ( Φ ∈ SAT ). T (t)
+
+encodes the transition logic, and an activation ba(t) is only valid if all literals l ∈ Pre a are satisfied at the step t and subsequently applies all literals l ∈ Post a at t + 1 . Frame axioms additionally enforce that any literal not appearing as a postcondition of an activated action is retained across the transition. Formally, for the set of all literals L and time step 
+
+t:
+
+F (t) = ^
+
+> l∈L
+
+(l(t)̸ = l(t + 1)) = ⇒ _
+
+> a∈A
+> l∈Post a
+
+ba(t)
+
+ . (17) 
+
+2) Free Variable Synthesis: We leverage the ability of SMT to reason over more complex datatypes beyond Booleans to synthesize missing information influencing the composition. Thus, in addition to the Boolean activation variables b ∈ B ,we simultaneously reason over two types of free variables:  
+
+> •
+
+Parametric free variables (θ ∈ Θ): These represent free variables within the preconditions and/or postconditions of morphisms. For example, rather than defining a strict amount of RAM consumption for a specific piece of software in the precondition literal RAM ≥ RAM req ,
+
+RAM req can be left as a free variable θreq that is simul-taneously solved within the composition. Because these parameters vary in type based on the underlying resource, we define the heterogeneous tuple Θ = (θ1, . . . , θ n)
+
+where each θi is drawn from a specific SMT sort 
+
+Di ∈ {R, Z, B, String , Enum , Set , . . . }. In this way, parametric free variables can be used to solve for design-time targets within morphisms or can be left free into deployment to solve for composition-dependent instan-tiations including physical cable connections, software parameters, or the names of instances of data in memory, for example.  
+
+> •
+
+Structural free variables (μ ∈ U ): These represent entire morphisms within a composition that are left free. If a composition is invalid because of unsatisfiable precondi-tions, a structural free variable μ can be introduced to represent a hypothetical component and its preconditions and postconditions solved such that the overall compo-sition is satisfied. In this way, structural free variables can be used to create design targets for morphisms that, if they existed, would render a composition valid. The space of structural free variables U is constrained by the current projection Fview .
+
+3) Finite Grounding: The parametric free variables θ ∈ Θ
+
+can range over symbolic sorts whose vocabularies are open ,including String and Set types. For example, the name of a ROS topic, the identifier of an instance of data in memory, or the class of a detectable object using an open-vocabulary model [56] should not be restricted to a finite set of values specified at design time. Pre-enumeration of all possible variable assignments within the domain is an expensive and brittle process in the best case, and in the context of a recompositional robot whose structure is fre-quently changing, it is often impossible to know the full set of possible values at design time. In practice, our solver also supports shell execution within condition evaluation, and arbitrary code execution means that the set of possible values for a variable may be infinite. Reasoning over an infinite domain, however, is generally undecidable. Our approach therefore grounds each symbolic sort over a finite universe H
+
+built from the symbolic constants occurring across the design-time domain and the generated problem definition along with one fresh reserve element per free variable. Our encoding only supports equality, disequality, and set membership constraints over these symbolic sorts, which makes the finite grounding sound and improves solver performance by reducing the search space. 
+
+Proposition 1 (Finite Grounding) . Let Φ be a formula of (16) 
+
+that is quantifier-free over its symbolic sorts, whose atoms over those sorts are restricted to equality, disequality, and set membership, and whose set terms are built by only adding or removing single set elements. Let H be the set of symbolic constants occurring in Φ extended with one fresh reserve element per free symbolic variable. Then, for every universe 
+
+U ⊇ H, Φ is satisfiable over U if and only if it is satisfiable over H.Proof Sketch. The admitted atoms depend on symbolic val-ues only through equality, disequality, and set membership. Injectivity carries equality and disequality both ways, and taking images commutes with set membership and with adding or removing single elements. Therefore, any injection of the symbolic universe that fixes the constants of Φ preserves and reflects every atom. (⇐) The inclusion H , → U is such an injection, so any model over H is also a model over U .(⇒) In a model over U , membership is tested only against the element terms occurring in Φ, so we may drop from each set every element unequal to all of them without changing any atom. Every symbolic value then is a constant of Φ or the value 8
+
+of a free variable, the latter contributing at most one distinct element each. An injection fixing the constants and sending these to distinct reserve elements of H yields a model over 
+
+H.The result of Proposition 1 is that a value never seen at modeling time requires no re-enumeration because the grounding is built from the problem and domain at runtime rather than just from the domain at modeling time, meaning admitting an unmodeled value requires only a single problem-file update rather than a model change. This advantage is discussed in Section VI-C. 
+
+4) Optimization: Optionally, this can be formulated as an optimization problem, where literals associated with certain resources can be applied as soft constraints to form Φsoft 
+
+and the remaining literals form Φhard . In this case, we solve for activations and free parametric and structural variables that satisfy the hard constraints Φhard while minimizing a cost function. The cost function is composed of penalties for violating the soft constraints, where each soft constraint Φsoft i
+
+has an associated violation indicator zi and weight wi, and an auxiliary objective c that can be declared to maximize a particular functionality or minimize the consumption of a particular resource: 
+
+x = arg min  
+
+> b,θ,μ
+
+c(b, θ, μ ) + 
+
+> m
+
+X
+
+> i=1
+
+wizi
+
+subject to Φhard (b, θ, μ ) ∈ SAT 
+
+zi ⇐⇒ ¬ Φsoft i (b, θ, μ ), ∀i ∈ { 1, . . . , m }
+
+b ∈ B , θ ∈ Θ, μ ∈ U .
+
+(18) 
+
+D. Lifelong Queries over the Model 
+
+(16) captures the composition as a conjunction of labeled constraints, which allows the model to support queries beyond plan existence. Take Φ = V 
+
+> φ∈L
+
+φ, where L = Linit ∪L trans ∪Lgoal is the set of all conjuncts in (16) and let a solution be the assignment x = ( b, θ, μ ) of (18). When an update to any component captured in the model replaces Φ with Φ′, three questions can be answered, each of which is a minimality query over the same formula: 
+
+1) Diagnose: why is the composition infeasible?: When 
+
+Φ′ ∈ UNSAT , we explain the failure relative to the com-position. An explanation is an irreducible subset M ⊆ L such that 
+
+^
+
+> φ∈M
+
+φ ∈ UNSAT and ∀ φ ∈ M : ^
+
+> ψ∈M\{ φ}
+
+ψ ∈ SAT .
+
+(19) Given the composition, every constraint in M is necessary for the infeasibility, and removing any one restores satisfiability. 
+
+M is irreducible but may not have minimum cardinality and 
+
+Φ′ may admit several such subsets. 
+
+2) Relax: what is the minimal restoration?: Let Lreq ⊆ L 
+
+be the requirements eligible for weakening. For each require-ment ρ ∈ Lreq of the form ρ ≡ (qρ ≥ rreq ,ρ ) where 
+
+qρ denotes the current level of a resource governed by ρ,introduce a slack variable δρ ≥ 0 yielding the weakened literal 
+
+ρ(δρ) ≡ (qρ + δρ ≥ rreq ,ρ ). The minimal restoration is then: 
+
+δ∗ = arg min 
+
+> δ≥0
+
+X
+
+> ρ∈L req
+
+wρ δρ
+
+subject to ^
+
+> φ∈L\L req
+
+φ ∧ ^
+
+> ρ∈L req
+
+ρ(δρ) ∈ SAT , (20) an instance of (18) in which the weakened requirements form the soft set Φsoft . The solver returns both the magnitude δ∗
+
+and, in the discrete case, the minimal set of requirements whose removal restores feasibility. Importantly, minimality is discovered rather than designated. (20) ranges over all of Lreq simultaneously, whereas the replanning baselines in Section VI-D must re-solve a bisection loop per candidate parameter. 
+
+3) Recompose: how much must the deployed system change?: In the recompositional robot problem, the current system state is an incumbent configuration that may be ex-pensive in terms of time, effort, or both, to change. Thus, when Φ′ ∈ UNSAT , it is practically useful to incorporate the incumbent state and minimize the cost of required changes when solving for an updated composition. Let A0 ⊆ A be the components of the currently deployed configuration, and let Ab ⊆ A denote the configuration induced by a candidate solution. The recomposition cost of the candidate solution is its weighted churn 
+
+∆( b) = X  
+
+> a∈ A b△ A 0
+
+wa, (21) or the symmetric difference between the candidate and in-cumbent compositions. The churn is weighted by each com-ponent’s replacement cost wa to capture the practical costs of reconfiguration, such as mounting a new piece of hardware, connecting cables for power and communication, restarting a piece of software, or modifying a behavior tree. Minimal-change recomposition then solves the lexicographic program 
+
+x∗ = arg lex min 
+
+> b, θ, μ
+
+ ∆( b), c (b, θ, μ )
+
+subject to Φhard (b, θ, μ ) ∈ SAT 
+
+b ∈ B , θ ∈ Θ, μ ∈ U ,
+
+(22) which holds the deployment fixed except where an update forces a change, breaking ties by the mission objective c of (18). By reversing the priority order to lex min  c, ∆, the same formulation instead recovers the cost-optimal solution regardless of the incumbent configuration. Agency over the objective prioritization makes the optimality-versus-stability tradeoff an explicit choice that can be determined based on the current context of the system (Table IV). Lifelong recomposition based on these queries takes the form of Algorithm 1, which is used in the demonstration in Section V-B. V. A PPLICATIONS 
+
+We demonstrate the utility of our approach in a multi-stage search-and-rescue application. We first use our solver as a design-time tool to synthesize specific software and behavioral 9
+
+Algorithm 1 Lifelong recomposition loop (onboard, Fig. 5) 
+
+Require: model, incumbent components A0, projection Fview  
+
+> 1:
+
+while mission active do  
+
+> 2:
+
+Φ′ ← encode sensed state, task, catalog (16)  
+
+> 3:
+
+if A0 satisfies Φ′ then ▷ composition still valid  
+
+> 4:
+
+continue  
+
+> 5:
+
+else if Φ′ ∈ SAT then  
+
+> 6:
+
+x∗ ← minimal-churn re-solve (22)  
+
+> 7:
+
+else  
+
+> 8:
+
+report cause M to operator (19)  
+
+> 9:
+
+find minimal restoration δ∗ (20)  
+
+> 10:
+
+await approval; weaken Φ′ ← Φ′(δ∗) 
+
+> 11:
+
+x∗ ← minimal-churn re-solve (22)  
+
+> 12:
+
+end if  
+
+> 13:
+
+enact x∗; A0 ← A b ▷ updated composition  
+
+> 14:
+
+end while 
+
+components and subcompositions, then integrate it into a symbolic robot model running onboard a physical robot that allows it to dynamically recognize and adapt to changing task, environmental, and internal constraints online. 
+
+A. Design-Time Component Engineering 
+
+The search-and-rescue application requires the robot to traverse a facility without a prior map, identify any people within the facility, approach them, and assess their condition before sharing their location and the generated assessment with a remote operator. Our rudimentary condition assessment approach uses a speech-to-text (STT) model to capture any spoken audio from the person and a vision-language model (VLM) that processes an image captured with the robot’s cam-era and the transcribed text from the STT model to generate a textual description of the person’s perceived condition and need for assistance. Because both the STT model and VLM are expensive to run locally, especially alongside other GPU-native processes, we first use our solver to design a subcomposition of STT model and VLM that can run locally alongside all other software required for the search-and-rescue mission. For the deployment in Fig. 5, we use an NVIDIA Jetson AGX Orin with 64 GB shared RAM/VRAM and a 1 TB disk running on the robot. To design the software components, we first create the skeleton software components with free parametric variables shown in Fig. 2 (top left), for which the composite constraints shown in Fig. 2 (top center) are solved. These constraints provide design parameters for the STT model and VLM that would enable them to run locally on the deployment computer alongside the other required software components. However, these constraints only inform design targets for software that can run on the robot, failing to capture other factors relevant to the deployment including the quality of the generated assessment and time required to generate it. To address this need and informed by the solved constraints, we consider five variants of the Whisper [57] STT model (Tiny, Base, Small, Medium, and Large) as well as two leading open-source VLMs including Gemma4 (E2B, E4B, 12B, 26B, and  
+
+> STT
+> θs
+> VLM
+> θv
+
+→
+
+(θs, 1 = θv, 1) →
+
+arm64 Arch 
+
+(θs, 2 + θv, 2) → ≤ 
+
+50 GB VRAM 
+
+(θs, 3 + θv, 3) → ≤ 
+
+200 GB Disk 
+
+→ Whisper-Small Gemma4:26B 0 20 40 60 80 100 120 
+
+Assessment Latency (s) 
+
+> 0.40.50.60.70.80.91.0
+> Assessment Quality
+> Tiny Base Small Medium Large
+> Whisper Variants G4:E2B Q3.5:2B G4:26B Q3.5:35B G4:31B
+
+Deployed: Gemma4:26B ◦ Whisper-Small  
+
+> Fig. 2. Development of the combined assessment stack, including hypo-thetical STT and VLM software components (top left). Solving for the free parameters within the subcomposition yields actionable design targets (top center). A combination of five STT candidates (Tiny, Base, Small, Medium, and Large variants of Whisper [57]) and eleven VLM candidates (E2B, E4B, 12B, 26B, and 31B variants of Gemma4 [58] and 0.8B, 2B, 4B, 9B, 27B, and 35B variants of Qwen3.5 [59]) were evaluated to generate the Pareto front (bottom). Of the 55 total compositions, 20 non-dominated compositions form the front. Based on these results, the implemented software components use the Small variant of Whisper and the 26B parameter variant of Gemma4, respectively, with both adhering to the standard of [61] (top right).
+
+31B) [58] and Qwen3.5 (0.8B, 2B, 4B, 9B, 27B, and 35B) [59] and generate morphisms associated with each variant. As a proxy metric for overall assessment quality, we use a hybrid of score on the MMMU-Pro benchmark [60] for VLM evaluation and word error rate (WER) for STT model evaluation, both of which are metrics provided by the respective model authors. 
+
+Fassessment = MMMU ∗ (1 − WER) (23) We also measured the GPU usage and latency of each model processing mission-similar audio, image, and text inputs. Using these measurements and our hybrid quality metric, we created a set of symbolic representations for the five STT model variants and eleven VLM variants and generated the Pareto front shown in Fig. 2 (bottom). Importantly, the Pareto front shows the optimized subcompositions in the context of the resources provided by the deployment computer and all 10 
+
+> Transcribe
+> θt
+> PromptVLM
+> θp
+> Verbalize
+> θv
+
++ μ
+
+> θμ
+
+=
+
+> Transcribe
+> θt
+
+μ
+
+> θμ
+> PromptVLM
+> θp
+> Verbalize
+> θv
+
+= VLMInteraction 
+
+> θ
+
+→
+
+<BehaviorTree ID="VLMInteraction" ><Sequence> <Transcribe 
+
+transcription= θt, 1 → "{text}" /> <μ → impl( TakePhoto )>
+
+image_topic= θμ, 1 → "/camera/ color/image_raw" image= θμ, 2 → "{image}" /> <PromptVLM 
+
+image= θp, 1 → "{image}" text= θp, 2 → "{text}" response= θp, 3 → "{response}" /> <Verbalize 
+
+text= θv, 1 → "{response}" /> </Sequence> </BehaviorTree>             
+
+> Fig. 3. A simple behavior tree to interact verbally using the STT and VLM models optimized in Fig. 2 plus TTS capabilities is developed. An initial composition is solved with a free structural variable μ. The conditions of μare solved such that the composition is valid. This behavior tree is stored as a new VLMInteraction behavior component, which is reasoned over in Section V-B. Once a real behavior matching the solved specification for μhas been implemented, during runtime, the remaining free parametric variables θare solved and the morphism application of VLMInteraction is grounded to the executable behavior tree shown right, translating the symbolic action into real robot behavior.
+> LiDAR
+> θ
+
+→
+
+lidar: mount: +: mount to θ1 → "payload_plate" 
+
+communication: +: plug into ethernet port θ2
+
+→ 2
+
+power: +: connect to 12V power at usbc power port θ3 → 1... 
+
+> YOLOE
+> θ
+
+→
+
+services: yoloe: image: yoloe: θ1-θ2 → humble, arm64 ... 
+
+yoloe: ros__parameters: classes: [θ3] → ["person"] 
+
+image_topic: θ4 → "/camera/ color/image_raw" ...  
+
+> Fig. 4. Runtime configurations for a LiDAR hardware component and a YOLOE [56] software component adherent to the standard of [61]. Because the robot in our demonstration (Fig. 5) cannot reconfigure its own hardware, morphism applications associated with hardware are grounded to human-readable instructions (left) which must be carried out manually by a human teammate. In our demonstration, these instructions are provided via an augmented reality headset. Morphism applications associated with software are grounded into the compose and parameter YAML file formats required by [61] (right), and all reconfiguration and management of software is performed autonomously.
+
+other components deployed in the search-and-rescue mission, not in isolation of the assessment capability alone. Of the 55 possible subcompositions of STT model and VLM, all 55 are feasible (expected, because the selection of components was guided by the initially solved constraints), and 20 are Pareto-optimal, with the remaining 35 being dominated by at least one other subcomposition. Using these results, the final STT model and VLM software components were designed, using the Small variant of Whisper and the 26B parameter variant of Gemma4, respectively, as shown in Fig. 2 (top right). Next, we demonstrate solving an integration gap within a partially formed composition using a structural free variable 
+
+μ. Fig. 3 shows a behavior subtree skeleton that uses the STT model and VLM components designed above plus a capability provided by a text-to-speech (TTS) model to interact with the person being assessed. The PromptVLM behavior requires both text and image inputs, but the behavior subtree skeleton does not provide a source for the image input, so the composi-tion is UNSAT . A free structural variable μ is introduced, and its conditions are solved such that the image input is provided to the PromptVLM behavior and the composition is SAT . μ is then implemented as a real behavior TakePhoto that takes a ROS image topic as input and provides a snapshot of data from that topic as output. This interaction composition is stored as a new VLMInteraction morphism, and during runtime, its parametric free variables θ are solved and grounded to the subtree shown in Fig. 3 (right), translating the symbolic action into real robot behavior. The STT model and VLM subcomposition and interaction subtree designed in this section are deployed in the search-and-rescue mission described in the following subsection. This application demonstrates that the design-space exploration performed by dedicated co-design tools [11], [36] falls out of our formulation as one query among several rather than requiring separate tooling; because these methods do not release comparable open-source implementations, we do not attempt a runtime comparison, but note that Fig. 2 required no purpose-built machinery beyond the model already used for synthesis and runtime recomposition elsewhere in this paper. 11 Are you injured? No, I'm OK. Please safely evacuate the building.   
+
+> LiDAR Driver Hyla-SLAM Move To Object
+> VLM Interaction
+> Locate Object
+> Enable Localization Report To Operator
+> Tracking Controller RGB Driver Raw Data Aggregator YOLOE Depth Pro Whisper TTS
+> RGB Driver Thermal Driver
+> Robot out of Range d = 13.4 m UNSAT d = 10.0 m SAT
+> Locate Object
+> Move To Object
+> VLM Interaction Report To Operator Generate Navigation Goal
+> Move To Navigation Goal
+> Gemma4
+> Are you injured? Please send help. Responders have been alerted.
+> Image Stream too Dark for Detection UNSAT
+> I. V. Teammate POV Teammate POV Teammate POV Robot Unfit for the Task UNSAT SAT SAT II. III. IV.
+> Robot POV
+> Locate Object Raw Data Aggregator VLM Interaction
+
+Fig. 5. Search and Rescue Demonstration: Counter-clockwise from top left: I) A quadruped robot and human teammate with an AR headset are tasked with performing a search-and-rescue mission. The robot cannot perform the task in its base composition ( UNSAT ), and solves for a new composition to achieve the task. Software and behavior recomposition are autonomous and instructions for hardware recomposition are provided to the teammate via the AR headset. Once reintegrated, the robot is SAT . II) During deployment, the robot exceeds a 10 m range constraint from the teammate. The robot tries to solve for a new composition that would render it SAT , and generates and executes a new behavior tree to move itself back within communication range. To continue exploring further into the facility, the teammate attaches a long-range radio component, which significantly extends the range constraint. III) Upon encountering a person, the robot approaches, interacts with the person, and shares their location and an assessment of their condition with the teammate. IV) During exploration, the robot enters a dark room and is no longer able to detect people within its RGB image stream, rendering it UNSAT . The robot solves for an updated composition to become SAT , which requires a physical swap of the RGB camera for a thermal one, corresponding software changes, and modifications to its behavior tree. In the updated composition, the robot is once again SAT . V) Using the thermal camera, the robot locates and interacts with a person in darkness, providing the same location and assessment information to the remote teammate. 
+
+B. Runtime Recomposition in a Search-and-Rescue Mission 
+
+In this demonstration, a robot and human teammate are tasked with performing a search-and-rescue mission in an unmapped facility. The robot is initialized with symbolic representations of a set of hardware components that can be interfaced with it via a simple rail-based mounting mechanism, [61]-compatible software components already present on the system but not running associated with various capabilities that may be useful during the mission, including drivers for various hardware components, image detection, STT, VLM, TTS, tracking, and SLAM, and behaviors provided by the various software modules that can be composed into behavior trees, also compatible with [61]. The human wears an augmented reality (AR) headset that enables in situ communication be-tween the robot and teammate and allows the teammate to see markers in the environment showing the location of the robot and any people detected during the mission. When provided the search-and-rescue objective, the robot recognizes it is UNSAT in its initial (empty) composition, and autonomously generates a new composition for itself to become SAT including interfacing of new hardware modules, starting of various software components, and generating and 12 
+
+executing a task-aligned behavior tree. In addition to the STT model and VLM subcomposition and interaction sub-tree, other components utilized in the composition include a LiDAR sensor that enables a software component based on [62] required to allow the robot to localize itself in the unfamiliar environment and a software component based on YOLOE [56] polled at high frequency to detect people in the environment before initiating the interaction process. As examples of the grounding of these symbolic components into actionable updates to the robot state, we show the free parametric variables θ solved for the LiDAR and YOLOE components in Fig. 4. In this demonstration, our robot is not designed to have self-reconfigurable hardware, so hard-ware components are grounded to a set of human-readable instructions related to the physical mounting and establishment of power and communication connections with the robot, as shown in Fig. 4 (left). These instructions are provided to the human teammate via the AR headset, who then must per-form the physical reconfiguration following the instructions. For software components, grounding includes generating the compose and parameter YAML files required by [61] with the solved parametric variables θ, as shown in Fig. 4 (right). Software recomposition is managed fully autonomously by the robot, including starting, stopping, and reparameterizing soft-ware components as required by the generated composition. Finally, grounding of behavior trees includes generating the XML file required by [61] with the solved parametric variables 
+
+θ, as shown in Fig. 3 (right). Behavior tree recomposition is also managed autonomously. The complete robot composition including hardware, software, and behavior is shown in Fig. 5-I. The robot periodically checks whether it is still SAT in its current composition during deployment. In Fig. 5-II, it recognizes it has exceeded a communication-related range constraint from the human teammate, and solves for a new composition that includes a behavior tree to walk itself back into range to become SAT again. To traverse further into the facility, the teammate attaches a long-range radio, which significantly extends this communication range. In Fig. 5-III, the robot detects, moves to, interacts with, and provides an assessment of a detected person within the environment, sharing the assessment and their location with the teammate via the AR headset. While traversing deeper into the facility, the robot enters a dark room and its image stream becomes too dark to detect people (implemented as a health check on the camera driver computing median pixel brightness), as shown in Fig. 5-IV. The robot recognizes it is UNSAT , and regenerates a new composition to become SAT again, which includes swapping its RGB camera with a thermal camera, stopping the RGB camera driver software and starting the thermal camera driver software, and reinitializing another software component and behaviors in its behavior tree with new parameters. In this composition, the robot is once again SAT and is able to detect, move to, interact with, and assess another person detected in the dark room, as shown in Fig. 5-V. Throughout this demonstration, the robot autonomously determines when it has become UNSAT due to changes in its task (Fig. 5-I), state (Fig. 5-II), or environment (Fig. 5-IV) and generates new compositions to become SAT again, including grounding symbolic components into actionable updates to its hardware, software, and behavior. These reconfiguration events are used as benchmarks to evaluate the performance of our approach in Section VI, and single-edit perturbations of the same deployment scenario are used in the diagnosis, relaxation, and recomposition studies in Section VI-D. VI. E VALUATION 
+
+Our primary claim is that lifelong recomposition is a family of queries over one persistent model, of which planning a single composition is only one. Our evaluation is organized accordingly, as follows. We first establish that our solver is competitive against baselines at the task of planning a single feasible or optimal composition so that the remaining compar-isons are not excused by planning weakness (Section VI-B). We then measure two further properties supporting lifelong recomposition, including:  
+
+> •
+
+How much model modification a deployment-time change requires before a formalism can re-solve (Section VI-C); and  
+
+> •
+
+Whether the formalism can answer questions that arise when re-solving fails and endangers the deployed sys-tem (Section IV-D), including why the composition is unsatisfiable, what the minimal changes are to make it satisfiable, and how much the deployed system must be recomposed (Section VI-D). Finally, Table V summarizes the expressiveness of our ap-proach and the baselines in terms of the requirements on the modeler and the variable types that can be reasoned over and co-optimized. 
+
+A. Setup and Baselines 
+
+We compare against official implementations of the three planning formalisms nearest our setting, each in its strongest configuration: (1) PDDL 2.1 [63] with ENHSP [64] as an optimal numeric backend planner; (2) PDDLStream [65], both in incremental sampler (PS s) and adaptive optimizer (PS o) con-figurations with Fast Downward [66] as the backend planner; and (3) SMTPlan+ [44], a satisficing PDDL+ planner that uses the Z3 SMT solver [67] as its backend. Our implementation similarly uses Z3 as its backend solver, so we can attribute differences in performance to the formalism rather than the solver. Every measurement in this section for every approach was taken onboard the same robot’s NVIDIA Jetson AGX Orin from Section V, so reported times capture the expected performance on an edge device in a real deployment. All reported times are the median over 10 trials, and interquartile ranges are below 0.6 s for all findings except one ( 1.26 s , ours on Fig. 5-II). We establish three rules for the comparison. First, every baseline receives its best-faith encoding, including encod-ings that strengthen the baseline beyond its standard usage. For example, for PDDL 2.1 with ENHSP, we authored an additional repeatable-increment encoding that absorbs some numeric changes that its standard encoding cannot. Second, 13                                                              
+
+> TABLE II. Solve times (seconds) on the search-and-rescue deployment (Fig. 5-I/II/IV) and three microbenchmarks, all measured onboard the robot’s NVIDIA Jetson AGX Orin (median of 10 trials). SAT rows seek any feasible plan; OPT rows seek an optimum. PDDL with ENHSP [64]; PS s/PS o:PDDLStream sampler/optimizer [65] with Fast Downward (FD) [66]; SMTP: SMTPlan+ [44]. ✓= optimal ( OPT ) or feasible ( SAT ) plan found; ×= sub-optimal ( SUBOPT ) or infeasible ( UNSAT ); — = optimizer inapplicable (feasibility-only row, no numeric objective, so the adaptive config reduces to the sampler); N/E= a valid encoding exists in principle but we did not author it for this problem: PDDLStream on the full-scale search-and-rescue model, whose hand-written stream/optimizer bodies are a substantial modeling effort we instead demonstrate on the microbenchmarks that isolate the same capabilities.
+> Scenario PDDL (ENHSP) PS s
+> (FD) PS o
+> (FD) SMTP Ours
+> Search and rescue demonstration (Fig. 5):
+> Fig. 5-I ( SAT )✓(1.01 s) SAT N/EN/E✓(2.63 s) SAT
+> ✓(6.46 s) SAT Fig. 5-II ( OPT )×(0.58 s) SUBOPT N/EN/E×(0.21 s) SUBOPT
+> ✓(4.85 s) OPT Fig. 5-IV ( SAT )✓(1.02 s) SAT N/EN/E✓(15.9 s) SAT
+> ✓(6.66 s) SAT
+> Microbenchmark:
+> GPU alloc. ( OPT )✓(0.51 s) OPT
+> ✓(13.1 s) OPT
+> ✓(0.56 s) OPT
+> ×(0.05 s) SUBOPT
+> ✓(0.12 s) OPT Navigation ( OPT )×(0.48 s) SUBOPT
+> ×(5.05 s) SUBOPT
+> ✓(0.53 s) OPT
+> ×(0.02 s) SUBOPT
+> ✓(0.02 s) OPT Detection ( SAT )✓(0.48 s) SAT
+> ✓(0.03 s) SAT —✓(0.05 s) SAT
+> ✓(0.11 s) SAT
+
+no baseline is ever fed an ill-formed input. Negative results are correct outputs of correct encodings, not failures of the encoding. Third, mission-time information, including sensed or computed values, operator requests, and goals, may be written into problem files for every formalism. What distin-guishes formalisms is what must change in the model (domain, streams, optimizers, costs, etc.) when the system updates. We release these encodings and our full results with our code 1.
+
+B. Planning Performance 
+
+Table II reports solve times on the three recomposition events of the search-and-rescue deployment (Fig. 5-I/II/IV), which are encoded verbatim in each formalism, and three smaller microbenchmarks that isolate individual capabilities. The first microbenchmark, GPU allocation, considers alloca-tion of a set of GPU-intensive processes sharing a single pool of resources with an objective to maximize the confidence of one process which is coupled to its resource consumption from the shared pool. The second, Navigation, represents an objective to travel as far as possible given a coupled battery constraint. The third, Detection, considers creating a detection pipeline that can detect a provided class from an input datastream of image data. We claim no planning speed advantage for our approach: ENHSP-backed PDDL 2.1 is faster on the full-scale problems and SMTPlan+ is often the fastest of all on the smaller problems. Rather, our advantage is in the expressivity our approach affords. For example, once an objective requires a free real, an open-world symbolic value, or several parameters coupled by a global objective, PDDL struggles to express it (returning SUBOPT 
+
+grid values on the Fig. 5-II and Navigation microbenchmark rows) and PDDLStream reaches the optimum only where hand-authored streams already encode the solution structure. SMTPlan+ shows that the separation is due to formulation rather than solving approach, as despite sharing the same backend solver, because it is a satisficing planner, it returns 
+
+SUBOPT solutions on every optimization row. Our solver synthesizes all free variables from each morphism’s conditions and co-optimizes them in a single query, reaching the optimum on every row. This added expressivity of our approach remains compatible with real-time deployment, as the full search-and-rescue prob-lems solve in 4.9 s to 6.7 s onboard the edge device, which is well within the budget for an event-driven recomposition that is only triggered when the robot becomes UNSAT , not at every control step. 
+
+C. Absorbing Change During Deployment 
+
+In the long-lived recompositional robotics context, the abil-ity to re-solve under changes is just as important as initial one-shot configuration generation. Table III measures four representative mission-time events, each applied as a one-edit perturbation to previous benchmark problems. The first modification, GPU upgrade, is an update to the GPU allocation microbenchmark that increases the available GPU memory by 1 GB . The second modification, Re-tasking, is another update to the GPU allocation microbenchmark that changes the objective from maximizing the confidence of a single process to minimizing the total GPU footprint of all processes. The third modification, Sensed value, is an update to the Navigation microbenchmark that increases the precision of the sensed battery level from a single decimal place to two decimal places. The fourth modification, Operator request, is an update to the Detection microbenchmark that adds an arbitrary detection class provided by an operator at runtime rather than coming from a pre-enumerated vocabulary. For each formalism, we report the model edits a human must make before the planner can even be re-run, together with the re-solve outcome and time. Several observations are apparent from Table III. For the first modification, the PDDL encoding solved with ENHSP re-solves the problem without any model edits, but returns a stale optimum because the new optimum lies off its pre-enumerated grid. Recovering the true optimum requires the repeatable-increment re-encoding (36 domain lines) we authored that increases in 1 GB increments. Such a repeatable-increment re-encoding is also sensitive to the required precision, as changing the GPU upgrade to 500 MB would require another re-encoding that increases in increments ≤ 500 MB . Both PDDLStream configurations are OPT without any changes, but SMTPlan+ returns a SUBOPT solution because it is a satisficing planner, while our approach recovers OPT without any model edits. For the second modification, all baseline encodings require model edits to redefine the costs associated with actions such that they are consistent with the new objective. SMTPlan+ also still returns SUBOPT , while our approach again recovers OPT without any model edits. For the third modification, PDDL and PDDLStream approaches 14 
+
+TABLE III. Absorbing mission-time change. Each row perturbs a solved problem by one runtime event; cells report the model edits (lines outside the problem file, comments excluded) a human must make before re-solving, and the re-solve outcome with median time over 10 trials on the robot’s Jetson. Model-line counts are per configuration : added +removed substantive lines in the .pddl files each config loads–sampler domain +stream, optimizer domain +optimizer– excluding problem definitions. Outcome markers match Table II: ✓ = optimal/feasible; × = suboptimal/infeasible; — = optimizer inapplicable.                                                          
+
+> Mission-time event PDDL (ENHSP) PS s
+> (FD) PS o
+> (FD) SMTP Ours GPU upgrade: GPU pool +1 GB (OPT )0 L → × †(0.51 s) SUBOPT 0 L →✓(15.3 s) OPT 0 L →✓(0.55 s) OPT 0 L → × (0.05 s) SUBOPT 0 L →✓(0.12 s) OPT Re-tasking: objective changed ( OPT )34 L →✓(0.51 s) OPT 30 L →✓(13.1 s) OPT 32 L →✓(0.55 s) OPT 34 L → × (0.06 s) SUBOPT 0 L →✓(0.12 s) OPT Increased precision: exact real measurement (7.73) ( SAT )0 L → × (0.46 s) UNSAT 24 L → × (3.90 s) UNSAT 22 L →✓(0.53 s) SAT 0 L →✓(0.02 s) SAT 0 L →✓(0.02 s) SAT Unmodeled request: out-of-vocabulary class ( SAT )0 L → × (0.45 s) UNSAT 0 L → × (3.62 s) UNSAT —0 L → × (1.68 s) UNSAT 0 L →✓(0.11 s) SAT
+> †The enumerated encoding re-solves but returns the stale optimum (the new one is off its grid); a repeatable-increment re-encoding we authored for ENHSP recovers the optimum at the cost of 36 domain lines.
+
+TABLE IV. Lifelong queries on the deployed search-and-rescue model (Fig. 5-I). Top rows: a budget cut renders the deployment infeasible. Bottom row: a cheaper interchangeable camera enters the catalog while the incumbent remains deployed. Baselines are given their best-faith workaround where one exists. Churn = components added +removed relative to the deployed system. PDDLStream is omitted: it has no encoding of the full-scale search-and-rescue model (Table II, N/E), so no workaround column can be measured for it.         
+
+> Query PDDL (ENHSP) SMTP Ours Diagnose: why does the deployed config. fail? “unsolvable” no cause (0.53 s) timeout †
+> no certificate minimal unsat core: 1 of 94 constraints (high LiDAR cost) (0.08 s) Relax: minimal restoration?
+> +19,860 USD after 22 full runs with bisection replan (19.6 s); parameter must be designated impractical: every UNSAT
+> probe times out
+> +19,860 USD exact, 1 call (11.4 s); all resources relaxed jointly, no per-parameter loop Recompose: minimal change? churn 4 (1.22 s) no stability term in the encoding churn 4 (8.97 s) no stability term in the encoding churn 0 (5.35 s) components held by (22) ‡†Iterative-deepening satisficing search cannot certify infeasibility; exceeded a 300 s budget on every trial. ‡objective-first lexicographic priority recovers the cost-optimal churn-4 solution; stability-first preserves the incumbent.
+
+require model edits, are UNSAT , or both, while SMTPlan+ re-covers the exact real value without any model edits, inheriting this capability from its underlying SMT solver, as does ours. For the fourth modification, all enumeration-based encodings return UNSAT because pre-enumeration cannot anticipate an open vocabulary and no finite model edit would help. In comparison, our approach can recover a SAT result due to Proposition 1. Across all four modifications, our approach requires zero model edits to recover SAT and OPT results while most of the baselines require 22–34 model edits, produce 
+
+UNSAT or SUBOPT results, or both. In the context of a long-lived, recompositional system, this difference is significant, as the baselines require a human to intervene and re-encode the model while our approach can recover without changes. 
+
+D. Queries Beyond Plan Existence 
+
+Table IV evaluates the three queries of Section IV-D on a variant of the base search-and-rescue problem from Fig. 5-I in which financial costs for procuring hardware modules are introduced. 
+
+TABLE V. What each planner supports and what the modeler must supply to reach the optimum on the coupled-parameter benchmarks, grouped as model-ing burden, expressible free-variable classes, and outcome. ✓ = yes/required, 
+
+× = no/not needed; enum. /disc. = expressible only via pre-enumeration or discretization; ∅ = none.                                                                                
+
+> PDDL PS sPS oSMTP Ours
+> Modeler must hand-encode:
+> Enumerated/discretized values ✓✓×××
+> Per-action costs tuned to objective ✓✓✓×‡×
+> Solution structure in model ××✓××
+> Supported variable types:
+> Activations b✓✓✓✓✓
+> Parameters θ(R,Z)enum. disc. ✓✓✓
+> Parameters θ(String ,Set , . . . )××××✓
+> Structures μ××××✓
+> Outcome:
+> Reaches optimum ✓†✓†✓×‡✓
+> Optimum without prior knowledge ××××✓
+> Optimized in single solve bbb⊗θ∅‡b⊗θ⊗μ
+> †Only when the optimum coincides with an enumerated/discrete value. ‡SMTPlan+ is a satisficing PDDL+ planner: its SMT backend binds continuous parameters exactly (hence ✓on θ∈R,Z, and no discretization is required), but it ignores optimization metrics; it is shown here for expressiveness, with runtimes in Tables II and III.
+
+In the first case, a modest budget of 500 USD is pro-vided, which is sufficient to procure the inexpensive hardware modules including the RGB camera, speaker/microphone, and external battery but insufficient to procure the more expensive LiDAR sensor (20,000 USD) utilized in Fig. 5-I. When queried for the cause of unsatisfiability, our solver identifies the LiDAR’s financial cost as the sole member of M, and reports that the problem is UNSAT in 0.08 s , while ENHSP-backed PDDL reports the problem is unsolvable with no cause. SMTPlan+ cannot certify infeasibility or provide an explanation. When queried for the minimal restoration, our solver pro-vides the solution of increasing the available budget by 19,860 USD in 11 .4 s without being told which parameter to relax. The strongest workaround we could construct for a black-box planner is a bisection loop re-running ENHSP at candidate budgets. It recovers the same solution after 22 full iterations in 19 .6 s , though it must be provided the parame-ter(s) to relax, must assume feasibility is monotonic in the parameter(s), and must be repeated per candidate parameter. For SMTPlan+, this same workaround is impractical outright 15 
+
+because each UNSAT probe times out. The recompose query uses a slightly different problem in which the budget is increased substantially such that the LiDAR’s cost is not prohibitive, but a new RGB camera module is introduced that is less expensive than the existing and deployed RGB camera and the objective is to minimize the total financial cost of the composition. Both ENHSP-backed PDDL and SMTPlan+ return the cost-optimal solution to the revised problem, which has a total churn of 4 to exchange the existing RGB camera and drivers. Our approach can similarly recover the cost-optimal solution, but because the cost-versus-stability tradeoff is explicit from (22), it can instead return a solution that preserves the existing deployed configuration with a total churn of 0 at the expense of a slightly higher total cost. 
+
+E. Expressivity Summary 
+
+Table V concisely captures the differences in what must be hand-encoded, which free-variable classes can be expressed, and what types of variables can be co-optimized in each benchmark and our formalism. In summary, the baselines exhibit excellent performance for finding optimal plans over fixed models, which is the task for which they are designed. However, each new capability we consider important to the objective of lifelong recomposition requires hand-authored workarounds, requires a re-encoding, or is outright inex-pressible. In comparison, our approach enables expression of the same capabilities as minimality queries over the same persistent, categorical model and supports simultaneous co-optimization of all free variables in a single query. VII. D ISCUSSION AND LIMITATIONS 
+
+Practical deployment of our approach is subject to several considerations. First, the efficacy of reasoning depends on the precision of the underlying ontology. For example, while the RGB and thermal image streams in Section V-B produce the same type of data, they possess distinct semantic properties. In our search and rescue task, we treat them equivalently for person detection, but they would not work interchangeably to detect objects with lower thermal contrast. As with many other formal methods-based approaches, such semantic differences must be explicitly captured. Second, structural free variables μ represent the weakest condition assignments that render the composition feasible, not realizable designs. Nothing compels the solver to invent or combine realistic conditions, and because structural free variables are symbolic morphisms rather than fully-formed hardware, software, or behavior components, implementation of a practical component that matches the synthesized μ must also be performed externally (as in Section V-A). It would also be possible to match the synthesized μ against a catalog of existing components, but this is not a capability we have implemented. Third, as described in Section V, while the robot in our search-and-rescue application has full agency over its own be-havior and software, it does not have the ability to reconfigure its own hardware. Rather than autonomously interfacing new hardware with itself, it generates reconfiguration instructions that must be enacted by a human teammate aided by an AR headset. This is not a limitation with our approach, but rather a realistic limitation of the overwhelming majority of real robotic systems and even many modular and reconfigurable systems which are not designed to support self-reconfigurable hardware [19], [22]. If our approach were deployed on a system that could reconfigure its own hardware, the mod-eling/solving approach would not change at all; instead, the 
+
+grounding of the symbolic representations to reality would be adjusted. For example, rather than generating instructions for a person to follow and sharing them via an AR headset, the sym-bolic representations could be grounded to self-reconfiguration actions that the robot could perform autonomously. Fourth, the STT and VLM subcomposition developed in Section V-A inherits the assumptions of its quality metric. That is, stage successes are treated as independent and the per-variant constants are point estimates drawn from published benchmarks and on-device measurements rather than distribu-tions over operating conditions. The enumerated front is exact for the model and is bounded by the fidelity of the constants to the deployed system. Finally, our evaluation compares against planning for-malisms which were built to synthesize plans over a fixed model, so evaluating them on model evolution, infeasibility explanation, and stability exercises them outside the envelope for which they were designed. We compare against them nonetheless because they are the only nearby systems with mature, open implementations that we could run on the same problems and hardware. The families that address the remain-ing parts of our setting are even less comparable, as co-design frameworks rarely release tooling that can be utilized on an external problem, and self-adaptive architectures presuppose a fixed adaptation space rather than synthesizing one. Nor is there an established benchmark for component-based lifelong recomposition spanning hardware, software, and behavior, so the studies in Section VI required us to author both the one-edit problem variants and the best-faith baseline encodings evaluated on them. These efforts do not substitute a neutral benchmark, but they provide a practical means to evaluate our approach and facilitate comparison with existing methods. VIII. C ONCLUSIONS 
+
+By formalizing robotic systems as dynamic, categorical circuits, we demonstrate how the boundary between design and deploy stages in the traditional design-then-deploy paradigm can be blurred. Our approach uses the same categorical model to solve for Pareto-optimal compositions before deployment and to answer questions about the deployed system’s fea-sibility, restoration costs, and minimal changes required for continued operation as the system’s capabilities, tasks, or en-vironment unexpectedly change. We demonstrate our approach in a search-and-rescue application, from pre-deployment de-sign of individual components and subcompositions to runtime recomposition spanning hardware, software, and behavior. We also evaluate our approach against optimal numeric, stream-based, and SMT-based planners, showing that our framework 16 
+
+can answer questions about the deployed system that are either inexpressible or require hand-authored workarounds in the baselines. Ultimately, this framework provides a mathematical and computational foundation for resilient robotic systems capable of lifelong recomposition in response to changes within themselves, their tasks, and their environments. REFERENCES [1] K. Panayiotou, E. Tsardoulias, C. Zolotas, A. L. Symeonidis, and L. Petrou, “A framework for rapid robotic application development for citizen developers,” Softw. , vol. 1, no. 1, 2022. [2] S. Garc´ ıa, D. Str¨ uber, D. Brugali, A. Di Fava, P. Pelliccione, and T. Berger, “Software variability in service robotics,” Emp. Softw. Eng. ,vol. 28, no. 2, 2023. [3] D. Brugali and P. Scandurra, “Component-based robotic engineering (part I),” IEEE Robot. Automat. Mag. , vol. 16, no. 4, 2009. [4] S. Peldszus, D. Brugali, D. Str¨ uber, P. Pelliccione, and T. Berger, “Software reconfiguration in robotics,” Emp. Softw. Eng. , vol. 30, no. 3, 2025. [5] A. Cully, J. Clune, D. Tarapore, and J.-B. Mouret, “Robots that can adapt like animals,” Nature , vol. 521, no. 7553, 2015. [6] L. Kunze, N. Hawes, T. Duckett, M. Hanheide, and T. Krajn´ ık, “Artificial intelligence for long-term robot autonomy: A survey,” IEEE Robot. Automat. Lett. , vol. 3, no. 4, 2018. [7] L. Carlone and C. Pinciroli, “Robot co-design: beyond the monotone case,” in Proc. IEEE Int. Conf. Robot. Automat. , 2019. [8] Q. Guo and L. Wang, “COSMIC: Concurrent optimization of structure, material, and integrated control for robotic systems,” arXiv preprint arXiv:2605.12654 , 2026. [9] S. Macenski, T. Foote, B. Gerkey, C. Lalancette, and W. Woodall, “Robot Operating System 2: Design, architecture, and uses in the wild,” Sci. Robot. , vol. 7, no. 66, 2022. [10] A. Censi, J. Lorand, and G. Zardini, Applied Compositional Thinking for Engineers , 2022, work in progress book. [11] A. Censi, “A mathematical theory of co-design,” arXiv preprint arXiv:1512.08055 , 2015. [12] D. Milojevic, G. Zardini, M. Elser, A. Censi, and E. Frazzoli, “CODEI: Resource-efficient task-driven co-design of perception and decision making for mobile robots applied to autonomous vehicles,” IEEE Trans. Robot. , vol. 41, 2025. [13] J. Salfity, C. Van Sice, B. Chen, S. Swanbeck, R. B. Anderson, and M. Pryor, “No reboot required: Real-time modular robot payload integration,” in Proc. Int. Conf. Ubiquitous Robots , 2025. [14] S. Swanbeck, J. Salfity, J. Gunawan, C. Van Sice, M. Pryor, and R. B. Anderson, “Deployment is not destiny: Robot recomposition in the field with unseen software, hardware, and compute payloads,” arXiv preprint arXiv:2608.11063 , 2026. [15] S. Eilenberg and S. MacLane, “General theory of natural equivalences,” 
+
+Trans. Amer. Math. Soc. , vol. 58, no. 2, 1945. [16] A. Brunete, A. Ranganath, S. Segovia, J. P. De Frutos, M. Hernando, and E. Gambao, “Current trends in reconfigurable modular robots design,” 
+
+Int. J. Adv. Robot. Syst. , vol. 14, no. 3, 2017. [17] J. Seo, J. Paik, and M. Yim, “Modular reconfigurable robotics,” Annual Rev. Control Robot. Auton. Syst. , vol. 2, no. 1, 2019. [18] G. Liang, D. Wu, Y. Tu, and T. L. Lam, “Modular reconfigurable robotics,” Int. J. Robot. Res. , vol. 44, no. 5, 2025. [19] L. Rossini, E. Romiti, A. Laurenzi, F. Ruscelli, M. Ruzzon, L. Covizzi, L. Baccelliere, S. Carrozzo, M. Terzer, M. Magri et al. , “CONCERT: a modular reconfigurable robot for construction,” J. Field Robot. , vol. 43, no. 3, 2026. [20] M. Lei, E. Romiti, A. Laurenzi, and N. G. Tsagarakis, “Task-driven computational framework for simultaneously optimizing design and mounted pose of modular reconfigurable manipulators,” in IEEE/RSJ Int. Conf. Intell. Robots Syst. , 2024. [21] A. M. S. Enayati, Z. Zhang, and H. Najjaran, “A methodical interpreta-tion of adaptive robotics: Study and reformulation,” Neurocomput. , vol. 512, 2022. [22] M. R. Khabbazi, F. Danielsson, B. Massouh, and B. Lennartson, “Plug and produce—a review and future trend,” Int. J. Adv. Manuf. Technol. ,vol. 134, no. 9, 2024. [23] J. O. Kephart and D. M. Chess, “The vision of autonomic computing,” 
+
+Comput. , vol. 36, no. 1, 2003. [24] J. Kramer and J. Magee, “Self-managed systems: an architectural challenge,” in Proc. Future Softw. Eng. , 2007. [25] G. Blair, N. Bencomo, and R. B. France, “Models@Run.Time,” Comput. ,vol. 42, no. 10, 2009. [26] N. Bencomo, S. G¨ otz, and H. Song, “Models@run.time: a guided tour of the state of the art and research challenges,” Softw. Syst. Model. , vol. 18, no. 5, 2019. [27] D. Bozhinoski, M. Garzon Oviedo, N. Hammoudeh Garcia, H. Desh-pande, G. Van Der Hoorn, J. Tjerngren, A. Wasowski, and C. Hernan-dez Corbato, “MROS: runtime adaptation for robot control architec-tures,” Adv. Robot. , vol. 36, no. 11, 2022. [28] D. I. Spivak, Category theory for the sciences . MIT press, 2014. [29] B. Fong and D. I. Spivak, “Seven sketches in compositionality: An invitation to applied category theory,” arXiv preprint arXiv:1803.05316 ,2018. [30] B. Coecke, T. Fritz, and R. W. Spekkens, “A mathematical theory of resources,” Inf. Comput. , vol. 250, 2016. [31] D. I. Spivak, “The operad of wiring diagrams: formalizing a graphical language for databases, recursion, and plug-and-play circuits,” arXiv preprint arXiv:1305.0297 , 2013. [32] D. Vagner, D. I. Spivak, and E. Lerman, “Algebras of open dy-namical systems on the operad of wiring diagrams,” arXiv preprint arXiv:1408.1598 , 2014. [33] A. Aguinaldo, J. Bunker, B. Pollard, A. Shukla, A. Canedo, G. Quiros, and W. Regli, “RoboCat: A category theoretic framework for robotic in-teroperability using goal-oriented programming,” IEEE Trans. Automat. Sci. Eng. , vol. 19, no. 3, 2021. [34] A. Aguinaldo, E. Patterson, and W. Regli, “Automating transfer of robot task plans using functorial data migrations,” IEEE Trans. Automat. Sci. Eng. , vol. 22, 2025. [35] G. Zardini, A. Censi, and E. Frazzoli, “Co-design of autonomous systems: From hardware selection to control synthesis,” in Proc. Eur. Control Conf. , 2021. [36] G. Zardini, D. Milojevic, A. Censi, and E. Frazzoli, “Co-design of embodied intelligence: A structured approach,” in Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst. , 2021. [37] H. Lipson and J. B. Pollack, “Automatic design and manufacture of robotic lifeforms,” Nature , vol. 406, no. 6799, 2000. [38] A. Schulz, C. Sung, A. Spielberg, W. Zhao, R. Cheng, E. Grinspun, D. Rus, and W. Matusik, “Interactive robogami: An end-to-end system for design of robots with ground locomotion,” Int. J. Robot. Res. , vol. 36, no. 10, 2017. [39] A. Zhao, J. Xu, M. Konakovi´ c-Lukovi´ c, J. Hughes, A. Spielberg, D. Rus, and W. Matusik, “Robogrammar: graph grammar for terrain-optimized robot design,” ACM Trans. Graph. , vol. 39, no. 6, 2020. [40] T. Tosun, G. Jing, H. Kress-Gazit, and M. Yim, “Computer-aided compositional design and verification for modular robots,” in Robotics Research: Volume 1 . Springer, 2017. [41] M. Luckcuck, M. Farrell, A. Ferrando, R. C. Cardoso, L. A. Dennis, and M. Fisher, “A compositional approach to verifying modular robotic systems,” arXiv preprint arXiv:2208.05507 , 2022. [42] M. Ghallab, A. Howe, C. Knoblock, D. McDermott, A. Ram, M. Veloso, D. Weld, and D. Wilkins, “PDDL-The planning domain definition language,” Technical Report, Tech. Rep. , 1998. [43] M. Cashmore, D. Magazzeni, and P. Zehtabi, “Planning for hybrid systems via satisfiability modulo theories,” J. Artif. Intell. Res. , vol. 67, 2020. [44] M. Cashmore, M. Fox, D. Long, and D. Magazzeni, “A compilation of the full PDDL+ language into SMT,” in Proc. Int. Conf. Automat. Planning Scheduling , vol. 26, 2016. [45] M. H. Liffiton and K. A. Sakallah, “Algorithms for computing minimal unsatisfiable subsets of constraints,” J. Automat. Reasoning , vol. 40, no. 1, 2008. [46] M. G¨ obelbecker, T. Keller, P. Eyerich, M. Brenner, and B. Nebel, “Coming up with good excuses: What to do when no plan can be found,” in Proc. Int. Conf. Automat. Planning Scheduling , vol. 20, 2010. [47] M. Fox, A. Gerevini, D. Long, I. Serina et al. , “Plan stability: Replanning versus plan repair.” in Proc. Int. Conf. Automat. Planning Scheduling ,vol. 6, 2006. [48] J. Marques-Silva, “Practical applications of Boolean satisfiability,” in 
+
+Proc. Int. Workshop Discrete Event Syst. , 2008. [49] L. De Moura and N. Bjørner, “Satisfiability modulo theories: introduc-tion and applications,” Commun. ACM , vol. 54, no. 9, 2011. [50] R. Halder, J. Proenc ¸a, N. Macedo, and A. Santos, “Formal verification of ROS-based robotic applications using timed-automata,” in Proc. IEEE/ACM Int. FME Workshop Formal Methods Softw. Eng. , 2017. [51] A. Aguinaldo and W. Regli, “A graphical model-based representation for classical AI plans using category theory,” in Proc. ICAPS Workshop Explainable AI Planning , 2021. 17 
+
+[52] J. Rintanen, K. Heljanko, and I. Niemel¨ a, “Planning as satisfiability: parallel plans and algorithms for plan search,” Artif. Intell. , vol. 170, no. 12, 2006. [53] M. H. Liffiton and A. Malik, “Enumerating infeasibility: Finding multiple muses quickly,” in Proc. Int. Conf. Integration of Constraint Program., Artif. Intell., and Operations Res. Springer, 2013. [54] P. Bercher, S. Sreedharan, and M. Vallati, “A survey on model repair in AI planning,” in Proc. Int. Joint Conf. Artif. Intell. , 2025. [55] M. Ghallab, D. Nau, and P. Traverso, Automated Planning: theory and practice . Elsevier, 2004. [56] A. Wang, L. Liu, H. Chen, Z. Lin, J. Han, and G. Ding, “YOLOE: Real-time seeing anything,” in Proc. IEEE/CVF Int. Conf. Comp. Vis. ,2025. [57] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, “Robust speech recognition via large-scale weak super-vision,” in Int. Conf. Mach. Learn. , 2023. [58] G. Team, S. E. Abd, V. Aggarwal, R. Algayres, A. Andreev, O. Bachem, I. Ballantyne, C. Brick, V. C˘ arbune, M. Casbon et al. , “Gemma 4 technical report,” arXiv preprint arXiv:2607.02770 , 2026. [59] A. Yang, A. Li, B. Yang, B. Zhang, B. Hui, B. Zheng, B. Yu, C. Gao, C. Huang, C. Lv et al. , “Qwen3 technical report,” arXiv preprint arXiv:2505.09388 , 2025. [60] X. Yue, T. Zheng, Y. Ni, Y. Wang, K. Zhang, S. Tong, Y. Sun, B. Yu, G. Zhang, H. Sun et al. , “MMMU-Pro: A more robust multi-discipline multimodal understanding benchmark,” in Proc. Assoc. Computat. Lin-guistics , 2025. [61] S. Swanbeck and M. Pryor, “CORAL: A unifying abstraction layer for compositional robotics software,” in Proc. IEEE/SICE Int. Symp. Syst. Integration , 2026. [62] ——, “Hyla-SLAM: Toward maximally scalable 3D LiDAR-based SLAM using dynamic memory management and behavior trees,” in 
+
+Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst. , 2025. [63] M. Fox and D. Long, “PDDL2.1: An extension to PDDL for expressing temporal planning domains,” J. Artif. Intell. Res. , vol. 20, 2003. [64] E. Scala, P. Haslum, S. Thi´ ebaux, and M. Ramirez, “Interval-based relaxation for general numeric planning,” in Proc. Eur. Conf. Artif. Intell. , 2016. [65] C. R. Garrett, T. Lozano-P´ erez, and L. P. Kaelbling, “PDDLStream: Integrating symbolic planners and blackbox samplers via optimistic adaptive planning,” in Proc. Int. Conf. Automat. Planning Scheduling ,2020. [66] M. Helmert, “The fast downward planning system,” J. Artif. Intell. Res. ,vol. 26, 2006. [67] L. De Moura and N. Bjørner, “Z3: An efficient SMT solver,” in Proc. Int. Conf. Tools Algorithms Construction Anal. Syst. , 2008.
