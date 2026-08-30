@@ -1,0 +1,406 @@
+Title: Free-Energy-Gated Plasticity for Real-Time Online Motor Learning in Physical Human-Robot Interaction
+
+URL Source: https://arxiv.org/pdf/2608.23000v2
+
+Published Time: Wed, 26 Aug 2026 00:37:15 GMT
+
+Number of Pages: 28
+
+Markdown Content:
+# Free-Energy-Gated Plasticity for Real-Time Online Motor Learning in Physical Human-Robot Interaction 
+
+Hiroki Sawada ∗ Jun Tani †
+
+Abstract 
+
+Fully online embodied learning requires synaptic adaptation to acquire new behaviors while preserving previously learned dynamics during ongoing interaction. We extend the Predictive-Coding-inspired Variational Recurrent Neural Network (PV-RNN) to continuously adapt its synaptic weights and propose Free-Energy-Gated Plasticity (FEGP), which regulates the ef-fective learning rate according to variational free energy. In real-time physical human-robot interaction, a randomly initialized network acquired three cyclic motor patterns without offline pretraining, replay, or task-boundary signals, with all three patterns emerging in autonomous rollouts. Controlled experiments over ten randomized teaching streams and five network initial-izations per stream showed that FEGP substantially improved repertoire coverage and retention of previously acquired patterns after they left the recent observation window. Neither a con-stant learning rate matched to the gate’s time-averaged effective rate nor replay of the same gain values with disrupted temporal organization reproduced these improvements. These results in-dicate that the temporal allocation of plasticity relative to model-environment mismatch, rather than simply its average magnitude or distribution, is critical for maintaining previously acquired behaviors during continued online learning. 
+
+Keywords: Physical Human–Robot Interaction, Continual Learning, Stability–Plasticity Trade-off, Free Energy Principle, Embodied Online Learning. 
+
+# 1 Introduction 
+
+Humans and animals acquire motor skills through continuous interaction with their environment, without a clear separation between inference and learning. Perception, prediction, action, and synaptic modification unfold together within an ongoing sensorimotor loop, such that adaptation directly shapes subsequent actions and observations. This differs from many artificial learning sys-tems in which learning and generation are temporally separated and weight updates are performed offline or episodically. To distinguish the setting considered here from such approaches, we refer to it as fully online , real-time , and boundary-free : weights are updated at every sensory sample with-out a separate training phase, each model update is completed before the next sensory sample is processed, and no task identity or transition signal is supplied to the learner. The central challenge in such a setting is not merely rapid adaptation, but regulation of adaptation. Synaptic updates must remain sufficiently plastic to acquire new behavioral dynamics while limiting interference with those already learned, reflecting the classical stability-plasticity dilemma [1] and its manifestation 
+
+> ∗
+
+Cognitive Neurorobotics Research Unit, Okinawa Institute of Science and Technology Graduate University, Oki-nawa, Japan 904-0302. Email: hiroki.sawada1@oist.jp 
+
+> †
+
+Cognitive Neurorobotics Research Unit, Okinawa Institute of Science and Technology Graduate University, Oki-nawa, Japan 904-0302. Email: jun.tani@oist.jp . Corresponding author. 
+
+1arXiv:2608.23000v2 [cs.RO] 25 Aug 2026 as catastrophic forgetting in neural networks. This challenge is particularly important for embod-ied agents because weight changes affect subsequent actions, which in turn alter the observations that drive future adaptation. Fully online embodied learning therefore requires a mechanism that regulates when and how strongly synaptic adaptation occurs. Modern continual learning (CL) research has largely focused on mitigating catastrophic for-getting. Regularization-based methods such as Elastic Weight Consolidation [2] and Synaptic Intelligence [3] constrain parameter changes according to their estimated importance to previously acquired knowledge, while later approaches have relaxed assumptions about task labels or explicit task boundaries [4–6]. These methods progressively reduce the amount of task information required during learning, but they have not generally addressed the acquisition of recurrent motor dynamics from scratch in a fully online, real-time, and boundary-free embodied setting. In such a setting, the learner’s own actions shape the observations that drive subsequent adaptation, coupling continual learning directly to ongoing physical interaction. Replay-based continual-learning methods mitigate forgetting by revisiting stored examples or regenerated past experience [7–9]. Meta-learning provides another approach by learning initial conditions or mechanisms that support rapid or selective adaptation, as in MAML [10] and ANML [11]. These approaches demonstrate effective ways to preserve or allocate plasticity, but they rely on retained or regenerated past experience, or on offline meta-training over a predefined task distribution. They therefore differ from the setting considered here, where plasticity must be regulated directly from signals available during ongoing interaction, without replay or prior meta-training. In robotics and physical human-robot interaction (pHRI), motor learning is often framed as learning from demonstration (LfD) [12], where demonstrations are collected before policy or model optimization. Dynamic Movement Primitives [13], for example, represent movements as stable dy-namical systems whose parameters are fitted to recorded demonstrations. Recent continual robot learning has also explored task-structured benchmarks, skill libraries, and mechanisms for preserv-ing previously acquired dynamics [14–16]. These approaches differ from the setting considered here, in which state inference, motor generation, physical interaction, and synaptic adaptation proceed continuously within a single uninterrupted sensorimotor process. A key open problem in recurrent embodied learning is therefore how to regulate synaptic plas-ticity so that multiple motor patterns can be acquired from scratch during uninterrupted, real-time interaction without interfering with previously acquired dynamics. A natural way to regulate plasticity online is to use a mismatch signal that is already avail-able within the inference process. Predictive coding provides such a framework by continuously comparing predictions with sensory observations [17], and related free-energy formulations extend this idea by expressing inference and learning in terms of variational free-energy minimization [18]. These principles have also been applied to robotic control and active inference [19, 20]. The Pre-dictive Coding inspired Variational Recurrent Neural Network (PV-RNN) [21] provides a concrete implementation for temporal sequences and has been applied to goal-directed behavior and physical human-robot interaction [22–24]. During online interaction, PV-RNN performs inference through error regression over a sliding window of recent observations, adapting its latent states so that the generative model better explains the observed sequence. Its synaptic weights, however, remain fixed after training, preventing the recurrent dynamics themselves from being learned during interaction. Allowing synaptic weights to adapt online would enable the recurrent dynamics themselves to change as new behaviors are encountered. In real-time interaction, however, inference and weight updates must be completed within each model-update interval, making it impractical to optimize over the entire interaction history. Adaptation must therefore rely on a finite window of recent observations. Because each weight update is then driven primarily by this recent context, 2continuous adaptation can bias the model toward recent behavior and interfere with previously acquired dynamics. Fully online learning therefore requires not only synaptic adaptation, but also a mechanism that regulates when and how strongly that adaptation is expressed. Biological and computational accounts of learning suggest that the rate of synaptic change can be regulated by internally generated signals of prediction error, surprise, or uncertainty. Prediction errors have been linked to adaptive updates of internal models [25], while surprise- and uncertainty-dependent regulation of plasticity has been studied through metaplastic synapses [26], neuronal-surprise signals [27], hierarchical Bayesian filters [28], and neuromodulatory mechanisms that am-plify learning under unexpected observations [29]. Related work in predictive-coding robotics has further shown that internally generated prediction errors can reflect confidence in ongoing percep-tual inference [30]. These accounts motivate treating plasticity as a dynamically regulated quantity driven by model-environment mismatch rather than as a fixed learning rate. Recent formulations of synaptic learning as free-energy minimization provide further theoretical motivation for linking plasticity regulation to variational free energy [31]. Importantly, variational free energy is already computed within PV-RNN during online inference, making it a natural internal signal for regulating synaptic adaptation without requiring an external task or novelty signal. We therefore propose Free-Energy-Gated Plasticity (FEGP), which scales synaptic updates as a sigmoidal function of variational free energy. We use variational free energy as an internally generated signal of model-environment mismatch, increasing plasticity under substantial mismatch and suppressing it as the model comes to explain the recent interaction better. FEGP thus couples synaptic adaptation directly to a signal already computed within the predictive-coding inference process. The contributions of this work are threefold. 1) We establish and evaluate a fully online em-bodied learning setting without task boundaries, replay, or offline consolidation, and show that unregulated online adaptation provides little retention of previously acquired motor patterns. 2) We introduce FEGP, a sigmoidal mechanism that regulates synaptic plasticity according to varia-tional free energy. FEGP improves repertoire coverage and retention, and controlled comparisons show that this effect depends on the temporal allocation of plasticity relative to model-environment mismatch. 3) We demonstrate the incremental acquisition of multiple motor behaviors from scratch during continuous physical human-robot interaction, with all three instructed patterns emerging in autonomous model rollouts. 1
+
+Together, these results show that internally generated mismatch signals can regulate plasticity online to support continual motor learning during ongoing physical interaction. 
+
+# 2 Method 
+
+2.1 Model and Fully Online Learning Formulation 
+
+The proposed model builds on the Predictive-Coding-inspired Variational Recurrent Neural Net-work (PV-RNN) framework [21]. The generative architecture and physical interaction scheme follow the formulation described in [24]. Here, we describe the modifications required to extend PV-RNN from online state inference to fully online synaptic learning. Conventional PV-RNN separates synaptic learning from online interaction. Synaptic weights are first optimized offline using prerecorded sensory sequences. During subsequent interaction, the weights remain fixed, while posterior latent variables are adapted through online error regression  
+
+> 1A video of a complete teaching session showing the robot learning online during physical human-robot interaction is available at https://www.youtube.com/watch?v=QOgh2rTOnaw .
+
+3over a sliding window of recent observations. We remove this phase separation. The network is initialized with random weights and receives no offline pretraining. During interaction, posterior-state inference, synaptic adaptation, and future generation are performed repeatedly within the same online learning process. Let X denote a sequence of sensory observations and z denote the latent variables of the generative model. Learning and inference are formulated by minimizing the variational free energy, 
+
+F = DKL [qϕ(z | X)∥pθ(z)] − Eqϕ(z|X) [log pθ(X | z)] , (1) where pθ denotes the generative model parameterized by θ, and qϕ denotes the variational posterior parameterized by ϕ. The first term penalizes divergence between the posterior and prior latent distributions, while the second penalizes inaccurate sensory predictions. For online inference, this objective is evaluated over a sliding window of recent observations. At model update t, the newest sensory observation is appended to the window, which contains the most recent N observations. Once the window reaches length N , the oldest observation is removed as each new observation is added. The posterior latent variables are then optimized over the current window, allowing the internal state to adapt to the recent sensory history. The sliding window provides the finite context required for online inference and synaptic adap-tation. It is not an episodic replay buffer: it contains only the current recent history and does not store completed demonstrations, separate episodes, or a long-term memory of past experience. In the fully online formulation, the synaptic parameters are also optimized during every model update. Conceptually, without plasticity modulation, a synaptic update can be written as 
+
+θt+1 = θt − α∇θFt, (2) where α denotes the base learning rate and Ft denotes the free-energy objective evaluated over the current past window. In the implementation, these updates are performed with Adam over multiple optimization iterations within each model update. The plasticity mechanism introduced in Sec. 2.3 scales the effective optimizer step size applied to the synaptic parameters. Posterior-state inference, synaptic adaptation, motor generation, and physical interaction there-fore form a continuing closed-loop sensorimotor process. The model-generated motor target affects the robot’s subsequent state, and the resulting sensory observation is incorporated into the next model update. Fig. 1 summarizes this online learning process and the separate evaluation pipeline. As shown on the left, each model update incorporates the newest observation into the sliding window, opti-mizes the posterior latent variables through error regression, adapts the synaptic parameters, and generates a future trajectory from the resulting internal state. As shown on the right, saved tra-jectories are segmented and classified offline for quantitative evaluation. This evaluation is strictly post hoc and provides no observations, targets, gradients, or other feedback to the online learning process. 
+
+2.2 Naive Online Weight Adaptation 
+
+Without plasticity modulation, Eq. 2 applies the same base learning rate at every model update. Because each gradient is computed from the current sliding window, the resulting weight change is driven primarily by prediction errors in the recent interaction history. This formulation does not distinguish between transient deviations within an already represented behavior and sustained mismatches that may require modification of the underlying dynamics. It also provides no state-dependent mechanism for reducing plasticity after the recent observations have become predictable. 4Figure 1: Overview of the fully online learning loop and the offline evaluation pipeline. Left: each model update incorporates the newest sensory observation into the sliding past window, per-forms posterior-state inference through error regression, adapts the synaptic weights through gated BPTT, and generates a future trajectory for motor control and subsequent analysis. Right: saved trajectories are segmented and classified post hoc using the evaluation pipeline described in Sec. 3.3. The evaluation pipeline does not feed information back into the online learning loop. The numerical settings used in the experiments are listed in Table 1. 5Consequently, recently observed patterns can continue to drive synaptic changes even when such changes interfere with dynamics acquired earlier in the interaction. We refer to this constant-plasticity formulation as naive online weight adaptation. Its behavior is evaluated experimentally against the proposed gated formulation. To regulate when and how strongly synaptic adaptation occurs, we introduce a free-energy-dependent plasticity gain. 
+
+2.3 Free-Energy-Gated Plasticity 
+
+We introduce Free-Energy-Gated Plasticity (FEGP), which regulates synaptic adaptation according to variational free energy. We use variational free energy as an internally generated signal of model-environment mismatch: plasticity is increased when the mismatch is large and suppressed as the recent interaction becomes better explained by the existing dynamics. The effective learning rate applied to the synaptic parameters is defined as 
+
+αeff (t) = α g (st), (3) where α is the base learning rate, st is the free-energy-based gate signal defined below, and g(st) ∈
+
+(0 , 1) is the plasticity gain. 
+
+Gate signal Let Wt denote the set of time steps in the current sliding window, with |W t| ≤ N .Each of the D = 14 sensory dimensions is represented by U = 10 softmax units. The accuracy term used for the gate is the mean prediction divergence over the current window, summed over sensory dimensions and softmax units, 
+
+Facc  
+
+> t
+
+= 1
+
+|W t|
+
+X
+
+> k∈W t
+> D
+
+X
+
+> d=1
+> U
+
+X
+
+> u=1
+
+˜pk,d,u ln ˜pk,d,u 
+
+ˆxk,d,u 
+
+, (4) where ˜ pk,d,u and ˆ xk,d,u denote the softmax-transformed sensory target and the corresponding model prediction, respectively. The free-energy quantity used for plasticity regulation additionally includes the meta-prior-weighted complexity term, ¯Ft = Facc  
+
+> t
+
++ X
+
+> l
+
+wl KL l,t , (5) where wl is the meta-prior of layer l and KL l,t is the posterior-prior divergence of that layer averaged over the current window. The gate signal is defined as the natural logarithm of the window-averaged variational free energy, 
+
+st = ln   ¯Ft + ϵF
+
+ , ϵF = 10 −12 , (6) where ϵF prevents taking the logarithm of zero. Averaging over the current window keeps the scale of the gate signal consistent while the window is still growing. The gate thresholds introduced below are defined on this logarithmic scale. 
+
+Plasticity gain The plasticity gain is defined as a sigmoid function of the gate signal, 
+
+g(st) = σ
+
+ st − λT
+
+
+
+= 11 + exp  − st−λT
+
+ , (7) 6where λ is the gate-signal value at which g(st) = 0 .5, and T controls the sharpness of the transition. When st exceeds λ, the effective learning rate approaches the base learning rate. When st falls below λ, synaptic adaptation is progressively suppressed. The temperature T determines whether the transition between lower and higher plasticity is sharp or gradual. 
+
+Application to the optimizer Each model update performs Ktot optimization iterations. The first KER iterations update only the posterior variables, whereas the remaining KW iterations update both the posterior variables and the synaptic parameters. The gate signal and plasticity gain are recomputed from the current window at every optimization iteration. The basic FEGP mechanism is specified by a single threshold λ and a temperature T . It allocates plasticity selectively over time by increasing synaptic adaptation when the gate signal is high and suppressing it when the gate signal is low. For sufficiently small T , the transition becomes sharp and the gain approaches zero when st remains below λ, making synaptic updates negligible once the recent interaction is well predicted. However, a low-temperature single-threshold gate can switch rapidly when st fluctuates near λ. We therefore introduce a hysteretic extension that adds temporal persistence by using separate thresholds for entering and leaving the adaptive regime. The single-threshold formulation remains the basic FEGP mechanism, while the hysteretic formulation is used to reduce rapid switching of the gain. Fig. 2 illustrates the relationship between the single-threshold and hysteretic formulations. In the single-threshold case, λlow = λhigh = λ.In the hysteretic formulation, the active threshold depends on the current plasticity regime, as described below. 
+
+Hysteretic regime persistence In the single-threshold formulation, the gain is determined directly by the current gate signal. When st repeatedly crosses λ, the gain can therefore alternate rapidly between low and high values. The hysteretic extension introduces a binary regime state rt ∈ { 0, 1} that persists across op-timization iterations. The stable regime ( rt = 0) uses the higher threshold λhigh , whereas the adaptive regime ( rt = 1) uses the lower threshold λlow , with λlow < λ high . In the stable regime, a relatively large gate signal is therefore required to engage substantial plasticity. Once the adap-tive regime has been entered, plasticity remains engaged until the gate signal falls below the lower threshold. A regime transition is permitted only when the relevant threshold is crossed and the gate signal is changing in the direction associated with the target regime. We measure this direction using ∆st = st − ¯st, (8) where ¯ st is the mean gate signal over the most recent NF gate evaluations. A transition from the stable to the adaptive regime requires st > λ high and ∆ st > 0, whereas a transition from the adaptive to the stable regime requires st < λ low and ∆ st < 0. When these conditions are satisfied, the corresponding transition is sampled once per optimiza-tion iteration according to 
+
+Pstable →adaptive = 1 − exp[ −β (st − λhigh ) ∆ t] , (9) and 
+
+Padaptive →stable = 1 − exp[ −β (λlow − st) ∆ t] , (10) where β controls how rapidly the transition probability increases as the gate signal moves beyond the active threshold. 7Figure 2: Schematic illustration of Free-Energy–Gated Plasticity. The plasticity gain g(st) is a sigmoid function of the gate signal st, defined as the logarithm of the window-averaged variational free energy (Eq. 6). In the single-threshold formulation, one threshold λ determines the transition between lower and higher plasticity. In the hysteretic formulation, the active threshold is selected from λlow and λhigh according to the current plasticity regime. The single-threshold gate is recovered when λlow = λhigh = λ.8A stochastic transition rule allows the dwell time in each regime to vary smoothly with the extent to which the threshold is exceeded, rather than switching immediately at the first crossing. The regime is initialized in the adaptive state, and a fixed random seed is used for the transition draws so that repeated runs are deterministic under otherwise identical conditions. The hysteretic formulation is intended to stabilize the temporal behavior of the plasticity gain rather than to change which behaviors can be acquired. Its effect on regime-switching dynamics and task-level performance is evaluated against the single-threshold formulation in the controlled experiments. The numerical settings for the model, online inference, and hysteretic extension are summarized in Table 1. Algorithm 1 summarizes one complete model update using the hysteretic formulation. The single-threshold formulation is obtained by using a fixed threshold λ and omitting the regime-transition and threshold-selection steps. 
+
+Algorithm 1 One model update with FEGP  
+
+> 1:
+
+input: observation Xt, synaptic parameters θ, posterior variables A, regime state r 
+
+> 2:
+
+append Xt to the past window; drop the oldest step if the window exceeds N 
+
+> 3:
+
+for i = 1 to Ktot do  
+
+> 4:
+
+forward pass over the window; obtain Facc and KL l 
+
+> 5:
+
+¯F ← F acc + P 
+
+> l
+
+wlKL l 
+
+> 6:
+
+s ← ln( ¯F + ϵF ) 
+
+> 7:
+
+update ¯ s over the last NF evaluations; ∆ s ← s − ¯s 
+
+> 8:
+
+r ← RegimeTransition (r, s, ∆s, λ low , λ high , β ) 
+
+> 9:
+
+λactive ← λhigh if r is stable, else λlow  
+
+> 10:
+
+g ← σ(( s − λactive )/T ) 
+
+> 11:
+
+backpropagate through time over the window  
+
+> 12:
+
+A ← Adam( A, ∇A ¯F; α) {ungated } 
+
+> 13:
+
+if i > K ER then  
+
+> 14:
+
+θ ← Adam( θ, ∇θ ¯F; αg ) {gated } 
+
+> 15:
+
+end if  
+
+> 16:
+
+end for  
+
+> 17:
+
+generate an H-step open-loop rollout from the resulting internal state  
+
+> 18:
+
+return motor target for step t, rollout 
+
+2.4 Robotic Implementation 
+
+The physical experiments were conducted using a dual-arm humanoid robot, Torobo 2. The PV-RNN operates in end-effector space. For each arm, the model predicts a seven-dimensional pose consisting of a three-dimensional Cartesian position and a four-dimensional unit quaternion, re-sulting in a 14-dimensional model output. The predicted end-effector poses are converted into joint-angle targets through inverse kinemat-ics and executed by the compliant low-level controller described in [24]. The controller allows the experimenter to guide the robot kinesthetically while tracking the model-generated targets. The measured joint angles are converted back into end-effector poses through forward kinemat-ics. The resulting 14-dimensional pose vector is used as the sensory observation Xt supplied to the PV-RNN. The model therefore learns and predicts trajectories in end-effector space, whereas 
+
+> 2Torobo by Tokyo Robotics: https://robotics.tokyo/products/torobo/.
+
+9physical actuation is performed in joint space. The low-level controller is kept fixed across all experimental conditions. 
+
+# 3 Experiments 
+
+Two experiments were conducted to evaluate fully online synaptic adaptation and the proposed Free-Energy-Gated Plasticity (FEGP) mechanism. Experiment 1 uses prerecorded kinesthetic teaching sequences to analyze how FEGP regulates online learning under controlled observation streams. Experiment 2 evaluates the complete system during real-time physical human-robot in-teraction. In both experiments, the PV-RNN was initialized with random weights and operated without offline pretraining. 
+
+3.1 Common Setup 
+
+The instructed behaviors consisted of three periodic two-arm movements, denoted A, B, and C, each beginning and ending at a home posture with both arms extended in front of the robot. Pattern A consisted primarily of lateral motion: the arms swung outward and returned, with each hand travelling approximately 50 cm sideways while moving less than 4 cm vertically. Patterns B and C formed a mirror-image pair. In pattern B, the left hand rose by approximately 50 cm while the right hand descended by approximately 50 cm, with the directions reversed in pattern C. All three patterns included a forward-backward excursion of approximately 19-27 cm. Thus, B and C were closely related mirror-image movements, whereas A was distinguished primarily by its lateral motion. Both experiments used the sensorimotor representation described in Sec. 2.4. Table 1 summa-rizes the network, inference, and optimization settings shared across experimental conditions. Table 1: Shared model, inference, and optimization settings. Component Parameter Value 
+
+Network 
+
+Sensory layer softmax units, σ 10, 0.05 PV-RNN L1 d, z, τ 40, 4, 3 PV-RNN L2 d, z, τ 20, 2, 9 Both PV-RNN layers meta-prior w 0.01 
+
+Online inference and learning 
+
+Past-window length N 500 Open-loop rollout horizon H 3000 Optimizer Adam –Base learning rate α 1 × 10 −3
+
+Adam coefficients β1, β 2 0.9, 0.999 Adam constant ϵ 10 −4
+
+Optimization iterations Ktot 10 Posterior-only iterations KER 5Posterior and weight iterations KW 510 3.2 Teaching Data 
+
+First, a human experimenter physically guided both robot arms through the three periodic move-ment patterns A, B, and C, and ten individual movement cycles were recorded for each pattern. The duration of one cycle ranged from 46 to 58 model updates, with a median of 52. Experiment 1 used ten teaching streams of 6,000 model updates constructed from these prere-corded kinesthetic demonstrations. Each teaching stream was assembled by concatenating cycles sampled from the recorded pool. After each completed cycle, the stream switched pattern with probability 0.2, and on a switch the next pattern was drawn uniformly from the two patterns not currently being taught. Otherwise, the current pattern was repeated using another randomly se-lected cycle of the same class. Because the successor of a pattern was not fixed, a model that had learned a single long cyclic sequence could not reproduce the stream, and the first two cycles of each stream were restricted to patterns A and B so that the third pattern was always introduced during the interaction. Because the streams were assembled from labeled cycles, their exact cycle bound-aries and class identities were known and could be used as ground truth for evaluator validation without manual annotation. The same ten teaching streams were supplied to every experimental condition to ensure a common observation sequence for comparison. Experiment 2 used live kinesthetic teaching during physical interaction, as described in Sec. 3.5. 
+
+3.3 Evaluation Pipeline 
+
+All quantitative trajectory measures were computed using a fixed evaluation pipeline separate from the learning model. Generated trajectories were first segmented into individual movement cycles and then classified as movement A, B, C, or Unknown . The same pipeline and fixed parameters were used for all conditions. The relationship between this evaluation pipeline and the online learning loop is illustrated in Fig. 1. 
+
+Segment-boundary detection Segment boundaries were detected using a 200-tree random for-est trained on labeled cycle boundaries. The input features were computed from local pose windows and included the pose values, their frame-to-frame differences, and the mean and standard deviation within each window, yielding 476 features with a window lag of 15 model updates. Boundary probabilities were thresholded at 0.03 and then subjected to non-maximum suppres-sion within a 15-update neighborhood. Trajectories with no reliable internal boundary were treated as single segments, while incomplete edge segments shorter than 45 updates were excluded. 
+
+Segment classification Each detected segment was classified using multivariate dynamic time warping (DTW) with a Sakoe-Chiba band of 20 steps [32]. Before computing DTW, the temporal mean was removed separately from the segment and the reference trajectory. No amplitude normal-ization was applied, and quaternion components were treated as ordinary real-valued dimensions. For each pattern, the reference trajectory was defined as the length-normalized mean of its ten recorded demonstrations. The same demonstrations were used to estimate the cycle-length statistics of that pattern. Each segment was assigned to the class with the minimum DTW distance and was accepted as an instance of that class only if two conditions were satisfied: its DTW distance was at most τ = 0 .90, and its duration lay within three standard deviations of the class mean. Otherwise, the segment was labeled Unknown . The two criteria were applied separately because they detect different types of mismatch. DTW is tolerant to temporal warping and therefore cannot distinguish a correct spatial trajectory executed at an implausible tempo, whereas a duration criterion cannot detect an incorrect trajectory with a plausible cycle length. 11 The threshold τ was calibrated using the recorded demonstrations and 280 control trajectories constructed to violate different aspects of the instructed movements, as described in Sec. S1 of the supplementary material. At τ = 0 .90, none of the recorded cycles were rejected, whereas 85.7% of the control trajectories were rejected. Nearly all accepted controls were time-reversed trajectories, reflecting the limited sensitivity of the present DTW-based shape measure to movement direction. 
+
+Evaluator validation Because all reported trajectory measures depend on this pipeline, we val-idated it against the known cycle boundaries and class labels of the teaching streams. Boundary detection achieved F1 = 1 .000 at a tolerance of three model updates, and the classifier correctly assigned all ground-truth cycles, with an end-to-end accuracy of 0.998 using automatically detected boundaries. To assess whether this performance depended on using the same recorded demonstra-tions for constructing and evaluating the pipeline, we additionally performed a demonstration-level hold-out validation. High boundary-detection and classification performance was maintained on streams assembled from held-out demonstrations. Full validation results, including concatenation controls, negative-control trajectories, threshold calibration, and the hold-out analysis, are reported in Sec. S1 of the supplementary material. 
+
+Metrics Repertoire coverage is the fraction of online-learning steps for which all three instructed movement classes appear within the model’s 3,000-step open-loop rollout. 
+
+Retention is the fraction of rollouts in which a class appears while that class is absent from the observation window, pooled over all such periods. A class counts as absent at a given update if it occurred earlier in the stream but not within the preceding N = 500 updates. Retention is additionally reported resolved by the elapsed duration of the absence. 
+
+Shape distance is the median DTW distance of the accepted segments in a run to the refer-ence of their assigned class. Whereas repertoire coverage measures which instructed patterns are present in a rollout, shape distance measures how closely the accepted generated cycles follow the demonstrated paths. The two measures can therefore vary independently. 
+
+Unidentified-segment ratio , used in Experiment 2, is the fraction of segments in an open-loop rollout labeled Unknown .
+
+3.4 Experiment 1: Controlled Analysis of Free-Energy-Gated Plasticity 
+
+Experiment 1 was organized around three main objectives. First, we identified the operating range of the plasticity gate and selected the FEGP configuration used in the subsequent controlled comparisons and Experiment 2. Second, we tested the functional contribution of FEGP using nested controls that separately matched its average effective learning rate and the distribution of its gain values, allowing us to distinguish free-energy-dependent plasticity allocation from these simpler alternatives. Third, we examined how availability depended on how long a pattern had been absent from the observation window, and how the acquired repertoire developed over the session. We additionally characterized how hysteresis affected the temporal dynamics of the gate and compared FEGP with Synaptic Intelligence as a representative continual-learning method. All acquisition conditions included online synaptic adaptation. At each model update, the model generated a 3,000-step open-loop rollout from its current inferred state, which was evaluated using the segmentation and classification pipeline described in Sec. 3.3. Preliminary runs placed the gate signal st approximately between −9.5 and −6.5. The single-threshold sweep was therefore chosen to cover and extend beyond this range and was used to identify the interval of λ over which acquisition proceeded. Within that interval, the hysteretic gate was swept over pairs of thresholds, and the setting ( λlow , λ high ) = ( −9, −7) was selected. 12 This configuration was used for all controlled comparisons in Experiment 1 and for the physical interaction in Experiment 2, and is referred to below simply as FEGP. Table 2 summarizes the experimental conditions. Table 2: Conditions in Experiment 1. Condition Setting FEGP (λlow , λ high ) = ( −9, −7), T = 0 .1Constant-plasticity baseline g(st) = 1 Single-threshold sweep λ ∈ {− 10 .0, −9.5, . . . , −6.0}, T = 0 .1Hysteretic-gate sweep λlow ∈ {− 10 , −9, −8},
+
+λhigh ∈ {− 8, −7, −6}
+
+Constant-rate control αconst = αg (st) under FEGP Replayed-gain control recorded g(st) replayed in shuffled, shifted, or reversed order Synaptic Intelligence c ∈ { 0, 10 −6, 10 −5, . . . , 10 −1, 1.0}
+
+Each run covered a full 6,000-model-update teaching stream, with the generated open-loop rollout scored every five model updates. All controlled comparisons were evaluated across ten teaching streams and five network initializations per stream, giving 50 sessions per condition, while the threshold and hysteresis sweeps used one initialization per stream. 
+
+Threshold and hysteresis analysis. We first varied the single threshold λ in increments of 0.5 to identify the range in which acquisition proceeded. Within this operating range, combinations of 
+
+λlow ∈ {− 10 , −9, −8} and λhigh ∈ {− 8, −7, −6} with λlow < λ high were evaluated for both task-level performance and the temporal stability of the gain. The selected setting was used as the reference FEGP configuration for the comparisons that follow. 
+
+Time-averaged learning-rate control. For each stream, a constant learning rate was set equal to the time-averaged effective rate produced by FEGP on that stream, isolating temporally varying plasticity from a reduced average rate. 
+
+Replayed-gain control. Whereas the time-averaged learning-rate control preserves only the av-erage effective learning rate, this control preserves the gain values themselves while altering their temporal order. The gain sequence produced by FEGP was replayed after uniform permutation, a half-period shift, or time reversal. These transformations preserve the set of gain values while disrupting their alignment with the model-environment mismatch. 
+
+Absence duration. On the standard streams, availability was additionally resolved by how long the pattern had been absent from the observation window, and the repertoire was resolved by model update, because both conditions were still improving at the end of the session. 
+
+Comparison with Synaptic Intelligence. For comparison with an existing continual-learning method, Synaptic Intelligence (SI) [3] was evaluated under constant plasticity. The regularization coefficient was selected from c ∈ { 0, 10 −6, 10 −5, . . . , 10 −1, 1.0}, with a decay factor of γ = 1 − 10 −6
+
+and a stabilizing constant of ξ = 10 −6. Because the present setting provides no task boundaries, the importance estimate cannot be consolidated at the end of a task. We therefore used a contin-uously accumulating variant, whose update rule is given in Sec. S2 of the supplementary material; conclusions about SI in this paper refer to that implementation. 13 3.5 Experiment 2: Online Acquisition During Physical Interaction 
+
+Experiment 2 evaluates the complete system during real-time physical human-robot interaction us-ing the FEGP configuration ( λlow , λ high ) = ( −9, −7) selected in Experiment 1. Posterior inference, synaptic adaptation, and motor generation were executed in real time at 20 Hz. A human experimenter physically guided both arms through patterns A, B, and C, advancing to the next pattern in the cyclic order with probability 0.2 after each completed cycle. The live sessions therefore followed the cyclic order, whereas the prerecorded streams of Experiment 1 ran-domized the successor; comparisons between the two experiments are made only qualitatively. Four independent 5-min sessions, corresponding to 6,000 model updates each, were conducted under the same protocol. At each model update, the model generated a 3,000-step open-loop rollout from its current inferred state. The unidentified-segment ratio and shape distance defined in Sec. 3.3 were computed from these rollouts. A recording of one such session, with the rollout segmentation and classification displayed alongside the interaction, is provided in the supplementary video introduced in Sec. 1 (footnote 1). To examine the development of autonomous generative dynamics independently of ongoing sensory input, model parameters were saved at 100-update intervals. At each checkpoint, the saved parameters were fixed and the model generated 1,000 steps autonomously without external sensory observations. These trajectories were segmented and classified using the same evaluation pipeline. The checkpoints at 1,200, 2,000, and 6,000 model updates are shown as representative examples, while the class-count and occupancy summaries use all checkpoints. 
+
+# 4 Results and Discussion 
+
+The results support four main conclusions. First, FEGP enabled the acquisition of three motor patterns from scratch during real-time physical human-robot interaction. Second, the gate did not change what the model produced while a pattern was being taught; it changed how long that pattern remained available after teaching moved on. Third, this effect arose from the temporal allocation of plasticity relative to model-environment mismatch, and not from a reduction in the average effective learning rate or from the distribution of gain values alone. Fourth, the breadth of the generated repertoire developed late in the session and was still increasing when teaching ended, so it is reported as a trajectory rather than as a single late average. 
+
+4.1 Experiment 1: Controlled Analysis of FEGP 
+
+4.1.1 Operating Regime and Hysteretic Gate Dynamics 
+
+The single-threshold sweep revealed a bounded operating range in which online acquisition pro-ceeded successfully. Acquisition was maintained over λ ∈ [−10 , −7.5], with all-three-pattern cover-age ranging from 14.1-31.7% during the late interaction, but collapsed at λ ≥ − 6.5, where 99.2% of the generated segments could no longer be matched to the instructed patterns and coverage fell to 0.3%. Within the working range, both coverage and retention were highest at λ = −8 (31.7% and 10.5%). Lower thresholds left the gate open too readily, so plasticity was barely regulated, whereas higher thresholds suppressed it before the repertoire had been acquired. Detailed results of the single-threshold sweep are shown in Figs. S1 and S2. Although λ = −8 provided a suitable operating point, the single-threshold formulation switched frequently between lower- and higher-gain regions as the free-energy signal fluctuated around the threshold. Across the 50 sessions, the threshold was crossed 718 times on average (range 303-1,156), and 19.3% of model updates occurred at intermediate gain values. Introducing separate opening 14 and closing thresholds strongly reduced this switching: the hysteretic formulation produced 54 regime transitions on average (range 8-101) and reduced the fraction of intermediate-gain updates to 4.7%, yielding more clearly separated low- and high-plasticity regimes (Fig. 3). 
+
+Figure 3: Effect of hysteresis on the temporal dynamics of the plasticity gate. (a) Representative gain trajectories under the single-threshold setting λ = −8 and the hysteretic setting ( λlow , λ high ) = (−9, −7). (b) Number of threshold crossings or regime transitions during the interaction. (c) Fraction of model updates with intermediate gain, defined by 0 .1 < g (st) < 0.9. The hysteretic formulation strongly reduces rapid switching and yields more clearly separated low- and high-plasticity regimes. We next swept pairs of ( λlow , λ high ) within the operating range. Pairs whose lower threshold was −9 or −8 retained absent patterns (10.6-38.9%), whereas pairs opening at −10 did not (0.3-6.8%), and pairs closing at −6 lost the repertoire entirely (0.0% coverage, 84.3-94.7% unidentified segments). Within the retaining band the pairs were comparable: (−9, −7), the configuration deployed in Experiment 2, reached 45.9% coverage and 23.1% retention, and ( −8, −7) reached 26.3% and 19.4%. The choice within this band is therefore not critical, and ( −9, −7) is used as the reference FEGP configuration throughout, since it is the setting that ran on the robot. Unless otherwise stated, FEGP refers to this configuration in the remainder of the paper. 
+
+4.1.2 What Gating Contributes: Nested Controls 
+
+We next used the controls of Experiment 1 to determine which properties of the plasticity schedule account for the effect of FEGP. Table 3 summarizes repertoire coverage and retention for the principal conditions. FEGP substantially outperformed constant plasticity, increasing repertoire coverage from 18.9% to 45.9% and retention from 0.0% to 23.1%. The difference was especially pronounced for retention, 15 Table 3: Repertoire coverage and retention under FEGP and its control conditions. Differences are relative to FEGP and are reported as coverage / retention in percentage points. Condition Cov. (%) Ret. (%) ∆ vs. FEGP (pp) 
+
+FEGP 45.9 23.1 —
+
+Constant 18.9 0.0 −27 .0/ − 23 .1Matched rate 12.5 0.2 −33 .4/ − 22 .9Permuted gain 21.3 0.5 −24 .6/ − 22 .6Reversed gain 11.4 0.8 −34 .5/ − 22 .3Shifted gain 17.1 2.2 −28 .8/ − 20 .9indicating that unregulated online adaptation provided little preservation of previously acquired patterns. Matching the average amount of plasticity was not sufficient to reproduce this effect. The matched-rate control, which used a constant learning rate equal to the time-averaged effective rate produced by FEGP, achieved only 12.5% coverage and 0.2% retention. Thus, the improvement under FEGP cannot be explained simply by a reduction in the average effective learning rate. Preserving the gain values while disrupting their temporal organization was likewise insufficient. Uniform permutation of the recorded gains reduced coverage to 21.3% and retention to 0.5%. Time reversal yielded 11.4% coverage and 0.8% retention, while a half-period shift yielded 17.1% coverage and 2.2% retention. All transformed schedules therefore remained substantially below FEGP despite being derived from the same recorded gain values. Together, these controls show that the effect of FEGP depends on the temporal allocation of plasticity relative to model-environment mismatch, rather than simply on its average magnitude or on the distribution of gain values. 
+
+4.1.3 Shape Distance of Generated Cycles 
+
+FEGP did not improve the shape accuracy of individual generated cycles. The median shape distance of accepted cycles was higher under FEGP than under constant plasticity (0.475 versus 0.393), and the matched-rate control fell between them (0.459). In physical units, the accepted cycles of both conditions followed the demonstrated paths closely: the DTW-aligned hand-position error was 40 mm under FEGP and 36 mm under constant plasticity, with orientation errors of 3 .3◦
+
+and 3 .0◦, against 23.9 mm and 2 .13 ◦ between two human demonstrations of the same pattern. The 4 mm difference between the conditions is small relative to the variability of the demonstrations themselves, and it was of the same size for each of the three patterns. These results indicate a trade-off between the accuracy of individual generated movements and the maintenance of the learned repertoire. Constant plasticity reproduced the demonstrated trajectories more closely, whereas FEGP maintained a broader repertoire and retained patterns that were no longer present in the recent observation window (Secs. 4.1.2 and 4.1.4). 
+
+4.1.4 Retention of Patterns Absent from the Observation Window 
+
+Because the teaching stream presents one movement pattern at a time, previously learned patterns regularly leave the 500-update observation window while learning continues. We therefore measured how often each pattern remained present in the model’s rollout as a function of the time elapsed since it left the observation window (Fig. 4). 16 Figure 4: Retention of movement patterns as a function of the time elapsed since they left the 500-update observation window. The value at 0 corresponds to patterns still present within the observation window. Under FEGP, availability drops after a pattern leaves the window but re-mains substantially above the two constant-rate controls over longer absence intervals. In contrast, retention under constant plasticity and the matched-rate control falls to near zero shortly after the pattern leaves the window. 17 While a pattern was still present within the observation window, FEGP produced it in 66.6% of rollouts, compared with 60.6% under constant plasticity and 46.2% under the matched-rate control. The conditions separated much more strongly after the pattern left the window. Under FEGP, retention was 27.9% within the first 50 updates of absence and remained at 23.8% after 51-100 updates, 23.6% after 101-200, 24.2% after 201-400, 32.7% after 401-800, and 30.9% beyond 800 updates. Both constant-rate controls, in contrast, lost the pattern almost immediately after it left the observation window. Under constant plasticity, retention fell to 0.3% within the first 50 updates of absence and was 0.0% thereafter. The matched-rate control showed the same rapid loss, with 0.3% retention within the first 50 updates, 0.0% after 51-100 updates, 0.8% after 101-200 updates, and 0.0% at all longer absence intervals. These results show that the effect of FEGP is expressed primarily after a pattern is no longer present in the recent observation history. Rather than disappearing shortly after leaving the obser-vation window, previously learned patterns remained available in roughly one quarter to one third of rollouts even after several hundred updates of absence. FEGP therefore substantially extends the period over which previously learned movements remain available without continued rehearsal. 
+
+4.1.5 Comparison with Synaptic Intelligence 
+
+Synaptic Intelligence showed a narrow range in which acquisition remained possible, but it did not reproduce the retention benefit of FEGP. For c ≤ 10 −4, repertoire coverage ranged from 16.8% to 28.8%, while retention remained at or below 0.4%. The highest coverage was obtained at c = 10 −5, with 28.8% coverage, 0.4% retention, and a 23.7% unidentified-segment ratio. At 
+
+c = 10 −3, repertoire coverage fell to 0.0% and the unidentified-segment ratio increased to 92.0%; for c ≥ 10 −2, all generated segments were unidentified. Thus, increasing SI regularization did not produce a useful trade-off between acquisition and retention in the present continuously interleaved setting. Weak regularization could preserve ac-quisition at a level comparable to the unregularized condition, but retention remained near zero, whereas stronger regularization prevented stable acquisition altogether. In particular, the value 
+
+c = 10 −5 gave the best repertoire coverage among the tested SI settings but only 0.4% retention when used on its own. This comparison used the continuously accumulating SI variant described in Sec. S2 of the supplementary material. Because the sweep was evaluated with a single network initialization, these results are intended as a comparison with a representative continual-learning regularizer rather than as a comprehensive evaluation of SI. Different formulations that rely on explicit task boundaries or consolidation events may behave differently. 
+
+4.2 Experiment 2: Real-Time Physical Human-Robot Interaction 
+
+Experiment 2 provides the primary embodied demonstration, using the hysteretic configuration (λlow , λ high ) = ( −9, −7) during real-time physical interaction. Fig. 5 shows the development of the generated repertoire across the four sessions. During learning, the number of identified movement types increased toward three in every session, while the unidentified-segment ratio decreased from high values early in learning to near zero toward the end of the interaction. The autonomous trajectories generated from saved checkpoints showed the same progression. At t = 1 ,200 and t = 2 ,000, the generated trajectories frequently contained segments that could not be identified as one of the instructed movements. By t = 6 ,000, these unidentified segments 18 had largely disappeared, and all three instructed movement patterns were represented in the au-tonomous generation across the four sessions (Fig. 5). 025 50 75 100       
+
+> Unidentified (%)
+> 025 50 75 100
+> Unidentified (%)
+> 025 50 75 100
+> Unidentified (%)
+> 025 50 75 100
+> Unidentified (%)
+> 0123
+> Movement types (-)
+> Time Development of Learning
+> Movement types Unidentified ratio
+> 0123
+> Movement types (-)
+> 0123
+> Movement types (-)
+> 01000 2000 3000 4000 5000 6000
+> Timesteps (-)
+> 0123
+> Movement types (-) Trial 1 Trial 2 Trial 3 Trial 4
+
+Figure 5: Development of the generated movement repertoire during real-time physical interac-tion in Experiment 2. Each row shows one independent session. Left: temporal evolution of the number of identified movement types and the unidentified-segment ratio in the open-loop rollouts generated during learning. Right: autonomous trajectories generated using parameters saved at model updates t = 1 ,200, 2 ,000, and 6 ,000. The trajectories were segmented and classified using the evaluation pipeline; segments assigned to patterns A, B, and C are color-coded, while unclassifiable segments are labeled “?”. The recent observation window did not contain all three patterns at every model update. Across the four sessions, at least one pattern was absent from the past observation window for an average of 42.5% of the interaction, yet all three patterns became available in autonomous generation as learning progressed (Fig. 5). This is qualitatively consistent with the retention measured on the prerecorded streams (Sec. 4.1.4), which randomized the order in which patterns were taught, whereas the live sessions followed the cyclic order. A representative session is provided in the supplementary video (footnote 1). Experiment 2 therefore demonstrates the online acquisition of multiple motor behaviors from scratch during uninterrupted real-time physical human-robot interaction. 
+
+# 5 Conclusion 
+
+This study demonstrated fully online acquisition of multiple motor behaviors during continuous physical human-robot interaction. Starting from random weights and without offline pretraining or externally supplied task boundaries, the PV-RNN progressively acquired all three instructed movement patterns during four independent 5-min interaction sessions. As learning proceeded, the number of identified movement types increased and unidentified generated segments largely disappeared, with all three instructed patterns eventually appearing in autonomous generation. 19 The controlled experiments showed that Free-Energy-Gated Plasticity (FEGP) substantially improved both repertoire coverage and the retention of previously acquired motor patterns. This effect cannot be explained simply by reducing the average amount of plasticity. A constant learning rate matched to the time-averaged effective rate of FEGP produced substantially lower coverage and almost no retention. Likewise, replaying the same gain values after permutation, time reversal, or temporal shifting failed to reproduce the performance of FEGP. These controls indicate that the effect of FEGP depends on when plasticity is expressed relative to ongoing model-environment mismatch, rather than simply on the average magnitude or distribution of the plasticity gain. The strongest effect of gating appeared after a learned pattern was no longer present in the recent observation history. Under constant plasticity and the matched-rate control, previously acquired patterns disappeared almost immediately after leaving the observation window. Under FEGP, by contrast, they remained available in a substantial fraction of model rollouts even after several hundred model updates of absence. FEGP therefore acts primarily by extending the availability of previously acquired behaviors while online learning continues. This improvement did not reflect a general increase in the accuracy of individual generated movements. Constant plasticity reproduced the demonstrated trajectories somewhat more closely, whereas FEGP maintained a broader behavioral repertoire and substantially greater retention. The breadth of this repertoire also continued to increase late in the teaching session, indicating that the final repertoire was still developing when interaction ended. Hysteresis further stabilized the plasticity mechanism by reducing rapid switching between low- and high-plasticity regimes. For comparison with an existing continual-learning method, we also evaluated a continuously accumulating variant of Synaptic Intelligence. Within the tested range, weak SI regularization allowed acquisition but provided little retention, whereas stronger regularization prevented stable acquisition. This comparison was based on a single network initialization and should therefore be interpreted as a representative baseline rather than as a comprehensive evaluation of Synaptic Intelligence. Several limitations remain. The experiments considered only three periodic movement patterns, and larger repertoires, richer sensorimotor behaviors, and substantially longer interactions remain to be tested. The plasticity thresholds and several evaluation parameters were selected empirically and may require adaptation across tasks and embodiments. In addition, the present DTW-based evaluation has limited sensitivity to movement direction. FEGP should therefore be viewed as a computational mechanism for regulating when synaptic adaptation occurs rather than as a complete solution to long-term memory or a biologically faithful model of synaptic plasticity. The present results nevertheless show that an internally generated model-environment mismatch signal can regulate plasticity online in a way that preserves previously acquired behavior while allowing continued learning during ongoing physical interaction. Future work should investigate longer-term consolidation, automatic adaptation of the gating parameters, and scaling to larger and more diverse embodied learning problems. 20 Supplementary Material S1 Validation of the Evaluation Pipeline 
+
+The ten teaching streams of Experiment 1 were assembled by concatenating recorded movement cycles (Sec. III-B of the main text), so their cycle boundaries and class labels are known exactly. The evaluation pipeline was validated on four representative teaching streams, comprising 459 ground-truth boundaries. This section reports that validation using the same fixed parameters used for all reported measurements: a random-forest boundary probability threshold of 0 .03, a non-maximum suppression window of 15 model updates, a window lag of 15, a shape threshold of 
+
+τ = 0 .90, and a duration tolerance of three standard deviations. 
+
+S1.1 Boundary detection 
+
+Table S1 reports precision, recall, and F1 over the 459 ground-truth boundaries of the four streams, as a function of the matching tolerance and of the detection threshold. Table S1: Boundary detection against ground truth (four streams, 459 boundaries). Setting Precision Recall F1
+
+Matching tolerance, at threshold 0.03 
+
+±3 model updates 1.000 1.000 1.000 
+
+±5 / ±10 / ±15 1.000 1.000 1.000 
+
+Detection threshold, at tolerance ±50.03 (operating point) 1.000 1.000 1.000 0.10 1.000 1.000 1.000 0.30 1.000 0.904 0.950 0.50 1.000 0.850 0.919 0.70 1.000 0.702 0.825 Because the streams are concatenations of recorded cycles, each ground-truth boundary carries a small kinematic discontinuity, and a detector could in principle exploit it. Table S2 shows that it does not: removing the discontinuity by a cosine crossfade across every join, or smoothing the whole stream so that the step change at a join becomes smaller than the typical within-cycle step, leaves detection unchanged, as does time-warping every cycle by ±10%. Table S2: Boundary detection after removing the concatenation artifact. Stream Boundary-step / within-cycle median F1 (±5) Class accuracy Unmodified 1.94 1.000 1.000 Crossfade (width 9) 1.21 1.000 1.000 Smoothed (width 5) 0.44 1.000 1.000 Time-warped ±10% 1.96 1.000 1.000 Warped + crossfade 1.25 1.000 1.000 21 Table S3: Rejection performance on recorded and control trajectories. Trajectory set Summed score, thr. 35 Rule used Shape distance (median) Recorded cycles (30) 0.00 0.00 0.36 Time-reversed 0.00 0.02 0.64 Block-permuted 0.00 0.98 2.35 Two patterns spliced 0.00 1.00 3.43 Half cycle 0.80 1.00 2.62 Two cycles concatenated 0.35 1.00 2.59 Smoothed random walk 0.00 1.00 2.31 Static pose 0.00 1.00 2.21 
+
+S1.2 Segment classification and the Unknown decision 
+
+Given ground-truth boundaries, all 459 cycles were assigned to the correct pattern and none was rejected. End-to-end accuracy on detector-produced segments was 0.998. Table S3 evaluates the classifier on seven categories of control trajectories that are not valid instances of the instructed patterns, with 40 trajectories per category. We compare the rejection rate of the rule used in this paper with that of a summed DTW-and-duration score thresholded at 35. Recorded cycles were evaluated with their own contribution removed from the corresponding class reference. The comparison also illustrates why the shape and duration conditions were applied separately. Under the summed score, the duration term dominates the decision, causing several spatially invalid trajectories to be accepted. The 30 positives span 0.211–0.852 with a median of 0.359 and none carries a length penalty, while the 280 negatives begin at 0.303 with a median of 2.362; the area under the ROC curve of the shape term is 0.988. The choice of τ is not delicate: rejection of the negatives varies by four percentage points over τ ∈ [0 .70 , 1.20], at 89.6%, 87.9%, 85.7%, 85.4% and 85.0% for τ = 0 .70, 0.80, 0 .90, 1 .00 and 1 .20, and τ = 0 .90 is the largest value at which no recorded cycle is rejected (3.3% are at 0 .80 and below). The one category the rule cannot reject is time reversal, at 2%: DTW on the present mean-removed pose representation has limited sensitivity to the direction of travel, so time-reversed movements can remain close to the same reference. Shape distance should therefore be interpreted primarily as agreement in path rather than in movement direction. On these controls, the duration condition is redundant with the shape condition because every control of implausible duration is already rejected on shape. It is nevertheless retained because DTW is tolerant to temporal warping and could otherwise accept a correct path executed at an implausible tempo. 
+
+S1.3 Demonstration-level hold-out 
+
+The detector, the references, the cycle-length statistics and the teaching streams all derive from the same 30 recorded cycles, and the detector’s own train/validation split is a random split over sliding windows of one stream, so windows from the same cycle appear on both sides. Table S4 repeats the validation with a split at the level of demonstrations: a training stream of 120 cycles assembled from demonstrations 1–5 of each pattern was used to fit the detector and to build the references and length statistics, and a disjoint test stream of 120 cycles assembled from demonstrations 6–10 was used for evaluation. 22 Table S4: Evaluation on a stream assembled only from held-out demonstrations. 
+
+Boundary detection 
+
+Detector Tol. Prec. Rec. F1
+
+All 30 cycles ±3 1.000 1.000 1.000 All 30 cycles ±5 1.000 1.000 1.000 Demos 1–5 ±3 0.967 0.967 0.967 Demos 1–5 ±5 1.000 1.000 1.000 
+
+Cycle classification 
+
+Reference Thr. Acc. Unknown Mean, all 30 0.90 1.000 0.000 Mean, demos 1–5 0.90 1.000 0.000 Single, demos 1–5 0.90 0.967 0.033 On the held-out stream, shape distances ranged from 0.27–0.49 against the mean-of-five refer-ence and from 0.50–0.73 against a single held-out cycle. Both ranges remained below the rejection threshold τ = 0 .90, indicating that the threshold transferred to demonstrations that took no part in building the references. 
+
+# S2 Synaptic Intelligence Update Rule 
+
+For comparison with an existing continual-learning method, we used a continuously accumulating variant of Synaptic Intelligence (SI), because the boundary-free setting provides no explicit point at which parameter importance can be consolidated. At every synaptic update, 
+
+A ← γA + ( −∇ θF) ⊙ (−∆θ), B ← B + ∆ θ⊙2, (S1) where ⊙ denotes elementwise multiplication. The importance estimate is recomputed after each update as Ω = A ⊘ (B + ξ), (S2) where ⊘ denotes elementwise division. A single reference parameter vector θ∗ is fixed at initialization, and the penalty 
+
+c X
+
+> j
+
+Ωj (θj − θ∗ 
+
+> j
+
+)2 (S3) is added to the objective. We used γ = 1 − 10 −6 and ξ = 10 −6 in all SI conditions. 
+
+# S3 Additional Figures 
+
+Unless otherwise noted, the multi-stream panels in this section show the same four representative teaching streams (Seq1–4), selected from the ten streams used in Experiment 1 for visual comparison across figures. 23 Figure S1: Late-stage summary of the single-threshold sweep in Experiment 1. Left: weight-update magnitude averaged over the final 2,000 model updates as a function of λ for four representative teaching streams (Seq1–4). Right: corresponding late-stage log-scaled free energy for the same streams. Increasing λ progressively suppresses weight adaptation while residual free energy in-creases. 
+
+# References 
+
+[1] S. Grossberg, “Competitive learning: From interactive activation to adaptive resonance,” Cog-nitive science , vol. 11, no. 1, pp. 23–63, 1987. [2] J. Kirkpatrick, R. Pascanu, N. Rabinowitz, J. Veness, G. Desjardins, A. A. Rusu, K. Milan, J. Quan, T. Ramalho, A. Grabska-Barwinska et al. , “Overcoming catastrophic forgetting in neural networks,” Proceedings of the national academy of sciences , vol. 114, no. 13, pp. 3521– 3526, 2017. [3] F. Zenke, B. Poole, and S. Ganguli, “Continual learning through synaptic intelligence,” in 
+
+International conference on machine learning . Pmlr, 2017, pp. 3987–3995. [4] J. Schwarz, W. Czarnecki, J. Luketina, A. Grabska-Barwinska, Y. W. Teh, R. Pascanu, and R. Hadsell, “Progress & compress: A scalable framework for continual learning,” in Interna-tional conference on machine learning . PMLR, 2018, pp. 4528–4537. [5] R. Aljundi, F. Babiloni, M. Elhoseiny, M. Rohrbach, and T. Tuytelaars, “Memory aware synapses: Learning what (not) to forget,” in Proceedings of the European conference on com-puter vision (ECCV) , 2018, pp. 139–154. [6] R. Aljundi, K. Kelchtermans, and T. Tuytelaars, “Task-free continual learning,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2019, pp. 11 254– 11 263. [7] D. Lopez-Paz and M. Ranzato, “Gradient episodic memory for continual learning,” Advances in neural information processing systems , vol. 30, 2017. [8] H. Shin, J. K. Lee, J. Kim, and J. Kim, “Continual learning with deep generative replay,” 
+
+Advances in neural information processing systems , vol. 30, 2017. [9] P. Buzzega, M. Boschini, A. Porrello, D. Abati, and S. Calderara, “Dark experience for gen-eral continual learning: a strong, simple baseline,” Advances in neural information processing systems , vol. 33, pp. 15 920–15 930, 2020. 24 Figure S2: Composition of the open-loop rollout over online learning under the single-threshold plasticity gate in Experiment 1. Rows correspond to threshold values λ ∈ {− 10 .0, . . . , −6.0},and columns show the same four representative teaching streams (Seq1–4) used throughout this section. At each online-learning update, the model’s 3,000-step rollout was segmented and classified as movement pattern A, B, C, or Unknown using the evaluation pipeline in Sec. III-C of the main text. The displayed values use a 10-update moving average. For λ ≤ − 8, the rollout develops and maintains all three instructed patterns, whereas plasticity is strongly suppressed for λ ≥ − 6.5. 25 Figure S3: Composition of the open-loop rollout under Synaptic Intelligence with con-stant plasticity in Experiment 1. Rows correspond to Synaptic Intelligence coefficients c ∈{0, 10 −6, 10 −5, 10 −4, 10 −3, 10 −2, 10 −1, 1.0}, and columns show the same four representative teaching streams (Seq1–4) used in Figs. S1 and S2. Colors are as in Fig. S2. Weak regularization produces outcomes similar to the unregularized baseline, whereas strong regularization prevents stable ac-quisition. 26 [10] C. Finn, P. Abbeel, and S. Levine, “Model-agnostic meta-learning for fast adaptation of deep networks,” in International conference on machine learning . PMLR, 2017, pp. 1126–1135. [11] S. Beaulieu, L. Frati, T. Miconi, J. Lehman, K. O. Stanley, J. Clune, and N. Cheney, “Learning to continually learn,” arXiv preprint arXiv:2002.09571 , 2020. [12] B. D. Argall, S. Chernova, M. Veloso, and B. Browning, “A survey of robot learning from demonstration,” Robotics and autonomous systems , vol. 57, no. 5, pp. 469–483, 2009. [13] S. Schaal, “Dynamic movement primitives-a framework for motor control in humans and hu-manoid robotics,” in Adaptive motion of animals and machines . Springer, 2006, pp. 261–280. [14] W. Wan, Y. Zhu, R. Shah, and Y. Zhu, “Lotus: Continual imitation learning for robot ma-nipulation through unsupervised skill discovery,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2024, pp. 537–544. [15] B. Liu, Y. Zhu, C. Gao, Y. Feng, Q. Liu, Y. Zhu, and P. Stone, “Libero: Benchmarking knowledge transfer for lifelong robot learning,” Advances in Neural Information Processing Systems , vol. 36, pp. 44 776–44 791, 2023. [16] S. Auddy, J. Hollenstein, M. Saveriano, A. Rodr´ ıguez-S´ anchez, and J. Piater, “Scalable and efficient continual learning from demonstration via a hypernetwork-generated stable dynamics model,” IEEE Transactions on Cognitive and Developmental Systems , 2026. [17] R. P. Rao and D. H. Ballard, “Predictive coding in the visual cortex: a functional interpretation of some extra-classical receptive-field effects,” Nature neuroscience , vol. 2, no. 1, pp. 79–87, 1999. [18] K. Friston, “The free-energy principle: a unified brain theory?” Nature reviews neuroscience ,vol. 11, no. 2, pp. 127–138, 2010. [19] L. Da Costa, P. Lanillos, N. Sajid, K. Friston, and S. Khan, “How active inference could help revolutionise robotics,” Entropy , vol. 24, no. 3, p. 361, 2022. [20] D. Liu, Y. Tan, and S. Wang, “A hierarchical active inference framework for stable robotic control,” Expert Systems with Applications , p. 130903, 2025. [21] A. Ahmadi and J. Tani, “A novel predictive-coding-inspired variational rnn model for online prediction and recognition,” Neural computation , vol. 31, no. 11, pp. 2025–2074, 2019. [22] T. Matsumoto and J. Tani, “Goal-directed planning for habituated agents by active inference using a variational recurrent neural network,” Entropy , vol. 22, no. 5, p. 564, 2020. [23] T. Matsumoto, W. Ohata, F. C. Benureau, and J. Tani, “Goal-directed planning and goal understanding by extended active inference: Evaluation through simulated and physical robot experiments,” Entropy , vol. 24, no. 4, p. 469, 2022. [24] H. Sawada, W. Ohata, and J. Tani, “Human-robot kinaesthetic interactions based on the free-energy principle,” IEEE Transactions on Systems, Man, and Cybernetics: Systems , vol. 55, no. 1, pp. 366–379, 2024. [25] K. Friston, T. FitzGerald, F. Rigoli, P. Schwartenbeck, and G. Pezzulo, “Active inference: a process theory,” Neural computation , vol. 29, no. 1, pp. 1–49, 2017. 27 [26] K. Iigaya, “Adaptive learning and decision-making under uncertainty by metaplastic synapses guided by a surprise detection system,” Elife , vol. 5, p. e18073, 2016. [27] M. L. Barry and W. Gerstner, “Fast adaptation to rule switching using neuronal surprise,” 
+
+PLoS computational biology , vol. 20, no. 2, p. e1011839, 2024. [28] C. D. Mathys, E. I. Lomakina, J. Daunizeau, S. Iglesias, K. H. Brodersen, K. J. Friston, and K. E. Stephan, “Uncertainty in perception and the hierarchical gaussian filter,” Frontiers in human neuroscience , vol. 8, p. 825, 2014. [29] J. Y. Angela and P. Dayan, “Uncertainty, neuromodulation, and attention,” Neuron , vol. 46, no. 4, pp. 681–692, 2005. [30] H. Sawada, A. Pitti, and M. Quoy, “Cernet: Class-embedding predictive-coding rnn for unified robot motion, recognition, and confidence estimation,” arXiv preprint arXiv:2512.07041 , 2025. [31] C. S. Kim, “Bayesian mechanics of synaptic learning under the free-energy principle,” Entropy ,vol. 26, no. 11, p. 984, 2024. [32] H. Sakoe and S. Chiba, “Dynamic programming algorithm optimization for spoken word recog-nition,” IEEE transactions on acoustics, speech, and signal processing , vol. 26, no. 1, pp. 43–49, 1978. 28
