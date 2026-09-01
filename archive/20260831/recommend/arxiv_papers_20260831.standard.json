@@ -1,0 +1,483 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-31T23:53:55.624968+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 8,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2608.27550v1",
+      "source": "arxiv",
+      "title": "Beyond Data Scaling: Representation-Centric Continued Pre-training for Vision-Language-Action Models",
+      "abstract": "Scaling robot data is crucial for building generalist Vision-Language-Action (VLA) models, yet robot trajectories are harder to scale than web-scale image-text data because embodied collection is costly and sparsely covers the physical world. This makes representation quality a central bottleneck: under a fixed robot-data budget, continued pre-training must turn limited trajectories into transferable visual-action knowledge rather than merely fit actions. We propose VLAct, a VLA-oriented VLM backbone trained on broad, heterogeneous, multi-embodiment robot data before task-specific fine-tuning. VLAct preserves the broad VLM prior and encourages shared action semantics across embodiments through VLM-prior preservation, multi-head continuous action co-supervision, and a partially unified cross-embodiment action layout, while allowing task-specific action heads during fine-tuning. Across simulation, real-world, and unseen-embodiment transfer, VLAct consistently improves downstream performance under fixed fine-tuning protocols. On LIBERO-Plus and RoboTwin 2.0, VLAct surpasses industrial VLA systems including ABot-M0 and LingBot-VLA, achieving success rates of 82.6% and 92.5%. On RoboDojo, VLAct ranks sixth among all policies by success rate and outperforms all explicitly designated world-action model (WAM) entries on both metrics. Most notably, on RoboCasa-GR1, an unseen humanoid embodiment, VLAct using only 20% of downstream trajectories outperforms the full-data GR00T-N1.6 baseline. These results are obtained using fully open-source data and only a 16-GPU training setup, showing that representation-centric continued pre-training can deliver highly competitive performance under a modest compute budget and is an important independent axis of VLA progress beyond data scaling.",
+      "authors": [
+        "Senqiao Yang",
+        "Chengyao Wang",
+        "Yuxin Chen",
+        "Zixuan Wang",
+        "Longxiang Tang",
+        "Haokun Gui",
+        "Jinhui Ye",
+        "Changsheng Lu",
+        "Xiaoyang Wu",
+        "Mingkang Zhu",
+        "Pengguang Chen",
+        "Shu Liu",
+        "Zhuotao Tian",
+        "Hengshuang Zhao",
+        "Bei Yu",
+        "Jiaya Jia"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-08-27T17:59:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.27550v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Representation-centric continued pre-training for Vision-Language-Action models directly addresses robotic manipulation and multi-embodiment generalist policies",
+      "llm_evidence_cn": "面向VLA模型的表征持续预训练，直接针对机器人操作与多具身通用策略",
+      "llm_evidence": "面向VLA模型的表征持续预训练，直接针对机器人操作与多具身通用策略",
+      "canonical_evidence": "面向VLA模型的表征持续预训练，直接针对机器人操作与多具身通用策略",
+      "llm_tldr_en": "VLAct proposes representation-centric continued pre-training for VLA models, preserving the VLM prior and sharing action semantics across embodiments to turn limited robot trajectories into transferable visual-action knowledge.",
+      "llm_tldr_cn": "针对机器人数据难以像图文数据那样规模扩展的问题，提出表征中心的持续预训练方法VLAct。该方法在任务微调前，利用广泛且异构的多具身机器人数据训练VLA专用的VLM主干，通过保留VLM先验和鼓励跨具身共享动作语义，把有限的轨迹转化为可迁移的视觉-动作知识。实验表明其在固定机器人数据预算下能提升下游操作任务的泛化能力，为通用技能机器人策略提供了更优的表征基础。",
+      "llm_tldr": "针对机器人数据难以像图文数据那样规模扩展的问题，提出表征中心的持续预训练方法VLAct。该方法在任务微调前，利用广泛且异构的多具身机器人数据训练VLA专用的VLM主干，通过保留VLM先验和鼓励跨具身共享动作语义，把有限的轨迹转化为可迁移的视觉-动作知识。实验表明其在固定机器人数据预算下能提升下游操作任务的泛化能力，为通用技能机器人策略提供了更优的表征基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.27609v1",
+      "source": "arxiv",
+      "title": "PHR-VLA: Planning Horizon Reasoning for Vision-Language-Action Models",
+      "abstract": "Vision-language-action models (VLAs) have shown strong promise for general-purpose robotic manipulation by mapping language instructions and vision observations directly to actions. However, most VLAs primarily condition action prediction on current observations and lack an explicit mechanism for reasoning over future task dynamics, which is particularly important for fine-grained, contact-rich manipulation. We present PHR-VLA, a framework that enables planning-horizon reasoning in VLAs through privileged latent representations of future dynamics. PHR-VLA introduces a lightweight auxiliary future head that, during training, aligns the VLA's internal representations with latent dynamics extracted from future observations. Evaluation results demonstrate that local, contact-centric, patch-level latent dynamics supervision from the wrist camera improves success rate on LIBERO from 84.1% to 88.4% and on real-world disassembly tasks from 63.3% to 82.5%. Patch-level supervision from a third-person camera also improves performance on Meta-World from 56.70% to 57.8%. These results demonstrate that privileged latent dynamics alignment provides an effective training signal for improving anticipatory reasoning in VLA policies. Project website: \\href{https://davoodsz.github.io/PHR-VLA.github.io/}{https://davoodsz.github.io/PHR-VLA.github.io/}",
+      "authors": [
+        "Davood Soleymanzadeh",
+        "Kaidi Zhang",
+        "Zhiyuan Zhang",
+        "Bihao Zhang",
+        "Xiao Liang",
+        "Yu She",
+        "Minghui Zheng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-08-27T18:42:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.27609v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "VLA for robotic manipulation with planning horizon reasoning",
+      "llm_evidence_cn": "面向机器人操作的视觉-语言-动作模型规划时域推理",
+      "llm_evidence": "面向机器人操作的视觉-语言-动作模型规划时域推理",
+      "canonical_evidence": "面向机器人操作的视觉-语言-动作模型规划时域推理",
+      "llm_tldr_en": "PHR-VLA adds a lightweight future head to Vision-Language-Action models, aligning internal representations with latent dynamics from future observations to enable planning-horizon reasoning for contact-rich manipulation.",
+      "llm_tldr_cn": "视觉-语言-动作模型（VLA）根据当前语言指令和视觉观测直接输出动作，但多数模型只依赖当前观测，缺乏对任务未来动态的显式推理，这在细粒度、富含接触的操作中尤为重要。本文提出PHR-VLA，通过一个轻量级辅助未来头，在训练时将VLA内部表示与从未来观测中提取的隐动态对齐，从而在推理时获得规划时域洞察。评估结果显示该方法显著提升了VLA在接触丰富操作任务上的表现，且计算开销很小。",
+      "llm_tldr": "视觉-语言-动作模型（VLA）根据当前语言指令和视觉观测直接输出动作，但多数模型只依赖当前观测，缺乏对任务未来动态的显式推理，这在细粒度、富含接触的操作中尤为重要。本文提出PHR-VLA，通过一个轻量级辅助未来头，在训练时将VLA内部表示与从未来观测中提取的隐动态对齐，从而在推理时获得规划时域洞察。评估结果显示该方法显著提升了VLA在接触丰富操作任务上的表现，且计算开销很小。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.28090v1",
+      "source": "arxiv",
+      "title": "Stay Seated: Learning Omnidirectional Humanoid Locomotion on a Passive Mobile Chair with Casters",
+      "abstract": "Humanoid robots with quasi-direct-drive actuators continuously generate joint torque while standing, whereas seated humans delegate weight support to chairs during desk work. As a first step toward seated loco-manipulation, we study omnidirectional seated locomotion on a passive mobile chair, requiring unfixed pelvis-seat contact and intermittent foot-floor propulsion of the robot-chair system. We extend a standard standing velocity-tracking environment with a passive-chair model, seated-state rewards, critic-only chair observations, and task-tailored contact settings. The policy is learned without motion-imitation rewards; its actor uses only proprioception and velocity commands, without contact sensing or chair states. In random-command evaluation, the policies tracked omnidirectional commands through nearly all 20-s rollouts, and the best seated policies could outperform the Standing policy in velocity tracking. Across four training seeds, a $2^3$ full-factorial comparison of symmetry regularization (SY), foot-slip regularization (FS), and command curriculum (CC) showed that FS reduced CoT but increased tracking error and that some FS-only policies converged to stationary local optima. Combining FS with either SY or CC avoided this failure without retuning FS, while SY improved bilateral leg symmetry during longitudinal motion. Direction-resolved analysis showed CoT ordered backward $<$ lateral $\\ll$ forward, with planted-leg extension in backward and lateral motion and knee flexion following heel contact in forward motion. The learned policy achieved zero-shot sim-to-real transfer to a Unitree G1 and generated omnidirectional seated locomotion.",
+      "authors": [
+        "Kango Yanagida",
+        "Kazuki Miyazawa",
+        "Takato Horii"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-28T08:58:20+00:00",
+      "link": "https://arxiv.org/pdf/2608.28090v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Humanoid seated locomotion on passive mobile chair, extending robot locomotion capabilities",
+      "llm_evidence_cn": "人形机器人在被动移动椅子上的坐姿全方位运动学习",
+      "llm_evidence": "人形机器人在被动移动椅子上的坐姿全方位运动学习",
+      "canonical_evidence": "人形机器人在被动移动椅子上的坐姿全方位运动学习",
+      "llm_tldr_en": "The paper studies omnidirectional seated locomotion for humanoids on a passive caster chair, extending a standing velocity-tracking environment with chair dynamics and learning a policy from proprioception and velocity commands only.",
+      "llm_tldr_cn": "人形机器人通常只能站立行走，而坐下工作场景需要坐姿运动能力。本文首次研究在带脚轮被动椅子上的全方位坐姿运动，通过加入被动椅子模型、坐姿奖励和接触设置，扩展标准站立速度跟踪环境。策略仅使用本体感知与速度命令即可学会移动，无需接触传感或椅子状态，为人形坐姿操作与移动打下了基础。",
+      "llm_tldr": "人形机器人通常只能站立行走，而坐下工作场景需要坐姿运动能力。本文首次研究在带脚轮被动椅子上的全方位坐姿运动，通过加入被动椅子模型、坐姿奖励和接触设置，扩展标准站立速度跟踪环境。策略仅使用本体感知与速度命令即可学会移动，无需接触传感或椅子状态，为人形坐姿操作与移动打下了基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.28266v1",
+      "source": "arxiv",
+      "title": "CoCoBench: A Cooperative Coordination Benchmark for Embodied Multi-Agent Task Planning",
+      "abstract": "Agent systems powered by multimodal large language models (MLLMs) have advanced rapidly in recent years, yet existing embodied-agent benchmarks still lack fine-grained diagnostics for multi-agent coordination. Most benchmarks either focus on single-agent task completion or summarize multi-agent behavior with overall task success rates, which can obscure coordination failures such as duplicated work, violations of ordering constraints, resource contention, and desynchronized handoffs. In this paper, we introduce CoCoBench, a construct-level benchmark for evaluating multi-agent embodied coordination in executable household tasks. CoCoBench contains 897 oracle-validated instances organized around four recurring coordination constructs: task allocation, sequential ordering, mutual exclusion, and handoff coordination. In addition to task success rate, CoCoBench provides construct-level scores that measure whether agents coordinate effectively. We evaluate 11 leading MLLMs across different coordination modes, observation inputs, and numbers of agents. The results show that coordination ability is highly construct-specific: strong overall performance does not imply balanced competence across different coordination types. These findings point to new directions for designing targeted model architectures and improving multi-agent coordination ability.",
+      "authors": [
+        "Yang Chen",
+        "Ye-Xin Xie",
+        "Lirong Che",
+        "Danyang Peng",
+        "Yuzhe Yang",
+        "Peiwen Lin",
+        "Xu Cao",
+        "Chuang Wang",
+        "Lei Yuan",
+        "Jian Su",
+        "Lan-Zhe Guo"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-28T12:29:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.28266v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "benchmark for embodied multi-agent coordination in household tasks",
+      "llm_evidence_cn": "面向家庭任务中具身多智能体协作的基准测试",
+      "llm_evidence": "面向家庭任务中具身多智能体协作的基准测试",
+      "canonical_evidence": "面向家庭任务中具身多智能体协作的基准测试",
+      "llm_tldr_en": "CoCoBench provides fine-grained diagnostics for multi-agent embodied coordination through 897 oracle-validated instances organized around recurring coordination constructs in executable household tasks.",
+      "llm_tldr_cn": "针对现有具身基准缺乏对多智能体协调失败（如重复工作、顺序违反、资源竞争）的细粒度诊断问题，本文提出CoCoBench基准。它围绕家庭可执行任务中的四类协调构造，构建了897个经oracle验证的实例，用于评估多智能体任务规划中的具体协调能力。该基准能揭示总体成功率掩盖下的协调缺陷，为具身多智能体研究提供了更精细的评测工具。",
+      "llm_tldr": "针对现有具身基准缺乏对多智能体协调失败（如重复工作、顺序违反、资源竞争）的细粒度诊断问题，本文提出CoCoBench基准。它围绕家庭可执行任务中的四类协调构造，构建了897个经oracle验证的实例，用于评估多智能体任务规划中的具体协调能力。该基准能揭示总体成功率掩盖下的协调缺陷，为具身多智能体研究提供了更精细的评测工具。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.27497v1",
+      "source": "arxiv",
+      "title": "Beyond Relative Geometry: Metric-Aware Geometry Perception for Robotics",
+      "abstract": "Recent embodied models increasingly leverage geometric representations to improve spatial reasoning and robotic manipulation. However, existing reconstruction methods only reconstruct relative geometry with arbitrary scales, causing predicted object dimensions and spatial distances to vary across scenes, viewpoints, and input configurations. This inconsistency prevents geometric perception from being directly aligned with robotic actions defined on the real-world scale. To address this limitation, we propose Metric-Aware Geometry Perception (MAGP), an end-to-end, plug-and-play framework for metric geometry reconstruction that can be seamlessly integrated into robotic policies. At its core, Metric Scale Equivariant Augmentation encourages the model to reconstruct metric geometry from camera parameters and depth observations, ensuring that the reconstructed geometry follows the metric scale specified by observations. Flexible Metric Conditioning further enables MAGP to support arbitrary view counts and combinations of camera and depth inputs, improving robustness to heterogeneous robotic sensing configurations. Together, these designs produce geometrically consistent reconstructions with stable object dimensions and spatial distances across scenes and sensing conditions. Experiments on ETH3D, MegaDepth, and ScanNet++ demonstrate that MAGP maintains strong relative geometry accuracy while reducing the absolute error by over an order of magnitude, from 2.01m to 0.07m. When integrated into multiple robotic policies, MAGP consistently improves performance on LIBERO, RoboTwin, and zero-shot LIBERO-Plus, with gains of up to 6.26% on RoboTwin. These results demonstrate the effectiveness and generalizability of metric geometry for robotic manipulation.",
+      "authors": [
+        "Fengjun Zhong",
+        "Congjia Chen",
+        "Zhaoxu Liu",
+        "Jinyang Du",
+        "Yuchen Gong",
+        "Enqi Mao",
+        "Ruihao Gong",
+        "ShuJie Wang",
+        "Xianglong Liu",
+        "Zhongliang Qiao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-27T02:07:22+00:00",
+      "link": "https://arxiv.org/pdf/2608.27497v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "metric-aware geometric perception for robotic manipulation",
+      "llm_evidence_cn": "面向机器人操作的度量感知几何感知",
+      "llm_evidence": "面向机器人操作的度量感知几何感知",
+      "canonical_evidence": "面向机器人操作的度量感知几何感知",
+      "llm_tldr_en": "Introduces MAGP, a plug-and-play framework for metric geometry reconstruction so robotic policies can perceive real-world scale, improving spatial reasoning and manipulation.",
+      "llm_tldr_cn": "现有多数重建方法只能恢复任意尺度的相对几何，导致机器人的空间推理和操作无法与真实世界尺度对齐。本文提出度量感知几何感知（MAGP），一种端到端、即插即用的度量重建框架，可无缝集成到机器人策略中。其核心是度量尺度等变增广，使模型在不同视角与场景下输出一致的尺度。实验结果验证了该框架对机器人操作与空间推理的提升。",
+      "llm_tldr": "现有多数重建方法只能恢复任意尺度的相对几何，导致机器人的空间推理和操作无法与真实世界尺度对齐。本文提出度量感知几何感知（MAGP），一种端到端、即插即用的度量重建框架，可无缝集成到机器人策略中。其核心是度量尺度等变增广，使模型在不同视角与场景下输出一致的尺度。实验结果验证了该框架对机器人操作与空间推理的提升。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.27797v1",
+      "source": "arxiv",
+      "title": "CEDAR: Automata as Verifiable Interfaces for Language-Guided Embodied Action",
+      "abstract": "Natural-language tasking of embodied agents is rarely just goal specification: users also impose constraints that must persist while the world changes. Code-generating LLM agents can produce plausible behaviors for such instructions, but their free-form programs provide no stable object to verify, compose with new constraints, or repair from a failing trace. We present CEDAR, a counterexample-guided framework that grounds instructions as regular languages over environment event traces. CEDAR uses a language model for semantic judgments and execution traces for correction, then represents both skills and specifications as deterministic finite automata. This turns constraints into executable finite-state objects: a learned skill can be intersected with a learned sleep at night or stay in this biome specification, yielding a controller that enforces the learned constraint by construction rather than by repeated prompting. In Minecraft, with the same simulator/API observations available to a program-generating baseline, CEDAR maintains temporal and spatial constraints that the baseline fails to preserve and amortizes reuse of learned skills, reducing cumulative LLM queries. These results suggest that regular languages offer a practical verification layer between natural-language instructions and embodied-agent policies.",
+      "authors": [
+        "Lekai Chen",
+        "Alvaro Velasquez",
+        "Ashutosh Trivedi"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.FL"
+      ],
+      "published": "2026-08-28T00:25:48+00:00",
+      "link": "https://arxiv.org/pdf/2608.27797v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "counterexample-guided automata for verifiable language-guided embodied action",
+      "llm_evidence_cn": "用自动机作为可验证接口，约束语言引导的具身动作",
+      "llm_evidence": "用自动机作为可验证接口，约束语言引导的具身动作",
+      "canonical_evidence": "用自动机作为可验证接口，约束语言引导的具身动作",
+      "llm_tldr_en": "CEDAR grounds language-guided embodied instructions as regular languages and compiles them into deterministic finite automata, enabling verifiable, composable and repairable robot skills.",
+      "llm_tldr_cn": "具身智能体的自然语言指令常包含必须持续满足的约束，而代码生成模型产生的程序难以验证、组合和修复。CEDAR利用反例引导框架，将指令转为环境事件轨迹上的正则语言，并用确定性有限自动机表示技能和规约。这样约束变成可执行的可验证对象，技能可与其他约束求交并自动修复。该方法有效提升了语言引导具身动作的可靠性和可组合性，为安全人机交互提供了保障。",
+      "llm_tldr": "具身智能体的自然语言指令常包含必须持续满足的约束，而代码生成模型产生的程序难以验证、组合和修复。CEDAR利用反例引导框架，将指令转为环境事件轨迹上的正则语言，并用确定性有限自动机表示技能和规约。这样约束变成可执行的可验证对象，技能可与其他约束求交并自动修复。该方法有效提升了语言引导具身动作的可靠性和可组合性，为安全人机交互提供了保障。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.27997v1",
+      "source": "arxiv",
+      "title": "A-PAIR: A Benchmark and Identity-Consistent Grounding Framework for Air-Ground Cross-View Referring Person Detection",
+      "abstract": "Air-ground cross-view referring person detection is a necessary component in the language-to-perception-to-control chain of collective embodied intelligence, grounding a language command into the same physical target before ground and aerial agents can coordinate downstream actions. Existing referring expression comprehension and open-vocabulary grounding methods do not jointly account for cross-view identity consistency, making them insufficient for Air-Ground Cross-View Referring Person Detection (AGCV-RPD), which involves similar pedestrian distractors, weak aerial appearance cues, and cross-view identity consistency. To study this problem, we introduce Air-Ground Paired Identity-Aware Referring (A-PAIR), the first comprehensive AGCV-RPD benchmark, containing 22,137 cross-view referring samples. To construct A-PAIR efficiently, we propose Factorized Annotation and Referential Alignment (FARA), a semi-automatic annotation framework that generates factorized referring descriptions and identity-consistency supervision at reduced cost. We propose Identity-Consistent Referring Grounding (ICRG), a framework that combines factorized referential grounding, candidate-completeness supervision, and cross-view consistency calibration for joint air-ground pair selection. ICRG improves ground, aerial, and pair-level detection over strong baselines, increasing pair F1 from 16.65% to 22.28%. These results show that AGCV-RPD requires paired detection and identity-consistent reasoning.",
+      "authors": [
+        "Zhoupeng Guo",
+        "Xinjie Yao",
+        "Yunqi Zhu",
+        "Zhihe Fan",
+        "Siqi Zhao",
+        "Jianjun Chen",
+        "Yichen Dong",
+        "Yan Fan",
+        "Pengfei Zhu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.MM"
+      ],
+      "published": "2026-08-28T07:05:43+00:00",
+      "link": "https://arxiv.org/pdf/2608.27997v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "air-ground cross-view referring person detection for collective embodied intelligence language-perception-control chain",
+      "llm_evidence_cn": "空地跨视角指人检测，服务集体具身智能的语言-感知-控制链路",
+      "llm_evidence": "空地跨视角指人检测，服务集体具身智能的语言-感知-控制链路",
+      "canonical_evidence": "空地跨视角指人检测，服务集体具身智能的语言-感知-控制链路",
+      "llm_tldr_en": "A-PAIR introduces a benchmark and identity-consistent grounding framework for air-ground cross-view referring person detection, supporting the language-to-perception-to-control chain of collective embodied intelligence.",
+      "llm_tldr_cn": "空地跨视角指人检测是集体具身智能语言-感知-控制链中的关键环节，需要在相似行人干扰和弱空视外观线索下保持身份一致性。现有指代表达理解和开放词汇定位方法未联合考虑跨视角身份一致性，难以直接应用。作者提出A-PAIR基准和身份一致性定位框架，专门解决该问题。它为地面与空中智能体的语言指令落地和多智能体协同提供了新的评测基准和方法。",
+      "llm_tldr": "空地跨视角指人检测是集体具身智能语言-感知-控制链中的关键环节，需要在相似行人干扰和弱空视外观线索下保持身份一致性。现有指代表达理解和开放词汇定位方法未联合考虑跨视角身份一致性，难以直接应用。作者提出A-PAIR基准和身份一致性定位框架，专门解决该问题。它为地面与空中智能体的语言指令落地和多智能体协同提供了新的评测基准和方法。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.27549v1",
+      "source": "arxiv",
+      "title": "Code as Worlds: Agentic Discovery of Executable World Representations for Physical Reasoning",
+      "abstract": "Physical understanding and reasoning depend on forming compact and generalizable representations of the world. While modern vision-language models can recognize and explain diverse physical events, they often lack explicit representations of the underlying mechanisms-such as object states, physical parameters, and governing dynamics-needed for reliably reasoning how the world evolves and responds to interventions. In this work, we introduce Code-as-World, a paradigm that represents physical worlds through executable world representations. By expressing physical composition, dynamic evolution, and visual appearance as executable code, Code-as-World provides a compact, quantitatively grounded, and controllable abstraction of the physical world. To construct such representations from multimodal observations, such as natural-language descriptions or real-world videos, we develop an agentic discovery loop inspired by abductive reasoning, where an agent proposes, executes, renders, verifies, and iteratively refines executable world hypotheses. As a concrete application, we use verified executable worlds to provide scalable physical supervision for training vision-language models on quantitative physical reasoning. Experiments show that Code-as-World-VL achieves state-of-the-art performance on QuantiPhy and surpasses leading proprietary models, highlighting the potential of executable world representations as a scalable foundation for physical intelligence.",
+      "authors": [
+        "Hanyang Wang",
+        "Yimo Cai",
+        "Weiliang Chen",
+        "Jiawei Chi",
+        "Haowen Sun",
+        "Qiyu Dai",
+        "Yi-Hsin Hung",
+        "Xingzhuo Guo",
+        "Jinshan Ren",
+        "Runmao Yao",
+        "Ziwei Liu",
+        "Mingsheng Long",
+        "Yueqi Duan",
+        "Jun Gao",
+        "Jiangran Lyu",
+        "Fangfu Liu",
+        "Jialong Wu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-27T17:57:25+00:00",
+      "link": "https://arxiv.org/pdf/2608.27549v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "executable world representations for physical reasoning, agentic discovery in embodied environments",
+      "llm_evidence_cn": "用可执行代码表示物理世界，用于物理推理与智能体探索",
+      "llm_evidence": "用可执行代码表示物理世界，用于物理推理与智能体探索",
+      "canonical_evidence": "用可执行代码表示物理世界，用于物理推理与智能体探索",
+      "llm_tldr_en": "Code-as-World represents physical worlds as executable code, encoding object states, dynamics and visual appearance for compact, quantitatively grounded and controllable physical reasoning.",
+      "llm_tldr_cn": "物理理解与推理需要紧凑可泛化的世界表示，但现有视觉-语言模型往往缺乏物体状态和动态机制等显式表征。文章提出Code-as-World范式，将物理组成、动态演化和视觉外观表达为可执行代码。该表示紧凑、可量化、可控，支持对世界演化和干预响应的可靠推理。它为具身智能体在物理世界中的交互推理提供了一种新的表示途径，但尚未直接面向具体机器人任务。",
+      "llm_tldr": "物理理解与推理需要紧凑可泛化的世界表示，但现有视觉-语言模型往往缺乏物体状态和动态机制等显式表征。文章提出Code-as-World范式，将物理组成、动态演化和视觉外观表达为可执行代码。该表示紧凑、可量化、可控，支持对世界演化和干预响应的可靠推理。它为具身智能体在物理世界中的交互推理提供了一种新的表示途径，但尚未直接面向具体机器人任务。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.28140v1",
+      "source": "arxiv",
+      "title": "Contact-Guided Exploration for Non-Prehensile Locomanipulation with Multi-Critic RL",
+      "abstract": "Non-prehensile manipulation offers versatile skills for moving and rearranging heavy or bulky objects, particularly when combined with a mobile manipulation platform. However, both model-based and model-free approaches struggle with the complex hybrid dynamics and the sparsity of the contact in these tasks. To address these challenges, we propose a contact-guided exploration strategy implemented within a Multi-Critic Reinforcement Learning (RL) framework. A dedicated exploration critic is trained with a dense contact-seeking reward that guides the end-effector toward meaningful contact points; its influence is progressively decayed to recover a task-optimal policy. We obtain candidate interaction points from a general-purpose grasping algorithm, enabling the exploration mechanism to generalise across various object geometries. We evaluate the approach on multiple tasks, including box pushing, chair transportation, and a dishwasher opening task. Finally, we validate the chair transportation policy through extensive experiments on a quadrupedal mobile manipulator, demonstrating deployable non-prehensile manipulation in the real world.",
+      "authors": [
+        "Simone Tolomei",
+        "Mayank Mittal",
+        "Franco Angelini",
+        "Manolo Garabini",
+        "Paolo Salaris",
+        "Marco Hutter"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-28T10:00:43+00:00",
+      "link": "https://arxiv.org/pdf/2608.28140v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Multi-critic RL with contact-guided exploration for locomanipulation",
+      "llm_evidence_cn": "多评论者强化学习结合接触引导探索解决移动操作问题",
+      "llm_evidence": "多评论者强化学习结合接触引导探索解决移动操作问题",
+      "canonical_evidence": "多评论者强化学习结合接触引导探索解决移动操作问题",
+      "llm_tldr_en": "Presents a multi-critic RL framework with a dense contact-seeking reward and progressive decay for non-prehensile locomanipulation, improving exploration in sparse-contact hybrid dynamics.",
+      "llm_tldr_cn": "针对非抓取移动操作中混合动力学复杂且接触稀疏的问题，提出基于多评论者强化学习的接触引导探索策略。训练专门的探索评论者以奖励接触为目标引导末端执行器接近关键接触点，并逐步衰减其影响以恢复任务最优策略，从通用抓取算法获取候选交互点。实验表明该方法有效应对复杂接触任务中的探索难题。",
+      "llm_tldr": "针对非抓取移动操作中混合动力学复杂且接触稀疏的问题，提出基于多评论者强化学习的接触引导探索策略。训练专门的探索评论者以奖励接触为目标引导末端执行器接近关键接触点，并逐步衰减其影响以恢复任务最优策略，从通用抓取算法获取候选交互点。实验表明该方法有效应对复杂接触任务中的探索难题。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.28435v1",
+      "source": "arxiv",
+      "title": "Linear Temporal Logic Translation via Human-Inspired Self-Constrained Reasoning for Robot Task Specification",
+      "abstract": "Many robotic tasks are temporally extended and demand precise specifications of subgoals, constraints, and their temporal ordering. Yet human operators typically communicate such tasks in natural language, which is inherently ambiguous, underspecified, and context dependent. Translating human instructions into formal task specifications, such as Linear Temporal Logic (LTL), is therefore essential for verifiable and safe robotic execution. Existing LLM-based translators attempt to bridge this gap through open-ended reasoning or post-hoc constraint enforcement, but the former may violate domain constraints, whereas the latter can disrupt the reasoning needed for novel instructions. This paper proposes Self-Constrained Reasoning (SCR), a framework that mitigates this trade-off by internalizing structural knowledge into the model's decision-making process rather than imposing it as an external filter. By combining a structural constraint representation with a hierarchical decision-making formulation, SCR guides reasoning within a formally grounded space while preserving adaptability to unseen instructions. Experiments show that SCR improves both domain-constraint satisfaction and generalization, providing an effective and interpretable approach for translating human intent into verifiable specifications for robotic execution.",
+      "authors": [
+        "Haofei Hou",
+        "Fanxu Meng",
+        "Shunyi Zhao",
+        "Kairui Yang",
+        "Mengchen Cai",
+        "Lecheng Ruan",
+        "Qining Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-28T15:18:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.28435v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Translating natural language to LTL for robot task specification, supporting verifiable robotic execution",
+      "llm_evidence_cn": "将自然语言翻译为LTL以生成机器人任务规范，支持可验证的机器人执行",
+      "llm_evidence": "将自然语言翻译为LTL以生成机器人任务规范，支持可验证的机器人执行",
+      "canonical_evidence": "将自然语言翻译为LTL以生成机器人任务规范，支持可验证的机器人执行",
+      "llm_tldr_en": "Presents self-constrained reasoning for translating ambiguous human instructions into Linear Temporal Logic specifications, preventing constraint violations and reasoning disruption; relevant to verifiable and safe robotic task execution.",
+      "llm_tldr_cn": "针对人类自然语言指令模糊、未指定且依赖上下文，难以直接用于可验证机器人执行的问题，提出受人类启发的自约束推理方法。该方法在LLM翻译为线性时序逻辑（LTL）过程中，既避免开放式推理违反领域约束，又不像事后约束那样破坏对新指令的推理。实验表明它在生成精确、可验证的LTL任务规范方面优于基线，为机器人安全执行和任务规划提供了可靠的接口。",
+      "llm_tldr": "针对人类自然语言指令模糊、未指定且依赖上下文，难以直接用于可验证机器人执行的问题，提出受人类启发的自约束推理方法。该方法在LLM翻译为线性时序逻辑（LTL）过程中，既避免开放式推理违反领域约束，又不像事后约束那样破坏对新指令的推理。实验表明它在生成精确、可验证的LTL任务规范方面优于基线，为机器人安全执行和任务规划提供了可靠的接口。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.28518v1",
+      "source": "arxiv",
+      "title": "When Robots Mishear Us: Mapping the Safety Risks of Voice-Controlled Embodied AI",
+      "abstract": "We investigate whether automatic speech recognition (ASR) errors in user input can lead to unsafe outputs from Embodied AI (EAI) models. We find that ASR errors can lead to harmful instructions being accepted and executed by EAI models, thereby reducing safety. We simulate ASR errors and combine them with existing safety benchmarks (SafeAgentBench and POEX) to evaluate how different errors affect embodied AI safety. We find that some of them preserve semantic structure but increase harmful ambiguity, while others weaken the model refusal behaviour and allow unsafe plans to be generated and executed. We show that in some cases automatic correction of ASR errors can reduce the risk, but this is not always effective. Overall, we show that ASR errors lead to significant safety risks for embodied AI.",
+      "authors": [
+        "Sihan Jia",
+        "Oliver Lemon"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.RO"
+      ],
+      "published": "2026-08-28T16:55:32+00:00",
+      "link": "https://arxiv.org/pdf/2608.28518v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "safety risks of voice-controlled embodied AI",
+      "llm_evidence_cn": "语音控制具身智能体的安全风险",
+      "llm_evidence": "语音控制具身智能体的安全风险",
+      "canonical_evidence": "语音控制具身智能体的安全风险",
+      "llm_tldr_en": "Shows that ASR errors in voice commands can make Embodied AI accept and execute harmful instructions, and that automatic correction sometimes but not always reduces risk.",
+      "llm_tldr_cn": "语音控制的具身智能体（EAI）依赖用户语音指令，但自动语音识别（ASR）错误可能让本应被拒绝的危险指令被接受并执行。论文模拟ASR错误并结合SafeAgentBench和POEX安全基准，系统评估各类错误对EAI安全的影响。结果发现部分错误保留语义但增加有害歧义，另一些则削弱模型拒答行为，使不安全计划得以生成。自动纠正ASR错误有时能降低风险但并非总是有效，凸显了语音接口对具身AI安全的重要威胁。",
+      "llm_tldr": "语音控制的具身智能体（EAI）依赖用户语音指令，但自动语音识别（ASR）错误可能让本应被拒绝的危险指令被接受并执行。论文模拟ASR错误并结合SafeAgentBench和POEX安全基准，系统评估各类错误对EAI安全的影响。结果发现部分错误保留语义但增加有害歧义，另一些则削弱模型拒答行为，使不安全计划得以生成。自动纠正ASR错误有时能降低风险但并非总是有效，凸显了语音接口对具身AI安全的重要威胁。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

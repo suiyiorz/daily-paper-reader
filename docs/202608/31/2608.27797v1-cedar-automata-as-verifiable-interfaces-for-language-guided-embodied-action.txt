@@ -1,0 +1,691 @@
+Title: CEDAR: Automata as Verifiable Interfaces for Language-Guided Embodied Action
+
+URL Source: https://arxiv.org/pdf/2608.27797v1
+
+Published Time: Mon, 31 Aug 2026 00:27:13 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+## CEDAR: Automata as Verifiable Interfaces for Language-Guided Embodied Action 
+
+Lekai Chen, Alvaro Velasquez and Ashutosh Trivedi 
+
+Department of Computer Science University of Colorado Boulder, USA 
+
+{lekai.chen, alvaro.velasquez, ashutosh.trivedi}@colorado.edu 
+
+Abstract 
+
+Natural-language tasking of embodied agents is rarely just goal specification: users also impose constraints that must persist while the world changes. Code-generating LLM agents can pro-duce plausible behaviors for such instructions, but their free-form programs provide no stable object to verify, compose with new constraints, or repair from a failing trace. We present CEDAR, a counterexample-guided framework that grounds instructions as regular languages over environment event traces. CEDAR uses a language model for semantic judgments and execution traces for correction, then represents both skills and specifications as deterministic finite automata. This turns constraints into exe-cutable finite-state objects: a learned skill can be intersected with a learned sleep at night or 
+
+stay in this biome specification, yielding a con-troller that enforces the learned constraint by construction rather than by repeated prompt-ing. In Minecraft, with the same simulator/API observations available to a program-generating baseline, CEDAR maintains temporal and spa-tial constraints that the baseline fails to preserve and amortizes reuse of learned skills, reducing cumulative LLM queries. These results suggest that regular languages offer a practical verifi-cation layer between natural-language instruc-tions and embodied-agent policies. 
+
+1 Introduction 
+
+Natural language is an attractive interface for task-ing embodied agents, but instructions rarely de-scribe only a terminal goal. They also encode tem-poral, spatial, and safety constraints: collect dia-monds but sleep at night ; explore the world but stay in the windswept forest ; mine minerals only at night .A useful agent must not merely execute a plausible program for the main goal; it must maintain a per-sistent interpretation of the user’s constraints while acting in a changing environment. Recent large-language-model (LLM) agents ad-dress open-world decision making by generating code, decomposing goals into subtasks, storing skills, or interleaving reasoning and action (Yao et al., 2023; Wang et al., 2023; Zhu et al., 2023; Liu et al., 2023; Wang et al., 2024). These sys-tems are flexible, but their learned skills are usually free-form programs or text memories. Such repre-sentations are hard to inspect formally. A generated program may satisfy a constraint once and then for-get it; two skills may be hard to compose safely; and a failure trajectory may not provide a precise object to repair. This paper studies a different interface between language and action: grounding a natural-language instruction into a regular language over environ-ment event traces . Instead of treating the LLM as the final policy, we use it as a noisy semantic teacher. The LLM helps select a compact alphabet of action, object, and event-predicate symbols and answers membership queries about whether a trace is consistent with an instruction. A DFA learner builds an explicit automaton, while an environment-backed equivalence oracle tests the automaton and returns counterexamples. The resulting controller is less expressive than arbitrary code, but it is min-imal up to isomorphism for the learned regular language, can be checked by replaying event traces, and is closed under operations such as intersection and concatenation. We instantiate this idea in CEDAR, aCounterexample-Driven Agent with Regular-language controllers. CEDAR represents both 
+
+skills and specifications as DFAs. Skill DFAs de-fine executable progress toward goals, while specifi-cation DFAs encode constraints induced by natural language. A learned skill and specification can be combined through product intersection; prerequi-site and follow-up skills can be combined through concatenation; and a failing execution trace can be returned to the learner as a counterexample. When a new task resembles a stored one, CEDAR reuses the DFA through template adaptation over a substi-arXiv:2608.27797v1 [cs.AI] 28 Aug 2026 1. Natural Language Specification  
+
+> Build a crafting table and fish, but sleep at night and stay in this biome. Mine Block
+> …
+> Craft CraftingTable
+> Fishing
+> Skill Library
+
+# ∩=
+
+> DFA Intersection Constrained DFA
+> DFA Learner
+> Alphabet Active Learning
+> Environment APIs Running Logs
+> 3. Environment
+> 2. CEDAR
+> Hypothesis Counterexample
+> APIs/Skills Game Objects
+> Events
+
+Figure 1: CEDAR workflow. The system grounds a natural-language goal or constraint into a compact symbolic alphabet, learns skill and specification DFAs using LLM membership queries (MQs) and environment or human counterexamples (CEs), stores reusable skill automata, and verifies execution by DFA composition. EQ denotes equivalence-query feedback from execution or human inspection. 
+
+tuted verb–object alphabet. A common point of confusion is the word mon-itor . In this paper, an event predicate or logger monitor is a read-only function over simulator/API state, such as time of day, biome, inventory, or whether an interaction changed the world. It is not a hidden perception module and not a hand-written safety shield. The code generated by V OYAGER 
+
+has access to the same underlying state variables through the environment API. The difference is representational and architectural: CEDAR con-verts natural-language goals and constraints into persistent finite-state objects that can be intersected, checked, reused, and repaired, whereas free-form code skills do not expose an formal language-level operation analogous to DFA intersection. To our knowledge, CEDAR is the first embodied-agent framework to use regular lan-guages as a shared executable representation for both learned skills and learned natural-language constraints. This shared representa-tion enables product intersection, concatenation, skill reuse under newly supplied constraints, and counterexample-guided relearning within one agent architecture. The main contribution is there-fore not a new DFA-learning algorithm. CA-PAL, active automata learning, and the use of an LLM as a semantic teacher build on prior work. The Minecraft experiments evaluate persistent con-straint enforcement and amortized skill reuse. The iTHOR study evaluates only whether alphabet grounding and environment-backed counterexam-ple repair can be instantiated in another simulator. 
+
+2 Task Formulation 
+
+We formulate instruction following as language grounding over event traces. Let E be an environ-ment. At each time step, the agent executes low-level actions and the environment exposes struc-tured observations through its simulator/API: in-ventory, time, biome, and nearby objects. CEDAR uses deterministic logger predicates over these same observations to emit symbolic events. A word extractor maps a trajectory of observations τ to a finite word w = ϕ(τ ) ∈ Σ∗ over a task-specific alphabet Σ.
+
+Alphabet. The global alphabet is a disjoint union 
+
+Σglobal = AP act ⊎ AP obj ⊎ AP evt , (1) where AP act contains control primitives such as mine , craft , and place ; AP obj contains objects such as diamond_ore or bed ; and 
+
+AP evt contains event-predicate symbols such as time=night , in_biome(windswept_forest) ,and has_ k(item) . A symbol is therefore either an executable action-object event or an observed pred-icate emitted by the logger. The logger predicate must be backed by an implemented environment query; the LLM selects among available predicates but does not create new sensors. 
+
+Instructions as languages. A user instruction 
+
+x induces two languages over traces: a goal lan-guage Lg(x) ⊆ Σ∗ and a constraint language 
+
+Lc(x) ⊆ Σ∗. For example, in collect diamonds but sleep at night , the goal language accepts traces that reach diamond collection, while the constraint language rejects traces in which the agent continues working through night without sleeping. CEDAR learns DFA hypotheses Ag and Ac for these lan-guages. A DFA is A = ( Q, Σ, δ, q 0, F ), with states 
+
+Q, transition function δ : Q × Σ → Q, initial state 
+
+q0 ∈ Q, and accepting states F ⊆ Q.
+
+Queries and counterexamples. We use active DFA learning algorithm CAPAL in a setting that is robust to persistent noise (Angluin, 1987; Chen et al., 2026). A membership query (MQ) asks whether a word w should be accepted. In CEDAR, an LLM answers MQs from the natural-language instruction and retrieved symbol descriptions. An equivalence query (EQ) asks whether the current DFA matches the target. For skill DFAs, the en-vironment approximates the EQ oracle: the agent executes the DFA, and receives a CE if accepted behavior does not achieve the intended outcome or rejected behavior is feasible. For high-level specifi-cations, a human may also provide CEs through an-notation, demonstration, or direct trace judgment.                
+
+> Term Meaning in CEDAR Alphabet ΣTask-specific set of actions, objects, and event-predicate symbols used to write traces. Word wSequence of symbols in Σextracted from environment logs. Skill DFA Automaton whose accepted words correspond to successful execution of a task skill. Specification DFA Automaton whose accepted words satisfy a persistent natural-language constraint. MQ Query asking whether a word is con-sistent with an instruction; answered by the LLM. EQ/CE Test of a hypothesis DFA; a mis-match yields acounterexample trace. Regular restriction The finite-state behavioral language imposed by a specification DFA; this is a learned formal constraint, not an extra sensor.
+
+Table 1: Language-grounding formulation. 
+
+3 CEDAR 
+
+The key design choice of CEDAR is to separate semantic grounding from control structure. The LLM supplies semantic judgments over language and symbols; the DFA supplies the persistent con-troller and formal operations. This separation is what makes a natural-language constraint such as 
+
+do not work at night persist throughout execution rather than appearing only as a line of prompt con-text or a one-time generated subtask. Figure 1 sum-marizes CEDAR. Skill B: Mine Diamond  
+
+> Skill A: Equip Pickaxe
+
+Merged Skill Human: You should sleep at night. 
+
+Figure 2: DFA composition for constraint enforcement. A learned specification DFA such as “sleep at night” is intersected with a learned skill DFA such as “mine diamond ore.” The resulting controller accepts exactly the traces accepted by both learned automata. Rejecting sinks and nonessential transition detail are omitted for readability. 3.1 Alphabet Construction 
+
+Learning over Σglobal is infeasible in an open-world environment with many APIs and objects, so CEDAR constructs a task-specific sub-alphabet 
+
+Σ before DFA learning. The important assumption is not that CEDAR receives extra predefined obser-vations, but that the environment already exposes structured state through the same simulator/API used by the code-generation baselines. Each can-didate symbol in Σglobal has two parts: a natural-language description used for retrieval and an ex-ecutable binding to an environment query, action primitive, or logger predicate. The LLM may select and prune symbols, but it cannot create a sensor from raw pixels or use a predicate that lacks an implementation. Our Minecraft global inventory contains 1,429 implemented symbols: 16 action primitives, 9 environment-event predicates, and 1,404 object symbols. The alphabet constructor embeds the instruction, retrieves candidate verbs, objects, and event predicates from this inventory, and asks the LLM to prune them into the finite alphabet used by the active learner. Evaluation against target alphabets from 44 validated skill DFAs yields abso-lute accuracy 0.9372 ± 0.10 and overlap coefficient 
+
+0.9208 ± 0.10 . The prompt and complete retrieval analysis are reported in Appendix B. If a required predicate is not implemented in 
+
+Σglobal , CEDAR cannot express the intended regu-lar language, just as a code-generating agent can-not reliably condition on an unavailable simula-tor variable. If the predicate exists globally but is omitted from the retrieved sub-alphabet, execu-tion may expose the omission when the resulting behavior conflicts with an outcome recognized by the approximate equivalence oracle. In that case, CEDAR expands the alphabet and restarts learn-ing. This mechanism is not complete: an omitted predicate may prevent the learned DFA from repre-senting part of the instruction while the available oracle nevertheless accepts the resulting behavior. The DFA can then reach an accepting state despite failing to capture the full intended semantics. 
+
+3.2 Active DFA Learning under Noise 
+
+For a fixed instruction and alphabet, the learner repeatedly asks MQs, updates a DFA hypothesis, and tests it through execution. The LLM is not assumed to be a perfect oracle. We follow the prob-abilistic MAT view and use the CAPAL persistent-noise-aware active DFA-learning procedure (Chen et al., 2026): repeated and inconsistent MQ an-swers are reconciled in the query cache, while en-vironment CEs correct systematic semantic errors. The system-level instantiation, including cache res-olution, hypothesis construction, equivalence test-ing, is given in Appendix G. For skill learning, the EQ oracle is implemented by execution. The current DFA is converted into a policy by choosing a shortest path from the cur-rent automaton state to an accepting state. If an invoked transition is absent from logs or fails to produce the expected event, the edge is temporarily disabled and the path is recomputed. If no accept-ing path remains, the trace is stored as a negative CE. If the DFA reaches an accepting state but the environment does not satisfy the intended goal, the accepted trace is likewise returned as a CE. The CE is passed to CAPAL’s refinement routine, which updates the learner’s observation storage and recon-structs the next hypothesis. Learning terminates when execution succeeds without producing a CE within the interaction budget. 
+
+3.3 Skill Storage, Retrieval, and Adaptation 
+
+A learned skill is stored as 
+
+s = ⟨A, v, n, E, D ⟩, (2) where A is the DFA, v ∈ AP act is a verb, n ∈
+
+AP obj is an object, E ⊆ AP evt is the set of success events, and D ⊆ Σ∗×{ 0, 1} is the labeled evidence used to learn the DFA. The evidence set is the union of MQ labels and EQ counterexamples. For a new query (v′, n ′), the Skill Manager first attempts exact symbolic lookup. If v′ = v and n′ =
+
+n, the stored DFA is reused directly. If the verb matches but the object differs, the manager treats the existing DFA as a template: it substitutes noun-specific symbols, updates examples accordingly, and refines the adapted DFA through the active learner. If the verb differs, the system learns a new skill. This symbolic reuse is the main source of amortized efficiency. 
+
+3.4 Verifying Natural-Language Constraints 
+
+Specifications are learned as DFAs with the same procedure, except that human counterexamples may be used when the intended constraint is am-biguous. The specification DFA is the persistent constraint object: it is learned from natural lan-guage and counterexamples, not hand-coded as an Figure 3: Sleep-at-night constraint. Action counts and average health for V OYAGER and CEDAR over repeated trials lasting three Minecraft days (aggregated over 24,000 ticks). Health denotes the averaged exact health value in the gameplay. Curves and error regions denote means and standard deviations. CEDAR suppresses night-time work because the constraint remains active throughout execution. 
+
+external guard. Once a specification DFA Ac and a skill DFA Ag are available, CEDAR enforces their conjunction by product intersection: 
+
+L(Ag ∩ Ac) = L(Ag) ∩ L(Ac). (3) The composed automaton accepts exactly the traces accepted by both learned automata. This is an exact guarantee with respect to Ag and Ac; it is not inde-pendently a certificate that either learned automa-ton faithfully captures every clause of the original natural-language instruction. Appendix J reports the component-state counts, the Cartesian-product upper bounds, etc. A code-generating baseline can be prompted with the same natural-language con-straint, and in our experiments it is; however, its stored skills are free-form programs rather than formal languages, so there is no exact operation analogous to L(Ag) ∩ L(Ac) for reusing a previ-ously learned skill under a newly supplied con-straint. Section 4 separately tests whether adding the same runtime assertion-and-repair condition to VOYAGER and C ODE ACT closes this gap. CEDAR also chains skills through concatena-tion. If A1 accepts traces for a prerequisite skill and A2 accepts traces for a follow-up skill, accept-ing states of A1 are connected to the initial state of 
+
+A2. Unlike unconstrained sequential calls to code skills, the DFA composition exposes whether the first skill actually reached an accepting condition before the second is invoked. 
+
+4 Experiments 
+
+We evaluate four questions. Q1: Under matched simulator/API observations, can regular-language controllers maintain natural-language constraints during execution? Q2: Does DFA skill reuse im-prove goal completion and LLM query cost? Q3: 
+
+Are the LLM-grounded alphabet and counterexam-ple loop reliable enough for practical learning? Q4: 
+
+Can the same grounding pipeline be instantiated outside Minecraft? The primary environment is Minecraft. We com-pare against V OYAGER (Wang et al., 2023) and CODE ACT (Wang et al., 2024), including versions of each method with and without an assertion-and-repair mechanism. All methods receive the same task instruction and access to the same underlying simulator/API state variables. For the V OYAGER 
+
+comparisons, we use the same map, spawn location, simulator APIs, and task instruction. CEDAR’s event predicates are deterministic recodings of state variables available through those APIs and do not provide additional perceptual information. Human CEs are not used for task-completion skill learning, the code-baseline comparisons, or the iTHOR experiments. They are used only in the high-level specification demonstrations, for which Appendix D reports the feedback modality, number of interventions, annotation source, and cost. We evaluate five iTHOR tasks as a feasibility study of alphabet grounding and environment-backed CE repair, not as a comparative benchmark or as evi-dence of cross-simulator skill reuse or specification intersection. The LLM components use GPT-5.5 for task decomposition and MQs, GPT-5.4-mini for JSON translation, and text-embedding-3-large 
+
+for embeddings. 
+
+4.1 Constraint Following in Minecraft Sleep at night. The instruction is: craft a di-amond pickaxe and keep collecting diamonds; sleep at night; you are given a bed . We eval-uate V OYAGER and C ODE ACT both with and without the same assertion night -> sleep before controller yield , and compare them with CEDAR’s learned specification-DFA com-position. Consequently, a reused or long-running code skill may continue executing after night be-Figure 4: Mine-minerals-only-at-night constraint. Temporal distribution of actions and collected objects over five trials per method, with a fixed budget of 24,000 simulator ticks per trial. The direct compliance metric—the fraction of mineral-mining actions executed outside the night interval—is reported in Table 3.                                        
+
+> Method Found diamond Constraint compliant Joint success Mean health ↑
+> VOYAGER without assertions 4/5 0/5 0/5 4.0±3.16
+> VOYAGER with assertions 4/5 2/5 0/5 8.4±4.56
+> CODE ACT without assertions 3/5 1/5 0/5 4.8±3.03
+> CODE ACT with assertions 0/5 3/5 0/5 12 .0±5.83
+> CEDAR 5/5 5/5 5/5 18 .4±2.61
+
+Table 2: Sleep-at-night assertion comparison. Exact 95% binomial confidence intervals are reported in Appendix H. Because n = 5 , the comparison is interpreted descriptively rather than as a high-powered estimate of population-level success probabilities. 
+
+gins until control returns to the assertion bound-ary.Table 2 reports task completion, constraint com-pliance, joint success, and health over five trials per condition. A run is counted as successful if it finds a diamond, as constraint-compliant if it doesn’t vi-olate any assertions programmed by experts, and as jointly successful only if both events occur in the same trajectory. Health is computed as terminal health at corresponding trajectory ticks. Runtime assertions improve local compliance, but none of the four code conditions achieves joint task-and-constraint success in the five evaluated trials. Trace inspection indicates that the assertions can repair a violation only when control returns to the assertion boundary: plans may treat sleep as a one-time subgoal, and reused or long-running skills may continue after night begins. CEDAR instead includes the learned specification state in the composed controller throughout execution. 
+
+Mine minerals only at night. The instruction is: explore the world and collect as many different items as possible, but dig for minerals like iron and diamond only at night . Both methods receive a fixed budget of 24,000 simulator ticks per trial. We measure constraint compliance through the day-time mineral-mining action counts. Table 3 sum-marizes object collection and Figure 4 shows the temporal distribution of actions and collected ob-                                   
+
+> Method Actions Underground Overground Items Objects VOYAGER 106 ±4.6157 ±15 48 .6±8.724 .8±6229 ±14
+> CEDAR 137 ±12 189 ±30 141 ±17 57 .4±4.7387 ±13
+
+Table 3: Minecraft instruction following for “mine min-erals only at night.” Values are mean ± standard devia-tion for the corresponding recorded events. 
+
+jects. CEDAR performs more total actions, col-lects more underground and overground objects under the reported protocol, and obtains more total items. The result reflects the difference between a one-time subtask and a persistent temporal re-striction: CEDAR’s higher action count reflects its use of daytime for exploration and nighttime for mineral extraction under the fixed horizon. 
+
+Stay in a requested biome. For the instruction 
+
+explore the world but stay in the windswept forest ,CEDAR includes biome-predicate symbols in the alphabet and learns a spatial constraint DFA. The biome predicate is obtained from the same simula-tor state available to both agents; CEDAR differs by turning it into a persistent formal constraint. The baseline traverses multiple biomes, while CEDAR restricts activity to the target biome. Figure 5 shows the resulting activity heatmaps. This experiment shows that the same language-grounding mecha-nism handles non-temporal event predicates. Figure 5: Biome constraint. Background colors denote Minecraft biomes and heatmap intensity denotes bot activity. CEDAR remains in the requested windswept forest region, while V OYAGER moves across biome boundaries. The heatmaps show an aggregation of location visit frequencies over 5 trials.                                                                                       
+
+> Method Wooden Pickaxe Iron Pickaxe Diamond Pickaxe Lava Bucket Compass VOYAGER w/o S.L. 6.9±2.1(25/25) 30 .4±4.5(25/25) 33 .4±10 .4(11/25) 26 .4±7.2(19/25) 25 .9±2.9(17/25) VOYAGER 4.2±3.5(25/25) 16 .2±3.8(25/25) 28 .9±10 .7(17/25) 22 .3±5(25/25) 17 .7±2.8(25/25) CEDAR w/o S.L. 6.6±2.8(25/25) 30 .4±3.3(25/25) 45 .9±11 .1(18/25) 27 .2±5.6(25/25) 29 .8±2.1(9/25) CEDAR 5.5±4(25/25) 9.6±6(25/25) 19 .8±6.5(23/25) 10 .5±8.5(25/25) 10 ±2.7(25/25)
+
+Table 4: Minecraft goal completion. Each method–task condition contains 25 trials. Entries report prompting iterations as mean ± standard deviation over successful trajectories only. Exact 95% binomial confidence intervals for success rates are reported in Appendix I. S.L. denotes a skill library. 
+
+4.2 Goal Completion and Skill Reuse 
+
+Table 4 reports prompting iterations and success rates for Minecraft crafting tasks. Without a skill library, CEDAR incurs additional interactions be-cause it must learn and test a DFA. With a learned library, CEDAR adapts stored DFAs instead of re-peatedly prompting for new code. Among success-ful trajectories, CEDAR with a skill library uses fewer mean prompting iterations than V OYAGER 
+
+with a skill library on four of the five tasks. These means are conditioned on success, however, and therefore summarize different trajectory subsets when success rates differ. They are not uncondi-tional efficiency estimates. Appendix I reports ex-act confidence intervals for the success rates, while Appendix A provides the cleaner cumulative-query accounting for the amortization claim. Appendix A reports cumulative LLM-query and wall-clock accounting for the amortization claim; these resource-budget measurements are kept sepa-rate from statistical task-performance estimates. 
+
+4.3 Grounding Reliability 
+
+The alphabet and CCE loop are explicit dependen-cies of the method, so we analyze them separately from end-to-end task success. Against their vali-dated target alphabets, retrieval achieves absolute accuracy 0.9372 ± 0.10 and overlap coefficient 
+
+0.9208 ± 0.10 . Appendix B reports the complete retrieval analysis. Appendix C.2 separately eval-uates environment-backed CE discovery by per-turbing correct skill DFAs. The average reported discovery accuracy is 0.9358. Together, these anal-yses support the practical use of an LLM semantic teacher corrected through environment feedback while leaving absent, rare, or noisy predicates as central failure modes. In particular, neither analysis establishes that every instruction-relevant predicate will be retrieved or that a silent alphabet omission will always be detected. 
+
+4.4 iTHOR Feasibility Study 
+
+To test whether task-specific alphabet grounding and environment-backed counterexample repair can be instantiated outside Minecraft, we run (a) Make a toast    
+
+> (c) Cook a potato (b) Make coffee Figure 6: iTHOR grounding-and-repair feasibility rollouts. Time-lapse frames for making toast, making coffee, and cooking a potato. The potato task initially produced a CE due to camera perspective; adding a LOOKUP action repaired the DFA without extra LLM queries. These rollouts show that the pipeline can run outside Minecraft, but they are not used as a comparative benchmark. Results are based on 3 runs.
+
+five iTHOR tasks: M AKE TOAST , M AKE COF -
+
+> FEE
+
+, C OOK POTATO , M AKE SALAD , and S TORE 
+
+PLATE IN FRIDGE . They do not evaluate persis-tent constraint enforcement, skill reuse, or amor-tized reuse outside Minecraft. Each task uses task-specific alphabet construction, executable predicate bindings, and an execution-backed counterexample loop. Each skill requires two LLM calls: one for sub-alphabet construction and one to synthesize the code-based oracle program that binds logger predi-cates and action stubs. Four tasks succeed in a sin-gle pass. C OOK POTATO initially fails because of camera perspective; the approximate equivalence oracle returns a counterexample, and inserting a 
+
+LOOKUP action repairs the DFA without additional LLM calls. Representative rollouts are shown in Figure 6. We do not present V OYAGER results in iTHOR because its released implementation is coupled to Minecraft and Mineflayer APIs. Accord-ingly, all comparative claims, persistent constraint-enforcement claims, and skill-reuse claims in this paper are supported by the Minecraft evaluation. 
+
+5 When Do Regular Languages Suffice? 
+
+A central limitation of CEDAR is also its source of interpretability: DFAs recognize regular lan-guages. They cannot count indefinitely, store un-bounded memory, or implement arbitrary recursion as JavaScript programs can. We therefore charac-terize the intended use case. Let Σ be a task alphabet extracted from imple-mented logger predicates, including thresholded predicates such as has_ 3_cobblestone , time pred-icates such as time=night , and spatial predicates such as in_biome(x) . If all numerical conditions needed for a skill are exposed as finite milestone predicates and each subtask completes or fails within a bounded event horizon H, then the suc-cessful traces of that subtask are regular. Intuitively, these predicates convert environment state into fi-nite symbols, and the bounded horizon yields a finite control graph. Under these assumptions, in-tersection for constraint enforcement and concate-nation for skill chaining preserve regularity. This analysis clarifies both the power and the boundary of the approach. CEDAR is appropri-ate when instructions can be expressed through finite milestones and persistent temporal or spatial restrictions backed by available environment predi-cates. It is less appropriate when the task requires unbounded counting, arbitrary data structures, or long-range memory not captured by the logger. In such settings, DFAs may still be useful as learned constraints, but the skill representation should be extended to richer formal models such as counter automata, visibly pushdown automata, or recursive state machines. 
+
+6 Related Work 
+
+A related line translates natural-language instruc-tions into temporal logic (Fuggitti and Chakraborti, 2023; Pan et al., 2023; Liu et al., 2024). These methods typically assume a proposition vocabulary and study formula translation using paired natural-language and formal specifications. CEDAR in-stead retrieves an API-backed task alphabet and learns an executable DFA through active judgments and execution CE. The supervision assumptions are therefore different, and we do not empirically establish superiority over NL-to-LTL translation systems. An NL-to-LTL front end could initial-ize a specification DFA when its output is regular or compilable to a finite monitor; subsequent CE-guided repair would remain complementary. Automata have previously been used as a verifi-cation layer for LLM-generated robot programs. In particular, Yang et al. (2024) convert generated pro-grams into automaton-based representations and verify them against externally supplied safety spec-ifications. This establishes the broader use of au-tomata for verifying generated programs, which we do not claim as novel. CEDAR addresses a differ-ent interface: it learns both the skill automaton and the natural-language constraint automaton from se-mantic judgments and execution traces, stores both as executable agent representations, and then com-poses the learned objects. Classical active DFA learning identifies reg-ular languages through membership and equiv-alence queries (Angluin, 1987). Recent work studies LLMs as probabilistic semantic teachers and persistent-noise-tolerant active DFA learning (Chen et al., 2026); related work also learns au-tomata from natural-language oracles (Vazquez-Chanlatte et al., 2024). CEDAR inherits these learning ideas rather than introducing a new ac-tive automata-learning algorithm. Its contribu-tion is their use within an embodied-agent archi-tecture in which both reusable skills and learned language constraints share the same executable regular-language representation. Xu et al. (2020) jointly infer reward machines and reinforcement- learning policies by collecting episodes whose observed rewards are inconsistent with a hypothesis reward machine and then re-learning the hypothesis. CEDAR likewise uses execution inconsistencies as counterexamples, but addresses a different setting and interface: it con-structs task-specific alphabets from simulator APIs, uses an LLM to judge natural-language trace mem-bership, executes learned DFAs as controllers, and composes learned skill and specification automata. Counterexample-guided automaton refinement it-self is therefore inherited rather than claimed as novel. Safe reinforcement learning and shield-ing constrain policies during learning or execu-tion (Moos et al., 2022; Gu et al., 2024). These methods generally assume that the relevant con-straint or shield is already available. CEDAR ad-dresses the preceding grounding problem by learn-ing a finite-state specification from natural lan-guage and counterexamples. A learned CEDAR specification DFA could in principle be used as a shield around another controller, but this paper does not compare against systems supplied with independently validated formal specifications and does not claim that its learned DFAs are certified safety specifications. More broadly, recent work on efficient LLM reasoning reduces the effective reasoning space through relevance-based pruning, structured search, model routing, and cache reuse (Ye et al., 2026a; Guo et al., 2026; Ye et al., 2026b; Wen et al., 2026); CEDAR is complementary in reducing the symbolic decision space through task-specific alphabet retrieval. 
+
+7 Conclusion 
+
+We presented CEDAR, the first framework that uses regular languages as a verifiable representation for learned embodied skills and natural-language constraints. Within the evaluated symbolic, event-driven setting, this shared representation makes learned instruction semantics explicit: skill and specification automata can be combined by product intersection, skills can be chained and reused, and failing execution traces can be returned as coun-terexamples for relearning. The Minecraft exper-iments provide evidence for persistent temporal and spatial constraint following, including relative to V OYAGER and C ODE ACT variants augmented with the same runtime assertion-and-repair condi-tion. They also provide the evidence for amortized skill reuse. The iTHOR study demonstrates that the same pipeline can be instantiated in another simulator. Overall, the results support regular lan-guages as a practical common substrate for learned skills and constraints when instructions can be rep-resented through finite predicates. 
+
+Limitations 
+
+Evidence for persistent constraint enforcement, skill composition, and amortized reuse comes from Minecraft. The iTHOR study evaluates only alpha-bet grounding, executable predicate binding, and environment-backed counterexample repair. CA-PAL assumes structured simulator/API observa-tions and does not reliably extract predicates from raw visual input. The evaluated environments are discrete and symbol-rich; we claim no advantage over code or continuous-control policies requiring unbounded memory, arbitrary data structures, or fine-grained continuous state. DFA intersection exactly enforces the languages represented by the learned automata, but fidelity to the user’s instruction depends on the selected alphabet and the correctness of membership- and equivalence-query feedback. Missing predicates can silently omit intended clauses while still per-mitting acceptance. Execution-backed alphabet expansion may reveal some omissions, but it is in-complete, and we do not systematically measure their rate. Incorrect human counterexamples can define the wrong learning target and steer CAPAL to-ward an incorrect automaton. Appendix D doc-uments the human-feedback demonstrations, but this study does not establish robustness to incorrect or conflicting feedback. Where only one provider was used, inter-annotator sensitivity cannot be esti-mated. Product automata have worst-case multiplicative state growth. Although the tested compositions re-main small (Appendix J), this does not guarantee general scalability. Retrieval is evaluated over the current 1,429-symbol inventory without controlled variation of inventory size or target-automaton com-plexity. Finally, learned specification DFAs are not cer-tified safety specifications. They are insufficient for physical robots or other safety-critical systems without independently validated sensing, specifi-cations, runtime enforcement, and fail-safe con-trol. Exact composition cannot correct incorrectly grounded semantics. 
+
+Acknowledgments 
+
+This work was supported by DARPA award num-ber HR0011261E001 and the NSF under CAREER Award CCF-2146563. Ashutosh Trivedi is a Royal Society Wolfson Visiting Fellow and gratefully ac-knowledges support from the Wolfson Foundation and the Royal Society. 
+
+References 
+
+Dana Angluin. 1987. Learning regular sets from queries and counterexamples. Information and Computation ,75(2):87–106. Lekai Chen, Ashutosh Trivedi, and Alvaro Velasquez. 2026. Towards persistent noise-tolerant active learn-ing of regular languages with class query. In The Fourteenth International Conference on Learning Representations .Francesco Fuggitti and Tathagata Chakraborti. 2023. NL2LTL: A python package for converting natural language instructions to linear temporal logic for-mulas. In Proceedings of the AAAI Conference on Artificial Intelligence, System Demonstrations .Shangding Gu, Long Yang, Yali Du, Guang Chen, Flo-rian Walter, Jun Wang, and Alois Knoll. 2024. A re-view of safe reinforcement learning: Methods, theory and applications. arXiv preprint arXiv:2205.10330 .Yu Guo, Shenghao Ye, Shuangwu Chen, Zijian Wen, Tao Zhang, Bai Qirui, Dong Jin, Yunpeng Hou, Huasen He, Jianyang, and Xiaobin Tan. 2026. Re-thinking table pruning in TableQA: From sequential revisions to gold trajectory-supervised parallel search. In Proceedings of the 64th Annual Meeting of the As-sociation for Computational Linguistics (Volume 1: Long Papers) , pages 12960–12976, San Diego, Cali-fornia, United States. Association for Computational Linguistics. Jason Xinyu Liu, Ankit Shah, George Konidaris, Ste-fanie Tellex, and David Paulius. 2024. Lang2ltl-2: Grounding spatiotemporal navigation commands us-ing large language and vision-language models. In 
+
+IEEE/RSJ International Conference on Intelligent Robots and Systems .Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu Gu, Hangliang Ding, Kaiwen Men, Kejuan Yang, Shudan Zhang, Xiang Deng, Ao-han Zeng, Zhengxiao Du, Chenhui Zhang, Sheng Shen, Tianjun Zhang, Yu Su, Huan Sun, and 3 others. 2023. Agentbench: Evaluating llms as agents. arXiv preprint arXiv:2308.03688 .Janosch Moos, Kay Hansel, Hany Abdulsamad, Svenja Stark, Debora Clever, and Jan Peters. 2022. Robust reinforcement learning: A review of foundations and recent advances. Machine Learning and Knowledge Extraction , 4(1):276–315. Jiayi Pan, Glen Chou, and Dmitry Berenson. 2023. Data-efficient learning of natural language to linear temporal logic translators for robot task specification. In IEEE International Conference on Robotics and Automation .Marcell Vazquez-Chanlatte, Karim Elmaaroufi, Stefan J. Witwicki, and Sanjit A. Seshia. 2024. l∗lm: Learn-ing automata from examples using natural language oracles. arXiv preprint arXiv:2402.07051 .Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Man-dlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. 2023. Voyager: An open-ended embodied agent with large language models. In Ad-vances in Neural Information Processing Systems .Xingyao Wang, Yangyi Chen, Lifan Yuan, Yizhe Zhang, Yunzhu Li, Hao Peng, and Heng Ji. 2024. Executable code actions elicit better llm agents. In Proceed-ings of the 41st International Conference on Machine Learning , ICML’24. JMLR.org. Zijian Wen, Tao Zhang, Shuangwu Chen, Shenghao Ye, Yu Guo, Qirui Chen, Jingxian Shuai, Yunpeng Hou, Huasen He, and Jianyang. 2026. SpecCache: Spec-ulative KV cache reuse for efficient RAG serving. In Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 18861–18871, San Diego, Cali-fornia, United States. Association for Computational Linguistics. Zhe Xu, Ivan Gavran, Yousef Ahmad, Rupak Majum-dar, Daniel Neider, Ufuk Topcu, and Bo Wu. 2020. Joint inference of reward machines and policies for reinforcement learning. In Proceedings of the In-ternational Conference on Automated Planning and Scheduling , volume 30, pages 590–598. Yunhao Yang, Neel P. Bhatt, William Ward, Zichao Hu, Joydeep Biswas, and Ufuk Topcu. 2024. Joint verification and refinement of language models for safety-constrained planning. arXiv preprint arXiv:2410.14865 .Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. React: Synergizing reasoning and acting in language models. In International Conference on Learning Representations .Shenghao Ye, Yu Guo, Dong Jin, Yuxiang Wang, Yikai Shen, Yunpeng Hou, Shuangwu Chen, Jianyang, and Xiaofeng Jiang. 2026a. When TableQA meets noise: A dual denoising framework for complex questions and large-scale tables. In Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 24022– 24045, San Diego, California, United States. Associ-ation for Computational Linguistics. Shenghao Ye, Yuxiang Wang, Yu Guo, Dong Jin, Shuangwu Chen, and Jian Yang. 2026b. Rethink-ing stepwise model routing: A cost-efficient table reasoning perspective. Preprint , arXiv:2605.29319. Xizhou Zhu, Yuntao Chen, Hao Tian, Chenxin Tao, Wei-jie Su, Chenyu Yang, Gao Huang, Bin Li, Lewei Lu, Xiaogang Wang, Yu Qiao, Zhaoxiang Zhang, and Jifeng Dai. 2023. Ghost in the minecraft: Gener-ally capable agents for open-world environments via large language models with text-based knowledge and memory. arXiv preprint arXiv:2305.17144 .A LLM Query and Runtime Cost 
+
+The cost of DFA learning is front-loaded. Once a DFA is learned, retrieval, intersection, and con-catenation are symbolic operations. On the Find a Diamond milestone sequence, CEDAR uses more queries at the first logging milestone but fewer cu-mulative queries from the Cobblestone milestone onward, reaching the final diamond milestone with 37 LLM queries compared with 75 for V OYAGER 
+
+(Table 5 and Figure 7). Wall-clock measurements show the same amortization effect: CEDAR incurs DFA construction time but has much lower skill-addition and total execution time under the reported protocol (Table 6). These resource-budget results are separate from statistical task-performance es-timates: success or object-count claims should be supported by confidence intervals, while amortiza-tion claims are based on cumulative LLM-query and runtime accounting. 
+
+Method Logs Table Cobble Furnace Iron Diamond VOYAGER 4 13 25 34 41 75 CEDAR 18 20 23 28 30 37 
+
+Table 5: Cumulative LLM queries on the Find a Dia-mond milestone sequence. Lower is better. Logs Crafting Table Cobblestone Furnace Iron Ingot Diamond Milestone towards 'Find a Diamond' 10 20 30 40 50 60 70 Cumulative LLM Queries (lower is better)   
+
+> Crossover
+> 413 25 34 41 75 18 20 23 28 30 37
+
+W1: Runtime Budget Comparison 
+
+> Voyager CEDAR
+
+Figure 7: Cumulative LLM-query budget for the Find a Diamond milestone sequence. CEDAR pays an early alphabet-construction cost but amortizes it through DFA reuse and reaches the final milestone with fewer total queries. 
+
+Stage VOYAGER CEDAR Task decomposition 2.749 ± 1.238 3.943 ± 2.134 
+
+Code/sample generation 6.381 ± 1.990 5.548 ± 1.876 
+
+Program description 2.384 ± 1.208 N/A Skill addition 2.653 ± 1.228 0.021 ± 0.008 
+
+DFA construction N/A 18 .548 ± 14 .289 
+
+Skill retrieval 0.323 ± 0.235 0.089 ± 0.586 
+
+Total execution 62 .427 ± 55 .834 33 .101 ± 24 .391 
+
+Table 6: Stage-wise wall-clock time in seconds, reported as mean ± standard deviation over 5 independent mea-surements per stage. 
+
+Task LLM calls Outcome MAKE TOAST 2 success MAKE COFFEE 2 success COOK POTATO 2 success after CE fix MAKE SALAD 2 success STORE PLATE IN FRIDGE 2 success 
+
+Table 8: iTHOR query budget for the feasibility study. The counterexample fix for C OOK POTATO did not re-quire additional LLM calls. Each task is evaluated over 3 executions. 
+
+B Alphabet Retrieval Details Global Alphabet Actions Control Primitives 
+
+> Craft[] exploreUntil[] getPlaced[]back Kill[] Mine[] Place[] Shoot[] Smelt[] Get[]FromChest Deposit[]IntoChest
+
+Events 
+
+> Inventory Changes Time of Day On Ground Life Status In Water In Lava Movements Collisions
+
+Objects 
+
+> "andesite" "andesite_wall" "attached_pumpkin_stem" "barrel" "basalt" "beacon" "bedrock" …"zombified_piglin_spawn_egg"
+
+Specification 
+
+> Text Embedding
+
+Prompter 
+
+> Symbols
+
+LLM 
+
+> Please use the symbols provided in `{}` to construct an alphabet for a DFA representing the specification `{}` in Minecraft. Follow these rules: 1. Combine verbs with appropriate nouns: some verbs (e.g., "mine", "exploreUntilFind") should only be paired with blocks, others (e.g., "smelt", "place") with items, and some (e.g., "kill") with entities. 2. Events should be stand-alone symbols and not combined with other symbols. 3. If certain symbols are irrelevant to the specification, omit them.
+
+Figure 8: RAG-based alphabet construction. From the global action, object, and event-predicate alphabet, retrieval selects task-relevant symbols that the LLM prunes into the finite alphabet used for DFA learning. The selected predicates are symbolic recodings of exist-ing simulator/API observations, not additional percep-tual inputs. 
+
+The alphabet constructor retrieves candidate sym-bols with implemented environment bindings and asks the LLM to build a compact alphabet. We eval-uate the retriever against target alphabets derived from 44 validated skill DFAs. Table 7 reports high absolute accuracy and overlap, indicating that the LLM usually reasons over a relevant subalphabet rather than the full global space. This is an analy-sis of symbol retrieval, not a claim that CEDAR invents new sensors. 
+
+Metric Absolute Acc. Overlap Coef. Cosine Sim. RAG 0.9372 ± 0.10 0.9208 ± 0.10 0.4500 ± 0.14 
+
+Table 7: RAG alphabet-construction performance over 44 validated skill DFAs. C Additional Results 
+
+C.1 iTHOR Query Budget C.2 Counterexample Discovery by Item 
+
+Item Accuracy Standard deviation Dirt 0.9727 0.1629 Birch Log 0.8636 0.3432 Grass Block 1.0000 0.0000 Birch Leaves 0.9909 0.0949 Stone 0.9727 0.1629 Coal Ore 1.0000 0.0000 Iron Ore 1.0000 0.0000 Copper Ore 0.9909 0.0949 Gold Ore 0.9636 0.1872 Redstone Ore 0.9636 0.1872 Emerald Ore 0.4909 0.4999 Diamond Ore 0.9818 0.1336 Lapis Ore 0.9636 0.1872 Andesite 0.9818 0.1336 Granite 0.9636 0.1872 Sand 0.8727 0.3333 Average 0.9358 0.1692 
+
+Table 9: Counterexample discovery in Minecraft simu-lations after perturbing correct skill DFAs. 0.0 2.5 5.0 7.5 10.0 12.5 15.0 CE Length 0.0 0.2 0.4 0.6 0.8 1.0 Mean and Std 
+
+> 0100 200 300 400 500 Counts mean std Counts
+
+Figure 9: Counterexample collection by CE length. 
+
+Shorter counterexamples are easier to surface during simulation; most observed CEs have length below seven, where collection probability remains high. 
+
+C.3 Expert DFA Reference 
+
+As an upper-bound diagnostic for the representa-tion, manually designed DFA skills were tested on the same Minecraft tasks. This is not a learn-ing baseline: it assumes expert construction and bypasses the language-grounding problem. The expert DFAs achieved 10/10 success for Wooden Pickaxe, Iron Pickaxe, Lava Bucket, and Compass, and 9/10 for Diamond Pickaxe, with the failure caused by map initialization. 
+
+D Human Counterexample Accounting 
+
+Human feedback is used only for the high-level specification demonstrations. It is not used for         
+
+> Specification Human CEs Final DFA states Sleep at night 89Mining only at night 55Stay in windswept forest 42
+
+Table 10: Human counterexamples used for specification-DFA learning. The modality identifies trajectory annotation, demonstration logs, or direct formal trace judgment. Time reports the total annotation time used in the reported run rather than a theoretical intervention bound. 
+
+Minecraft task-completion skill learning, the code-baseline comparisons, or the iTHOR experiments. Table 10 reports the interventions actually used in the reported specification-learning runs. The reported specification feedback was sup-plied by on human expert (author). Consequently, the experiments do not measure inter-annotator dis-agreement or sensitivity to alternative interpreta-tions. A semantically incorrect counterexample can define an incorrect target language and cause CAPAL to learn the wrong specification DFA. 
+
+Figure 10: Human counterexample interfaces. Coun-terexamples can be supplied through trajectory annota-tion, demonstration logs, or direct formal words over the DFA alphabet. 
+
+E Prompt Sketch for Alphabet Construction 
+
+The RAG-style alphabet constructor retrieves candi-date symbols with implemented environment bind-ings and asks the LLM to build a compact alphabet. A simplified prompt is shown below: 
+
+Given the specification and the candidate sym-bols in braces, construct an alphabet for a DFA in Minecraft. Combine verbs with appropriate nouns: mine should be paired with blocks, smelt 
+
+and place with items, and kill with entities. Event predicates should remain standalone sym-bols. Omit irrelevant symbols. Return only the selected symbols. 
+
+F Failure Modes 
+
+Missing predicates. If no implemented symbol represents a required milestone, the DFA cannot encode it. For example, a task requiring at least three cobblestones needs a finite event predicate such as has_3_cobblestone . Without that predi-cate, the DFA may over-accept or fail to distinguish relevant progress states. If the predicate exists in the global inventory but is omitted from the re-trieved task alphabet, an execution counterexample may expose the omission and trigger alphabet ex-pansion. This recovery is not guaranteed: if the available oracle does not recognize the semantic mismatch, the incomplete DFA may still reach an accepting state. This is a logger/alphabet limitation rather than an observation-advantage assumption, since code-generating agents also require access to the relevant simulator variable. 
+
+Rare long-horizon counterexamples. Coun-terexamples become harder to discover when an incorrect transition appears only after a long exe-cution prefix. Most simulated counterexamples are short, but rare long-horizon failures remain possi-ble. 
+
+Shared semantic misunderstanding. The LLM and human feedback provider may share an incor-rect interpretation of an ambiguous instruction. A semantically incorrect counterexample can then define the wrong target language and direct the ac-tive learner toward an incorrect automaton. Coun-terexamples help only when at least one oracle can recognize the mismatch. CEDAR does not claim robustness to systematically incorrect equivalence feedback. 
+
+G CEDAR Instantiation of CAPAL 
+
+Algorithm 1 gives the system-level interaction be-tween CEDAR and CAPAL. CAPAL maintains its active-learning state, including its prefix set, suffix sets, state partition, discrimination tree, and hypoth-esis DFA. CEDAR supplies semantic membership judgments, persistent query-cache evidence, and execution-backed counterexamples. 
+
+Algorithm 1 CEDAR instantiation of CAPAL 
+
+Require: Instruction x; initial alphabet Σ; CA-PAL learner L; membership-query budget 
+
+BMQ ; execution/EQ budget BEQ 
+
+Ensure: DFA hypothesis A or budget-exhaustion report  
+
+> 1:
+
+Initialize persistent MQ cache C ← ∅ 
+
+> 2:
+
+Initialize gold counterexample cache G ← ∅ 
+
+> 3:
+
+Initialize L on Σ 
+
+> 4:
+
+bMQ ← 0; bEQ ← 0 
+
+> 5:
+
+while true do  
+
+> 6:
+
+while HAS PENDING MQ( L) do  
+
+> 7:
+
+w ← NEXT MQ (L) 
+
+> 8:
+
+if w ∈ G then  
+
+> 9:
+
+ˆy ← G[w] 
+
+> 10:
+
+else if w ∈ C then  
+
+> 11:
+
+ˆy ← C[w] 
+
+> 12:
+
+else  
+
+> 13:
+
+if bMQ = BMQ then  
+
+> 14:
+
+return budget-exhaustion re-port and latest hypothesis, if available  
+
+> 15:
+
+end if  
+
+> 16:
+
+ˆy ← LLMJ UDGE (x, Σ, w ) 
+
+> 17:
+
+C[w] ← ˆy 
+
+> 18:
+
+bMQ ← bMQ + 1  
+
+> 19:
+
+end if  
+
+> 20:
+
+ANSWER MQ( L, w, ˆy) 
+
+> 21:
+
+end while  
+
+> 22:
+
+A ← BUILD HYPOTHESIS (L) 
+
+> 23:
+
+if bEQ = BEQ then  
+
+> 24:
+
+return budget-exhaustion report and A 
+
+> 25:
+
+end if  
+
+> 26:
+
+(τ, o ) ← EXECUTE (A) 
+
+> 27:
+
+bEQ ← bEQ + 1  
+
+> 28:
+
+wτ ← ϕ(τ ) 
+
+> 29:
+
+if OUTCOME MISMATCH (x, A, w τ , o )
+
+then  
+
+> 30:
+
+yτ ←
+
+ENVIRONMENT LABEL (x, w τ , o ) 
+
+> 31:
+
+G[wτ ] ← yτ 
+
+> 32:
+
+L ←
+
+REFINE WITH COUNTEREXAMPLE (L, w τ , y τ ) 
+
+> 33:
+
+else if DETECTED MISSING PREDI -
+
+> CATE
+
+(x, Σ, τ, o ) then  
+
+> 34:
+
+Σ ← EXPAND ALPHABET (x, Σ, τ, o ) 
+
+> 35:
+
+Reinitialize L on the enlarged Σ 
+
+> 36:
+
+Replay compatible cached labels from 
+
+C and G 
+
+> 37:
+
+else  
+
+> 38:
+
+return A 
+
+> 39:
+
+end if  
+
+> 40:
+
+end while Persistent-noise reconciliation. For each queried word w, the cache stores the first Boolean membership judgment ey(w) and returns that judgment on subsequent queries. CAPAL does not repeatedly sample the same word or aggregate multiple labels for that word. A counterexample label supplied through execution is instead stored as a gold override and takes precedence over the cached membership judgment. CAPAL obtains robustness through a statistical class query over multiple suffixes. For prefixes u
+
+and v, let 
+
+E = Ecore ∪ E′
+
+> pool
+
+, m = |E| ,
+
+where E′ 
+
+> pool
+
+is a capped sample from the suffix pool. CAPAL computes the empirical disagree-ment rate 
+
+D(u, v ) = 1
+
+m |{ e ∈ E : ey(ue )̸ = ey(ve )}| 
+
+and declares u and v to represent the same Myhill– Nerode class iff 
+
+D(u, v ) ≤ p0 + τ, p0 = 2¯ η(1 − ¯η),τ = min 
+
+(
+
+τmax ,
+
+r ln(2 /α )2m
+
+)
+
+,
+
+where ¯η is a conservative upper bound on the membership-noise rate. Only D IFFERENT out-comes are cached. The cache key includes the pre-fix pair, suffix-set version, and decision threshold, so a comparison is recomputed when its evidence or threshold changes. During a comparison with 
+
+m planned suffixes, CAPAL stops early and caches DIFFERENT when the accumulated disagreement count dt satisfies 
+
+dt
+
+m > p 0 + τ. 
+
+Counterexample update. CAPAL maintains a prefix-closed access set S, a core discriminator set Ecore , a capped suffix pool Epool , an observa-tion table of cached membership judgments, and a discrimination tree over the current state classes. Given a labeled counterexample (wτ , y τ ), CAPAL stores yτ as a gold override and inserts the prefixes of wτ into S.CAPAL then applies Rivest–Schapire analysis, searching for the earliest factorization 
+
+wτ = uae 
+
+such that 
+
+δA(A[u], a )̸ = A[ua ].
+
+If such a factorization exists, the suffix e is added to Ecore as a structural discriminator. If no split ex-ists, the counterexample is treated as label-only: its gold label corrects the acceptance decision for the class it reaches, and the counterexample is recorded without immediately expanding the observation ta-ble. If the same label-only counterexample recurs, its suffixes are added to Ecore to separate the incor-rectly merged class. When enforcing consistency, CAPAL uses the discrimination tree to select a discriminator from the lowest common ancestor of two distinct suc-cessor classes and adds the corresponding derived column to Ecore . Any membership queries required by the resulting closedness or consistency repairs are issued lazily. CAPAL then rebuilds its state partition and hypothesis DFA; CEDAR does not directly patch an individual transition. 
+
+Budgets and termination. The membership and execution budgets in Algorithm 1 are experiment-level CEDAR limits rather than parameters re-quired by CAPAL. Cache hits and gold-label lookups do not consume the membership-query budget; only a new call to LLMJ UDGE does. Each execution of a hypothesis consumes one execu-tion/EQ query. Learning terminates when execution produces no recognized counterexample, when the experi-ment’s success predicate is satisfied, or when ei-ther budget is exhausted. CAPAL ordinarily as-sumes a fixed alphabet. Alphabet expansion is therefore implemented as a CEDAR-level restart: the alphabet-dependent learner state is reinitial-ized, while cached membership judgments and gold counterexample labels for words that remain valid over the enlarged alphabet are replayed. This preserves previously acquired semantic evidence without reusing an invalid state partition or discrim-ination tree. 
+
+H Assertion-Baseline Statistics 
+
+Table 11 reports exact two-sided 95% binomial con-fidence intervals for the three binary outcomes in Table 2. The intervals are necessarily wide because each condition contains only five trials. Method Found diamond Constraint compliant Joint success VOYAGER w/o A. 4/5 
+
+[0 .284 , 0.995] 
+
+0/5 
+
+[0 .000 , 0.522] 
+
+0/5 
+
+[0 .000 , 0.522] 
+
+VOYAGER w/ A. 4/5 
+
+[0 .284 , 0.995] 
+
+2/5 
+
+[0 .053 , 0.853] 
+
+0/5 
+
+[0 .000 , 0.522] 
+
+CODE ACT w/o A. 3/5 
+
+[0 .147 , 0.947] 
+
+1/5 
+
+[0 .005 , 0.716] 
+
+0/5 
+
+[0 .000 , 0.522] 
+
+CODE ACT w A. 0/5 
+
+[0 .000 , 0.522] 
+
+3/5 
+
+[0 .147 , 0.947] 
+
+0/5 
+
+[0 .000 , 0.522] 
+
+CEDAR 5/5 
+
+[0 .478 , 1.000] 
+
+5/5 
+
+[0 .478 , 1.000] 
+
+5/5 
+
+[0 .478 , 1.000] 
+
+Table 11: Observed success counts and exact two-sided 95% Clopper–Pearson confidence intervals for the five-trial sleep-at-night comparison. The intervals describe marginal binary outcomes and do not remove the uncertainty caused by the small sample. A.: aseertions .
+
+I Goal-Completion Success Intervals 
+
+Table 12 reports exact two-sided 95% binomial con-fidence intervals for the success counts in Table 4. These intervals concern task success; they do not address the conditional prompting-iteration means.                              
+
+> Task VOYAGER
+> w/o S.L. VOYAGER CEDAR w/o S.L. CEDAR Wooden 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> Iron 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> Diamond 11/25
+> [0 .244 ,0.651]
+> 17/25
+> [0 .465 ,0.851]
+> 18/25
+> [0 .506 ,0.879]
+> 23/25
+> [0 .740 ,0.990]
+> Lava 19/25
+> [0 .549 ,0.906]
+> 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> 25/25
+> [0 .863 ,1.000]
+> Compass 17/25
+> [0 .465 ,0.851]
+> 25/25
+> [0 .863 ,1.000]
+> 9/25
+> [0 .180 ,0.575]
+> 25/25
+> [0 .863 ,1.000]
+
+Table 12: Task-success counts and exact two-sided 95% Clopper–Pearson confidence intervals over 25 trials per method–task condition. S.L. denotes a skill library. 
+
+J Automaton State Counts 
+
+The product of a skill DFA and a specification DFA has the standard worst-case upper bound |Qg|| Qc|.Table 13 reports the component sizes and the num-ber of reachable states in each composed automaton after unreachable product states are removed. 
+
+Metric Diamond 
+
+∩ Sleep Mine 
+
+∩ Night Explore 
+
+∩ Biome Skill DFA states 7 N/A N/A Specification DFA states 9 3 2Reachable product states 17 3 2
+
+Table 13: Component and reachable product-automaton sizes for the evaluated skill–constraint compositions. The worst-case product size is |Qg || Qc|; the reported product sizes exclude unreachable states.

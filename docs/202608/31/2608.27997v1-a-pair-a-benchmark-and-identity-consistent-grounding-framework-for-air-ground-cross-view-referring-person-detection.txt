@@ -1,0 +1,333 @@
+Title: A-PAIR: A Benchmark and Identity-Consistent Grounding Framework for Air-Ground Cross-View Referring Person Detection
+
+URL Source: https://arxiv.org/pdf/2608.27997v1
+
+Published Time: Mon, 31 Aug 2026 00:45:53 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# A-PAIR: A Benchmark and Identity-Consistent Grounding Framework for Air-Ground Cross-View Referring Person Detection 
+
+# Zhoupeng Guo 1, Xinjie Yao 2, Yunqi Zhu 3, Zhihe Fan 4, Siqi Zhao 5,Jianjun Chen 5, Yichen Dong 5, Yan Fan 6, Pengfei Zhu 5
+
+> 1
+
+School of Automation, Southeast University, Nanjing, China 
+
+> 2
+
+Faculty of Information Engineering and Automation, Kunming University of Science and Technology, Kunming, China 
+
+> 3
+
+School of Computer Science and Engineering, University of New South Wales, Sydney, Australia 
+
+> 4
+
+School of Sports Training, Tianjin University of Sport, Tianjin, China 
+
+> 5
+
+Tianjin University, Tianjin, China 
+
+> 6
+
+National University of Defense Technology, Changsha, China 
+
+Abstract 
+
+Air-ground cross-view referring person detection is a nec-essary component in the language-to-perception-to-control chain of collective embodied intelligence, grounding a lan-guage command into the same physical target before ground and aerial agents can coordinate downstream actions. Exist-ing referring expression comprehension and open-vocabulary grounding methods do not jointly account for cross-view identity consistency, making them insufficient for Air-Ground Cross-View Referring Person Detection (AGCV-RPD), which involves similar pedestrian distractors, weak aerial appearance cues, and cross-view identity consistency. To study this prob-lem, we introduce Air-Ground Paired Identity-Aware Refer-ring (A-PAIR), the first comprehensive AGCV-RPD bench-mark, containing 22 ,137 cross-view referring samples. To construct A-PAIR efficiently, we propose Factorized Anno-tation and Referential Alignment (FARA), a semi-automatic annotation framework that generates factorized referring de-scriptions and identity-consistency supervision at reduced cost. We propose Identity-Consistent Referring Grounding (ICRG), a framework that combines factorized referential grounding, candidate-completeness supervision, and cross-view consistency calibration for joint air-ground pair selec-tion. ICRG improves ground, aerial, and pair-level detection over strong baselines, increasing pair F1 from 16 .65% to 
+
+22 .28% . These results show that AGCV-RPD requires paired detection and identity-consistent reasoning. 
+
+# Introduction 
+
+Air-ground cross-view referring person detection is a nec-essary component in the language-to-perception-to-control chain of collective embodied intelligence: a language com-mand must first be grounded to the same physical target across complementary sensors before ground and aerial agents can coordinate downstream actions. For such collab-orative embodied systems, a fundamental capability is to un-derstand a natural-language referring expression and ground it consistently across heterogeneous sensors. A human or embodied agent may describe a person once, yet expect both the ground and aerial views to detect the same physical in-dividual. We refer to this task as Air-Ground Cross-View Referring Person Detection (AGCV-RPD). Formally, given a ground image, an aerial image of the same scene, and a re-
+
+Figure 1: AGCV-RPD task. The model detects the same re-ferred person in paired ground and aerial views. ferring expression, the model must output one bounding box per view that detects the same person identity, as illustrated in Fig. 1. Solving AGCV-RPD links free-form language, cross-view perception, and identity reasoning into a foundational query interface for air-ground embodied collaboration. Existing research offers powerful building blocks but does not define the full problem studied here. Single-image referring expression comprehension and open-vocabulary grounding models such as TransVG (Deng et al. 2021), MDETR (Kamath et al. 2021), GLIP (Li et al. 2022), Ground-ingDINO (Liu et al. 2024), recent grounding systems (Dai et al. 2025; Goto et al. 2025; Zhan et al. 2026), and the drone-oriented RefDrone (Sun et al. 2026) provide per-image detection priors for a described object. However, air-ground referring is not a direct extension of single-image ground-ing. The same scene may contain many similarly dressed pedestrians and repeated spatial layouts, making a referring expression compatible with multiple regions. The aerial view further reduces a person to a small, weakly textured target, so the appearance cues named by language may be barely vis-arXiv:2608.27997v1 [cs.CV] 28 Aug 2026 ible. Most importantly, a plausible prediction in the ground image and a plausible prediction in the aerial image do not necessarily refer to the same physical person. Conversely, a standalone identity matcher assumes candidate crops are already available and cannot decide which regions should be proposed from language. These factors make air-ground referring a coupled detection and identity-consistency prob-lem rather than a pair of independent single-view grounding tasks. This gives rise to three key challenges: 1. Similar pedestrians and spatial ambiguity. 2. Weak appearance cues of small targets. 3. Cross-view identity consistency. We address these challenges with Identity-Consistent Referring Grounding (ICRG), an identity-consistent refer-ring grounding framework. Rather than appending a stan-dalone retrieval module after grounding, ICRG builds a uni-fied query-to-pair prediction pipeline around three comple-mentary supervision signals. Factorized referential super-vision separates identity-stable appearance semantics from view-dependent scene-spatial semantics to reduce ambigu-ity among similar pedestrians. Candidate-completeness su-pervision expands the candidate space so small or weakly described targets are not removed before pair reasoning. Auxiliary cross-view identity-consistency supervision cal-ibrates candidate pairs and suppresses boxes that are individ-ually plausible but jointly identity-inconsistent. To enable this study, we propose Factorized Annotation and Refer-ential Alignment (FARA) to construct Air-Ground Paired Identity-Aware Referring (A-PAIR), a benchmark derived from the G2APS air-ground person dataset with paired images, same-identity boxes, structured text, and auxiliary identity-consistency labels. Our contributions are as follows: 
+
+• A-PAIR benchmark. We introduce A-PAIR, the first com-prehensive benchmark for AGCV-RPD. A-PAIR contains 
+
+22 ,137 cross-view referring samples over 7,588 unique ground images and 3,891 unique aerial images. 
+
+• FARA annotation framework. We propose FARA, a semi-automatic pipeline combining VLM annotation, keyframe propagation, and quality control for cross-view descrip-tions and identity supervision. 
+
+• ICRG framework. We propose ICRG for the AGCV-RPD task. ICRG integrates candidate-completeness supervi-sion, factorized referential grounding, and cross-view consistency calibration to improve cross-view matching performance in complex air-ground scenes. 
+
+# Related Work 
+
+Language-Guided Person Detection 
+
+Language-guided person detection associates textual de-scriptions with image regions through several complemen-tary research lines. Context-aware methods model attributes, context, and inter-object relations among candidate re-gions (Yu et al. 2018; Mao et al. 2016; Hu et al. 2016). Trans-former approaches, including TransVG (Deng et al. 2021), MDETR (Kamath et al. 2021), and TransVG++ (Deng et al. 2023), replace proposal ranking with direct box regression or text-conditioned detection. Region-language pre-training supports open-vocabulary grounding in GLIP (Li et al. 2022), GroundingDINO (Liu et al. 2024), and PropVG (Dai et al. 2025). Person-centric research covers text-based and full-image person search (Li et al. 2017; Zhang et al. 2023b), while recent multimodal and small-object methods extend grounding to dialogue, coordinate generation, and tiny tar-gets (Goto et al. 2025; Zhan et al. 2026). Despite these advances, existing methods remain single-view: they predict one-image boxes, retrieve person candi-dates, or evaluate grounding per image, without requiring ground and aerial predictions to identify the same individual. AGCV-RPD introduces paired air-ground detection, while A-PAIR jointly evaluates language-region alignment and cross-view identity consistency. 
+
+Cross-View Air-Ground Perception 
+
+Cross-view air-ground perception links observations across viewpoint changes through several complementary research lines. Scene-level geo-localization matches ground images to aerial or satellite views of the same place (Workman, Souvenir, and Jacobs 2015; Hu et al. 2018; Zhu, Yang, and Chen 2021), learning viewpoint-invariant descriptors across large perspective gaps. Identity-level person re-identification matches people across cameras, from discriminative base-lines (Luo et al. 2019) to part-based and transformer rep-resentations (Sun et al. 2018; He et al. 2021; Ye et al. 2022). Detection-oriented methods use DETR-style and open-vocabulary models for language-aware object detec-tion (Carion et al. 2020; Zhu et al. 2021; Minderer et al. 2022; Zhang et al. 2023a; Cheng et al. 2024). Drone-view bench-marks and datasets such as VisDrone and RefDrone (Du et al. 2019; Sun et al. 2026) support person and referring detection in dense high-altitude scenes. These paradigms nevertheless stop short of paired re-ferring decisions: geo-localization matches places, re-identification assumes given crops, and aerial or open-vocabulary detection remains largely single-view. Drone-view referring adds language guidance but lacks paired ground evidence for identity verification. A-PAIR addresses this gap with paired ground-aerial images, same-identity boxes, auxiliary identity labels, and pair-level evaluation. 
+
+# The A-PAIR Benchmark 
+
+Data Source 
+
+A-PAIR is derived from G2APS (Zhang et al. 2023c). From paired frames, we retain cross-view observations that share at least one person identity, yielding 7,588 shared-identity ground-aerial pairs associated with 7,588 unique ground im-ages and 3,891 unique aerial images. All bounding boxes follow the xywh convention. Each sample contains both an appearance-full expression and a scene-spatial expres-sion, enabling full-, spatial-, and factorized-prompt evalua-tion within a unified protocol. Figure 2: FARA annotation pipeline. The pipeline constructs A-PAIR from paired G2APS observations with factorized descrip-tions and identity labels. 
+
+FARA annotation 
+
+The core of A-PAIR is FARA, a semi-automatic factorized annotation framework organized as the seven-step pipeline in Fig. 2. Starting from the verified xywh boxes in G2APS Person.mat, FARA groups frames by scene and track band to build cross-view records. Each ground frame is paired with the temporally nearest aerial frame in the same group, and every pid visible in both frames yields one cross-view record with its two target boxes. To extract appearance cues for ef ,FARA selects up to four ground-view observations for each pid, preferring distinct images and larger target boxes, and sends padded target crops to a VLM. The VLM returns one reusable noun phrase restricted to stable visible appearance cues (e.g., clothing and clearly carried items); scene context, position, action, viewpoint, and uncertain attributes are ex-cluded. This pid-level phrase is reused by all records of that pid. FARA independently builds view-specific spatial expres-sions for the ground and aerial views. It selects sparse keyframes within each view-specific sequence and asks the VLM to assign each target a short scene-relative phrase, such as a relation to a sidewalk, road edge, vehicle, tree, or building. For a non-keyframe observation, FARA copies the nearest keyframe phrase only when it belongs to the same se-quence and pid and satisfies both image-distance and frame-gap bounds; otherwise, the observation is marked with a fall-back spatial phrase. The final per-view referring expression combines the shared appearance phrase with its view-specific spatial phrase. The released pipeline performs automated, rather than manual, checks of box validity, expression com-position, forbidden target/box references, coordinate-only spatial phrases, fallback use, and VLM failures; a completion pass fills missing pid-level appearance profiles. The remaining steps validate the annotations and export benchmark-ready supervision. FARA augments each record with every Person.mat instance in its two images and exports COCO-style all-person detection labels, providing 32 ,016 
+
+ground and 34 ,108 aerial training annotations. It also gen-erates cross-view identity pairs: all ground–aerial instance pairs with the same pid are positives, while negatives replace either side with a different-pid person from the same paired images (up to four per replacement direction). The resulting training export contains 377 ,402 pairs, including 50 ,741 pos-itives. Finally, FARA forms the official split from connected components of samples that share a ground or aerial image, assigning each whole component to one split. 
+
+Dataset Statistics and Comparison 
+
+Table 2 summarizes the split of A-PAIR. It contains 22 ,137 
+
+cross-view referring samples, where each sample is a refer-ring instance with paired ground–aerial images and a target identity; 15 ,497 are used for training, 2,213 for validation, and 4,427 for testing. The PIDs column counts unique cross-view identities, the Pairs column counts unique ground– aerial image pairs, and the Gnd. img. and Aer. img. columns count unique ground and aerial images, respectively. As shown in Table 1, the reference, aerial, cross-view, and ReID benchmarks each cover only part of the capabilities of AGCV-RPD. However, they lack paired aerial–ground views, natural-language detection, bounding boxes corresponding to the same identity, or paired evaluation protocols. By pro-viding a dataset that contains language descriptions together with cross-view aerial and ground images, A-PAIR estab-lishes a data foundation for research that bridges the two modalities while maintaining cross-view consistency. 
+
+Evaluation Metrics 
+
+Using the hit definition from the Task Definition subsection, we report instance-level and image-level F1 and accuracy for each view. In this single-target referring protocol, every other person in the image counts as a negative. The instance-level metrics are defined as F1 inst = 2TP 
+
+2TP + FP + FN , (1) Acc inst = TP TP + FP + FN + TN , (2) Dataset Lang. Aerial Ground Air-Ground Pair Same-ID Boxes ID Aux. Pair Eval. RefCOCO (Yu et al. 2016) ✓ - ✓ - - - -RefCOCO+ (Yu et al. 2016) ✓ - ✓ - - - -RefCOCOg (Mao et al. 2016) ✓ - ✓ - - - -RefDrone (Sun et al. 2026) ✓ ✓ - - - - -VisDrone (Du et al. 2019) - ✓ - - - - -UAVDT (Du et al. 2018) - ✓ - - - - -DOTA (Xia et al. 2018) - ✓ - - - - -CVUSA (Workman, Souvenir, and Jacobs 2015) - ✓ ✓ ✓ - - -VIGOR (Zhu, Yang, and Chen 2021) - ✓ ✓ ✓ - - -Market-1501 (Zheng et al. 2015) - - ✓ - ✓ ✓ -DukeMTMC (Ristani et al. 2016) - - ✓ - ✓ ✓ -G2APS (Zhang et al. 2023c) - ✓ ✓ ✓ ✓ ✓ -A-PAIR ✓ ✓ ✓ ✓ ✓ ✓ ✓
+
+Table 1: Benchmark comparison. A-PAIR covers language grounding, paired air-ground views, same-identity boxes, and pair-level evaluation. Split Samples Pairs Gnd. img. Aer. img. Train 15,497 6,672 6,672 3,530 Val 2,213 279 279 69 Test 4,427 637 637 292 Total 22,137 7,588 7,588 3,891 Table 2: A-PAIR split statistics. where TN = 0 because there are no no-target samples. Image-level metrics (F1 img , Acc img ) score whether the top prediction attains 
+
+IoU( ˆbv , b ∗ 
+
+> v
+
+) ≥ 0.5. (3) For pair-level evaluation, a prediction is correct only when both views are correct: 
+
+hit pair = hit g ∧ hit a. (4) The pair metrics (Pair Acc, Pair F1) are therefore the primary indicator of cross-view competence. 
+
+# Method 
+
+ICRG addresses AGCV-RPD with a unified framework for language guided pair detection, as illustrated in Fig. 3. Given paired ground and aerial images and factorized referring ex-pressions, it first defines the pair correctness criterion, then builds candidate pools through factorized grounding and all person completion, and finally uses auxiliary identity con-sistency to calibrate candidate pairs before selecting the final ground and aerial boxes. The following subsections formal-ize the task, describe the three scoring sources, and present the fusion inference procedure. 
+
+Task Definition 
+
+Each A-PAIR sample is a tuple (Ig , I a, e f , e s, y ), where Ig
+
+and Ia are paired ground and aerial images of a shared scene, 
+
+ef is an appearance-full referring expression, es is a scene-spatial expression, and y is the target person identity (pid). The model must predict one box per view, (ˆbg , ˆba), both detecting the person with identity y. A single-view prediction is correct when its intersection-over-union with the ground-truth box exceeds a threshold τ = 0 .5:
+
+hit v = ⊮
+
+h
+
+IoU( ˆbv , b ∗ 
+
+> v
+
+) ≥ τ
+
+i
+
+, v ∈ { g, a }. (5) A pair prediction is correct only when both views are cor-rect, hit g ∧ hit a, which makes the pair criterion harder than either view. This coupling is what single-view transfer fails to satisfy and motivates the design below. 
+
+Factorized Grounding 
+
+The first supervision signal detects candidates referred to by language in each view. Rather than treating a referring ex-pression as an indivisible sentence, A-PAIR factorizes the supervision into an appearance profile for each identity and a scene and spatial description for each view. The full ap-pearance expression ef captures stable identity semantics, whereas the scene and spatial expression es retains spatial cues relative to scene landmarks, such as being near a bus stop shelter, that remain useful when appearance is weak. We feed both factors to a grounding model G built on the Ground-ingDINO architecture (Liu et al. 2024) with a Swin Trans-former image encoder and a text encoder coupled by cross modal attention. For each view v and factor e ∈ { ef , e s}, the model produces scored referring boxes 
+
+Rev = G(Iv , e ) = {(rk, s ref  
+
+> k
+
+)}Kk=1 , (6) where rk is a candidate box and sref  
+
+> k
+
+its referring confi-dence. The grounding model is trained with the standard grounded detection objective, which combines a contrastive token alignment loss and box regression: 
+
+Lground = Lalign + λL1 LL1 + λgiou Lgiou . (7) The appearance factor drives precise detection when appear-ance is visible, while the scene and spatial factor improves recall in crowded scenes where appearance is ambiguous, providing complementary candidates Rv = Ref 
+
+> v
+
+∪R es 
+
+> v
+
+. This Figure 3: ICRG framework. It combines factorized grounding, candidate completion, and cross-view consistency. design uses appearance to constrain who the referred person could be and spatial context to constrain where that person can plausibly appear in each view. Taking the union rather than forcing a single expression avoids committing to one cue prematurely and defers the final identity decision to the fusion stage, where evidence from both views is available. 
+
+Candidate Completeness 
+
+Referring grounding can still miss the target when the ex-pression is under-specified or the target is small. To bound this failure, candidate-completeness supervision trains an all-person detector D, sharing the same detector backbone but optimized on the A-PAIR all-person detection labels, to enu-merate every person in each view: 
+
+Pv = D(Iv ) = {(pj , s det  
+
+> j
+
+)}Mv
+
+> j=1
+
+, (8) with detection confidence sdet  
+
+> j
+
+. D is optimized with the de-tection loss Ldet = Lcls + Lbox . The union Cv = Rv ∪ P v
+
+forms the candidate pool per view, so a correct target that the referring signal overlooks can still enter the final selec-tion. The role of D is recall-oriented rather than precision-oriented: because pair selection is decided after cross-view calibration, the detector only needs to place the target some-where in Cv , and any spurious boxes it introduces are filtered later by referring and consistency scores. 
+
+Cross-View Consistency 
+
+The third supervision signal calibrates whether two language-compatible candidates also refer to the same phys-ical person. For a candidate box c in view v, we crop the region and embed it with a ResNet-50 encoder f into a unit-normalized feature f (c) ∈ Rd. The auxiliary identity-consistency score between a ground candidate gi and an aerial candidate aj is the cosine similarity 
+
+sid (gi, a j ) = f (gi)⊤f (aj )
+
+∥f (gi)∥ ∥ f (aj )∥ . (9) The encoder is trained on cross-view crop pairs from the training split using the binary consistency loss 
+
+Lid = − X
+
+> (i,j )∈T
+
+h
+
+yij log σ sid 
+
+> ij
+
+
+
++ (1 − yij ) log  1 − σ sid 
+
+> ij
+
+ i
+
+,
+
+(10) where T is the set of training cross-view crop pairs, yij =
+
+⊮[pid( gi) = pid( aj )] indicates whether the two crops share the same pid, and σ is the logistic function. The signal sup-plies cross-view identity consistency that language alone can-not provide. It learns to bridge the appearance gap between a street-level crop, where clothing and build are visible, and an aerial crop of the same person, where those attributes are lost to scale and viewpoint. The signal is auxiliary: it does not retrieve a person independently of language, but calibrates pairs proposed by the referring and completeness signals. It can suppress an identity-inconsistent pair in which each view matches the expression but both boxes depict different people. Algorithm 1 ICRG inference. Candidate pairs are scored by fused detection, referring, and identity-consistency cues. 
+
+Require: ground image Ig , aerial image Ia, prompts ef , e s 
+
+> 1:
+
+Rv ← G(Iv , e f ) ∪ G(Iv , e s) for v ∈ { g, a } 
+
+> 2:
+
+Pv ← D(Iv ); Cv ← R v ∪ P v 
+
+> 3:
+
+for all (gi, a j ) ∈ C g × C a do  
+
+> 4:
+
+compute sdet  
+
+> ij
+
+, s ref  
+
+> ij
+
+, s id (gi, a j ) 
+
+> 5:
+
+score( gi, a j ) ← Eq. (11) with val-selected weights  
+
+> 6:
+
+end for  
+
+> 7:
+
+return arg max (gi,a j ) score( gi, a j )
+
+Fusion and Inference 
+
+The final stage selects one identity-consistent ground-aerial candidate pair. For each candidate pair (gi, a j ) ∈ C g × C a
+
+we compute a fused score 
+
+score( gi, a j ) = wdet sdet  
+
+> ij
+
++wref sref  
+
+> ij
+
++wid sid (gi, a j ), (11) where sdet  
+
+> ij
+
+and sref  
+
+> ij
+
+aggregate the detection and referring confidences of the two boxes. The non-negative weights 
+
+(wdet , w ref , w id ) are not learned by gradient descent; they are selected by grid search on the validation split to max-imize pair accuracy, which keeps the fusion interpretable and avoids overfitting the small test set. At inference, the predicted pair is the arg-max of Eq. (11): 
+
+(ˆbg , ˆba) = arg max   
+
+> (gi,a j)
+
+score( gi, a j ). (12) Algorithm 1 summarizes inference. All learnable compo-nents ( G, D, f ) are trained on the training split with their objectives; the fusion weights are fixed once selected on val-idation, and the test split is evaluated once. 
+
+# Experiments 
+
+Setup 
+
+Dataset, protocol, and metrics. All experiments use the A-PAIR dataset and the evaluation protocol from Evaluation Metrics, with 15 ,497 training, 2,213 validation, and 4,427 
+
+test samples. Unless noted, methods are trained on the train-ing split and evaluated once on the test split. We report the per-view instance-level and image-level metrics and the pair-level metrics defined in Evaluation Metrics. 
+
+IoU-Quality Diagnosis Reveals Core Challenges 
+
+Before comparing methods, we use Fig. 4 to diagnose where AGCV-RPD predictions fail. The cells where both views sat-isfy IoU ≥ 0.5 correspond to pair-level hits and account for only 12 .54% of the test set, showing that correct paired detection is much harder than obtaining plausible boxes in individual views. The distribution further reveals three re-curring failure patterns. First, aerial detection is the main bottleneck: many samples contain a correct or near-correct ground prediction but miss the aerial target, consistent with the weak appearance cues of small aerial persons. Second, the Near and Weak bins indicate that many errors are not arbitrary background selections; the model often predicts 
+
+Figure 4: Pair-level IoU-quality decomposition. Each cell reports the percentage of A-PAIR test samples in a ground-aerial IoU-quality bin. nearby or partially overlapping regions, suggesting ambigu-ity among similar pedestrians and repeated spatial layouts. Third, the gap between view-wise hits and pair-level hits shows that independent single-view compatibility does not reliably produce an identity-consistent pair, motivating ex-plicit cross-view consistency modeling. 
+
+Main Results Validate Paired Reasoning 
+
+Table 3 compares ICRG with seven single view baselines on the image disjoint test split, including REC, small ob-ject grounding, and VLM-based detection models. The strongest baseline, GroundingDINO-T (Liu et al. 2024), ob-tains 16 .65% pair F1, while ICRG improves it to 22 .28% .This gain shows that independently grounding the two views is insufficient for AGCV-RPD, because two plausible single view predictions may still fail to form an identity consis-tent pair. The weak pair results of recent methods such as SOREC-PIZA, PropVG, and Vision-R1 further support this conclusion. As visualized in Fig. 5, ICRG achieves the best tradeoff between ground view detection and pair level per-formance, validating the need for joint language grounding, candidate recall, and cross view consistency. 
+
+Factorized Grounding Reduces Ambiguity 
+
+Factorized grounding addresses similar pedestrians and spa-tial ambiguity. In Table 4, enabling only Fact. improves pair F1 from 3.60% to 20 .88% . This improvement indicates that separating appearance and spatial cues is more effective than treating the referring expression as an undifferentiated prompt. The appearance factor narrows who the target could be, while the scene and spatial factor narrows where the target can plausibly appear in each view. Their union provides com-plementary candidates and reduces early mistakes caused by ambiguous descriptions or visually similar pedestrians. Method Ground Aerial Pair F1 i Acc i F1 img Acc img F1 i Acc i F1 img Acc img Acc F1 TransVG (Deng et al. 2021) 2.53 1.28 4.94 2.53 0.05 0.02 0.09 0.05 0.00 0.00 PropVG (Dai et al. 2025) 1.49 0.75 2.94 1.49 0.00 0.00 0.00 0.00 0.00 0.00 Vision-R1 (Zhan et al. 2026) 1.92 0.97 3.77 1.92 0.00 0.00 0.00 0.00 0.00 0.00 SOREC-PIZA (Goto et al. 2025) 13.96 7.50 24.50 13.96 7.43 3.86 13.84 7.43 1.78 3.51 GDINO-B (Liu et al. 2024) 26.74 15.44 42.20 26.74 12.02 6.39 21.46 12.02 5.74 10.85 RefDrone (Sun et al. 2026) 33.50 20.12 50.19 33.50 14.66 7.91 25.57 14.66 8.31 15.35 GDINO-T (Liu et al. 2024) 32.28 19.25 48.80 32.28 17.42 9.54 29.67 17.42 9.08 16.65 ICRG (ours) 35.17 21.34 52.04 35.17 21.89 12.29 35.92 21.89 12.54 22.28 
+
+Table 3: Main results on A-PAIR. All metrics are percentages; bold and italics mark the best and second-best results.                                           
+
+> Fact. Cand. Cons. Ground Aerial Pair F1 iF1 img F1 iF1 img Acc F1 ---7.32 13.65 19.91 33.21 1.83 3.60
+> ✓--34.88 51.72 20.83 34.47 11.66 20.88
+> ✓✓-36.12 53.07 21.82 35.82 12.24 21.82
+> ✓✓✓35.17 52.04 21.89 35.92 12.54 22.28
+
+Table 4: Ablation results on A-PAIR. Columns indicate en-abled supervision signals under the same protocol. 
+
+Completeness Improves Aerial Recall 
+
+Candidate completeness mainly benefits aerial detection, where targets are small and appearance cues are weak. In Table 4, adding Cand. to the setting with Fact. alone raises aerial F1 i from 20 .83% to 21 .82% and aerial F1 img from 
+
+34 .47% to 35 .82% , with the full model further reaching 
+
+21 .89% and 35 .92% . The larger image-level gain suggests that Cand. recovers valid targets in difficult aerial frames, while the smaller instance-level change indicates that ad-ditional proposals may also introduce distractors. The all-person detector therefore serves as a recall safeguard. When the referring branch misses a tiny or under-specified aerial target, candidate completion can still retain that person for later pair selection. By decoupling proposal recall from lan-guage confidence, Cand. prevents an early grounding miss from becoming irreversible. Its gain thus comes from im-proving target availability rather than acting as a standalone precision module. 
+
+Consistency Calibration Improves Pairing 
+
+Consistency calibration improves the final pair decision af-ter candidate generation produces plausible boxes in both views. In Table 4, adding Cons. to the Fact.+Cand. setting raises pair Acc from 12 .24% to 12 .54% and pair F1 from 
+
+21 .82% to 22 .28% . These gains are modest but meaningful because Cons. does not create new candidates; it reranks the existing ground–aerial candidate pairs according to identity compatibility. Thus, identity consistency changes the final decision from selecting two separately plausible boxes to se-lecting a jointly valid pair, although missed aerial targets and similar distractors still limit absolute pair accuracy. 
+
+Figure 5: Ground versus pair performance. Each point shows one method by Ground F1 i and Pair F1 on A-PAIR. 
+
+# Conclusion 
+
+We introduced air-ground cross-view referring person detec-tion and developed A-PAIR, a benchmark built from paired ground-aerial observations with same-identity boxes, fac-torized language expressions, all-person detection labels, and identity-consistency pairs. A-PAIR formulates language-guided person detection as a joint cross-view decision prob-lem: the predicted ground and aerial boxes must both match the query and correspond to the same physical individual. Ex-isting single-view referring methods process the two views independently, making them vulnerable to ambiguous candi-dates and cross-view identity mismatches. To address this challenge, ICRG unifies factorized referential grounding, candidate-completeness supervision, and cross-view con-sistency calibration in a query-to-pair framework. On the A-PAIR dataset, ICRG consistently improves ground-view, aerial-view, and pair-level detection over strong single-view baselines, increasing pair F1 from 16 .65% to 22 .28% . These results demonstrate the value of explicitly modeling cross-view identity consistency for paired referring detection. Fu-ture work will extend A-PAIR toward temporal air-ground observations, more crowded scenes, and broader environ-mental diversity. References 
+
+Carion, N.; Massa, F.; Synnaeve, G.; Usunier, N.; Kirillov, A.; and Zagoruyko, S. 2020. End-to-End Object Detection with Transformers. In Proceedings of the European Conference on Computer Vision , 213–229. Cheng, T.; Song, L.; Ge, Y.; Liu, W.; Wang, X.; and Shan, Y. 2024. YOLO-World: Real-Time Open-Vocabulary Object Detection. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 16901–16911. Dai, M.; Cheng, W.; Zhuang, J.; Liu, J.-J.; Zhao, H.; Feng, Z.; and Yang, W. 2025. PropVG: End-to-End Proposal-Driven Visual Grounding with Multi-Granularity Discrimination. In 
+
+Proceedings of the IEEE/CVF International Conference on Computer Vision , 7058–7068. Deng, J.; Yang, Z.; Chen, T.; Zhou, W.; and Li, H. 2021. TransVG: End-to-End Visual Grounding with Transformers. In Proceedings of the IEEE/CVF International Conference on Computer Vision , 1749–1759. Deng, J.; Yang, Z.; Liu, D.; Chen, T.; Zhou, W.; Zhang, Y.; Li, H.; and Ouyang, W. 2023. TransVG++: End-to-End Visual Grounding with Language Conditioned Vision Trans-former. IEEE Transactions on Pattern Analysis and Machine Intelligence , 45(11): 13636–13652. Du, D.; Qi, Y.; Yu, H.; Yang, Y.; Duan, K.; Li, G.; Zhang, W.; Huang, Q.; and Tian, Q. 2018. The Unmanned Aerial Vehicle Benchmark: Object Detection and Tracking. In Proceedings of the European Conference on Computer Vision , 370–386. Du, D.; Zhu, P.; Wen, L.; Bian, X.; Ling, H.; Hu, Q.; et al. 2019. VisDrone-DET2019: The Vision Meets Drone Object Detection in Image Challenge Results. In Proceedings of the IEEE/CVF International Conference on Computer Vision Workshops , 213–226. Goto, K.; Hirose, T.; Ukai, M.; Kurita, S.; and Inoue, N. 2025. Referring Expression Comprehension for Small Objects. In 
+
+Proceedings of the IEEE/CVF International Conference on Computer Vision , 21231–21242. He, S.; Luo, H.; Wang, P.; Wang, F.; Li, H.; and Jiang, W. 2021. TransReID: Transformer-Based Object Re-Identification. In Proceedings of the IEEE/CVF International Conference on Computer Vision , 14993–15002. Hu, R.; Xu, H.; Rohrbach, M.; Feng, J.; Saenko, K.; and Darrell, T. 2016. Natural Language Object Retrieval. In 
+
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 4555–4564. Hu, S.; Feng, M.; Nguyen, R. M. H.; and Lee, G. H. 2018. CVM-Net: Cross-View Matching Network for Image-Based Ground-to-Aerial Geo-Localization. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 7258–7267. Kamath, A.; Singh, M.; LeCun, Y.; Synnaeve, G.; Misra, I.; and Carion, N. 2021. MDETR: Modulated Detection for End-to-End Multi-Modal Understanding. In Proceedings of the IEEE/CVF International Conference on Computer Vi-sion , 1760–1770. Li, L. H.; Zhang, P.; Zhang, H.; Yang, J.; Li, C.; Zhong, Y.; Wang, L.; Yuan, L.; Zhang, L.; Hwang, J.-N.; Chang, K.-W.; and Gao, J. 2022. Grounded Language-Image Pre-training. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 10955–10965. Li, S.; Xiao, T.; Li, H.; Zhou, B.; Yue, D.; and Wang, X. 2017. Person Search with Natural Language Description. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 5187–5196. Liu, S.; Zeng, Z.; Ren, T.; Li, F.; Zhang, H.; Yang, J.; Li, C.; Yang, J.; Su, H.; Zhu, J.; and Zhang, L. 2024. Ground-ing DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection. In Proceedings of the European Conference on Computer Vision , 38–55. Luo, H.; Gu, Y.; Liao, X.; Lai, S.; and Jiang, W. 2019. Bag of Tricks and a Strong Baseline for Deep Person Re-Identification. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops ,1487–1495. Mao, J.; Huang, J.; Toshev, A.; Camburu, O.; Yuille, A.; and Murphy, K. 2016. Generation and Comprehension of Un-ambiguous Object Descriptions. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition ,11–20. Minderer, M.; Gritsenko, A.; Stone, A.; Neumann, M.; Weis-senborn, D.; Dosovitskiy, A.; Mahendran, A.; Arnab, A.; Dehghani, M.; Shen, Z.; Wang, X.; Zhai, X.; Kipf, T.; and Houlsby, N. 2022. Simple Open-Vocabulary Object Detec-tion with Vision Transformers. In Proceedings of the Euro-pean Conference on Computer Vision , 728–755. Ristani, E.; Solera, F.; Zou, R. S.; Cucchiara, R.; and Tomasi, C. 2016. Performance Measures and a Data Set for Multi-Target, Multi-Camera Tracking. In Proceedings of the Euro-pean Conference on Computer Vision Workshops , 17–35. Sun, Y.; Zheng, L.; Yang, Y.; Tian, Q.; and Wang, S. 2018. Beyond Part Models: Person Retrieval with Refined Part Pooling and a Strong Convolutional Baseline. In Proceedings of the European Conference on Computer Vision , 480–496. Sun, Z.; Liu, Y.; Zhu, H.; Gu, Y.; Zou, Y.; Liu, Z.; Xia, G.-S.; Du, B.; and Xu, Y. 2026. RefDrone: A Challeng-ing Benchmark for Referring Expression Comprehension in Drone Scenes. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 1752–1762. Workman, S.; Souvenir, R.; and Jacobs, N. 2015. Wide-Area Image Geolocalization with Aerial Reference Imagery. In Proceedings of the IEEE International Conference on Computer Vision , 3961–3969. Xia, G.-S.; Bai, X.; Ding, J.; Zhu, Z.; Belongie, S.; Luo, J.; Datcu, M.; Pelillo, M.; and Zhang, L. 2018. DOTA: A Large-Scale Dataset for Object Detection in Aerial Images. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 3974–3983. Ye, M.; Shen, J.; Lin, G.; Xiang, T.; Shao, L.; and Hoi, S. C. H. 2022. Deep Learning for Person Re-Identification: A Survey and Outlook. IEEE Transactions on Pattern Analysis and Machine Intelligence , 44(6): 2872–2893. Yu, L.; Lin, Z.; Shen, X.; Yang, J.; Lu, X.; Bansal, M.; and Berg, T. L. 2018. MAttNet: Modular Attention Network for Referring Expression Comprehension. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 1307–1315. Yu, L.; Poirson, P.; Yang, S.; Berg, A. C.; and Berg, T. L. 2016. Modeling Context in Referring Expressions. In Pro-ceedings of the European Conference on Computer Vision ,69–85. Zhan, Y.; Zhu, Y.; Zheng, S.; Zhao, H.; Yang, F.; Tang, M.; and Wang, J. 2026. Vision-R1: Evolving Human-Free Align-ment in Large Vision-Language Models via Vision-Guided Reinforcement Learning. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,5807–5817. Zhang, H.; Li, F.; Liu, S.; Zhang, L.; Su, H.; Zhu, J.; Ni, L. M.; and Shum, H.-Y. 2023a. DINO: DETR with Improved DeNoising Anchor Boxes for End-to-End Object Detection. In Proceedings of the International Conference on Learning Representations .Zhang, S.; Cheng, D.; Luo, W.; Xing, Y.; Long, D.; Li, H.; Niu, K.; Liang, G.; and Zhang, Y. 2023b. Text-Based Person Search in Full Images via Semantic-Driven Proposal Gener-ation. In Proceedings of the 4th International Workshop on Human-Centric Multimedia Analysis , 5–14. Zhang, S.; Yang, Q.; Cheng, D.; Xing, Y.; Liang, G.; Wang, P.; and Zhang, Y. 2023c. Ground-to-Aerial Person Search: Benchmark Dataset and Approach. In Proceedings of the 31st ACM International Conference on Multimedia , 789–799. Zheng, L.; Shen, L.; Tian, L.; Wang, S.; Wang, J.; and Tian, Q. 2015. Scalable Person Re-Identification: A Benchmark. In Proceedings of the IEEE International Conference on Computer Vision , 1116–1124. Zhu, S.; Yang, T.; and Chen, C. 2021. VIGOR: Cross-View Image Geo-Localization Beyond One-to-One Retrieval. In 
+
+Proceedings of the IEEE/CVF Conference on Computer Vi-sion and Pattern Recognition , 5316–5325. Zhu, X.; Su, W.; Lu, L.; Li, B.; Wang, X.; and Dai, J. 2021. Deformable DETR: Deformable Transformers for End-to-End Object Detection. In Proceedings of the International Conference on Learning Representations .

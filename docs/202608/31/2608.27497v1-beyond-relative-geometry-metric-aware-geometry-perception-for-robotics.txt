@@ -1,0 +1,552 @@
+Title: Beyond Relative Geometry: Metric-Aware Geometry Perception for Robotics
+
+URL Source: https://arxiv.org/pdf/2608.27497v1
+
+Published Time: Mon, 31 Aug 2026 00:02:05 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Beyond Relative Geometry: Metric-Aware Geometry Perception for Robotics 
+
+## Fengjun Zhong 1, Congjia Chen 1, Zhaoxu Liu 1, Jinyang Du 1, Yuchen Gong 1, Enqi Mao 1, Ruihao Gong 1, ShuJie Wang 2, Xianglong Liu 1∗, Zhongliang Qiao 2
+
+> 1
+
+Beihang University, 2XiaoyuBot 
+
+Abstract 
+
+Recent embodied models increasingly leverage geometric rep-resentations to improve spatial reasoning and robotic ma-nipulation. However, existing reconstruction methods only reconstruct relative geometry with arbitrary scales, causing predicted object dimensions and spatial distances to vary across scenes, viewpoints, and input configurations. This in-consistency prevents geometric perception from being directly aligned with robotic actions defined on the real-world scale. To address this limitation, we propose Metric-Aware Geometry Perception (MAGP), an end-to-end, plug-and-play framework for metric geometry reconstruction that can be seamlessly inte-grated into robotic policies. At its core, Metric Scale Equivari-ant Augmentation encourages the model to reconstruct metric geometry from camera parameters and depth observations, en-suring that the reconstructed geometry follows the metric scale specified by observations. Flexible Metric Conditioning fur-ther enables MAGP to support arbitrary view counts and com-binations of camera and depth inputs, improving robustness to heterogeneous robotic sensing configurations. Together, these designs produce geometrically consistent reconstructions with stable object dimensions and spatial distances across scenes and sensing conditions. Experiments on ETH3D, MegaDepth, and ScanNet++ demonstrate that MAGP maintains strong rel-ative geometry accuracy while reducing the absolute error by over an order of magnitude, from 2.01m to 0.07m . When integrated into multiple robotic policies, MAGP consistently improves performance on LIBERO, RoboTwin, and zero-shot LIBERO-Plus, with gains of up to 6.26% on RoboTwin. These results demonstrate the effectiveness and generalizability of metric geometry for robotic manipulation. 
+
+## 1 Introduction 
+
+Current embodied models mainly rely on 2D visual observa-tions, which provide rich semantics but lack explicit geom-etry for spatial reasoning and precise manipulation (Black et al. 2025; Kim et al. 2024). With the rapid development of feed-forward 3D reconstruction, an increasing number of embodied models have incorporated depth, point clouds, and multi-view geometry to provide explicit spatial structures for scene understanding and action prediction (Yang et al. 2026; Yuan et al. 2025; Wu et al. 2026; Ni et al. 2025; Qu et al. 2025; Shridhar, Manuelli, and Fox 2023; Zhen et al. 2024; Zhang et al. 2026; Liu et al. 2026; Ge et al. 2025). Under 
+
+> ∗
+
+Corresponding author. Task: Pick up the pillow on the sofa .                 
+
+> View 1 View 2 View 3
+> 1m 1m 1m
+> View 2 View 3
+> 2.0m 0.9m
+> Relative Geometry Reconstruction Metric Geometry Reconstruction
+> View 1
+> 0.8m
+> Fused Views lacking Scale Consistency Fused Views with Scale Consistency
+> Predicted pillow length = actual length: 0.6m Predicted pillow length ≠actual length: 0.6m
+> 0.48m 1.2m 0.54m 0.6m 0.6m 0.6m
+
+## × √× × √ √
+
+Figure 1: Illustrative example of relative/metric geometry reconstruction across different views. Metric geometry pre-serves consistent object dimensions and spatial distances across views, whereas relative geometry exhibits view-dependent scale variations. perspective projection, scenes with different physical dimen-sions and camera distances can produce indistinguishable vi-sual observations. Existing reconstruction models therefore only recover relative geometry (Wang et al. 2025c, 2026b,a, 2025a). Such relative geometry preserves scene shape and spatial layout but lacks a consistent metric reference. As the viewpoint or camera input order changes, the same object will be reconstructed at different scales, resulting in incon-sistent estimates of object dimension and spatial distance. As illustrated in Fig. 1, relative geometry reconstruction assigns inconsistent object dimensions to the same object across views and produces spatially misaligned multi-view geometry in a shared coordinate system. Consequently, the same robot motion has different geometric displacements under different perspectives, disrupting the correspondence between robot perception and action. This causes inaccurate target localization, miscalibrated end-effector motion, and degraded fine-grained manipulation. In contrast, metric ge-ometry anchors all observations to a consistent metric scale, preserving consistent object dimensions and spatial relation-ships across views. Such a scale-aligned representation is essential for embodied intelligence, as it provides a reliable geometric basis for target localization, action calibration, motion planning, and precise manipulation. arXiv:2608.27497v1 [cs.RO] 27 Aug 2026 However, achieving metric geometry reconstruction is ex-tremely challenging. It requires reconstruction models to in-fer a globally consistent metric scale from metric observa-tions, such as camera translation and depth observations. In practice, reconstruction models often rely on visual priors, including object categories, scene layouts, and appearance statistics, rather than learning the intrinsic correspondence between metric observations and scene scale. This challenge becomes more severe under flexible observation configura-tions, where the availability, quantity, and depth map den-sity of metric observations vary across different robotic plat-forms. The model must exploit all available metric evidence effectively while remaining robust to changes in sensor con-figuration. To address these challenges, we propose Metric-Aware Geometry Perception (MAGP), an end-to-end, plug-and-play metric reconstruction framework for robotics. MAGP jointly encodes multi-view images with optional camera parame-ters and depth observations into geometry tokens that ex-plicitly preserve metric scale, enabling seamless integration with embodied policies. Its core, metric scale equivariant re-construction , is achieved through Metric Scale Equivariant Augmentation (MSEA), which perturbs metric observations to encourage scale inference from camera translation and depth rather than appearance-based priors. Fig. 2 demon-strates that the reconstructed scene geometry matches the metric scale specified by the metric observation . Flexible Metric Conditioning further supports arbitrary view counts and combinations of metric inputs, accommodating hetero-geneous robotic sensing configurations. Finally, joint rela-tive and metric supervision preserves fine-grained geometry while ensuring reconstruction in a consistent metric scale. Experiments on ETH3D, MegaDepth, and ScanNet++ demonstrate that MAGP improves both relative and metric geometry reconstruction. In the image-only setting, MAGP achieves depth and point scores of 74.23% and 84.27%, surpassing Depth Anything 3 by 17.41% and 17.00%, re-spectively. With camera parameters and depth observations, these scores further increase to 84.81% and 87.34%, while the corresponding absolute errors decrease to 0.11m and 
+
+0.06m . When integrated into embodied policies, MAGP im-proves performance by up to 1.3% on LIBERO and 6.26% on RoboTwin, while achieving a further 3.9% gain in zero-shot evaluation on LIBERO-Plus. Our contributions are summarized as follows: 
+
+• To our knowledge, MAGP is the first end-to-end and plug-and-play framework to provide metric geometry percep-tion for robotic manipulation, bridging geometric recon-struction and action prediction under a unified scale. 
+
+• MAGP supports flexible combinations of images, camera parameters, and depth observations, recovering metric geometry whenever metric observations are available. 
+
+• Extensive experiments across three reconstruction bench-marks and three robotic manipulation benchmarks demonstrate that MAGP preserves strong relative geom-etry accuracy while reducing the absolute error from 
+
+2.01m to 0.07m , and consistently improves different robotic policies by up to 6.26%. 
+
+## 2 Related Work 
+
+3D Geometry Reconstruction. Recent 3D reconstruc-tion has shifted from optimization-based pipelines to feed-forward models that directly infer scene geometry and camera parameters. DUSt3R (Wang et al. 2024) and MASt3R (Leroy, Cabon, and Revaud 2024) formulate reconstruction through pairwise pointmap regression and geometric matching, while VGGT (Wang et al. 2025a), CUT3R (Wang et al. 2025b), and π3 (Wang et al. 2025d) extend this paradigm to unified multi-view modeling. Depth Anything 3 (Lin et al. 2025) in-troduces a depth-ray representation, MapAnything (Keetha et al. 2026) supports flexible geometric observations, and VGGT-Ω (Wang et al. 2026a) improves performance through large-scale model and data scaling. Despite these advances, these methods remain focused on relative geometry, neglect-ing consistent metric scale recovery. 
+
+Geometry-Aware Robotic Manipulation. Recent stud-ies have incorporated 3D geometry into embodied models through several representative designs (Huang et al. 2026; Xia et al. 2026; Liu et al. 2026; Zhang et al. 2026). 3DS-VLA (Li et al. 2025) aligns 3D observations with pretrained visual features, while DepthVLA (Yuan et al. 2025) intro-duces depth representations for spatial reasoning. VGGT-DP (Ge et al. 2025) injects pretrained VGGT features through a plug-and-play module, whereas ABot-M0 (Yang et al. 2026) adopts a dual-stream architecture to combine visual-language and VGGT-based geometric representations. Al-though these methods improve manipulation performance, their geometry only captures relative structure. In contrast, our MAGP recovers metric geometry and directly embeds metric information into geometric tokens for robotics. 
+
+## 3 Challenge of Metric Scale 3D Perception 
+
+As illustrated in Fig. 1, existing reconstruction models can recover accurate relative geometry, yet their predicted scales vary across views. Such inconsistency prevents reconstruc-tion within a shared physical coordinate system and weakens the alignment between spatial perception and robotic actions. This section formalizes the learning objectives of relative and metric reconstruction and identifies the key challenge in re-covering consistent scene scale. 
+
+Relative geometry lacks the metric precision required for reliable robotic manipulation. Given a sequence of N
+
+images I = {Ii}Ni=1 , each view is associated with depth Di,camera intrinsics Ki, and extrinsics [Ri|ti]. Ri and ti trans-form camera coordinates into the world coordinate system, a pixel ˜p = ( u, v, 1) T with depth Di(u, v ) is back-projected as 
+
+Pi(u, v ) = RiDi(u, v )K−1 
+
+> i
+
+˜p + ti. (1) Aggregating valid points from all views yields the metric scene point cloud P.To resolve the inherent scale ambiguity of visual observa-tions, existing reconstruction models ϕθ (·) commonly nor-malize the prediction and ground truth independently and optimize a relative geometry reconstruction objective: 
+
+Lrel = d
+
+
+
+N ( ˆP), N (P)
+
+
+
+, (2) tt 2t 2t  D 2D     
+
+> Metric Observation Input: Camera Translation t or Depth D
+> Metric Scale Equivariant Reconstruction
+> Metric Scale Agnostic Reconstruction
+> 1.19m 2.38m
+> 1.17m 1.17m
+> 1.19m
+> 1.15m 1.16m
+> 2.31m
+> or or or
+> Input: Multi -View Images Input: Multi -View Images Reference Scene
+> 1.20m
+> (t, D)
+> (2t, 2D)
+> 2.40m
+> 2× Scale
+> Same Visual
+> Observation
+
+Figure 2: Scenes with scaled camera translation and depth, 
+
+(t, D) → (2 t, 2D), can yield same multi-view images. Given these metric observations, metric scale equivariant recon-struction follows the corresponding scale change, whereas metric scale agnostic reconstruction remains unchanged. where ˆP = ϕθ (I) denotes the point cloud predicted by re-construction model ϕθ (·), N (·) denotes scene-level scale normalization and d(·) measures geometric discrepancy. Since N (sP) = N (P) for any s > 0, the model is only required to predict 
+
+ˆP = sP, s ∼ ϕθ (I), (3) where s is an unknown, sample-dependent scale factor. Consequently, the reconstructed scale varies with view selection, camera motion, and visual content, causing identi-cal geometric distances to correspond to different real-world measurements. This ambiguity is particularly detrimental to robotic manipulation, where geometry must calibrate end-effector displacement, gripper width, and motion trajecto-ries. Relative geometry can indicate where to act, but cannot reliably determine how far to move in physical space. 
+
+Metric scale should be grounded in camera translation and depth observations. Metric scale is determined by two metric observations. Camera translation t provides a global metric baseline that, together with camera intrin-sics, rotations, and cross-view correspondences, resolves the scale ambiguity between camera motion and scene structure through triangulation. Depth observations D provide local metric anchors by specifying physical distances along cam-era rays. A straightforward metric reconstruction approach is to remove scene-level normalization and directly regress the scene geometry in physical units: 
+
+ˆP = sP, s ∈ R+. (4) where ˆP = ϕθ (I, K, R, t, D). Accordingly, the reconstruc-tion model is required to be optimized by 
+
+Lmetric = d
+
+ ˆP, P
+
+
+
+. (5) However, we find that metric supervision Lmetric alone is insufficient for reliable metric geometry modeling. As il-lustrated by the metric scale agnostic reconstruction in Fig. 2 and corroborated by the results in Table 2, reconstruction models will overlook the metric information provided by camera translation and depth. Instead, they tend to infer scene scale from visual correlations, such as object appear-ance, semantic categories, and scene layout. Consequently, the predicted scale becomes primarily dependent on the vi-sual observations, i.e., s ∼ ϕθ (I). This challenge is further exacerbated in practical robotic systems, where the avail-ability of metric observations varies, making it difficult for models to extract reliable metric information from sparse and partially available observations. Metric reconstruction should explicitly ground scene scale in the available metric observations rather than infer it from visual appearance. The reconstructed geometry should be formulated as 
+
+ˆP = sP, s ∼ ϕθ (t, D), (6) where s denotes the metric scale inferred from camera trans-lation and depth observations. Accordingly, scaling the avail-able metric observations by α > 0 should proportionally scale the reconstruction, which we call metric scale equiv-ariant reconstruction :
+
+ϕθ (I, K, R, αt, α D) = αϕ θ (I, K, R, t, D) . (7) This attribute ensures that the reconstructed geometry fol-lows the scale explicitly encoded by the metric observations. 
+
+## 4 Metric-Aware 3D Perception for Robotics 
+
+Building on metric scale equivariant reconstruction, we pro-pose MAGP, a unified framework that produces metric geom-etry for robotics. MAGP combines Metric Scale Equivariant Augmentation, Flexible Metric Conditioning, and joint rel-ative and metric scale supervision to align reconstruction scale with metric observations, support flexible observation combinations, and preserve accurate geometric structure. 
+
+4.1 Architecture Design 
+
+As illustrated in Fig. 3, MAGP is an end-to-end metric ge-ometry reconstruction model with a single-transformer back-bone. It jointly encodes multi-view images, optional camera parameters, and depth observations into metric geometry tokens that capture scale-consistent scene structure, object dimensions, and spatial distances. These tokens are then in-tegrated into the embodied policy, providing scale-consistent geometric representations for robotics. 
+
+Metric-Aware Geometry Modeling. MAGP employs a single-transformer backbone for unified multi-view geomet-ric modeling. Given N images {Ii}Ni=1 , each view is con-verted into patch tokens by the patch embedding εI (·):
+
+zIi = εI (Ii). The early transformer layers perform within-view self-attention to capture view-specific structure, while the subsequent layers alternate between within-view and cross-view attention to establish inter-view correspondences and aggregate global scene geometry. This unified design Metric -Aware Geometry Modeling      
+
+> Camera
+> Encoder
+> Patch
+> Embed
+> Patch
+> Embed
+> Single Transformer
+> Metric Scale Geometry Tokens
+> Metric Scale
+> 3D Point Clouds
+> 16cm
+> DPT and
+> Camera Head
+> Images Depth Camera
+> Parameters
+> Element -wise Addition
+> Concatenation
+> Element -wise Addition
+> Concatenation
+> Element -wise Addition
+> Concatenation
+
+2     
+
+> Camera Parameters ( K, R, t )
+> (Optional)
+> Multi -View Images I
+> Depth D(Optional)
+> Language Instruction
+> "Pick up the bottle and
+> place it on the tray."
+> …"Pick up the bottle and
+> place it on the tray."
+> …
+
+Inputs 1    
+
+> Camera Parameters ( K, R, t )
+> (Optional)
+> Multi -View Images I
+> Depth D(Optional)
+> Language Instruction
+> "Pick up the bottle and
+> place it on the tray."
+> …
+
+Inputs 1
+
+> "Pick up the bottle and place it
+> on the tray."
+> Language Instruction
+
+Metric to Action Grounding 3
+
+> VLM Backbone
+> (e.g. Qwen3VL -4B)
+> Images
+
+…
+
+> Language -Visual Tokens
+
+…
+
+> Language -Visual Tokens
+> Cross -
+> Attention
+
+…
+
+> Metric -Grounded
+> Visual -Language Tokens
+
+…
+
+> Metric -Grounded
+> Visual -Language Tokens
+> K/V
+> Q
+
+Action Prediction 4    
+
+> Actions Actions
+> Δx, Δy, Δz
+> (End -effector Translation)
+> Δx, Δy, Δz
+> (End -effector Translation)
+> Rotation
+> (Roll, Pitch, Yaw)
+> Rotation
+> (Roll, Pitch, Yaw)
+> Gripper
+> (Open / Close)
+> Gripper
+> (Open / Close)
+> Noise Actions Noise Actions
+> Action Expert
+> (Flow Matching)
+
+Figure 3: Architecture schematic of MAGP. MAGP encodes multi-view images, optional camera parameters, and depth obser-vations into metric geometry tokens using a single transformer. These tokens ground visual-language representations through residual cross-attention, providing metric scale calibrated geometry for action prediction. eliminates the need for a separate multi-view fusion mod-ule and naturally accommodates a variable number of views, enabling deployment across robotic platforms with diverse camera configurations. MAGP supports flexible observation configurations. For each view i, available camera parameters (Ki, R i, t i) and depth Di are encoded as zCi = εC (Ki, R i, t i) and zDi =
+
+εD (Di). εC (·) is a lightweight MLP and εD (·) is a patch embedding. Missing observations are represented by shared learnable tokens zC 
+
+> ∅
+
+and zD 
+
+> ∅
+
+. The camera token is concate-nated with the image tokens, whereas the depth tokens are added to the image tokens as ezIi = zIi + zDi . Unlike scene-wise normalization, which removes metric scale, MAGP ap-plies a scene-independent normalization factor μ to cam-era translation and depth observations. This uniform linear rescaling places metric quantities within a consistent nu-merical range, thereby improving numerical stability during optimization without introducing scene-dependent scale dis-tortion. The DPT head decodes metric geometry tokens into met-ric scale depth maps, while the camera head estimates the corresponding intrinsics and extrinsics. These predictions are jointly back-projected into a shared metric coordinate system to recover scene geometry. 
+
+Metric to Action Grounding. To inject metric geometry into the embodied policy, we introduce a residual cross-attention module that grounds visual-language features in metric scale geometric representations. Let Hvl ∈ RL×C
+
+denote the visual-language tokens produced by Qwen3-VL-4B-Instruct (Bai et al. 2025), and Hgeo ∈ RM ×Cg denote the metric geometry tokens extracted by MAGP. The two representations are first projected into a shared latent space: 
+
+Q = Hvl WQ, K = Hgeo WK , V = Hgeo WV , (8) where WQ, WK , and WV are learnable projection matrices. Then, the visual-language tokens serve as queries, while the metric geometry tokens provide keys and values: 
+
+Hfuse = Hvl + CrossAttn (Q, K, V) . (9) This residual fusion enables task-relevant metric cues, in-cluding object dimensions, spatial distances, and scene ge-ometry, to be selectively integrated into the visual-language representation. The resulting features preserve the semantic reasoning capability of Qwen3-VL-4B-Instruct while pro-viding scale-consistent geometric grounding for action pre-diction. 
+
+4.2 Robust Metric-Aware Geometry Optimization 
+
+Providing camera parameters and depth observations alone is insufficient for reliable metric geometry recovery, as the reconstruction model favors visual priors over the physical constraints encoded by these observations. This problem is further complicated by heterogeneous sensing configurations and variations in depth availability and density. MAGP ad-dresses these challenges through the following strategies. 
+
+Metric Scale Equivariant Augmentation. A metric-aware model should respond proportionally to changes in the scale specified by metric observations. To introduce this attribute while maintaining a stable numerical range, we pa-rameterize the augmentation scale as α ∼ abs (N (μ, 1)) . For each training scene, camera translation, depth observations, and geometric supervision are jointly rescaled as 
+
+˜ti = αti, ˜Di = αDi, ˜Pi = αPi, (10) According to Eq. (1), this transformation preserves im-age projections while scaling the physical scene geometry by 
+
+α. By associating identical visual observations with differ-ent metric scales, the augmentation prevents visual appear-ance from determining reconstruction scale and encourages MAGP to follow the physical constraints encoded by camera translation and depth. 
+
+Flexible Metric Conditioning. Robotic platforms exhibit heterogeneous sensing configurations: camera parameters may be available only for selected views, while depth ob-servations can be dense, sparse, or entirely missing. Training with a fixed combination of metric observations can therefore cause over-dependence on a specific sensor configuration and limit cross-platform generalization. To simulate diverse observation patterns, MAGP indepen-dently varies camera and depth availability for each view. Specifically, 
+
+mCi , m Di ∼ Bernoulli(0 .5) , (11) where m = 1 retains the corresponding observation and 
+
+m = 0 replaces it with a shared learnable placeholder. The camera representation is defined as 
+
+˜zCi = mCi zCi +  1 − mCi
+
+ zC
+
+> ∅
+
+. (12) To account for varying depth density, a stochastic spatial mask Si is further applied: 
+
+˜D∗ 
+
+> i
+
+= Si ⊙ ˜Di, (13) where ⊙ denotes element-wise multiplication. The depth representation is then constructed as 
+
+˜zDi = mDi εD
+
+ ˜D∗
+
+> i
+
+
+
++  1 − mDi
+
+ zD 
+
+> ∅
+
+. (14) By independently varying camera availability, depth avail-ability, and depth density across views, MAGP unifies camera-conditioned, depth-conditioned, jointly conditioned, and partially observed settings within a single model. It lever-ages available metric observations to recover metric geome-try and, when such observations are sparse or missing, com-plements them with the remaining observations and multi-view geometric constraints. This flexible conditioning mech-anism reduces reliance on fixed sensor configurations and improves robustness to heterogeneous sensing conditions. 
+
+Training Objective. MAGP jointly optimizes relative and metric objectives. As defined in Eqs. (2) and (5), respectively, the relative supervision Lrel preserves fine-grained geometry and cross-view consistency, whereas the metric supervision 
+
+Lmetric supervises reconstruction in metric scale. Since met-ric supervision is valid only when sufficient scale evidence is available, we introduce 
+
+mmetric = I [Nextrinsics ≥ 2 ∨ Ndepth ≥ 1] , (15) where Nextrinsics and Ndepth denote the numbers of views with valid camera extrinsics and depth observations, respec-tively. Thus, mmetric = 1 when either a metric multi-view baseline or at least one depth observation is available. Using the ℓ1 discrepancy d(x, y) = ∥x − y∥1, the final objective is 
+
+Lgeo = Lrel + mmetric Lmetric . (16)                                                                                
+
+> Method Depth Points
+> δ1.03 (↑)δ1.25 (↑)Abs (↓)δ1.03 (↑)δ1.25 (↑)Abs (↓)
+> Input: Image VGGT 51.77 95.58 3.88 67.42 97.10 2.09 MA 51.92 96.99 4.97 68.53 98.13 2.17 DA3 56.82 97.89 3.96 67.27 98.30 2.00 VGGT-Ω66.40 98.51 4.04 82.91 99.17 2.00 MAGP 74.23 99.05 0.75 84.27 99.17 0.40
+> Input: Image, Camera Parameter MA 50.22 93.25 2.31 57.34 93.19 1.03 DA3 62.65 98.28 3.92 72.11 98.58 2.01 MAGP 84.87 99.12 0.12 87.21 99.28 0.07
+> Input: Image, Depth MA 40.00 93.30 0.29 49.33 94.80 0.24 MAGP 73.70 99.15 0.25 83.23 99.28 0.13
+> Input: Image, Camera Parameter, Depth MA 57.50 93.96 0.21 58.11 95.36 0.12 MAGP 84.81 99.16 0.11 87.34 99.34 0.06
+
+Table 1: Comparison of reconstruction accuracy under dif-ferent settings. Results are averaged over three benchmarks. 
+
+## 5 Experiments 
+
+We evaluate MAGP on both reconstruction and robotic benchmarks, assessing its metric reconstruction capability and its effectiveness for robotics. 
+
+5.1 Evaluation on 3D Reconstruction Task 
+
+Implementation Details. MAGP is initialized from pre-trained DA3-Giant model and trained on a mixture of multi-view reconstruction datasets using a two-stage view curricu-lum. Details are provided in the appendix. 
+
+Benchmark and Metric. We evaluate metric geometry re-construction on ETH3D (Schops et al. 2017), MegaDepth (Li and Snavely 2018), and ScanNet++ (Yeshwanth et al. 2023). Performance is measured using δ1.03 , δ1.25 , and absolute er-ror ( Abs ). The δ metrics report the inlier ratios under relative thresholds of 1.03 and 1.25 , while Abs measures the mean absolute error in meters. 
+
+Comparison with State-of-the-Art Methods. As shown in Table 1, MAGP consistently outperforms VGGT, MapA-nything (MA), Depth Anything 3 (DA3), and VGGT-Ω across all observation settings. With images alone, it achieves δ1.03 
+
+scores of 74.23% for depth and 84.27% for points, surpass-ing DA3 by 17.41% and 17.00%, respectively, demonstrating strong relative geometry reconstruction. When camera parameters or depth observations are avail-able, MAGP substantially improves metric accuracy while preserving relative geometry. Using camera parameters, it achieves Abs errors of 0.12m for depth and 0.07m for points; using depth observations, the errors are 0.25m and 0.13m .With both observations, MAGP attains the best performance, reducing the errors to 0.11m and 0.06m .Fig. 4 further demonstrates cross-batch scale consistency. MAGP maintains a consistent metric scale across indepen-dently reconstructed view subsets, enabling coherent fusion, whereas DA3 produces subset-dependent scales that lead to severe misalignment and fragmented geometry. (b) Depth Anything 3 has various  scale s across independently reconstructed view subsets 
+
+Views 1  Views 2  Views 3  Fused Views 
+
+(a) MAGP (Ours) has  a consistent  metric  scale across independently reconstructed view subsets 
+
+Views 2  Views 3  Fused Views Views 1 
+
+Views 1  Views 2  Views 3 Figure 4: Scale consistency across three independently reconstructed subsets. MAGP achieves consistency reconstruction. 
+
+Input MSEA Depth Points 
+
+δ1.03 (↑) Abs (↓) δ1.03 (↑) Abs (↓)[R| 0.9t] × 69.58 0.11 74.57 0.09 
+
+✓ 78.68 0.05 83.53 0.04 
+
+[R| t] × 70.72 0.06 75.97 0.06 
+
+✓ 78.86 0.04 83.90 0.04 
+
+[R| 1.1t] × 71.60 0.07 77.08 0.07 
+
+✓ 79.21 0.04 83.94 0.04 
+
+[R| 2t] × 53.74 0.45 53.21 0.36 
+
+✓ 73.84 0.06 80.21 0.05 
+
+0.9 D × 70.82 0.17 76.43 0.14 
+
+✓ 75.84 0.06 83.02 0.06 
+
+D × 70.73 0.07 75.88 0.07 
+
+✓ 76.43 0.06 83.26 0.05 
+
+1.1 D × 70.30 0.13 75.82 0.12 
+
+✓ 76.07 0.07 83.56 0.06 
+
+2D × 69.83 0.63 74.92 0.53 
+
+✓ 76.18 0.09 83.31 0.08 
+
+Table 2: Ablation of Metric Scale Equivariant Augmenta-tion (MSEA). Translation t and depth D are independently rescaled while visual observations remain fixed. 
+
+Ablation Studies. Table 2 evaluates the effectiveness of MSEA on ScanNet++. MSEA enables the model to consis-tently follow scale variations, whereas removing it causes substantial degradation and weak responsiveness to the pro-vided metric observations. Together with Fig. 2, these results show that MSEA is essential for preventing reliance on visual priors and achieving metric scale equivariant reconstruction. Table 3 isolates the effects of different training objectives on ScanNet++. The relative objective Lrel preserves accu-rate geometric structure but does not explicitly constrain the 
+
+Lgeo 
+
+Depth Points 
+
+δ1.03 (↑) Abs (↓) δ1.03 (↑) Abs (↓)
+
+Lrel 63.53 2.54 73.90 1.67 
+
+Lmetric 77.44 0.16 81.97 0.10 
+
+Lrel &Lmetric 80.67 0.15 83.30 0.09 
+
+Table 3: Ablation of training objective Lgeo . Joint relative and metric supervision improves geometric accuracy while maintaining metric scale consistency. 
+
+μ Depth Points 
+
+δ1.03 (↑) Abs (↓) δ1.03 (↑) Abs (↓)
+
+5 80.74 0.15 85.53 0.08 
+
+10 82.99 0.13 84.47 0.08 
+
+15 80.90 0.16 81.24 0.09 
+
+Table 4: Ablation of the normalization factor μ. μ serves both as the normalization factor for metric inputs and as the mean of the Gaussian distribution used in MSEA. reconstruction to a metric scale. In contrast, Lmetric enables metric geometry recovery, although its relative accuracy re-mains below that achieved by the joint objective. Jointly opti-mizing Lrel and Lmetric yields the best overall performance, confirming their complementarity: relative supervision pre-serves fine-grained geometric structure, whereas metric su-pervision anchors the reconstruction to a consistent metric scale. We set the normalization factor to μ = 10 based on the characteristic spatial scales of environments relevant to robotic perception. Hypersim captures complex indoor scenes, whereas CO3Dv2 provides object-centric observa-Method Camera Robot Language Light Background Noise Layout Total                                                                         
+
+> OpenVLA 0.8 3.5 23.0 8.1 34.8 15.2 28.5 15.6 OpenVLA-OFT 56.4 31.9 79.5 88.7 93.3 75.8 74.2 69.6
+> π013.8 6.0 58.8 85.0 81.4 79.0 68.9 53.6
+> π0-Fast 65.1 21.6 61.0 73.2 73.2 74.4 68.8 61.6
+> π0.564.3 57.2 82.8 94.2 94.0 79.6 78.2 77.0 RIPT-VLA 55.2 31.2 77.6 88.4 91.6 73.5 74.2 68.4 GR00T 60.9 49.0 87.6 92.5 95.5 81.3 78.5 76.4 GR00T 165.9 56.8 88.1 94.1 94.5 83.6 79.0 79.0 GR00T 262.7 63.9 88.0 96.4 94.7 86.1 79.3 80.3 +3 .9
+
+Table 5: Zero-shot performance comparison on LIBERO-Plus. Task success rates (%) are reported. 1 denotes the use of relative geometry, while 2 denotes the use of metric geometry (MAGP).                                                                       
+
+> Method Spatial Object Goal Long Avg.
+> π096.8 98.8 95.8 85.2 94.1
+> π0.598.8 98.2 98.0 92.4 96.9 OpenVLA 84.7 88.4 79.2 53.7 76.5 OpenVLA-OFT 97.6 98.4 97.9 94.5 97.1 Motus 96.8 99.8 96.6 97.6 97.7 DepthVLA 196.4 98.0 95.8 89.2 94.9 Fast-WAM 98.2 100.0 97.0 95.2 97.6 StarVLA-π98.2 99.8 98.2 90.8 96.8 StarVLA-π198.4 99.4 98.6 92.8 97.3 +0 .5
+> StarVLA-π299.4 98.4 98.8 95.6 98.1 +1 .3
+> GR00T 99.2 98.8 98.0 94.0 97.5 GR00T 199.4 98.4 98.8 95.6 98.1 +0 .6
+> GR00T 299.8 99.2 98.4 96.6 98.5 +1 .0
+
+Table 6: Performance comparison on LIBERO. Task success rates (%) are reported. 1 denotes the use of relative geometry, while 2 denotes the use of metric geometry (MAGP). tions of everyday objects from diverse viewpoints, jointly covering scene-level understanding and local interaction. Their mean scene depths are 9.39m and 10 .92m , respec-tively, supporting a representative scale of approximately 
+
+10m . Table 4 further shows that this physically grounded choice provides a stable trade-off across depth and point re-construction metrics. 
+
+5.2 Evaluation on Robotic Manipulation Task 
+
+Implementation Details. Our policy is trained from scratch for 100K iterations on LIBERO, while the RoboTwin policy is initialized from the pretrained DM0.5 (Dexmal Team 2026) weights and trained for 150K iterations. Details are provided in the appendix. 
+
+Benchmark and Evaluation Protocol. We evaluate robotic manipulation on LIBERO (Liu et al. 2023) and RoboTwin (Chen et al. 2025), and assess zero-shot robust-ness on LIBERO-Plus (Fei et al. 2026) without additional fine-tuning. We compare MAGP with representative state-of-the-art methods (Black et al. 2026; Kim et al. 2024; Kim, Finn, and Liang 2025; Bi et al. 2025; Yuan et al. 2025, 2026; Black et al. 2025; Bjorck et al. 2025; Pertsch et al. 2025; Ye                                  
+
+> Method Clean Rand. Avg.
+> π065.92 58.40 62.16
+> π0.582.74 76.76 79.75 X-VLA 72.80 72.84 72.82 Motus 88.66 87.02 87.84 ABot-M0 186.06 85.08 85.57 GR00T 82.06 81.32 81.69 GR00T 186.70 83.64 85.17 +3 .48
+> GR00T 287.46 88.44 87.95 +6 .26
+> DM0.5 92.72 91.52 92.12 DM0.5 294.06 93.76 93.91 +1 .79
+
+Table 7: Performance comparison on RoboTwin. Task suc-cess rates (%) are reported. 1 denotes the use of relative ge-ometry, while 2 denotes the use of metric geometry (MAGP). et al. 2026). Details are provided in the appendix. 
+
+Performance comparison on LIBERO and RoboTwin. 
+
+As shown in Tables 6 and 7, metric geometry consistently im-proves manipulation performance. On LIBERO, the average success rate increases from 96.8% to 98.1% for StarVLA-
+
+π and from 97.5% to 98.5% for GR00T. On RoboTwin, it improves GR00T from 81.69% to 87.95% and DM0.5 from 92.12% to 93.91%, demonstrating the effectiveness of metric-consistent geometry across models and benchmarks. 
+
+Zero-shot Performance on LIBERO-PLUS. Table 5 re-ports zero-shot results on LIBERO-Plus. GR00T 2 achieves the best overall success rate of 80.3%, outperforming GR00T and GR00T 1 by 3.9% and 1.3%, respectively. The largest gain occurs under robot-state perturbations, from 49.0% to 63.9%, with further improvements under light, noise, and layout shifts. These results show that metric geometry im-proves robustness to embodiment and spatial shifts. 
+
+## 6 Conclusion 
+
+We propose MAGP, an end-to-end and plug-and-play frame-work that reconstructs metric geometry for downstream robotic policies. Extensive experiments on 3D reconstruc-tion and robotic manipulation benchmarks demonstrate its effectiveness and consistent advantages. References 
+
+Bai, S.; Cai, Y.; Chen, R.; Chen, K.; Chen, X.; Cheng, Z.; Deng, L.; Ding, W.; Gao, C.; Ge, C.; et al. 2025. Qwen3-vl technical report. arXiv preprint arXiv:2511.21631 .Bi, H.; Tan, H.; Xie, S.; Wang, Z.; Huang, S.; Liu, H.; Zhao, R.; Feng, Y.; Xiang, C.; Rong, Y.; Zhao, H.; Liu, H.; Su, Z.; Ma, L.; Su, H.; and Zhu, J. 2025. Motus: A Unified Latent Action World Model. arXiv:2512.13030. Bjorck, J.; Castañeda, F.; Cherniadev, N.; Da, X.; Ding, R.; Fan, L.; Fang, Y.; Fox, D.; Hu, F.; Huang, S.; et al. 2025. Gr00t n1: An open foundation model for generalist humanoid robots. arXiv preprint arXiv:2503.14734 .Black, K.; Brown, N.; Darpinian, J.; Dhabalia, K.; Driess, D.; Esmail, A.; Equi, M. R.; Finn, C.; Fusai, N.; Galliker, M. Y.; et al. 2025. π0.5: a Vision-Language-Action Model with Open-World Generalization. In 9th Annual Conference on Robot Learning .Black, K.; Brown, N.; Driess, D.; Esmail, A.; Equi, M.; Finn, C.; Fusai, N.; Groom, L.; Hausman, K.; Ichter, B.; Jakubczak, S.; Jones, T.; Ke, L.; Levine, S.; Li-Bell, A.; Mothukuri, M.; Nair, S.; Pertsch, K.; Shi, L. X.; Tanner, J.; Vuong, Q.; Walling, A.; Wang, H.; and Zhilinsky, U. 2026. π0: A Vision-Language-Action Flow Model for General Robot Control. arXiv:2410.24164. Chen, T.; Chen, Z.; Chen, B.; Cai, Z.; Liu, Y.; Li, Z.; Liang, Q.; Lin, X.; Ge, Y.; Gu, Z.; et al. 2025. Robotwin 2.0: A scal-able data generator and benchmark with strong domain ran-domization for robust bimanual robotic manipulation. arXiv preprint arXiv:2506.18088 .Dexmal Team. 2026. DM0.5: An Open-World Foundation Model for General-Purpose Embodied Intelligence. Fei, S.; Wang, S.; Shi, J.; Dai, Z.; Cai, J.; Qian, P.; Ji, L.; He, X.; Zhang, S.; Fei, Z.; et al. 2026. Libero-plus: A progressive robustness benchmark for visual-language-action models. In 
+
+Proceedings of the IEEE/CVF Conference on Computer Vi-sion and Pattern Recognition , 38574–38583. Ge, S.; Zhang, Y.; Xie, S.; Zhang, W.; Zhou, M.; and Wang, Z. 2025. VGGT-DP: Generalizable Robot Control via Vision Foundation Models. arXiv preprint arXiv:2509.18778 .Huang, H.; Cen, M.; Tan, K.; Quan, X.; Huang, G.; and Zhang, H. 2026. Graphcot-vla: A 3d spatial-aware reasoning vision-language-action model for robotic manipulation with ambiguous instructions. In Proceedings of the AAAI Confer-ence on Artificial Intelligence , volume 40, 18324–18332. Keetha, N. V.; Müller, N.; Schönberger, J.; Porzi, L.; Zhang, Y.; Fischer, T.; Knapitsch, A.; Zauss, D.; Weber, E.; Antunes, N.; et al. 2026. Mapanything: Universal feed-forward metric 3d reconstruction. In Thirteenth International Conference on 3D Vision .Kim, M. J.; Finn, C.; and Liang, P. 2025. Fine-Tuning Vision-Language-Action Models: Optimizing Speed and Success. arXiv:2502.19645. Kim, M. J.; Pertsch, K.; Karamcheti, S.; Xiao, T.; Balakr-ishna, A.; Nair, S.; Rafailov, R.; Foster, E.; Lam, G.; Sanketi, P.; et al. 2024. Openvla: An open-source vision-language-action model. arXiv preprint arXiv:2406.09246 .Leroy, V.; Cabon, Y.; and Revaud, J. 2024. Grounding image matching in 3d with mast3r. In European conference on computer vision , 71–91. Springer. Li, X.; Heng, L.; Liu, J.; Shen, Y.; Gu, C.; Liu, Z.; Chen, H.; Han, N.; Zhang, R.; Tang, H.; et al. 2025. 3DS-VLA: A 3D Spatial-Aware Vision Language Action Model for Robust Multi-Task Manipulation. In Conference on Robot Learning ,2344–2359. PMLR. Li, Z.; and Snavely, N. 2018. Megadepth: Learning single-view depth prediction from internet photos. In Proceed-ings of the IEEE conference on computer vision and pattern recognition , 2041–2050. Lin, H.; Chen, S.; Liew, J.; Chen, D. Y.; Li, Z.; Shi, G.; Feng, J.; and Kang, B. 2025. Depth anything 3: Recovering the vi-sual space from any views. arXiv preprint arXiv:2511.10647 .Liu, B.; Zhu, Y.; Gao, C.; Feng, Y.; Liu, Q.; Zhu, Y.; and Stone, P. 2023. Libero: Benchmarking knowledge transfer for lifelong robot learning. Advances in Neural Information Processing Systems , 36: 44776–44791. Liu, J.; Wuwu, Q.; Han, N.; Chen, H.; Liu, Z.; Fei, F.; Jia, Y.; Gu, C.; Guo, Y.; Shi, B.; et al. 2026. Lift3D-VLA: Lifting VLA Models to 3D Geometry and Dynamics-Aware Manip-ulation. arXiv preprint arXiv:2607.06564 .Ni, Z.; He, Y.; Qian, L.; Mao, J.; Fu, F.; Sui, W.; Su, H.; Peng, J.; Wang, Z.; and He, B. 2025. VO-DP: Semantic-Geometric Adaptive Diffusion Policy for Vision-Only Robotic Manipu-lation. arXiv preprint arXiv:2510.15530 .Pertsch, K.; Stachowicz, K.; Ichter, B.; Driess, D.; Nair, S.; Vuong, Q.; Mees, O.; Finn, C.; and Levine, S. 2025. FAST: Efficient Action Tokenization for Vision-Language-Action Models. arXiv:2501.09747. Qu, D.; Song, H.; Chen, Q.; Yao, Y.; Ye, X.; Ding, Y.; Wang, Z.; Gu, J.; Zhao, B.; Wang, D.; et al. 2025. Spatialvla: Exploring spatial representations for visual-language-action model. arXiv preprint arXiv:2501.15830 .Schops, T.; Schonberger, J. L.; Galliani, S.; Sattler, T.; Schindler, K.; Pollefeys, M.; and Geiger, A. 2017. A multi-view stereo benchmark with high-resolution images and multi-camera videos. In Proceedings of the IEEE conference on computer vision and pattern recognition , 3260–3269. Shridhar, M.; Manuelli, L.; and Fox, D. 2023. Perceiver-actor: A multi-task transformer for robotic manipulation. In 
+
+Conference on Robot Learning , 785–799. PMLR. Wang, J.; Chen, M.; Karaev, N.; Vedaldi, A.; Rupprecht, C.; and Novotny, D. 2025a. Vggt: Visual geometry grounded transformer. In Proceedings of the Computer Vision and Pattern Recognition Conference , 5294–5306. Wang, J.; Chen, M.; Zhang, S.; Karaev, N.; Schönberger, J.; Labatut, P.; Bojanowski, P.; Novotny, D.; Vedaldi, A.; and Rupprecht, C. 2026a. VGGT-Ω. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) .Wang, Q.; Zhang, Y.; Holynski, A.; Efros, A. A.; and Kanazawa, A. 2025b. Continuous 3d perception model with persistent state. In Proceedings of the Computer Vision and Pattern Recognition Conference , 10510–10522. Wang, R.; Xu, S.; Dai, C.; Xiang, J.; Deng, Y.; Tong, X.; and Yang, J. 2025c. Moge: Unlocking accurate monocular geom-etry estimation for open-domain images with optimal training supervision. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 5261–5271. Wang, R.; Xu, S.; Dong, Y.; Deng, Y.; Xiang, J.; Lv, Z.; Sun, G.; Tong, X.; and Yang, J. 2026b. Moge-2: Accurate monocu-lar geometry with metric scale and sharp details. Advances in Neural Information Processing Systems , 38: 35928–35959. Wang, S.; Leroy, V.; Cabon, Y.; Chidlovskii, B.; and Revaud, J. 2024. Dust3r: Geometric 3d vision made easy. In Pro-ceedings of the IEEE/CVF conference on computer vision and pattern recognition , 20697–20709. Wang, Y.; Zhou, J.; Zhu, H.; Chang, W.; Zhou, Y.; Li, Z.; Chen, J.; Pang, J.; Shen, C.; and He, T. 2025d. π3: Scalable Permutation-Equivariant Visual Geometry Learning. arXiv e-prints , arXiv–2507. Wu, W.; Lu, F.; Wang, Y.; Yang, S.; Liu, S.; Wang, F.; Zhu, Q.; Sun, H.; Wang, Y.; Ma, S.; et al. 2026. A Pragmatic VLA Foundation Model. arXiv preprint arXiv:2601.18692 .Xia, Z.; Tang, Y.; Wei, B.; and Wang, Y. 2026. 3DVLA: En-hancing Vision-Language-Action Models via 3D Spatial and Instance Understanding. arXiv preprint arXiv:2605.29416 .Yang, Y.; Zeng, S.; Lin, T.; Chang, X.; Qi, D.; Xiao, J.; Liu, H.; Chen, R.; Chen, Y.; Huo, D.; et al. 2026. Abot-m0: Vla foundation model for robotic manipulation with action manifold learning. arXiv preprint arXiv:2602.11236 .Ye, J.; Gao, N.; Yang, S.; Zheng, J.; Wang, Z.; Chen, Y.; Chen, P.; Chen, Y.; Liu, S.; and Jia, J. 2026. StarVLA-α:Reducing Complexity in Vision-Language-Action Systems. In European Conference on Computer Vision (ECCV) .Yeshwanth, C.; Liu, Y.-C.; Nießner, M.; and Dai, A. 2023. Scannet++: A high-fidelity dataset of 3d indoor scenes. In 
+
+Proceedings of the IEEE/CVF International Conference on Computer Vision , 12–22. Yuan, T.; Dong, Z.; Liu, Y.; and Zhao, H. 2026. Fast-WAM: Do World Action Models Need Test-time Future Imagina-tion? arXiv:2603.16666. Yuan, T.; Liu, Y.; Lu, C.; Chen, Z.; Jiang, T.; and Zhao, H. 2025. DepthVLA: Enhancing Vision-Language-Action Models with Depth-Aware Spatial Reasoning. arXiv:2510.13375. Zhang, Y.; Zhang, S.; Shen, Y.; Dong, S.; Deng, J.; Zhang, X.; Gao, Y.; Wu, J.; Nie, X.; Cheng, Z.; et al. 2026. GEAR-VLA: Learning Geometry-Aware Action Representations for Generalizable Robotic Manipulation. arXiv preprint arXiv:2606.08530 .Zhen, H.; Qiu, X.; Chen, P.; Yang, J.; Yan, X.; Du, Y.; Hong, Y.; and Gan, C. 2024. 3D-VLA: A 3D Vision-Language-Action Generative World Model. In International Confer-ence on Machine Learning , 61229–61245. PMLR. Appendix A 3D Reconstruction Task 
+
+A.1 Training Datasets 
+
+MAGP is trained on a large and diverse collection of real-world and synthetic datasets, including Un-realStereo4K, WildRGB-D, Spring, ParallelDomain4D, MegaDepth, MPSD, Dynamic Replica, CO3Dv2, SAIL-VOS 3D, Hypersim, BlendedMVS, and ScanNet++. These datasets collectively cover indoor and outdoor environments, static and dynamic scenes, and monocular, stereo, and multi-view configurations. Their geometric annotations are ob-tained from depth sensors, simulation engines, or structure-from-motion and multi-view stereo pipelines, providing di-verse supervision for relative- and metric-scale reconstruc-tion. 
+
+A.2 Implementation Details 
+
+MAGP is initialized from the pretrained DA3-Giant model. Training is conducted on 32 NVIDIA H100 GPUs using the AdamW optimizer with a learning rate of 5 × 10 −6 and a weight decay of 0.05 . The learning rate follows a cosine decay schedule throughout optimization. Mixed-precision training and gradient checkpointing are employed to improve compu-tational efficiency and reduce memory consumption. A two-stage view curriculum is adopted to progressively strengthen multi-view geometric reasoning. In the first stage, MAGP is trained for 240K optimization steps, with the number of views per scene varying from 2 to 4. The resulting checkpoint is then further optimized for 38K steps, with the number of views varying from 2 to 18. 
+
+A.3 Model Complexity and Inference Efficiency 
+
+Table 8 compares the model complexity and inference ef-ficiency of MAGP with the DA3 baseline. Both methods employ the same backbone and prediction head. MAGP in-troduces only 0.001 B additional parameters, which origi-nate from a lightweight depth encoder implemented as a patch-embedding layer to project the input depth map into patch-level representations. Inference latency is measured on a single NVIDIA A800 GPU under identical experimental settings for both methods. Compared with DA3, MAGP in-creases the latency only marginally, from 152ms to 154ms .These results demonstrate that MAGP enables metric-aware geometry perception with negligible parameter and compu-tational overhead, facilitating its efficient and plug-and-play integration into robotic manipulation policies. 
+
+A.4 Qualitative Results 
+
+Fig. 5 qualitatively compares the metric geometry recon-structed by MAGP with the ground truth across diverse in-door and outdoor scenes. The predictions closely match the ground truth in overall scene extent, object dimensions, and spatial distances, while preserving fine-grained structures and complex geometric layouts. Notably, this agreement is achieved without post-hoc scale alignment, indicating that MAGP recovers not only accurate relative geometry but also the absolute size of the scene. These results visually confirm             
+
+> Method Backbone Encoder Head Latency
+> DA3 1.136B 0.115B 0.069B 152ms MAGP 1.136B 0.116B 0.069B 154ms
+
+Table 8: Model complexity and inference efficiency analysis. that MAGP produces geometrically detailed reconstructions with a consistent metric scale across diverse environments. 
+
+## B Robotic Manipulation Task 
+
+B.1 Evaluation Benchmarks and Protocols 
+
+We evaluate robotic manipulation on LIBERO, LIBERO-Plus, and RoboTwin. For LIBERO, the policy is trained exclusively on demon-strations from the four standard suites: LIBERO-Spatial, LIBERO-Object, LIBERO-Goal, and LIBERO-Long. Each suite contains 10 tasks, and each task is evaluated over 50 independent rollouts, resulting in 2,000 evaluation episodes in total. Performance is reported as the average task success rate. We further evaluate on RoboTwin, a large-scale bench-mark comprising 50 diverse dual-arm manipulation tasks. These tasks cover a broad range of bimanual skills, includ-ing object transfer, tool use, stacking, articulated-object ma-nipulation, and coordinated dual-arm operation. Following the standard protocol, each policy is evaluated under both clean and randomized settings. Each task is tested over 100 independent rollouts in each setting, resulting in 10,000 eval-uation episodes in total. The randomized setting introduces variations in scene clutter, lighting, backgrounds, tabletop height, and language instructions. We report the average suc-cess rate across all tasks for both settings to evaluate manipu-lation capability and robustness under diverse environmental conditions. To assess robustness beyond the training distribution, the LIBERO-trained policy is evaluated zero-shot on LIBERO-Plus without additional fine-tuning. LIBERO-Plus expands the original tasks into 10,030 variants through controlled per-turbations across seven dimensions: object layouts, camera viewpoints, robot initial states, language instructions, light-ing conditions, background textures, and sensor noise. Each variant is evaluated once due to the scale of the benchmark. We report success rates for each perturbation dimension and across the complete benchmark, measuring generalization to changes in geometry, appearance, embodiment, and lan-guage. 
+
+B.2 Implementation Details 
+
+For LIBERO, policies are trained for 100K iterations on 16 NVIDIA H100 GPUs with a per-GPU batch size of 4, yielding a global batch size of 64. For RoboTwin, policies are trained for 150K iterations on 32 NVIDIA H100 GPUs with a per-GPU batch size of 1, resulting in a global batch size of 32. The StarVLA-π and GR00T policies are trained from scratch, whereas DM0.5 is initialized from its pretrained weights and subsequently fine-tuned on RoboTwin. Since the original training data do not provide camera intrinsics, extrinsics, or depth measurements as metric observations, we use MoGe to estimate depth from the head-camera images and treat the resulting predictions as depth observations for MAGP. Optimization is performed using AdamW with β1 = 0 .9,
+
+β2 = 0 .95 , ϵ = 1 × 10 −8, and a weight decay of 1 × 10 −8.The learning rate is set to 1×10 −5 and follows a cosine decay schedule throughout training. No training or fine-tuning is performed on LIBERO-Plus. The LIBERO-trained policy is directly evaluated under the zero-shot setting. 
+
+B.3 Evaluation 
+
+LIBERO. Fig. 6 presents representative rollouts from the four LIBERO suites. LIBERO-Spatial evaluates rea-soning about relative object positions, LIBERO-Object tests object-centric generalization, LIBERO-Goal focuses on goal-conditioned manipulation, and LIBERO-Long re-quires long-horizon action execution. Across these settings, the policies accurately localize target objects, approach them with appropriate motion amplitudes, and complete multi-stage interactions. These qualitative results indicate that MAGP provides consistent object dimensions and spatial distances that benefit both fine-grained manipulation and long-horizon task execution. 
+
+RoboTwin. As illustrated in Fig. 7, the evaluated tasks in-volve diverse interactions such as object adjustment, tool use, block manipulation, stamping, and switch operation. MAGP enables successful execution not only in clean environments but also under randomized object placements, backgrounds, lighting conditions, and scene configurations. The improve-ments under these more challenging conditions suggest that metric geometry provides stable spatial grounding when vi-sual appearance and scene layouts vary. 
+
+LIBERO-Plus. We further evaluate the LIBERO-trained policy on LIBERO-Plus without additional fine-tuning. Fig. 8 shows that the policy can retain its manipulation capability under substantial changes in visual appearance, object layout, and robot initialization. These results demonstrate that the geometric representation learned by MAGP remains reliable beyond the training distribution, particularly under shifts that alter embodiment states and spatial relationships. Overall, the consistent improvements across LIBERO, RoboTwin, and zero-shot LIBERO-Plus demonstrate that MAGP is broadly compatible with different robotic policies and manipulation settings. By providing object dimensions and spatial distances on a consistent metric scale, MAGP strengthens the alignment between geometric perception and action prediction, leading to more accurate and robust ma-nipulation. GT  PR 
+
+# GT 
+
+# GT 
+
+# PR 
+
+# PR 
+
+# PR 
+
+# PR 
+
+# PR 
+
+# GT 
+
+# GT 
+
+# GT 
+
+# GT  PR  PR GT Figure 5: Qualitative presentation of metric geometry reconstruction. Across diverse indoor and outdoor scenes, MAGP accurately recovers metric geometry whose scene dimensions and spatial extent match the ground truth, while preserving fine-grained geometric structures. In each GT-PR pair, the red dashed lines are drawn with identical lengths at corresponding structures, providing an intuitive visual reference for evaluating the metric consistency between the prediction and the ground truth. Long 
+
+# Goal 
+
+# Object 
+
+# Spatial Figure 6: Representative Policy Rollouts on LIBERO. LIBERO comprises LIBERO-Long, LIBERO-Goal, LIBERO-Object, and LIBERO-Spatial, which respectively evaluate spatial-relation reasoning, object-centric generalization, goal-conditioned manipulation, and long-horizon task execution. From top to bottom, each row presents a representative rollout from LIBERO-Long, LIBERO-Goal, LIBERO-Object, and LIBERO-Spatial. …… 
+
+# turn_switch 
+
+# stamp_seal 
+
+# blocks_ 
+
+# ranking_rgb 
+
+# beat_block_ 
+
+# hammer 
+
+# adjust_bottle 
+
+# Clean  Random Figure 7: Representative policy rollouts under clean and randomized RoboTwin Settings. Each row shows the initial and final states of a representative task. The randomized setting introduces variations in object placement, background, lighting, and scene configuration to evaluate policy robustness under environmental distribution shifts. Background Background 
+
+# Noise 
+
+# Camera Camera 
+
+# Robot Robot 
+
+# Camera 
+
+# Robot 
+
+# …… Figure 8: Representative zero-shot policy rollouts on LIBERO-Plus. Each row presents a manipulation trajectory under a different distribution shift, demonstrating policy robustness to variations in noise, background, camera and robot states.
