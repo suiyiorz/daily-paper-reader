@@ -6,74 +6,62 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-03
-- 运行时间：2026-09-03 23:04:33 UTC
+- 最新运行日期：2026-09-04
+- 运行时间：2026-09-04 22:44:57 UTC
 - 运行状态：成功
-- 本次总论文数：18
-- 精读区：9
-- 速读区：9
+- 本次总论文数：14
+- 精读区：11
+- 速读区：3
 
 ### 今日简报（AI）
-今日共读18篇论文，9篇精读、9篇速读，重点关注足式机器人端到端控制与智能车辆情境感知两大方向。最值得精读的是《SleepWalking》（9.0分），用特权表示塑造提升腿足机器人盲态行走能力，另有《Context-Aware Intelligent Vehicles》同样获9.0高分值得细看。若想快速入门，可从速读中的《DSG》与《AM-Bench》切入，了解动态场景图构建与空中操控仿真基准。
-- 详情：[/202609/03/README](/202609/03/README)
+今日14篇论文中，人形机器人全身操控与“语言—学习—现实”闭环策略成双峰亮点，均获9分高评。最值得关注的是纯本体感觉实现类人灵活操作，以及借助持久程序打通语言控制到真实部署的路径；此外开源人形平台与多模态交互数据集也值得一瞥。若想快速入门，建议从这两篇9分精读入手，把握控制与学习的融合趋势。
+- 详情：[/202609/04/README](/202609/04/README)
 
 ### 精读区论文标签
-1. [SleepWalking: Privileged Representation Shaping for End-to-End Blind Locomotion in Legged Robots](/202609/03/2608.30883v1-sleepwalking-privileged-representation-shaping-for-end-to-end-blind-locomotion-in-legged-robots)  
+1. [Blind Dexterity: Whole-Body Humanoid Manipulation via Pure Proprioception](/202609/04/2608.29487v1-blind-dexterity-whole-body-humanoid-manipulation-via-pure-proprioception)  
    标签：评分：9.0/10、query:ad
-   evidence：面向腿足机器人盲态运动，采用特权表征塑造解决部分可观测问题
-2. [Context-Aware Intelligent Vehicles](/202609/03/2609.00682v1-context-aware-intelligent-vehicles)  
+   evidence：仅用本体感觉实现人形机器人全身操作与移动，直接对应机器人操作与运动
+2. [SUN: Persistent Programs For Language-Grounded Control-to-Learning-to-Real Policies](/202609/04/2608.31167v1-sun-persistent-programs-for-language-grounded-control-to-learning-to-real-policies)  
    标签：评分：9.0/10、query:ad
-   evidence：上下文感知的智能车辆系统，构建统一状态以支持学习与闭环控制
-3. [Towards Generalizable Visually Grounded Exploration of Household Devices](/202609/03/2609.00845v1-towards-generalizable-visually-grounded-exploration-of-household-devices)  
+   evidence：语言驱动程序统一MPC与RL实现长视距操作
+3. [RoboTok: An Internet-Scale Data Engine for Human Demonstration Retrieval and Dexterous Manipulation Learning](/202609/04/2609.03199v1-robotok-an-internet-scale-data-engine-for-human-demonstration-retrieval-and-dexterous-manipulation-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：研究具身智能体在真实家庭环境中的泛化视觉接地探索，使其无需人工指导即可操作新设备
-4. [EmbodiedSkills: A Unified Framework for Orchestrating, Training, and Deploying VLA Agents](/202609/03/2609.01281v1-embodiedskills-a-unified-framework-for-orchestrating-training-and-deploying-vla-agents)  
+   evidence：互联网示范检索用于灵巧操作学习
+4. [Long-Horizon Consistent and Interaction-Aware World Models for Multi-Style End-to-End Driving](/202609/04/2609.03225v1-long-horizon-consistent-and-interaction-aware-world-models-for-multi-style-end-to-end-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：将VLA技能决策视为按物理状态检查的待执行提案，支撑长时程具身任务
-5. [Evaluating Multimodal LLMs as Generalist Vision-Language-Action Agents for Drone Control: Commanding, Approaching, Tracking and Searching](/202609/03/2609.01404v1-evaluating-multimodal-llms-as-generalist-vision-language-action-agents-for-drone-control-commanding-approaching-tracking-and-searching)  
+   evidence：交互感知世界模型用于端到端自动驾驶
+5. [Drive-HWM: Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving](/202609/04/2609.03572v1-drive-hwm-hierarchical-world-models-for-dynamic-latent-guided-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：多模态大模型作为具身智能体控制无人机任务的评测
-6. [Towards Zero-Shot Transfer Across Embodiments For Driving VLAs](/202609/03/2609.02341v1-towards-zero-shot-transfer-across-embodiments-for-driving-vlas)  
+   evidence：分层快慢世界模型将未来场景预测与基于观测的动作生成结合，用于自动驾驶决策。
+6. [SV-WAM: An Efficient Surround-View World-Action Model for End-to-End Autonomous Driving](/202609/04/2609.03602v1-sv-wam-an-efficient-surround-view-world-action-model-for-end-to-end-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：研究自动驾驶视觉-语言-动作模型的跨数据集、跨相机平台零样本迁移，与驾驶感知决策直接相关
-7. [MS-MEM: Multi-Skill Manipulation-Enhanced Mapping via Uncertainty- and Disturbance-Aware Action Selection](/202609/03/2609.02493v1-ms-mem-multi-skill-manipulation-enhanced-mapping-via-uncertainty--and-disturbance-aware-action-selection)  
+   evidence：端到端自动驾驶、环视感知与基于世界模型的动作学习
+7. [WISE: World-model-guided Imagination Scheduling for Efficient Post-training of Vision-Language-Action Models](/202609/04/2609.03681v1-wise-world-model-guided-imagination-scheduling-for-efficient-post-training-of-vision-language-action-models)  
    标签：评分：9.0/10、query:ad
-   evidence：多技能操作结合主动感知与抓取的建图方法
-8. [HINT: Human-Intent Inception for Long-Horizon Robot Manipulation](/202609/03/2609.02653v1-hint-human-intent-inception-for-long-horizon-robot-manipulation)  
+   evidence：面向机器人操作策略后训练的世界模型方法
+8. [Revisiting Topological Graphs for Macro Action based Closed-loop Reinforcement Learning of Vision Language Navigation in Continuous Environment](/202609/04/2609.03906v1-revisiting-topological-graphs-for-macro-action-based-closed-loop-reinforcement-learning-of-vision-language-navigation-in-continuous-environment)  
    标签：评分：9.0/10、query:ad
-   evidence：面向长期机器人操作，在密集视觉变化下注入人类语义意图以纠正视觉捷径行为
-9. [From Proxy Learning to Driving Decisions: A Transfer-Based Framework for Evaluating Future-Aware Autonomous Driving Planners](/202609/03/2609.02688v1-from-proxy-learning-to-driving-decisions-a-transfer-based-framework-for-evaluating-future-aware-autonomous-driving-planners)  
+   evidence：连续视觉语言导航中基于宏观动作的强化学习
+9. [MulDP: Multimodal Diffusion Policy for Autonomous Quadruped Parkour Navigation across Complex Terrains](/202609/04/2609.03984v1-muldp-multimodal-diffusion-policy-for-autonomous-quadruped-parkour-navigation-across-complex-terrains)  
    标签：评分：9.0/10、query:ad
-   evidence：评估面向未来的自动驾驶规划器，分析预测世界模型对轨迹选择与驾驶决策的真实增益
+   evidence：多模态扩散策略实现四足跑酷导航
+10. [Continuous Actions from Discrete Minds: Latent-Aligned Planning for End-to-End Autonomous Driving](/202609/04/2609.04070v1-continuous-actions-from-discrete-minds-latent-aligned-planning-for-end-to-end-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：端到端自动驾驶中通过潜在对齐规划将语义推理与连续轨迹执行结合
+11. [GIFT: Guided Intermediate Feature Training via Action-Oriented Structural Supervision for Robotic Manipulation](/202609/04/2609.04193v1-gift-guided-intermediate-feature-training-via-action-oriented-structural-supervision-for-robotic-manipulation)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向机器人操作的中间特征训练方法，弥合视觉特征与控制效用之间的行动充分性差距
 
 ### 速读区论文标签
-1. [User Experience in Human-Machine Interaction: Insights from Field Studies in Autonomous Mobility](/202609/03/2608.30526v1-user-experience-in-human-machine-interaction-insights-from-field-studies-in-autonomous-mobility)  
+1. [Establishing a Dynamic Multimodal HRI Dataset for Engagement Analysis with a Humanoid Robot](/202609/04/2609.03255v1-establishing-a-dynamic-multimodal-hri-dataset-for-engagement-analysis-with-a-humanoid-robot)  
    标签：评分：8.0/10、query:ad
-   evidence：针对真实交通中自动驾驶乘客开展144人次场测，研究多模态人机交互与用户体验
-2. [DSG: Dynamic 3D Scene Graph Construction for Embodied Agents in Changing Indoor Environments](/202609/03/2609.00619v1-dsg-dynamic-3d-scene-graph-construction-for-embodied-agents-in-changing-indoor-environments)  
+   evidence：面向人形机器人的人机交互参与度多模态数据构建
+2. [BRIDGE: An Open-Source Humanoid Platform via Morphology-Control Co-Design for Physical AI](/202609/04/2609.03497v1-bridge-an-open-source-humanoid-platform-via-morphology-control-co-design-for-physical-ai)  
    标签：评分：8.0/10、query:ad
-   evidence：动态三维场景图构建与空间关系推理,服务变化室内环境中的具身智能体
-3. [AM-Bench: A Modular Simulation Suite and Benchmark for Aerial Manipulation Policy Learning](/202609/03/2609.00641v1-am-bench-a-modular-simulation-suite-and-benchmark-for-aerial-manipulation-policy-learning)  
+   evidence：人形机器人形态与控制协同设计、全身运动优化与物理AI开源平台
+3. [Toward Unified Robot Learning: Bridging Representation, Vision-Language-Action, and World Models](/202609/04/2609.03927v1-toward-unified-robot-learning-bridging-representation-vision-language-action-and-world-models)  
    标签：评分：8.0/10、query:ad
-   evidence：空中操作策略学习仿真基准，通过变化机器人本体、低层控制与高层策略支持强化学习研究
-4. [Dual Process Motion Planning](/202609/03/2609.01260v1-dual-process-motion-planning)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向机器人智能控制的快慢双过程运动规划，融合经验学习与鲁棒推理
-5. [Scalable Rao-Blackwellized Online Planning for High-Dimensional POMDPs](/202609/03/2609.01351v1-scalable-rao-blackwellized-online-planning-for-high-dimensional-pomdps)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向高维机器人部分可观测环境的在线POMDP规划
-6. [One Demonstration, Many Objects: Generalizing Manipulation via Local Contact Geometry](/202609/03/2609.01938v1-one-demonstration-many-objects-generalizing-manipulation-via-local-contact-geometry)  
-   标签：评分：8.0/10、query:ad
-   evidence：以局部接触几何建模和接触奖励驱动的强化学习，提升灵巧操作的物体泛化能力
-7. [LookStep: Efficient Vision-Language Navigation with Linguistic Foresight and Event Driven Memory](/202609/03/2609.02350v1-lookstep-efficient-vision-language-navigation-with-linguistic-foresight-and-event-driven-memory)  
-   标签：评分：8.0/10、query:ad
-   evidence：具身的视觉语言导航与语言前瞻记忆机制
-8. [Towards Trustworthy Autonomous Robots: An Explainable AI-Based Decision Framework](/202609/03/2609.02861v1-towards-trustworthy-autonomous-robots-an-explainable-ai-based-decision-framework)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向物理环境自主机器人的可解释决策框架，覆盖感知、推理、规划与执行
-9. [PAVE: Predictive Alignment and Value-Guided Evolution for World-Action Policies](/202609/03/2608.30378v2-pave-predictive-alignment-and-value-guided-evolution-for-world-action-policies)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向智能机器人控制的世界-动作策略，融合预测对齐与价值引导策略优化
+   evidence：综述表示学习、VLA模型与世界模型的统一视角，推动机器人在真实环境中感知-行动-推理一体化。
 
 
 <div class="dpr-home-promo-card">
