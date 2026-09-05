@@ -1,0 +1,420 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-05T21:58:31.063548+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 7,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2608.28718v1",
+      "source": "arxiv",
+      "title": "RoboPhys-3D: A Comprehensive Embodied World Model Evaluation via 3D Reconstruction",
+      "abstract": "Video world models increasingly serve as data engines, action planners, and simulators for embodied AI, but conventional embodied world model (EWM) benchmarks lack a unified 3D-grounded protocol for establishing whether generated rollouts preserve the underlying 3D scene state or translate into executable actions. We introduce RoboPhys-3D, a 3D-grounded EWM benchmark built on RoboTwin 2.0, covering 50 manipulation tasks across four regimes, with 5,000 episodes and 25,000 multi-view ground-truth videos. A defining feature of RoboPhys-3D is that generated and ground-truth videos are processed through the same 3D reconstruction pipeline, enabling reconstruction-induced error to be distinguished from generation-induced error. The RoboPhys-3D benchmark organizes 50 complementary metrics into 18 sub-dimensions across four levels: pixel-level fidelity, 3D geometry consistency, state-level understanding, and task-level completeness. We further introduce Average Full Score, a hierarchical score averaging all 50 metrics for comprehensive evaluation, and RoboPhyscore, a compact task-aligned score averaging the metrics most strongly correlated with task success. Among the four representative video world models, Cosmos 3 achieves the highest RoboPhyscore (0.6330, 92.7% of ground truth), while state- and execution-grounded metrics reveal substantial failures that perceptual and vision-language model-based judgments fail to capture. RoboPhyscore further exhibits strong agreement with human evaluation (Pearson r = 0.9761 and Spearman \\r{ho} = 0.8962), demonstrating the importance of grounded, execution-aware evaluation for EWM capability.",
+      "authors": [
+        "Tianyi Wang",
+        "Jiazhou Chen",
+        "Yiming Xu",
+        "Xiangyu Li",
+        "Tianyi Zeng",
+        "Chih-Hsien Chou",
+        "Ning Lu",
+        "Liang Peng",
+        "Junfeng Jiao",
+        "Christian Claudel"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV",
+        "cs.ET",
+        "eess.SY"
+      ],
+      "published": "2026-08-28T09:44:13+00:00",
+      "link": "https://arxiv.org/pdf/2608.28718v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Embodied world model evaluation benchmark covering 50 manipulation tasks",
+      "llm_evidence_cn": "覆盖50个操作任务的具身世界模型三维评估基准",
+      "llm_evidence": "覆盖50个操作任务的具身世界模型三维评估基准",
+      "canonical_evidence": "覆盖50个操作任务的具身世界模型三维评估基准",
+      "llm_tldr_en": "Introduces RoboPhys-3D, a 3D-grounded benchmark for embodied world models, covering 50 manipulation tasks and using the same 3D reconstruction pipeline on both generated and ground-truth videos to separate generation error from reconstruction error.",
+      "llm_tldr_cn": "现有具身世界模型基准缺乏统一的三维语义校验协议，难以判断生成视频是否保持三维场景状态或可转化为可执行动作。为此提出RoboPhys-3D，一种基于三维重建的具身世界模型评测基准，构建于RoboTwin 2.0之上，涵盖50个操作任务、5000个回合与25000段多视角真值视频。其核心特征是对生成视频与真值视频采用同一套三维重建流程，从而分离重建误差与生成误差。该基准为具身智能中的世界模型提供了系统化评测工具，可服务操作任务学习与模拟器验证。",
+      "llm_tldr": "现有具身世界模型基准缺乏统一的三维语义校验协议，难以判断生成视频是否保持三维场景状态或可转化为可执行动作。为此提出RoboPhys-3D，一种基于三维重建的具身世界模型评测基准，构建于RoboTwin 2.0之上，涵盖50个操作任务、5000个回合与25000段多视角真值视频。其核心特征是对生成视频与真值视频采用同一套三维重建流程，从而分离重建误差与生成误差。该基准为具身智能中的世界模型提供了系统化评测工具，可服务操作任务学习与模拟器验证。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.29537v1",
+      "source": "arxiv",
+      "title": "AGM: Achievement-Grounded Memory for Closed-Loop Agents with Frozen VLA Policies",
+      "abstract": "Frozen vision-language-action (VLA) policies offer broad manipulation skills but execute open-loop action chunks without tracking task progress, so the agent cannot reliably decide whether to continue, retry, or terminate. External memory is a natural remedy, yet it can be harmful when attempted actions are treated as completed progress, turning local execution errors into persistent task-state errors. We propose Achievement-Grounded Memory (AGM), a lightweight closed-loop framework for frozen VLA policies that represents a task as a subgoal sequence with a progress pointer and advances this memory only after the current subgoal is verified by physical evidence. Proprioceptive interaction cues decide when to verify, while coherent point tracking and language-conditioned cross-view comparison, sourced from frozen foundation models through a single 2.43M-parameter verification head, decide what was achieved. AGM thereby converts open-loop execution into a closed loop of execution, verification, and progress, keeping the policy frozen without test-time large-model inference. On the RoboMME Counting benchmark, AGM reaches on PickXTimes and on BinFill, surpassing the strongest memory-augmented baseline by points on average, and the framework yields equally decisive gains on a physical robot. Reliable embodied memory thus depends more on disciplined state updates than on memory capacity.",
+      "authors": [
+        "Hongbo Gao",
+        "Zeyu Ni",
+        "Xin Wen",
+        "Siyu Xu",
+        "Ruifeng Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-08-30T03:50:49+00:00",
+      "link": "https://arxiv.org/pdf/2608.29537v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Robotic manipulation with frozen VLA policies; closed-loop task progress using physical evidence",
+      "llm_evidence_cn": "面向机器人操作，用物理证据验证子目标以形成闭环",
+      "llm_evidence": "面向机器人操作，用物理证据验证子目标以形成闭环",
+      "canonical_evidence": "面向机器人操作，用物理证据验证子目标以形成闭环",
+      "llm_tldr_en": "Frozen VLA policies execute open-loop chunks and cannot track task progress. AGM represents a task as a subgoal sequence with a progress pointer, advancing memory only when physical evidence verifies completion, yielding reliable closed-loop manipulation for embodied agents.",
+      "llm_tldr_cn": "冻结的视觉-语言-动作（VLA）策略虽具备多样的操作技能，但常以开环动作块执行，无法可靠判断继续、重试或终止，导致任务状态错乱。为此提出AGM，把任务表示为子目标序列与进度指针，仅在物理证据验证当前子目标完成时才推进记忆，本体感觉交互线索决定验证时机。该方法让冻结策略在操作任务中获得可靠的闭环进度跟踪，避免将局部执行误差固化为持久状态错误，提升具身操作的稳定性。",
+      "llm_tldr": "冻结的视觉-语言-动作（VLA）策略虽具备多样的操作技能，但常以开环动作块执行，无法可靠判断继续、重试或终止，导致任务状态错乱。为此提出AGM，把任务表示为子目标序列与进度指针，仅在物理证据验证当前子目标完成时才推进记忆，本体感觉交互线索决定验证时机。该方法让冻结策略在操作任务中获得可靠的闭环进度跟踪，避免将局部执行误差固化为持久状态错误，提升具身操作的稳定性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.30396v1",
+      "source": "arxiv",
+      "title": "Scaffolding Foundation Models into Physical-World Agents Pushes the Frontier of Long-Horizon Navigation",
+      "abstract": "Long-horizon physical-world agents must reason over distant goals while grounding decisions in reliable closed-loop behavior. Today's foundation models split these capabilities: vision-language models (VLMs) infer missing information and adapt high-level plans but remain brittle and inefficient at repeated navigation grounding, while navigation foundation models (NFMs) robustly execute semantic goals but operate as bounded episodes without persistent task-level reasoning. We introduce NavMCP, an agentic scaffolding framework that couples a VLM reasoning agent with an NFM executor for long-horizon exploration. The VLM decides what evidence to seek, where to search, and when to stop, while the NFM grounds each semantic sub-goal into closed-loop navigation. Three channels structure their collaboration: intent translates evidence needs into navigation calls, observation converts rollouts into source-grounded trajectory evidence, and memory accumulates findings, negative evidence, and unresolved goals across calls. This design turns isolated navigation rollouts into persistent embodied interaction without retraining either model. On Embodied Question Answering, NavMCP achieves state-of-the-art results on HM-EQA, MT-HM3D, and EXPRESS-Bench. Under matched agent and executor backbones, it outperforms an episodic interface by 14.9 percentage points on HM-EQA. On a Unitree Go2, NavMCP reaches 78.3% success, with its margin over the strongest baseline growing from 10 to 45 points as the task horizon increases. These results demonstrate the potential of scaffolding complementary foundation models into long-horizon physical-world agents.",
+      "authors": [
+        "Zixing Lei",
+        "Gengze Zhou",
+        "Xiong-Hui Chen",
+        "Jiazhao Zhang",
+        "Yiyang Huang",
+        "Hang Yin",
+        "Haoqi Yuan",
+        "Qi Wu",
+        "Weixin Li",
+        "Siheng Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-08-31T07:50:16+00:00",
+      "link": "https://arxiv.org/pdf/2608.30396v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Physical-world agentic navigation scaffolding VLM reasoning with a navigation executor",
+      "llm_evidence_cn": "面向物理世界长时程导航的VLM与导航执行器协同智能体",
+      "llm_evidence": "面向物理世界长时程导航的VLM与导航执行器协同智能体",
+      "canonical_evidence": "面向物理世界长时程导航的VLM与导航执行器协同智能体",
+      "llm_tldr_en": "For long-horizon physical-world agents, VLM planners can reason but fail at repeated grounding and navigation foundation models can execute but lack persistent task reasoning; NavMCP scaffolds them so the VLM seeks evidence and decides when to stop while the NFM grounds each semantic goal.",
+      "llm_tldr_cn": "长时程物理世界导航需要同时具备面向远距离目标的语义推理与可靠闭环执行，而VLM与导航基础模型各有短板。NavMCP将VLM推理层与NFM执行器进行外挂式组合，由前者决定寻找何种证据、搜索位置与停止时机，由后者落地每个语义子目标。该框架弥合了高层规划与重复性导航落地之间的鸿沟，推进了长时程物理世界智能体的能力前沿。",
+      "llm_tldr": "长时程物理世界导航需要同时具备面向远距离目标的语义推理与可靠闭环执行，而VLM与导航基础模型各有短板。NavMCP将VLM推理层与NFM执行器进行外挂式组合，由前者决定寻找何种证据、搜索位置与停止时机，由后者落地每个语义子目标。该框架弥合了高层规划与重复性导航落地之间的鸿沟，推进了长时程物理世界智能体的能力前沿。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.30760v1",
+      "source": "arxiv",
+      "title": "PRACTICE: From Experience to Expertise in Self-Evolving Embodied Agents",
+      "abstract": "Recent studies have shown that multimodal large language models (MLLMs) can serve as embodied agents, translating language instructions and visual observations into executable plans. However, building agents that can continually improve through interaction and rapidly adapt to their environments remains challenging. Summing up experience from past interaction trajectories provides a promising solution, but existing experience-based methods often rely on manually designed prompting workflows to extract and update skills. Such fixed procedures may struggle to learn updated skills from new and diverse experiences. We introduce PRACTICE, which trains a skill learner to discover and maintain a persistent skill library from past interaction trajectories while keeping the task executor frozen. Given the historical accumulated skills and incoming trajectories, the skill learner produces structured batch-edits that add, refine, merge, or remove skills, and then hierarchical consolidate all collected edits into a consistent updated skill library. We train the learner with a two-stage curriculum. First, it learns basic skill generation and library maintenance from oracle trajectories. Then, by contrasting successful and failed trajectories from heterogeneous executors on the same tasks, it learn to identify invalid action patterns and recovery strategies. Finally, we apply online skill-edit distillation to align the skill learner with a stronger teacher on its current edit distribution to further improves the policy. Experiments demonstrate that a compact skill learner delivers consistent performance improvements across successive library-update rounds for multiple frozen executors. On EB-ALFRED and EB-Habitat, PRACTICE further outperforms the strongest experience-based baselines. Project resources are publicly available at: https://baai-agents.github.io/PRACTICE",
+      "authors": [
+        "Ziyi Bai",
+        "Siqi Li",
+        "Tinglei Huang",
+        "Börje F. Karlsson"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-31T13:26:16+00:00",
+      "link": "https://arxiv.org/pdf/2608.30760v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "training a skill learner to maintain a persistent skill library for self-evolving multimodal LLM embodied agents",
+      "llm_evidence_cn": "训练技能学习者维护持久技能库，使多模态大模型具身智能体能持续自演化",
+      "llm_evidence": "训练技能学习者维护持久技能库，使多模态大模型具身智能体能持续自演化",
+      "canonical_evidence": "训练技能学习者维护持久技能库，使多模态大模型具身智能体能持续自演化",
+      "llm_tldr_en": "PRACTICE trains a skill learner to discover and maintain a persistent skill library from past interaction trajectories, replacing fixed manual prompting workflows, so multimodal LLM-based embodied agents can continually improve and rapidly adapt to new environments from diverse experience.",
+      "llm_tldr_cn": "多模态大语言模型可作为具身智能体把指令和视觉观测转化为行动计划，但难以通过交互持续进步。现有经验式方法依赖人工设计的提示流程来抽取和更新技能，面对多样新经验时不够灵活。PRACTICE训练一个技能学习者，从过去的交互轨迹中发现并维护持久的技能库。这样智能体可不断从新经验中学习，实现自我演化，为具身智能体在多变环境中的快速适应提供更通用的机制。",
+      "llm_tldr": "多模态大语言模型可作为具身智能体把指令和视觉观测转化为行动计划，但难以通过交互持续进步。现有经验式方法依赖人工设计的提示流程来抽取和更新技能，面对多样新经验时不够灵活。PRACTICE训练一个技能学习者，从过去的交互轨迹中发现并维护持久的技能库。这样智能体可不断从新经验中学习，实现自我演化，为具身智能体在多变环境中的快速适应提供更通用的机制。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.03565v1",
+      "source": "arxiv",
+      "title": "Toward Physically Grounded JEPA World Models for Goal-Conditioned Robotic Planning",
+      "abstract": "Action-conditioned JEPA world models enable planning toward visually specified goals without reconstructing future pixels, yet latent prediction alone does not explicitly encourage the learned representations to retain information relevant to robotic control. We introduce an end-to-end JEPA world model that augments latent prediction with inverse dynamics (IDM) and state alignment (SA). While inverse dynamics discourages latent collapse and makes latent transitions informative of the actions that produced them, state alignment grounds consecutive representations in their associated physical configuration and motion. Across four benchmark tasks, our model attains the highest success rates on TwoRoom (100%), PushT (98%), and OGBench-Cube (87%), while performing comparably to LeWorldModel on Reacher. Our ablation further shows that adding state alignment consistently improves planning success over IDM alone across all four tasks. Although LeWorldModel, our primary baseline, attains higher average straightening on OGBench-Cube, transition-subspace analysis shows that its transition energy is concentrated in a substantially lower-dimensional subspace. Our state-aligned model exhibits a higher effective transition dimension than LeWorldModel and improves planning over IDM alone, supporting state alignment as an effective complement to inverse dynamics for robotic planning.",
+      "authors": [
+        "Muyuan Liu",
+        "Yue Huang",
+        "Zheng Liang",
+        "Xiang Gao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-09-03T09:11:13+00:00",
+      "link": "https://arxiv.org/pdf/2609.03565v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Goal-conditioned robotic planning; physically grounded JEPA world model for robotic control",
+      "llm_evidence_cn": "面向机器人操作规划的物理锚定世界模型，使潜在表征与动作和物理状态对齐",
+      "llm_evidence": "面向机器人操作规划的物理锚定世界模型，使潜在表征与动作和物理状态对齐",
+      "canonical_evidence": "面向机器人操作规划的物理锚定世界模型，使潜在表征与动作和物理状态对齐",
+      "llm_tldr_en": "JEPA world models plan toward goals without pixel reconstruction, but latent states lack control-relevant grounding. The proposed end-to-end model adds inverse dynamics and state alignment, achieving top success rates on TwoRoom PushT and OGBench-Cube.",
+      "llm_tldr_cn": "动作条件JEPA世界模型虽然能不重建像素而向视觉目标规划，但潜在预测没有显式保留与机器人控制相关的信息，难以保证物理一致性。本文提出端到端JEPA模型，在潜在预测基础上加入逆动力学与状态对齐约束，使潜在转移包含动作语义并锚定物理构型与运动。在TwoRoom、PushT和OGBench-Cube基准上分别达到100%、98%与87%的最高成功率，说明物理锚定与逆动力学能显著提升目标条件机器人规划能力。",
+      "llm_tldr": "动作条件JEPA世界模型虽然能不重建像素而向视觉目标规划，但潜在预测没有显式保留与机器人控制相关的信息，难以保证物理一致性。本文提出端到端JEPA模型，在潜在预测基础上加入逆动力学与状态对齐约束，使潜在转移包含动作语义并锚定物理构型与运动。在TwoRoom、PushT和OGBench-Cube基准上分别达到100%、98%与87%的最高成功率，说明物理锚定与逆动力学能显著提升目标条件机器人规划能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.03715v1",
+      "source": "arxiv",
+      "title": "MINERVA: How Small Can a Manipulation Policy Be and Still Solve LIBERO?",
+      "abstract": "Vision-language-action (VLA) models with billions of parameters now dominate the LIBERO manipulation benchmark, but the model capacity actually required by the benchmark remains unclear. We introduce MINERVA (MINimal Efficient Robotic Vision-Action policy), a family of deliberately compact visuomotor policies designed to measure this task-specific capacity floor. A 0.54M-parameter policy achieves 95.1% average success over 2,000 rollouts on the four standard LIBERO suites, only 2.4 points below the reported LeRobot $π_{0.5}$ result despite using 7,700$\\times$ fewer parameters. Performance saturates near 1M parameters and collapses below 0.25M. Across broad architectural, training, and inference sweeps, only action-chunk length and vision capacity consistently exceed a $\\pm$1-point training-seed band. Flow matching provides no detectable advantage over direct L1 regression across three seeds, while regression is up to 3.8$\\times$ faster on GPU. A task-ID permutation probe shows that standard LIBERO instruction conditioning primarily selects among memorized tasks: changing only the task-ID mapping reduces success to near chance. The same recipe achieves 94.6% success across 89 LIBERO-90 tasks, while LIBERO-Plus perturbations reduce performance to 46--56%, with near-zero robustness to photometric shifts. The 0.54M policy replans every control step in 5--9 ms per chunk on a laptop CPU, 113$\\times$ faster than SmolVLA and 1,400$\\times$ faster than $π_{0.5}$, without a GPU. These results establish a first empirical estimate of LIBERO's task-specific capacity floor and motivate capacity-aware design and distillation for deployment-efficient robot policies.",
+      "authors": [
+        "Kohei Sendai",
+        "Tatsuya Matsushima",
+        "Yusuke Iwasawa"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-03T11:51:10+00:00",
+      "link": "https://arxiv.org/pdf/2609.03715v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "compact visuomotor policies for LIBERO manipulation benchmarks",
+      "llm_evidence_cn": "研究极小参数量操作策略在LIBERO操作基准上的成功率与性能瓶颈",
+      "llm_evidence": "研究极小参数量操作策略在LIBERO操作基准上的成功率与性能瓶颈",
+      "canonical_evidence": "研究极小参数量操作策略在LIBERO操作基准上的成功率与性能瓶颈",
+      "llm_tldr_en": "Measures the capacity floor of LIBERO: a 0.54M-parameter MINERVA policy reaches 95.1% success over 2000 rollouts, 7700x fewer parameters than a big VLA yet only 2.4 points lower.",
+      "llm_tldr_cn": "虽然现有数十亿参数的VLA模型主导LIBERO操作基准,但该基准真正需要多少容量仍不明确。论文提出极小参数MINERVA策略族来探测能力下限:0.54M参数策略在2000次rollout上平均成功率达95.1%,与大规模LeRobot π0.5结果仅差2.4点,参数量少了7700倍。约1M参数处性能饱和,低于0.25M则明显崩溃。这说明LIBERO上的操作能力可以浓缩到极小策略,为理解基准难度与部署轻量操作模型提供了证据。",
+      "llm_tldr": "虽然现有数十亿参数的VLA模型主导LIBERO操作基准,但该基准真正需要多少容量仍不明确。论文提出极小参数MINERVA策略族来探测能力下限:0.54M参数策略在2000次rollout上平均成功率达95.1%,与大规模LeRobot π0.5结果仅差2.4点,参数量少了7700倍。约1M参数处性能饱和,低于0.25M则明显崩溃。这说明LIBERO上的操作能力可以浓缩到极小策略,为理解基准难度与部署轻量操作模型提供了证据。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.00161v1",
+      "source": "arxiv",
+      "title": "IMPACT: Attention Is the Interaction Map for Scalable Interaction-Aware World Model Training",
+      "abstract": "World models have made remarkable progress in action-conditioned future prediction for embodied agents, yet still struggle to model physically plausible interactions. Existing approaches address this limitation by constraining the generation process with external representations encoding motion, geometry, or semantics. Obtaining these spatiotemporally dense representations typically requires auxiliary estimators or manual annotations, limiting training scalability. We instead revisit the training objective and identify a supervision-allocation mismatch under the globally averaged mean squared error (MSE) denoising objective: prevalent static content dominates the optimization signal, leaving sparse dynamic-object regions critical to interaction generation disproportionately under-supervised. Motivated by this observation, we introduce IMPACT, a scalable Interaction-aware Model training framework with Prior-guided Attention Calibration and Targeting. IMPACT uses cross-attention associated with manipulated-object tokens as an internal spatiotemporal prior for action-conditioned changes. It samples candidate regions from this prior, calibrates them with detached local prediction errors to construct an interaction map, and uses the map to reweight denoising supervision, requiring neither external representations nor inference-time modifications. Extensive experiments on robot-arm and human-hand manipulation, spanning diverse control modalities and DiT backbones, show that IMPACT consistently outperforms the corresponding MSE-trained baselines, improving interaction fidelity, physical plausibility, and visual quality.",
+      "authors": [
+        "Rongze Tang",
+        "Jianjie Fang",
+        "Zhaolu Wang",
+        "Ziyou Wang",
+        "Xvyuan Liu",
+        "Haisheng Su",
+        "Xin Zhang",
+        "Wei Wu",
+        "Chen Gao",
+        "Yong Li",
+        "Zhibo Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-08-31T18:00:36+00:00",
+      "link": "https://arxiv.org/pdf/2609.00161v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Action-conditioned world models for embodied agents; interaction-aware training from attention maps",
+      "llm_evidence_cn": "面向具身智能体的交互感知世界模型训练，以注意力重分配稀疏动态区域监督",
+      "llm_evidence": "面向具身智能体的交互感知世界模型训练，以注意力重分配稀疏动态区域监督",
+      "canonical_evidence": "面向具身智能体的交互感知世界模型训练，以注意力重分配稀疏动态区域监督",
+      "llm_tldr_en": "World models for embodied agents struggle to model physically plausible interactions. IMPACT finds MSE denoising over-weights static content and under-trains sparse dynamic regions, then uses attention as an interaction map to fix supervision allocation for scalable interaction-aware training.",
+      "llm_tldr_cn": "世界模型在具身智能体的动作条件未来预测上已有很大进展，但仍难学习物理上合理的交互。现有方法依赖外部运动、几何或语义表示来约束生成，这些稠密表示往往需要辅助估计器或人工标注，限制训练扩展。IMPACT重新审视去噪训练目标，发现全局平均MSE使静态内容主导监督而稀疏动态物体区域训练不足，因此引入注意力作为交互图来重新分配监督信号，从而实现无需额外标注的可扩展交互感知世界模型训练。",
+      "llm_tldr": "世界模型在具身智能体的动作条件未来预测上已有很大进展，但仍难学习物理上合理的交互。现有方法依赖外部运动、几何或语义表示来约束生成，这些稠密表示往往需要辅助估计器或人工标注，限制训练扩展。IMPACT重新审视去噪训练目标，发现全局平均MSE使静态内容主导监督而稀疏动态物体区域训练不足，因此引入注意力作为交互图来重新分配监督信号，从而实现无需额外标注的可扩展交互感知世界模型训练。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.03611v1",
+      "source": "arxiv",
+      "title": "FailBench: How Reliable are VLMs at Judging Robot Task Success?",
+      "abstract": "Vision-Language Models (VLMs) are increasingly used to evaluate robot manipulation outcomes, but existing benchmarks offer limited evidence of cross-domain generalization. We introduce FailBench, a benchmark for robot failure detection comprising 2,197 manipulation attempts across 14 public sources (12 real-world, 2 simulated). In FailBench, 75% of failures occur naturally, and six real-world sources come from non-failure-detection datasets. Evaluating 13 VLM-based detectors, we find the best model achieves only 0.77 mean balanced accuracy. Notably, models fine-tuned for failure detection consistently underperform general-purpose VLMs and their own pretrained baselines. Performance depends heavily on required visual evidence: models approach saturation when outcomes depend on observable object motion, but degrade to near-chance (<0.60 balanced accuracy) on contact-intensive assembly tasks. Error analysis reveals a systematic bias toward predicting success under ambiguous evidence, which persists even with increased reasoning effort. Finally, we show that input-level intervention--spatially localizing and cropping outcome-relevant regions--improves the top detector by 2.4 percentage points without extra training.",
+      "authors": [
+        "Zaruhi Navasardyan",
+        "Tatul Danielyan",
+        "Hrant Davtyan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-03T09:58:55+00:00",
+      "link": "https://arxiv.org/pdf/2609.03611v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "cross-domain benchmark for VLM-based failure detection across 2197 robot manipulation attempts",
+      "llm_evidence_cn": "跨域机器人操作失败检测基准，覆盖多源真实与仿真操作尝试",
+      "llm_evidence": "跨域机器人操作失败检测基准，覆盖多源真实与仿真操作尝试",
+      "canonical_evidence": "跨域机器人操作失败检测基准，覆盖多源真实与仿真操作尝试",
+      "llm_tldr_en": "FailBench benchmarks VLM-based robot failure detection across 2197 manipulation attempts from 14 public sources; evaluation of 13 detectors shows best accuracy only 0.77 and that fine-tuned detectors underperform general VLMs, with performance strongly tied to required visual evidence.",
+      "llm_tldr_cn": "视觉语言模型正被用来判断机器人操作是否成功，但已有基准难以评估跨域泛化。FailBench汇集14个公开来源共2197次操作尝试，其中75%为自然发生的失败，构建机器人失败检测基准。对13种视觉语言模型检测器的评估显示最优平均平衡准确率仅0.77，专门微调的失败检测模型反而普遍不如通用视觉语言模型及预训练基线。结果表明所需视觉证据类型对性能影响很大，为机器人任务成败判断与操作评测提供了新基准。",
+      "llm_tldr": "视觉语言模型正被用来判断机器人操作是否成功，但已有基准难以评估跨域泛化。FailBench汇集14个公开来源共2197次操作尝试，其中75%为自然发生的失败，构建机器人失败检测基准。对13种视觉语言模型检测器的评估显示最优平均平衡准确率仅0.77，专门微调的失败检测模型反而普遍不如通用视觉语言模型及预训练基线。结果表明所需视觉证据类型对性能影响很大，为机器人任务成败判断与操作评测提供了新基准。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.29937v1",
+      "source": "arxiv",
+      "title": "AcrossWAM1.0:A Modular Latent World-Action Stack for Compact Robot Policies",
+      "abstract": "Latent world-action models avoid rendering future pixels by predicting an action-relevant visual subgoal in feature space. LaWAM established this formulation, but its original presentation left the world model, multimodal backbone, and deployment checkpoint tightly coupled. We introduce AcrossWAM1.0, a modularization and scaling study of this latent world-action stack. Rather than presenting latent subgoals as a new algorithm, we make the module boundary explicit: a policy adapter produces latent-action and action-generation contexts; a retained latent world decoder grounds the predicted transition in the current scene;and a flow-matching expert generates continuous action chunks. We further separate training-only teachers from the inference graph and provide a verifiable deployment export. On 2,000 paired LIBERO episodes, replacing a Qwen3-VL-2B backbone with Qwen3.5-0.8B yields 97.45% success versus 98.00% for the 2B model (a-0.55percentage-point difference; exact McNemarp=0.266). This does not prove equivalence, but it meets a prespecified two-point retention criterion. The compact, inference-reachable checkpoint contains 1,472.6M unique parameters, 42.4% fewer than the original 2B policy, while all retained tensors are bitwise identical to the source checkpoint. Cross-family execution is additionally checked with a MiniCPM-V adapter smoke test; closed-loop cross-family transfer remains an open evaluation. AcrossWAM1.0 therefore contributes an auditable software and evaluation boundary for compact latent world-action policies, distinct from LaWAM's original latent-subgoal contribution.",
+      "authors": [
+        "Yafei Zhang",
+        "Nan Wu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-30T18:09:17+00:00",
+      "link": "https://arxiv.org/pdf/2608.29937v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modular latent world-action policy stack for compact robot action generation",
+      "llm_evidence_cn": "模块化潜在世界-动作策略栈，用于紧凑机器人动作生成",
+      "llm_evidence": "模块化潜在世界-动作策略栈，用于紧凑机器人动作生成",
+      "canonical_evidence": "模块化潜在世界-动作策略栈，用于紧凑机器人动作生成",
+      "llm_tldr_en": "AcrossWAM1.0 modularizes a latent world-action policy stack into a policy adapter, retained latent world decoder, and flow-matching expert, and separates training-only teachers from the inference graph, enabling clearer structure and more compact robot action generation without pixel rendering.",
+      "llm_tldr_cn": "隐式世界-动作模型通过在特征空间预测与动作相关的视觉子目标来避免渲染未来像素，但其模块边界与部署结构不够清晰。AcrossWAM1.0将该模型模块化和规模化：策略适配器产生潜在动作与动作生成上下文，保留的潜在世界解码器把预测过渡锚定到当前场景，流匹配专家生成连续动作块，并分离训练专用教师与推理图。这种解耦有助于开发紧凑的机器人策略，也为机器人具身控制的世界模型研究提供了可复用的结构设计。",
+      "llm_tldr": "隐式世界-动作模型通过在特征空间预测与动作相关的视觉子目标来避免渲染未来像素，但其模块边界与部署结构不够清晰。AcrossWAM1.0将该模型模块化和规模化：策略适配器产生潜在动作与动作生成上下文，保留的潜在世界解码器把预测过渡锚定到当前场景，流匹配专家生成连续动作块，并分离训练专用教师与推理图。这种解耦有助于开发紧凑的机器人策略，也为机器人具身控制的世界模型研究提供了可复用的结构设计。",
+      "llm_tags": [
+        "query:ad:composite"
+      ],
+      "matched_query_tag": "query:ad:composite",
+      "matched_query_text": "Papers central to 帮我查找自动驾驶、机器人、居身智能相关论文, especially work that connects or combines: autonomous driving systems perception planning control; robotics manipulation locomotion human-robot interaction; embodied intelligence agents in physical environments; self-driving vehicles sensor fusion decision making; robot perception visual and tactile sensing; intelligent control reinforcement learning for robots; autonomous driving and robotics integration for embodied intelligence; reinforcement learning for robotic manipulation and autonomous navigation; embodied AI agents in real world scenarios.",
+      "matched_requirement_id": "req-composite-ad",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.31022v1",
+      "source": "arxiv",
+      "title": "MNIST-PRO: MNIST is Back as a Partially Observable World for AI Agents",
+      "abstract": "AI agents in partially observable environments need to coordinate active sensing with working memory to maintain an evolving perceptual state. However, existing benchmarks struggle to isolate this perceptual-state construction and interpretation capability because they introduce physical and control complexities. We address this with MNIST-PRO, a benchmark that isolates agentic perception by converting MNIST digit recognition into a sequential, glimpse-based search task with lookback constraints. We evaluate ten multimodal models across four memory representations, including raw visual history, textual states, structured metric grid maps, and a consolidated visual canvas. While models excel under full observability, partial observability exposes a clear performance gap. We identify three distinct bottlenecks. First, perceptual-state construction and interpretation present a challenge, as agents struggle to integrate fragmented glimpses. Second, agents often stop exploring before they see the full sequence. Third, models often fail to revise early, incorrect beliefs even when faced with subsequent contradictory evidence. These results show that simply acquiring visual evidence is not enough. Agents must also be able to build and update a reliable perceptual state.",
+      "authors": [
+        "Vernon Toh",
+        "Navonil Majumder",
+        "Zhengyuan Liu",
+        "Nancy F. Chen",
+        "Soujanya Poria"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-08-31T16:05:39+00:00",
+      "link": "https://arxiv.org/pdf/2608.31022v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark for agentic perception and working memory under partial observability, transferable to embodied agent perception and state construction",
+      "llm_evidence_cn": "面向部分可观测环境下智能体感知与工作记忆的基准，对具身智能体感知状态构建具有方法论迁移价值",
+      "llm_evidence": "面向部分可观测环境下智能体感知与工作记忆的基准，对具身智能体感知状态构建具有方法论迁移价值",
+      "canonical_evidence": "面向部分可观测环境下智能体感知与工作记忆的基准，对具身智能体感知状态构建具有方法论迁移价值",
+      "llm_tldr_en": "MNIST-PRO recasts digit recognition as a sequential glimpse search with lookback, isolating agent perception under partial observability. Evaluation of ten multimodal models across four memory types shows partial observability clearly degrades performance.",
+      "llm_tldr_cn": "现有具身AI或AI智能体基准常混入物理与控制复杂度，难以单独评价部分可观测条件下的感知与记忆。为此提出MNIST-PRO基准，将MNIST数字识别改造成带回溯约束的逐次瞥视搜索任务。对十种多模态模型和四种记忆表示的评测显示，全观测下模型表现良好，但部分观测会暴露明显缺陷。该基准为拆解智能体主动感知与工作记忆能力提供了干净的测试工具。",
+      "llm_tldr": "现有具身AI或AI智能体基准常混入物理与控制复杂度，难以单独评价部分可观测条件下的感知与记忆。为此提出MNIST-PRO基准，将MNIST数字识别改造成带回溯约束的逐次瞥视搜索任务。对十种多模态模型和四种记忆表示的评测显示，全观测下模型表现良好，但部分观测会暴露明显缺陷。该基准为拆解智能体主动感知与工作记忆能力提供了干净的测试工具。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

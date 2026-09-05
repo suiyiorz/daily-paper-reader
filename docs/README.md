@@ -6,62 +6,54 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-04
-- 运行时间：2026-09-04 22:44:57 UTC
+- 最新运行日期：2026-09-05
+- 运行时间：2026-09-05 22:07:02 UTC
 - 运行状态：成功
-- 本次总论文数：14
-- 精读区：11
-- 速读区：3
+- 本次总论文数：10
+- 精读区：6
+- 速读区：4
 
 ### 今日简报（AI）
-今日14篇论文中，人形机器人全身操控与“语言—学习—现实”闭环策略成双峰亮点，均获9分高评。最值得关注的是纯本体感觉实现类人灵活操作，以及借助持久程序打通语言控制到真实部署的路径；此外开源人形平台与多模态交互数据集也值得一瞥。若想快速入门，建议从这两篇9分精读入手，把握控制与学习的融合趋势。
-- 详情：[/202609/04/README](/202609/04/README)
+今日共推荐10篇论文，精读6篇、速读4篇，聚焦具身智能、世界模型与机器人策略评估。
+
+最值得关注的是9.0分精读《RoboPhys-3D》通过3D重建全面评测具身世界模型，以及《AGM》利用成就记忆增强冻结VLA策略的闭环决策。
+
+建议优先精读这两篇高分工作，同时可速读FailBench以了解VLM评判任务成功的可靠性。
+- 详情：[/202609/05/README](/202609/05/README)
 
 ### 精读区论文标签
-1. [Blind Dexterity: Whole-Body Humanoid Manipulation via Pure Proprioception](/202609/04/2608.29487v1-blind-dexterity-whole-body-humanoid-manipulation-via-pure-proprioception)  
+1. [RoboPhys-3D: A Comprehensive Embodied World Model Evaluation via 3D Reconstruction](/202609/05/2608.28718v1-robophys-3d-a-comprehensive-embodied-world-model-evaluation-via-3d-reconstruction)  
    标签：评分：9.0/10、query:ad
-   evidence：仅用本体感觉实现人形机器人全身操作与移动，直接对应机器人操作与运动
-2. [SUN: Persistent Programs For Language-Grounded Control-to-Learning-to-Real Policies](/202609/04/2608.31167v1-sun-persistent-programs-for-language-grounded-control-to-learning-to-real-policies)  
+   evidence：覆盖50个操作任务的具身世界模型三维评估基准
+2. [AGM: Achievement-Grounded Memory for Closed-Loop Agents with Frozen VLA Policies](/202609/05/2608.29537v1-agm-achievement-grounded-memory-for-closed-loop-agents-with-frozen-vla-policies)  
    标签：评分：9.0/10、query:ad
-   evidence：语言驱动程序统一MPC与RL实现长视距操作
-3. [RoboTok: An Internet-Scale Data Engine for Human Demonstration Retrieval and Dexterous Manipulation Learning](/202609/04/2609.03199v1-robotok-an-internet-scale-data-engine-for-human-demonstration-retrieval-and-dexterous-manipulation-learning)  
+   evidence：面向机器人操作，用物理证据验证子目标以形成闭环
+3. [Scaffolding Foundation Models into Physical-World Agents Pushes the Frontier of Long-Horizon Navigation](/202609/05/2608.30396v1-scaffolding-foundation-models-into-physical-world-agents-pushes-the-frontier-of-long-horizon-navigation)  
    标签：评分：9.0/10、query:ad
-   evidence：互联网示范检索用于灵巧操作学习
-4. [Long-Horizon Consistent and Interaction-Aware World Models for Multi-Style End-to-End Driving](/202609/04/2609.03225v1-long-horizon-consistent-and-interaction-aware-world-models-for-multi-style-end-to-end-driving)  
+   evidence：面向物理世界长时程导航的VLM与导航执行器协同智能体
+4. [PRACTICE: From Experience to Expertise in Self-Evolving Embodied Agents](/202609/05/2608.30760v1-practice-from-experience-to-expertise-in-self-evolving-embodied-agents)  
    标签：评分：9.0/10、query:ad
-   evidence：交互感知世界模型用于端到端自动驾驶
-5. [Drive-HWM: Hierarchical World Models for Dynamic-Latent Guided Autonomous Driving](/202609/04/2609.03572v1-drive-hwm-hierarchical-world-models-for-dynamic-latent-guided-autonomous-driving)  
+   evidence：训练技能学习者维护持久技能库，使多模态大模型具身智能体能持续自演化
+5. [Toward Physically Grounded JEPA World Models for Goal-Conditioned Robotic Planning](/202609/05/2609.03565v1-toward-physically-grounded-jepa-world-models-for-goal-conditioned-robotic-planning)  
    标签：评分：9.0/10、query:ad
-   evidence：分层快慢世界模型将未来场景预测与基于观测的动作生成结合，用于自动驾驶决策。
-6. [SV-WAM: An Efficient Surround-View World-Action Model for End-to-End Autonomous Driving](/202609/04/2609.03602v1-sv-wam-an-efficient-surround-view-world-action-model-for-end-to-end-autonomous-driving)  
+   evidence：面向机器人操作规划的物理锚定世界模型，使潜在表征与动作和物理状态对齐
+6. [MINERVA: How Small Can a Manipulation Policy Be and Still Solve LIBERO?](/202609/05/2609.03715v1-minerva-how-small-can-a-manipulation-policy-be-and-still-solve-libero)  
    标签：评分：9.0/10、query:ad
-   evidence：端到端自动驾驶、环视感知与基于世界模型的动作学习
-7. [WISE: World-model-guided Imagination Scheduling for Efficient Post-training of Vision-Language-Action Models](/202609/04/2609.03681v1-wise-world-model-guided-imagination-scheduling-for-efficient-post-training-of-vision-language-action-models)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作策略后训练的世界模型方法
-8. [Revisiting Topological Graphs for Macro Action based Closed-loop Reinforcement Learning of Vision Language Navigation in Continuous Environment](/202609/04/2609.03906v1-revisiting-topological-graphs-for-macro-action-based-closed-loop-reinforcement-learning-of-vision-language-navigation-in-continuous-environment)  
-   标签：评分：9.0/10、query:ad
-   evidence：连续视觉语言导航中基于宏观动作的强化学习
-9. [MulDP: Multimodal Diffusion Policy for Autonomous Quadruped Parkour Navigation across Complex Terrains](/202609/04/2609.03984v1-muldp-multimodal-diffusion-policy-for-autonomous-quadruped-parkour-navigation-across-complex-terrains)  
-   标签：评分：9.0/10、query:ad
-   evidence：多模态扩散策略实现四足跑酷导航
-10. [Continuous Actions from Discrete Minds: Latent-Aligned Planning for End-to-End Autonomous Driving](/202609/04/2609.04070v1-continuous-actions-from-discrete-minds-latent-aligned-planning-for-end-to-end-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：端到端自动驾驶中通过潜在对齐规划将语义推理与连续轨迹执行结合
-11. [GIFT: Guided Intermediate Feature Training via Action-Oriented Structural Supervision for Robotic Manipulation](/202609/04/2609.04193v1-gift-guided-intermediate-feature-training-via-action-oriented-structural-supervision-for-robotic-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作的中间特征训练方法，弥合视觉特征与控制效用之间的行动充分性差距
+   evidence：研究极小参数量操作策略在LIBERO操作基准上的成功率与性能瓶颈
 
 ### 速读区论文标签
-1. [Establishing a Dynamic Multimodal HRI Dataset for Engagement Analysis with a Humanoid Robot](/202609/04/2609.03255v1-establishing-a-dynamic-multimodal-hri-dataset-for-engagement-analysis-with-a-humanoid-robot)  
+1. [IMPACT: Attention Is the Interaction Map for Scalable Interaction-Aware World Model Training](/202609/05/2609.00161v1-impact-attention-is-the-interaction-map-for-scalable-interaction-aware-world-model-training)  
    标签：评分：8.0/10、query:ad
-   evidence：面向人形机器人的人机交互参与度多模态数据构建
-2. [BRIDGE: An Open-Source Humanoid Platform via Morphology-Control Co-Design for Physical AI](/202609/04/2609.03497v1-bridge-an-open-source-humanoid-platform-via-morphology-control-co-design-for-physical-ai)  
-   标签：评分：8.0/10、query:ad
-   evidence：人形机器人形态与控制协同设计、全身运动优化与物理AI开源平台
-3. [Toward Unified Robot Learning: Bridging Representation, Vision-Language-Action, and World Models](/202609/04/2609.03927v1-toward-unified-robot-learning-bridging-representation-vision-language-action-and-world-models)  
-   标签：评分：8.0/10、query:ad
-   evidence：综述表示学习、VLA模型与世界模型的统一视角，推动机器人在真实环境中感知-行动-推理一体化。
+   evidence：面向具身智能体的交互感知世界模型训练，以注意力重分配稀疏动态区域监督
+2. [FailBench: How Reliable are VLMs at Judging Robot Task Success?](/202609/05/2609.03611v1-failbench-how-reliable-are-vlms-at-judging-robot-task-success)  
+   标签：评分：7.0/10、query:ad
+   evidence：跨域机器人操作失败检测基准，覆盖多源真实与仿真操作尝试
+3. [AcrossWAM1.0:A Modular Latent World-Action Stack for Compact Robot Policies](/202609/05/2608.29937v1-acrosswam10a-modular-latent-world-action-stack-for-compact-robot-policies)  
+   标签：评分：6.0/10、query:ad
+   evidence：模块化潜在世界-动作策略栈，用于紧凑机器人动作生成
+4. [MNIST-PRO: MNIST is Back as a Partially Observable World for AI Agents](/202609/05/2608.31022v1-mnist-pro-mnist-is-back-as-a-partially-observable-world-for-ai-agents)  
+   标签：评分：6.0/10、query:ad
+   evidence：面向部分可观测环境下智能体感知与工作记忆的基准，对具身智能体感知状态构建具有方法论迁移价值
 
 
 <div class="dpr-home-promo-card">
