@@ -6,54 +6,45 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-05
-- 运行时间：2026-09-05 22:07:02 UTC
+- 最新运行日期：2026-09-06
+- 运行时间：2026-09-06 21:59:12 UTC
 - 运行状态：成功
-- 本次总论文数：10
-- 精读区：6
-- 速读区：4
+- 本次总论文数：7
+- 精读区：5
+- 速读区：2
 
 ### 今日简报（AI）
-今日共推荐10篇论文，精读6篇、速读4篇，聚焦具身智能、世界模型与机器人策略评估。
+今日精读7篇论文，聚焦具身智能与导航世界模型，其中两篇获9.0高分。
 
-最值得关注的是9.0分精读《RoboPhys-3D》通过3D重建全面评测具身世界模型，以及《AGM》利用成就记忆增强冻结VLA策略的闭环决策。
+最值得看：Hydra用离散潜在规划+连续流匹配执行实现导航；物理人机交互需分离“行为”与“现实”以满足约束。
 
-建议优先精读这两篇高分工作，同时可速读FailBench以了解VLM评判任务成功的可靠性。
-- 详情：[/202609/05/README](/202609/05/README)
+若想入门，建议先从高分精读论文入手，快速把握前沿框架与交互安全设计。
+- 详情：[/202609/06/README](/202609/06/README)
 
 ### 精读区论文标签
-1. [RoboPhys-3D: A Comprehensive Embodied World Model Evaluation via 3D Reconstruction](/202609/05/2608.28718v1-robophys-3d-a-comprehensive-embodied-world-model-evaluation-via-3d-reconstruction)  
+1. [Hydra: A Navigation World Action Model with Discrete Latent Planning and Continuous Flow-Matching Execution](/202609/06/2608.28995v1-hydra-a-navigation-world-action-model-with-discrete-latent-planning-and-continuous-flow-matching-execution)  
    标签：评分：9.0/10、query:ad
-   evidence：覆盖50个操作任务的具身世界模型三维评估基准
-2. [AGM: Achievement-Grounded Memory for Closed-Loop Agents with Frozen VLA Policies](/202609/05/2608.29537v1-agm-achievement-grounded-memory-for-closed-loop-agents-with-frozen-vla-policies)  
+   evidence：面向机器人导航的世界动作模型，将规划器嵌入潜在空间，服务于具身智能体在物理环境中的实时控制。
+2. [Behavior--Realization Separation for Constrained Physical Human--Robot Interaction](/202609/06/2609.00669v1-behavior--realization-separation-for-constrained-physical-human--robot-interaction)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作，用物理证据验证子目标以形成闭环
-3. [Scaffolding Foundation Models into Physical-World Agents Pushes the Frontier of Long-Horizon Navigation](/202609/05/2608.30396v1-scaffolding-foundation-models-into-physical-world-agents-pushes-the-frontier-of-long-horizon-navigation)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向物理世界长时程导航的VLM与导航执行器协同智能体
-4. [PRACTICE: From Experience to Expertise in Self-Evolving Embodied Agents](/202609/05/2608.30760v1-practice-from-experience-to-expertise-in-self-evolving-embodied-agents)  
-   标签：评分：9.0/10、query:ad
-   evidence：训练技能学习者维护持久技能库，使多模态大模型具身智能体能持续自演化
-5. [Toward Physically Grounded JEPA World Models for Goal-Conditioned Robotic Planning](/202609/05/2609.03565v1-toward-physically-grounded-jepa-world-models-for-goal-conditioned-robotic-planning)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作规划的物理锚定世界模型，使潜在表征与动作和物理状态对齐
-6. [MINERVA: How Small Can a Manipulation Policy Be and Still Solve LIBERO?](/202609/05/2609.03715v1-minerva-how-small-can-a-manipulation-policy-be-and-still-solve-libero)  
-   标签：评分：9.0/10、query:ad
-   evidence：研究极小参数量操作策略在LIBERO操作基准上的成功率与性能瓶颈
+   evidence：面向受约束物理人机交互，分离期望行为与带约束的机器人实现
+3. [AcrossWAM1.0:A Modular Latent World-Action Stack for Compact Robot Policies](/202609/06/2608.29937v1-acrosswam10a-modular-latent-world-action-stack-for-compact-robot-policies)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向机器人策略的潜在世界动作栈，模块化解耦世界模型与动作生成，以特征空间子目标替代未来像素渲染
+4. [Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots](/202609/06/2609.01384v1-obstacle-aware-autonomous-coverage-and-navigation-for-outdoor-robots)  
+   标签：评分：8.0/10、query:ad
+   evidence：自主户外覆盖导航，融合鲁棒定位、控制器感知规划与能量管理
+5. [Humanoid Safe Stop via Learned Stoppability Value](/202609/06/2609.02358v1-humanoid-safe-stop-via-learned-stoppability-value)  
+   标签：评分：8.0/10、query:ad
+   evidence：人形机器人安全停止的学习控制框架，关联机器人运动与安全保障。
 
 ### 速读区论文标签
-1. [IMPACT: Attention Is the Interaction Map for Scalable Interaction-Aware World Model Training](/202609/05/2609.00161v1-impact-attention-is-the-interaction-map-for-scalable-interaction-aware-world-model-training)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向具身智能体的交互感知世界模型训练，以注意力重分配稀疏动态区域监督
-2. [FailBench: How Reliable are VLMs at Judging Robot Task Success?](/202609/05/2609.03611v1-failbench-how-reliable-are-vlms-at-judging-robot-task-success)  
+1. [Brain-Language-Action (BLA) Models: Language-Conditioned EEG for Robotics Control](/202609/06/2608.28967v1-brain-language-action-bla-models-language-conditioned-eeg-for-robotics-control)  
    标签：评分：7.0/10、query:ad
-   evidence：跨域机器人操作失败检测基准，覆盖多源真实与仿真操作尝试
-3. [AcrossWAM1.0:A Modular Latent World-Action Stack for Compact Robot Policies](/202609/05/2608.29937v1-acrosswam10a-modular-latent-world-action-stack-for-compact-robot-policies)  
+   evidence：语言条件脑电机器人控制框架，以智能控制方式将脑状态映射到更大动作空间
+2. [Scene Graph-based Driving Scenario Extraction for Automotive Egocentric Datasets](/202609/06/2609.00333v1-scene-graph-based-driving-scenario-extraction-for-automotive-egocentric-datasets)  
    标签：评分：6.0/10、query:ad
-   evidence：模块化潜在世界-动作策略栈，用于紧凑机器人动作生成
-4. [MNIST-PRO: MNIST is Back as a Partially Observable World for AI Agents](/202609/05/2608.31022v1-mnist-pro-mnist-is-back-as-a-partially-observable-world-for-ai-agents)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向部分可观测环境下智能体感知与工作记忆的基准，对具身智能体感知状态构建具有方法论迁移价值
+   evidence：利用场景图与线性时序逻辑从驾驶传感器流中自动提取场景，服务于自动驾驶系统开发中的场景覆盖分析。
 
 
 <div class="dpr-home-promo-card">

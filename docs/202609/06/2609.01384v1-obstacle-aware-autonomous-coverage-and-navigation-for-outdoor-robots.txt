@@ -1,0 +1,257 @@
+Title: Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots
+
+URL Source: https://arxiv.org/pdf/2609.01384v1
+
+Published Time: Wed, 02 Sep 2026 01:33:56 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 
+
+Leonardo Gargani, Matteo Frosi, and Matteo Matteucci 
+
+Department of Electronics, Information and Bioengineering (DEIB), Politecnico di Milano, Italy 
+
+leonardo.gargani@polimi.it 
+
+Abstract. Long-duration outdoor coverage with autonomous platforms remains challenging beyond classical planning: deployments face localiza-tion drift in open spaces, obstacles in cluttered sites, controller feasibility in turn-heavy maneuvers, and persistent autonomy with energy manage-ment. We propose a unified ROS 2 architecture for outdoor coverage that combines coverage planning, robust localization, and Nav2-based execution. A dual-antenna RTK-GNSS fused in an EKF keeps the robot pose, both position and heading, accurate across long missions; three controller-aware refinements are added to a mature coverage planner; a Behavior-Tree mission manager coordinates multi-goal execution, lay-ered recovery, cost-aware goal management, and autonomous docking for return-to-charge. We validate the stack through simulation and real-world trials across multiple outdoor areas with varying geometries and obstacle densities. Overall, these results show that the proposed stack can reliably complete outdoor coverage missions across varied areas, sweep-ing 93 .1 % to 96 .1 % of the planned coverage area. 
+
+Keywords: Coverage path planning, Autonomous navigation, Behavior trees, Field robotics, ROS 2 
+
+## 1 Introduction 
+
+Industrial outdoor sites such as solar farms, logistics yards, and large managed green areas increasingly deploy autonomous platforms for repetitive maintenance (mowing, sweeping, inspection, soil conditioning). Coverage strategies are well studied in controlled settings, but translating them into reliable field opera-tion remains hard: deployments require stable localization in open spaces, safe interaction with both known and unknown obstacles, long-duration execution, smooth return-to-charge, and other mission-level capabilities. These constraints expose three closely related gaps in many existing ap-proaches. First, low-speed motion with frequent turns makes heading estimation difficult, especially during intermittent GNSS degradation. Second, geometri-cally optimal coverage paths may still prove fragile at execution time when way-point distribution and turn resolution do not align with controller feasibility. Third, long-duration operation is inherently a system-level problem: planning arXiv:2609.01384v1 [cs.RO] 1 Sep 2026 2 Leonardo Gargani et al.   
+
+> (a) Environment. (b) Perimeter.
+> (c) Coverage. (d) Execution.
+
+Fig. 1: Stages of the proposed framework: (a) environment and working-area definition, (b) perimeter recording and admissible-region construction, (c) full coverage computation, and (d) autonomous mission execution. and control alone are insufficient without structured supervision, recovery poli-cies, and safe interruption mechanisms for energy-aware mission management. While modern navigation frameworks such as Nav2 provide Behavior Tree–based orchestration [1], integrating robust localization, planning refinements, execution robustness, and persistent operation into a single cohesive, field-deployable ar-chitecture remains an open systems integration problem. We address this with a unified ROS 2 architecture for outdoor coverage that integrates localization, perception, planning, and execution under a mission-level supervisor (Fig. 1). We target the gap between a geometrically valid plan and its reliable execution in the field: we pair a robust outdoor localization stack with controller-aware planning refinements and a persistent Behavior-Tree executive, and validate the complete system in simulation and across five real outdoor areas. The reported tests establish feasibility across a range of geometries. In summary, our contributions are as follows. 
+
+– An outdoor localization stack for long coverage missions: a dual-antenna RTK-GNSS and wheel-odometry fusion in a custom 12-state EKF with per-sensor Mahalanobis gating and a fallback that infers heading from the direc-tion of travel, designed to keep the global pose reliable through tight turns and intermittent GNSS, the regime where wheel odometry alone drifts. Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 3
+
+– Controller-aware coverage refinements layered on Fields2Cover and formalized against the native planner behavior: collinearity-aware resampling that adapts waypoint density to the controller’s tracking needs, obstacle-aware connectors that delegate inter-swath transitions to the reactive layer to preserve clearance, and layout-aware obstacle clustering that merges clut-tered layouts into clean obstacle polygons before planning. 
+
+– A Behavior-Tree mission executive integrated with Nav2 that converts an offline coverage route into long-horizon autonomy for outdoor operation: batched multi-goal execution, a layered recovery policy, cost-aware goal man-agement under interference from unknown obstacles, and marker-guided au-tonomous docking with energy-triggered return-to-charge. 
+
+– An end-to-end evaluation in simulation and across five real outdoor ar-eas spanning convex and non-convex geometries, with and without known obstacles, reporting mission-level reliability and a coverage-efficiency metric focused on the quality of the executed coverage runs. 
+
+## 2 Related Works 
+
+Coverage path planning and field pipelines. Coverage path planning (CPP) has a long history in robotics, with classical methods guaranteeing complete cover-age through geometric decomposition, such as the boustrophedon cellular de-composition [2] and related grid and spanning-tree formulations [3]. Since a length-optimal complete coverage path is generally costly to compute, practical planners typically rely on cell decomposition and cover each cell with parallel swaths [4]. This decomposition-based swath-and-route strategy remains widely used in field deployments. For real vehicles, this approach is consolidated into reusable pipelines: Fields2Cover (F2C) [5] packages headland and swath gen-eration, routing, and path synthesis into a modular open-source library. The related Fields2Benchmark [6] standardizes evaluation on a large dataset of real fields with varied geometries, while reviews organize coverage into coverage plan generation, swath traversal ordering, and smooth drivable-path planning [7]. 
+
+Coverage transitions and execution robustness. Headland and inter-swath tran-sitions are an active subproblem of their own, addressed by continuous-curvature headland coverage with clothoid turns at field corners [8] and by optimization-based motion planning for the single headland turns that arise in constrained fields carrying obstacles [9]. A complementary line targets execution-time ro-bustness: anytime replanning repairs only the affected sections of a path when initially unknown obstacles appear, within a bounded time budget [10], while online multi-robot planners distribute coverage over a fleet [11, 12]. What these pipelines leave open is how reliably a real robot executes the resulting plan, maintaining clearance between passes and handling unexpected obstacles. 
+
+Outdoor localization and heading estimation. Outdoor coverage execution re-quires a stable global pose. During coverage, the robot often moves slowly and 4 Leonardo Gargani et al. 
+
+turns frequently, making heading difficult to estimate from wheel odometry alone and prone to drift over long missions. In the Robot Operating System (ROS), heterogeneous sensor measurements are often fused through a configurable ex-tended Kalman filter [13]. Separately, dual-antenna RTK-GNSS can provide a motion-independent yaw measurement, which can be included in the filter to improve attitude estimation [14]. For long coverage missions, measured-yaw gat-ing and direction-of-travel fallback strategies can help maintain a usable heading estimate when the dual-antenna solution temporarily degrades. 
+
+Execution, behavior trees, and persistent autonomy. Reliable field operation also relies on the execution layer. Nav2 [1, 15] is a widely used ROS 2 navigation substrate with Behavior-Tree (BT) orchestration, layered costmaps, controllers, and recovery behaviors. BTs are favored over finite-state machines for modular, reactive execution [16]. Persistent autonomy with charging and recovery was demonstrated in long-term indoor deployments [17], and recent work formalizes fleet-level charging schedules for long-duration autonomy [18]. These components are often treated separately; here, we combine them in a single supervisor for outdoor coverage, including recovery, goal management, and return-to-charge. We integrate these lines of work into a single outdoor-coverage stack for a field robot and validate it outdoors. The execution layer follows a deterministic route and handles unknown obstacles by temporarily deferring blocked goals to the reactive navigation layer, rather than modifying the offline plan [10]. The local-ization stack builds on the standard ROS filtering approach for heterogeneous sensors [13], adding dual-antenna yaw gating and a direction-of-travel fallback for turn-heavy coverage. Finally, because the differential-drive platform can ro-tate in place, the planning refinements focus on waypoint density and inter-swath connector clearance rather than continuous-curvature headland turns. 
+
+## 3 System Description and Architecture 
+
+This section defines the setting and system used in the paper. We first formalize the coverage task and admissible workspace, then present the offline-to-online architecture and hardware platform, and finally detail the localization stack that maintains accurate global pose over long, turn-heavy missions in open fields. 
+
+3.1 Problem Formulation 
+
+We consider a single differential-drive robot operating on predominantly planar outdoor terrain. The workspace is described by an outer boundary polygon B ⊂ 
+
+R2 and a set of m known obstacles O = {O1, . . . , O m}, each Oi ⊂ B a simple polygon mapped a priori during preparation. Obstacles that appear only at runtime, whether fixed objects absent from the map or moving agents such as pedestrians, are unknown and handled reactively (Sec. 5). The two classes differ in what is available at planning time, not by whether they move. Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 5
+
+The robot has a working width w (the tool coverage width) and footprint radius ρ; its planar pose is x = ( x, y, θ ) ∈ SE (2), a position and a heading. Being differential-drive, it can rotate on the spot, so its minimum turning radius rmin 
+
+is effectively zero and the plan need not respect a tight curvature bound. The robot must keep a safety margin δ ≥ ρ from obstacles, covering its footprint plus extra clearance. We grow each obstacle into Oδi = {q ∈ R2 :dist( q, O i) ≤ δ}, the set of points within δ of Oi, and subtract grown obstacles from int( B), the interior of the boundary (the region it encloses). What remains is the admissible region , the free space in which the plan must remain: 
+
+A = int( B) \
+
+> m
+
+[
+
+> i=1
+
+Oδi . (1) A coverage plan is the path the robot is expected to follow. We represent it as a curve γ parameterized by arc length s ∈ [0 , L ], where s is the distance from the start and L is the total path length. For each s, the curve gives the robot pose γ(s) = ( x, y, θ ) ∈ SE (2). As the robot moves along it, the maintenance tool sweeps a ground region. If Dw(x) denotes the width-w working band centered at the robot and orthogonal to its heading, this region is defined as: 
+
+S(γ) = [
+
+> s∈[0 ,L ]
+
+Dw
+
+ γ(s). (2) We judge a plan by how completely the robot actually sweeps the workspace during execution. Writing S(γ) ∩ A for the swept area that lies inside the ad-missible region, and distinguishing the planned route γplan from the executed trajectory γexec actually followed by the robot, the coverage efficiency is the fraction of planned coverage that is actually realized in practice: 
+
+ηc = |S(γexec ) ∩ S(γplan ) ∩ A| |S(γplan ) ∩ A| ∈ [0 , 1] , (3) where | · | denotes the area of a region (in m 2) and both sweeps use the same implement width, so ηc isolates execution quality from the plan. Computing a length-optimal complete coverage path is costly even for sim-ple polygons [4]; we therefore inherit the cell-decomposition-and-swaths strat-egy of Fields2Cover and, rather than re-deriving an optimal plan, target the gap between a geometrically valid route and its field execution (Sec. 4.2). Under standard assumptions, the planned route preserves the completeness of the un-derlying decomposition. The empirical gap to ηc = 1 (Sec. 6) is due to practical execution effects such as turning, overlap, and discrete waypoint following. 
+
+3.2 Architecture and Platform 
+
+Fig. 2 summarizes the offline-to-online structure of the proposed framework. The offline part first converts a site geometry into the admissible region A of 6 Leonardo Gargani et al. Perimeter recording Obstacle map & metric alignment Layout-aware clustering Fields2Cover: swaths & route Σ 
+
+> Collinearity-aware resampling Obstacle-aware connectors Behavior-Tree executive (Nav2) RTK-GNSS lo-calization (EKF) Cost-aware goal management Autonomous docking
+> Coverage Preparation
+> (offline)
+> Coverage Planning
+> (offline)
+> Online Execution
+> (online)
+> AΣ
+
+Fig. 2: Architecture of the proposed coverage framework. Offline preparation produces the admissible region A; offline planning turns it into a coverage route 
+
+Σ; online execution runs the route under a Behavior-Tree executive. Eq. (1), then clusters the known obstacles and computes a coverage route Σ with Fields2Cover and our refinements (Sec. 4.2). The online part executes Σ under a Behavior-Tree supervisor, using the localization filter to maintain the robot pose and the navigation stack to handle unknown obstacles reactively (Sec. 5). Since the same packaged stack is used in simulation and on the real robot, routes prepared offline can be reused across repeated runs of the same site. Experiments were conducted with an outdoor differential-drive robot de-signed for large-area maintenance. The platform includes wheel encoders, a dual-antenna Unicore UM982 RTK-GNSS with a fixed base station for georeferenced position and heading, a Livox Mid-360 3D LiDAR for obstacle perception, and a rear-facing camera used during docking. The full autonomy stack runs onboard the robot, without relying on cloud services or remote computation. In deployment, the coverage planner uses the boustrophedon swath ordering, with the 1 .0 m-wide working tool along swaths spaced 0 .9 m apart. The naviga-tion stack pairs a Regulated Pure Pursuit controller (nominal speed 0 .5 m /s) with a grid-based global planner and a two-stage smoother (curvature-minimizing then Savitzky-Golay) over inflated local and global costmaps [15], fed by the 20 Hz 12-state EKF of the localization stack detailed next. 
+
+3.3 Localization 
+
+Holding an accurate heading is the precondition for trackable coverage, and it is the hardest state to maintain on this platform: in tight turns, the heading inferred from wheel motion alone drifts, and over a long mission, this error accumulates until the global pose becomes unreliable. Therefore, we fuse wheel odometry with a dual-antenna RTK-GNSS module that supplies a georeferenced position pk = ( xk, y k) and a motion-independent yaw ψk. These measurements are combined in a custom 12-state EKF that runs in 2D-constrained mode on planar terrain and preserves the robot’s planar pose estimate. Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 7
+
+The dual-antenna yaw, per-sensor gating that rejects prediction-inconsistent measurements, and the heading fallback follow current dual-antenna GNSS-EKF practice. Each measurement is accepted only if it agrees with the filter’s predic-tion within its uncertainty. Writing the innovation ν = z − ˆz (measurement minus predicted measurement) and its covariance S, the squared, covariance-normalized mismatch must stay under a per-sensor threshold (chi-square test), 
+
+d2 = ν⊤S−1ν ≤ χ2
+
+> α
+
+, (4) which rejects short-lived measurement outliers before they can update and cor-rupt the filter estimate (each sensor stream has its own threshold). The GNSS yaw is also used only when the module-reported orientation confidence ck ex-ceeds a threshold cthr . When it does not, rather than relying only on encoder heading, we estimate the direction of travel from GNSS positions as the angle average of the last N valid GNSS position increments, evenly spaced, ˆψk = atan2 
+
+ P 
+
+> j
+
+sin ϕj , P 
+
+> j
+
+cos ϕj
+
+
+
+, (5) where each ϕj = atan2( ∆y j , ∆x j ) is the direction of the step ( ∆x j , ∆y j ) between consecutive positions, spaced at least δp meters apart. We accept this estimate only when the per-step directions are mutually consistent. In practice, this means that their circular variance over the window must stay below vthr ; this variance is close to 0 when the directions are aligned and close to 1 when scattered. If not, the filter uses its own prediction to maintain a usable global heading even when the directly measured yaw temporarily becomes unavailable. 
+
+## 4 Coverage Planning 
+
+The offline stage produces the reusable coverage route in two sequential parts: it first prepares the admissible region from the site survey, then plans swaths over it with Fields2Cover and our controller-aware refinements. 
+
+4.1 Coverage Preparation 
+
+Preparation produces the admissible region A so that all geometry shares a single metric frame that the coverage planner and the navigation stack both consume. 
+
+Perimeter acquisition is performed once per site or after a layout change by either driving the robot along the boundary while logging georeferenced poses or manually entering known waypoints. The resulting poses are subsampled by translation and yaw thresholds, optionally edited for consistency, and accepted only if they form a valid, closed, non-self-intersecting polygon B.
+
+Obstacle preparation then takes the known-obstacle footprints from a 2D map, a sliced 3D model, or a projected reconstruction, and places them metri-cally with a similarity transformation from pixel-to-world correspondences. The footprints are then buffered by the safety margin δ (Sec. 3.1) and subtracted from B to yield the polygonal admissible model A used by all later stages. 8 Leonardo Gargani et al. 
+
+4.2 Controller-aware Refinements 
+
+We build on Fields2Cover [5] (F2C), a mature open-source geometric coverage planner. Three refinements adapt F2C’s geometrically valid output for closed-loop execution, each formalized relative to the native planner behavior it re-places. Given the admissible region A and the vehicle parameters ( w, r min ), F2C runs four deterministic stages: it (i) offsets the boundary inward to re-serve a constant-width headland for turning; (ii) fills the interior with paral-lel swaths spaced by the working width w; (iii) orders the swaths into a route 
+
+Σ = ( σ1, σ 2, . . . ) that minimizes non-productive travel, for which it provides sev-eral strategies such as boustrophedon, snake, and spiral orderings; and (iv) syn-thesizes a drivable path γF2C by joining consecutive swaths with motion prim-itives (Dubins for forward-only motion, Reeds-Shepp when reverse is allowed). F2C is geometrically sound overall, but γF2C targets geometric validity rather than closed-loop trackability and transition clearance. 
+
+Collinearity-Aware Resampling. F2C samples turns densely but can leave long straight swaths with few intermediate poses, which degrades tracking and overlap on the most coverage-critical segments. A uniform resampling would fix the straights but dilute the dense turn sampling that F2C provides, so we instead adapt the density to the local geometry, resampling the waypoint se-quence without altering the path it traces. For an ordered waypoint sequence 
+
+W = ( p1, . . . , p n) with pi ∈ R2, let ci = pi+1 − pi−1 be the chord that skips vertex pi and di = pi − pi−1 the step from pi−1 to pi; the angle between these two vectors measures how sharply the path bends at vertex pi,
+
+θi = arccos ci · di
+
+∥ci∥ ∥ di∥ , (6) which is zero when pi lies on the chord and grows as the path bends more sharply. Resampling proceeds in three passes (Algorithm 1): a distance pass that keeps one point per dmin and splits any gap above dmax ; a decimation pass that drops near-collinear vertices ( θi ≤ θthr ); and a final pass that re-interpolates any gap still above dmax . Turns keep their dense native sampling while straight swaths end up uniformly sampled at dmax , and because points are only added or removed along the existing line, resampling changes neither the path nor the ground it sweeps, as the before-and-after panels of Fig. 3a confirm. 
+
+Obstacle-Aware Connectors. In F2C, the swaths respect obstacle clearance, but the connectors joining consecutive swaths are produced by a separate routine that need not respect the clearance margin δ (Sec. 3.1); in cluttered layouts these transitions can cross an inflated obstacle Oδi and render the offline plan infeasible (Fig. 3b, left). We therefore disable native connector generation and join each swath σk to the next by a straight link ℓk, from the end of σk to the start of σk+1 
+
+(Fig. 3b, right). This link is a goal-to-goal intent , not a committed trajectory: at runtime, the local planner executes it on the live costmap, enforcing clearance Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 9 
+
+> (a) Collinearity-aware resampling. (b) Obstacle-aware connectors.
+
+Fig. 3: Trajectory refinements to F2C, before (left) and after (right): (a) resam-pling equalizes waypoint density on straights and keeps turns; (b) F2C’s looping connectors are replaced by straight links realized online by the reactive layer. against both known and unknown obstacles. The offline plan therefore keeps a deterministic structure between swaths, while the online planner resolves the actual transition without the connectors that F2C would otherwise insert. 
+
+Layout-Aware Obstacle Clustering. Densely packed small obstacles can create many gaps that are too narrow for the robot to traverse safely, leading F2C to generate fragile transitions. Therefore, we merge nearby obstacles using a morphological operation: the obstacle layer is rasterized into a binary occu-pancy image and dilated with a rectangular structuring element, i.e., a small rectangular mask used to expand occupied pixels. This mask is wider across the driving direction than along it and is sized according to the robot clearance. After dilation, we extract the outer contours of the expanded occupied regions to obtain the merged obstacle polygons. Two obstacles merge when the gap between them is smaller than the mask width in the connection direction, so one rasterize-dilate-contour pass both enforces the safety margin and removes sub-traversable gaps. The absorbed area is limited to those narrow gaps, so the admissible region shrinks only slightly while the merged layout keeps the gener-ated trajectories collision-free and feasible to execute in the field. 
+
+## 5 Online Execution 
+
+The online stack targets long-horizon coverage in large outdoor environments, where the robot must execute long waypoint sequences, navigate safely around obstacles, and return to charge autonomously. It follows a layered sense-localize-plan-act structure: building on the localization stack of Sec. 3.3, a supervising Behavior Tree (BT) coordinates navigation, recovery, and energy management from the first undocking to the final return to the charging station. 10 Leonardo Gargani et al. 
+
+Algorithm 1 Collinearity-aware resampling                                                           
+
+> Require: waypoints W= ( p1, . . . , p n), spacing bounds dmin < d max , angle θthr
+> Ensure: resampled waypoints W′tracing the same path 1: W′←(p1)2: for i= 2 to ndo
+> 3: ℓ← ∥ pi−last( W′)∥
+> 4: if ℓ > d max then
+> 5: append evenly spaced points (gap ≤dmax ) from last( W′) to pi, then pi
+> 6: else if ℓ≥dmin then
+> 7: append pito W′
+> 8: end if
+> 9: end for
+> 10: drop every interior vertex piof W′with θi≤θthr
+> 11: re-insert evenly spaced points along every remaining segment longer than dmax
+> 12: return W′
+
+5.1 Behavior-Tree Mission Executive 
+
+Mission execution is organized as a Behavior Tree on two levels (Fig. 4). A compact mission tree runs the deployment loop: while the battery is sufficient for operation, it extracts the route goals, undocks, hands the entire route to the navigation layer, and docks again; otherwise, low battery or a failed mission returns the robot to the charging station. The navigation layer is a Nav2 BT with two stages: a get-to-route phase that drives to the first swath using a single-goal horizon, and a recovery-wrapped plan-and-follow loop that executes the remaining route. The loop plans over a short horizon of the next K=4 goals, prunes each goal once the robot passes within its acceptance radius, truncates the controller path to a few meters ahead, and re-smooths it every control cycle, so replanning stays frequent and local regardless of the route length. Robustness comes from a recovery subtree of escalating actions (Fig. 4), tried one at a time under a bounded retry budget: clearing the local then global costmap, in-place rotation to refresh perception, a short wait for unknown ob-stacles to clear, and a short controlled back-up to free the robot when stuck. 
+
+5.2 Reactive Obstacle Handling and Goal Management 
+
+Obstacle avoidance separates global intent from local safety. The local costmap inflates LiDAR-observed occupancy into safety buffers that discourage passages too narrow to execute reliably, while the global costmap holds only the opera-tional boundary and the known obstacles from preparation (Sec. 4.1), so offline planning sets intent and online perception enforces safety. Unknown-obstacle handling during coverage is treated as a goal-management problem, not merely a replanning one: because coverage trajectories are densely sampled, an unknown obstacle may overlap upcoming goals, and replanning alone may still drive toward a blocked pose. Before each planning cycle, the supervisor checks the next goals against the local costmap: any goal with cost Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 11        
+
+> ?Fallback
+> →Sequence
+> reactive
+> Return to charging dock Battery sufficient? →Cut Extract route goals Undock Navigate route (b) Dock
+
+(a) Mission executive.        
+
+> →Sequence Get to route start Recovery node
+> ×6retries
+> Plan & follow loop ⟳Round-robin
+> recovery
+> Clear costmaps Spin Wait Back up
+
+(b) Navigation behavior tree. 
+
+Fig. 4: Behavior-Tree execution at two levels. (a) The mission executive runs the loop (extract goals, undock, navigate, dock) while the battery is sufficient and otherwise returns to the dock. (b) The Nav2 tree drives to the route start, then wraps the plan-and-follow loop in a recovery node with escalating actions. Ellipses denote conditions, solid boxes actions, and dashed boxes subtree calls. above cmax is sent to the back of the queue instead of being selected, so the planner first follows the goals that are currently reachable. A deferred goal is retried when it returns to the front of the queue, and is dropped only after 
+
+rmax =3 postponements. Because the local costmap is a rolling window that is cleared when obstacles disappear, a region blocked on one pass is usually covered on a later pass, while progress continues safely elsewhere. 
+
+5.3 Autonomous Docking 
+
+Long-duration operation is supported by autonomous docking integrated into the same BT supervisor, which interrupts coverage and triggers docking once the battery falls below its threshold, so return-to-charge is part of the mission logic rather than a special case handled outside it. Docking follows a two-stage procedure (Fig. 5): the robot first navigates to a predefined staging pose near the charging station, then runs a perception-guided alignment phase in which a calibrated camera detects a fiducial ArUco marker [19] and estimates its pose as the alignment target; the staging pose sits at a fixed offset ahead of the dock with a yaw that keeps the marker visible. Docking success is inferred from a change in the robot’s power state, and undocking re-runs the same alignment approach in reverse to back the robot out to the staging pose. 
+
+## 6 Evaluation 
+
+We evaluate the integrated system through real-world trials, assessing mission-level reliability and coverage quality under realistic operating conditions. Among the outdoor tests performed, we report five representative areas covering different field shapes and sizes, with and without obstacles in the scene. 12 Leonardo Gargani et al. 
+
+> camera field of view charging dock ArUco marker robot at staging pose alignment approach
+
+Fig. 5: Autonomous docking (top view). From a staging pose in front of the station, the robot follows a perception-guided path (dashed) toward an ArUco marker kept in the camera field of view; docking success is confirmed by the robot’s power state. Undocking reverses the alignment phase to the staging pose. 
+
+6.1 Experimental Setup and Test Scenarios 
+
+The evaluation covers both phases: offline preparation (perimeter recording, ob-stacle extraction, and coverage computation; Secs. 4.1, 4.2) and online execution (route following, multi-goal navigation, recovery, docking, and unknown-obstacle avoidance; Sec. 5). The stack was first checked in simulation, including on fields larger than the outdoor test sites. Real-world trials then tested the complete pipeline under realistic sensing and terrain conditions, with each run performed autonomously from start to finish using the same operating protocol. We defined five operational areas: convex (01, 02, 05) and non-convex (03, 04), without known obstacles (01, 02) and with them (03, 04, 05). Field sizes reach about 1600 m 2. Across trials, we varied geometry, the number and size of known obstacle footprints, and the presence of unknown obstacles such as pedestrians or temporarily placed objects in the workspace. Known obstacles were handled offline by buffering their footprints out of A, whereas unknown obstacles were handled online through the costmap and goal-management mechanisms. 
+
+6.2 Evaluation Metrics 
+
+Alongside the coverage efficiency ηc of Eq. (3), we report mission success as a bi-nary outcome: a mission succeeds if, without human intervention after perimeter definition, the robot reaches the route start, traverses the whole coverage route, and completes the terminal phase (docking when required). For ηc, we compute the swept area with the 1 .0 m width from Eq. (2). In both the numerator and denominator, this area is limited to the part that lies inside the operational area. Table 1 reports, for every field, the field area, the planned-coverage value used as the denominator, the planned-route length, and the total area of the obstacles mapped inside the operational boundary, alongside ηc.
+
+6.3 Field Results 
+
+Fig. 6 contrasts the planned route with the executed coverage of a representative field (Seq. 05), showing that the robot follows the planned swaths consistently over the full area. Across the five areas, the robot completed the full coverage Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 13 
+
+Table 1: Coverage results for the five working areas. Field is the operational area, Planned the area swept by a perfect run with the 1 .0 m implement, Route 
+
+the planned-route length, and Obstacles the mapped-obstacle area inside the boundary; ηc is the executed swept area as a fraction of Planned (Sec. 6). Every mission was completed end-to-end without human intervention.                                          
+
+> Seq. Shape Field [m 2]Planned [m 2]Route [m] Obstacles [m 2]ηc(%)
+> 01 convex 168.0 156.3 180.0 0.0 93.2 02 convex 196.1 190.6 221.2 0.0 94.2 03 non-convex 372.7 304.2 356.3 7.5 93.1 04 non-convex 948.2 711.9 837.2 65.2 94.9 05 convex 1640.9 1397.9 1614.1 98.5 96.1
+
+route autonomously and swept 93 .1 % to 96 .1 % of the planned coverage area. Because the planner spaces the 1 .0 m implement every 0 .9 m, adjacent passes overlap by 0 .05 m per side and tile the field without seams; this overlap absorbs most lateral tracking error but does not remove it entirely, so poses that stray past it can still leave thin uncovered strips. The larger fields, where long straight swaths dominate over turns, track most tightly and reach the higher efficiencies. Coverage quality remains largely insensitive to scale and clutter. The planned route grows from 180 m on the smallest field to over 1 .6 km on the largest (Ta-ble 1), yet the smallest convex field (Seq. 01) and the largest, most cluttered one (Seq. 05, a 1641 m 2 field whose three obstacles total 98 .5 m 2) differ by only three efficiency points, and the two non-convex fields with obstacles (Seq. 03 and 04) track as tightly as the obstacle-free convex ones. The obstacle-aware connectors and layout-aware clustering keep planned routes feasible around mapped obsta-cles. The resulting routes can then be followed reliably by the robot in the field, and offline planning still completes in seconds on the largest layouts. The route-length column exposes a further regularity: across all five areas, the planned route runs between 1 .15 and 1 .18 meters of path per square meter of planned coverage, an overhead of about one part in six over the ideal straight-swath length that the headland turns and the inter-swath links account for. This ratio is essentially constant with field size, so the planner tiles every field at the same density, and its routing effort grows in proportion to the area rather than faster, which keeps offline planning within seconds even on the largest layout. Unknown obstacles were tested directly in the field. During the runs, pedestri-ans walked alongside and in front of the robot, and the local costmap together with the goal-management layer detected them and kept clearance: the robot slowed or deferred the blocked goals, routed around them where possible, and resumed coverage once the way was clear, all without manual intervention. 14 Leonardo Gargani et al.  
+
+> (a) Planned route. (b) Executed coverage.
+
+Fig. 6: Planned route versus executed coverage for one representative field (Seq. 05, convex with three obstacles), at matching scale. (a) The planned route, with parallel swaths joined by straight links; (b) the executed run, showing the swept area in green and mapped obstacles as striped footprints. 
+
+## 7 Conclusion and Future Work 
+
+We presented a unified ROS 2 system for outdoor coverage with a single robot. The system combines dual-antenna RTK-GNSS localization, controller-oriented refinements to Fields2Cover, and a Nav2 Behavior Tree executive for long-duration execution with obstacle handling, recovery, and autonomous docking. Across five outdoor areas with different shapes, sizes, and obstacle layouts, the system completed every coverage route, sweeping 93 .1 % to 96 .1 % of the planned coverage area; offline planning finished in seconds, and the executive handled un-known obstacles and returned to charge without intervention. The same stack was also checked in simulation on fields larger than the outdoor sites, suggesting that the pipeline can scale beyond the areas evaluated here in practice. Fu-ture work will extend the system to multi-robot coordination and to localization methods that remain reliable when GNSS is highly degraded or unavailable. 
+
+## References         
+
+> 1. Steve Macenski, Francisco Mart´ ın, Ruffin White, and Jonatan Gin´ es Clavero. The marathon 2: A navigation system. In 2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , pages 2718–2725. IEEE, 2020. 2. Howie Choset. Coverage of known spaces: The boustrophedon cellular decomposi-tion. Autonomous Robots , 9(3):247–253, 2000. 3. Yoav Gabriely and Elon Rimon. Spanning-tree based coverage of continuous areas by a mobile robot. Annals of mathematics and artificial intelligence , 31(1):77–98, 2001. 4. Enric Galceran and Marc Carreras. A survey on coverage path planning for robotics. Robotics and Autonomous systems , 61(12):1258–1276, 2013. 5. Gonzalo Mier, Jo˜ ao Valente, and Sytze de Bruin. Fields2cover: An open-source coverage path planning library for unmanned agricultural vehicles. IEEE Robotics and Automation Letters , 8(4):2166–2172, 2023.
+
+Obstacle-Aware Autonomous Coverage and Navigation for Outdoor Robots 15 6. Gonzalo Mier, Ana Mar´ ıa Casado Faul´ ı, Jo˜ ao Valente, and Sytze de Bruin. Fields2benchmark: An open-source benchmark for coverage path planning methods in agriculture. Smart Agricultural Technology , page 101156, 2025. 7. Maria H¨ offmann, Shruti Patel, and Christof B¨ uskens. Optimal guidance track generation for precision agriculture: A review of coverage path planning techniques. 
+
+Journal of Field Robotics , 41(3):823–844, 2024. 8. Gonzalo Mier, Rick Fennema, Jo˜ ao Valente, and Sytze de Bruin. Continuous cur-vature path planning for headland coverage with agricultural robots. Journal of Field Robotics , 42(3):641–656, 2025. 9. Chen Peng, Peng Wei, Zhenghao Fei, Yuankai Zhu, and Stavros G Vougioukas. Optimization-based motion planning for autonomous agricultural vehicles turning in constrained headlands. Journal of Field Robotics , 41(6):1984–2008, 2024. 10. Megnath Ramesh, Frank Imeson, Baris Fidan, and Stephen L Smith. Anytime replanning of robot coverage paths for partially unknown environments. IEEE Transactions on Robotics , 40:4190–4206, 2024. 11. Ratijit Mitra and Indranil Saha. Scalable online coverage path planning for multi-robot systems. In 2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , pages 10102–10109. IEEE, 2022. 12. Jingtao Tang, Zining Mao, and Hang Ma. Large-scale multi-robot coverage path planning on grids with path deconfliction. IEEE Transactions on Robotics , 2025. 13. Thomas Moore and Daniel Stouch. A generalized extended kalman filter imple-mentation for the robot operating system. In Intelligent Autonomous Systems 13: Proceedings of the 13th International Conference IAS-13 , pages 335–348. Springer, 2015. 14. Wei Ding, Wei Sun, Huifang Yan, Yang Jiang, and Yang Gao. Attitude estimation in challenging environments by integrating low-cost dual-antenna gnss and mems marg sensor. GPS Solutions , 29(1):49, 2025. 15. Steve Macenski, Tom Moore, David V Lu, Alexey Merzlyakov, and Michael Fer-guson. From the desks of ros maintainers: A survey of modern & capable mobile robotics algorithms in the robot operating system 2. Robotics and Autonomous Systems , 168:104493, 2023. 16. Michele Colledanchise and Petter ¨Ogren. Behavior trees in robotics and AI: An introduction . CRC Press, 2018. 17. Nick Hawes, Christopher Burbridge, Ferdian Jovan, Lars Kunze, Bruno Lacerda, Lenka Mudrova, Jay Young, Jeremy Wyatt, Denise Hebesberger, Tobias Kortner, et al. The strands project: Long-term autonomy in everyday environments. IEEE Robotics & Automation Magazine , 24(3):146–156, 2017. 18. Nitesh Kumar, Jaekyung Jackie Lee, Sivakumar Rathinam, Swaroop Darbha, PB Sujit, and Rajiv Raman. The persistent robot charging problem for long-duration autonomy. IEEE Robotics and Automation Letters , 10(3):2191–2198, 2025. 19. Jun Seok Oh and Min Young Kim. Regression-based docking system for au-tonomous mobile robots using a monocular camera and aruco markers. Sensors ,25(12):3742, 2025.
