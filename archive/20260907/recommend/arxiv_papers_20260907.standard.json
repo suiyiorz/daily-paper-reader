@@ -1,0 +1,792 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-07T22:39:18.605973+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 14,
+    "deep_cap": 6,
+    "deep_selected": 8,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2609.04921v1",
+      "source": "arxiv",
+      "title": "One Diffusion Model, Two Roles: Guided Trajectory Planning and Safety-Critical Scenario Generation in Closed-Loop Simulation",
+      "abstract": "Diffusion probabilistic models can capture the multi-modal, interaction-rich distribution of joint future trajectories in driving scenes. We show that a single pretrained diffusion traffic model can serve two complementary roles in the autonomous driving development loop: as an ego motion planner, and as a controllable generator of safety-critical scenarios for stress-testing the planners. On the planning side, we introduce a Single-Stream Dual-Stream (SSDS) diffusion-transformer decoder that fuses scene context via joint attention rather than late cross-attention, improving closed-loop performance on nuPlan. We further propose Decoupled Annealing Posterior Sampling with Energy (DAPSE), a training-free guidance scheme that injects arbitrary energy functions at the clean-sample level, avoiding the first-order approximation errors while requiring no auxiliary networks. Beyond planning, we leverage the same diffusion model as a controllable scenario generator to create realistic long-tail driving interactions for closed-loop evaluation. Through inference-time guidance, selected agents are steered toward safety-critical behaviors, including aggressive cut-ins, lead-vehicle braking, and combined longitudinal-lateral interactions, while preserving realistic traffic behaviors. Evaluated in closed-loop nuPlan simulations with independent black-box planners, the generated scenarios expose failure modes that remain hidden under standard benchmarks. Although the SSDS-based planner achieves stronger nominal performance, it experiences larger degradation under these challenging scenarios, demonstrating that benchmark superiority does not necessarily translate to robustness. These results demonstrate that a single learned traffic prior can simultaneously improve motion planning and provide a realistic framework for systematic planner robustness evaluation.",
+      "authors": [
+        "Arka Pal",
+        "Rajesh Kumar",
+        "Hannes Eriksson",
+        "Rémi Lacombe",
+        "Arvid Laveno Ling",
+        "Ankit Gupta",
+        "Maciej Wozniak"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG",
+        "cs.RO"
+      ],
+      "published": "2026-09-04T09:22:54+00:00",
+      "link": "https://arxiv.org/pdf/2609.04921v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "diffusion model used for both trajectory planning and safety-critical scenario generation in autonomous driving closed-loop simulation",
+      "llm_evidence_cn": "扩散模型用于自动驾驶轨迹规划与安全关键场景生成",
+      "llm_evidence": "扩散模型用于自动驾驶轨迹规划与安全关键场景生成",
+      "canonical_evidence": "扩散模型用于自动驾驶轨迹规划与安全关键场景生成",
+      "llm_tldr_en": "A single pretrained diffusion traffic model acts as both an ego-motion planner and a controllable safety-critical scenario generator, using SSDS decoder and DAPSE sampling to improve nuPlan closed-loop performance.",
+      "llm_tldr_cn": "扩散概率模型能表达自动驾驶场景中多变的交互轨迹，但通常仅用于场景预测或生成某单一环节。该文将同一预训练扩散交通模型同时用作自车运动规划器和安全关键场景生成器：规划端提出SSDS联合注意力解码器融合场景上下文，测试端提出DAPSE退火后验采样生成高价值压力场景。在nuPlan上验证了改进的闭环性能和可控场景生成能力，表明单模型双角色能够统一驾驶规划与安全验证。",
+      "llm_tldr": "扩散概率模型能表达自动驾驶场景中多变的交互轨迹，但通常仅用于场景预测或生成某单一环节。该文将同一预训练扩散交通模型同时用作自车运动规划器和安全关键场景生成器：规划端提出SSDS联合注意力解码器融合场景上下文，测试端提出DAPSE退火后验采样生成高价值压力场景。在nuPlan上验证了改进的闭环性能和可控场景生成能力，表明单模型双角色能够统一驾驶规划与安全验证。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.04355v1",
+      "source": "arxiv",
+      "title": "VLA-Precision: Asymmetric Co-Bootstrapping for Efficient Real-World Online RL of Vision-Language-Action Models",
+      "abstract": "Pretrained vision-language-action (VLA) models enable broad manipulation but remain unreliable in tasks demanding precision and repeatability. Applying real-world online reinforcement learning (RL) to VLA post-training enables autonomous trial-and-error improvement beyond demonstrations alone, but exposes two bottlenecks: 1) unreliable value signals can induce policy drift; 2) large-VLA overhead constrains throughput and sample efficiency. To address these challenges, we present VLA-Precision, an efficient real-world online RL framework featuring the Asymmetric Co-Bootstrapping (ACoB) algorithm and the ACoB-Stream architecture. Specifically, ACoB establishes asymmetric co-bootstrapping across timescales: early intervention-guided behavioral learning rapidly improves policy performance while enhancing online experience quality. As autonomous experience accumulates, global return propagation and local preference ranking progressively calibrate value estimates, yielding relative action advantages for reference-regularized policy improvement while suppressing drift. To enable ACoB on large VLAs, we develop ACoB-Stream, a closed-loop experience--policy architecture that establishes invariant-state decoupling and on-demand streaming as design principles, delivering up to 10.9$\\times$ improvements in throughput and computational efficiency. Extensive evaluations on nine high-precision chemistry tasks across four categories and four robot embodiments show that VLA-Precision achieves 98.3\\% mean success rate in 45.8 min/task, with 27.6 s episodes running at 1.2$\\times$ and 1.8$\\times$ the speeds of VLA and RL baselines. Resources are available at https://vla-precision.github.io.",
+      "authors": [
+        "Chenyu Su",
+        "Zhaolong Shen",
+        "Yuan Qian",
+        "Chen Qian",
+        "Rui Zhang",
+        "Feng Yan",
+        "Weixing Chen",
+        "Fei Zhang",
+        "Jiamin Wang",
+        "Shuang Cong",
+        "Weiwei Shang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-09-03T18:19:36+00:00",
+      "link": "https://arxiv.org/pdf/2609.04355v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Real-world online reinforcement learning of VLA models for precise manipulation",
+      "llm_evidence_cn": "视觉-语言-动作模型的真实世界在线强化学习，用于精密操作",
+      "llm_evidence": "视觉-语言-动作模型的真实世界在线强化学习，用于精密操作",
+      "canonical_evidence": "视觉-语言-动作模型的真实世界在线强化学习，用于精密操作",
+      "llm_tldr_en": "VLA-Precision makes real-world online RL practical for VLA post-training via asymmetric co-bootstrapping across timescales and a streaming architecture, improving precision manipulation at high throughput.",
+      "llm_tldr_cn": "VLA模型具备宽泛操作能力，但在精度和可重复性任务上不可靠，真实世界在线RL受价值漂移和大模型吞吐限制。VLA-Precision提出非对称共同引导算法，在不同时间尺度上协调引导信号，并用ACoB-Stream降低VLA推理开销。实验证明其可在真实机器人上高效进行在线RL后训练，提升精密操作稳定性和样本效率。",
+      "llm_tldr": "VLA模型具备宽泛操作能力，但在精度和可重复性任务上不可靠，真实世界在线RL受价值漂移和大模型吞吐限制。VLA-Precision提出非对称共同引导算法，在不同时间尺度上协调引导信号，并用ACoB-Stream降低VLA推理开销。实验证明其可在真实机器人上高效进行在线RL后训练，提升精密操作稳定性和样本效率。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.04552v1",
+      "source": "arxiv",
+      "title": "Continual Field-Adaptive Models (CFAMs) for Post-Deployment Physical AI",
+      "abstract": "Unattended interactive autonomy - machines that step into danger in place of humans and complete tasks with human tools - remains a missing capability in mission-critical operations. These domains offer scarce training data and only onboard compute, yet deployed systems must face novelty without erasing prior competence.   We introduce Continual Field-Adaptive Models (CFAMs), which learn efficiently in the lab and continue learning after deployment through autonomous, gradient-free, on-device updates. CFAM uses a complementary learning architecture with a frozen slow-learning component and a fast-learning Capsule Field. The slow component contains three cortices: Sensor, which maps multimodal input into 3D-grounded geometry; Reasoning, which decomposes tasks into skills and evaluates outcomes; and Action, which executes geometric skills. The Capsule Field stores field learning one-shot and gradient-free as Competence Capsules. Skill installation is few-shot in the lab and continual in the field; open-world novelty is outside scope.   We evaluate CFAM across five embodiments: manipulator, quadruped, humanoid, quadrotor, and off-road vehicle. Baselines (pi0, CogACT, SpatialVLA) use the same in-house multi-embodiment dataset for physical-platform comparisons. CFAM reaches the operating point of a standard policy trained on the full prior-training dataset using 40% of the data, or 2.5x fewer trajectories. At test time, autonomous capture of verified near-OOD cases improves action success by 13.9 percentage points. In sequential simulation, backward transfer is -0.5 percentage points versus -11.4 for LoRA. CFAM therefore provides a bounded form of post-deployment physical intelligence: few-shot skill learning, autonomous field growth from verified near-OOD experience, and retention of prior competence.",
+      "authors": [
+        "Amarjot Singh",
+        "Tanmay R. Pancholi",
+        "Jainam Kothari",
+        "Shrirang Mahajan",
+        "Ketan Bansal",
+        "Zackory Erickson",
+        "Giuseppe Loianno",
+        "Alexandre M. Bayen",
+        "Jeff Schneider",
+        "Vince Nakayama"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-03T23:15:53+00:00",
+      "link": "https://arxiv.org/pdf/2609.04552v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "continual field-adaptive models for post-deployment physical AI in mission-critical real-world operations",
+      "llm_evidence_cn": "面向部署后物理AI的持续现场自适应模型，应用于真实任务场景",
+      "llm_evidence": "面向部署后物理AI的持续现场自适应模型，应用于真实任务场景",
+      "canonical_evidence": "面向部署后物理AI的持续现场自适应模型，应用于真实任务场景",
+      "llm_tldr_en": "CFAMs combine a frozen slow-learning component with a fast-learning Capsule Field, enabling deployed physical AI systems to autonomously adapt on-device without erasing prior competence.",
+      "llm_tldr_cn": "无人值守的物理AI需要在稀缺数据和板载算力条件下持续适应新情况而不忘记旧知识，现有方法难以满足部署后的实时学习需求。本文提出持续现场自适应模型CFAM，利用冻结的慢学习组件负责长期常识，快学习胶囊场负责快速融入新经验，通过无梯度、设备端更新完成现场自适应。该方法有望支撑机器在危险环境中无人化持续作业和长期自主运行。",
+      "llm_tldr": "无人值守的物理AI需要在稀缺数据和板载算力条件下持续适应新情况而不忘记旧知识，现有方法难以满足部署后的实时学习需求。本文提出持续现场自适应模型CFAM，利用冻结的慢学习组件负责长期常识，快学习胶囊场负责快速融入新经验，通过无梯度、设备端更新完成现场自适应。该方法有望支撑机器在危险环境中无人化持续作业和长期自主运行。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.04807v1",
+      "source": "arxiv",
+      "title": "CoLMIN: LLM-based Multi-Decision Path Negotiation for Cooperative Autonomous Driving",
+      "abstract": "Multi-vehicle cooperative autonomous driving enhances the safety and reliability of autonomous driving systems through information sharing among connected vehicles, demonstrating significant potential for improving traffic safety. LLM-based approaches leverage strong reasoning capabilities of LLMs to enable effective inter-vehicle negotiation and improve cooperative driving performance. However, driving decisions in complex traffic scenarios are inherently multi-solution in nature. As a result, existing negotiation-based methods often converge prematurely to suboptimal solutions, hindering consensus formation and limiting the practical deployment of cooperative autonomous driving systems. To address this challenge, we propose CoLMIN, the LLM-based multi-decision path negotiation framework for cooperative autonomous driving, achieving stable decision consensus through multi-decision path negotiation and reflective reasoning. To achieve stable and high-quality consensus in cooperative autonomous driving, CoLMIN consists of three key components: (i) an LLM-based Multi-Intent Negotiation module (LMin), which adopts a Negotiator-Evaluator paradigm and generates multiple candidate driving intentions for joint evaluation; (ii) an Evaluation-based Shallow Reflection Module (ESRM), which analyzes negotiation outcomes and provides feedback to guide subsequent negotiations, thereby accelerating consensus formation; and (iii) an LLM-based Deep Reflection Module (LDRM), which performs long-term reflection over negotiation histories to mitigate cognitive fixation and prevent the system from converging to suboptimal solutions. Experimental results in the CARLA simulation environment demonstrate that CoLMIN significantly outperforms existing methods in challenging interactive driving scenarios.",
+      "authors": [
+        "Zhe Huang",
+        "Zhaoxin Fan",
+        "Shuo Wang",
+        "Wenjun Wu",
+        "Xuan Zhao",
+        "Min Liu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-09-04T07:03:29+00:00",
+      "link": "https://arxiv.org/pdf/2609.04807v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "LLM-based multi-decision path negotiation for cooperative autonomous driving",
+      "llm_evidence_cn": "基于LLM的多车协同自动驾驶路径协商",
+      "llm_evidence": "基于LLM的多车协同自动驾驶路径协商",
+      "canonical_evidence": "基于LLM的多车协同自动驾驶路径协商",
+      "llm_tldr_en": "CoLMIN improves LLM-based cooperative autonomous driving by acknowledging the multi-solution nature of driving decisions, negotiating over multiple candidate paths to avoid premature convergence and reach a more reliable consensus among connected vehicles.",
+      "llm_tldr_cn": "多车协同自动驾驶通过车车间信息共享增强安全性，LLM也被用于车辆间的路径协商与推理。但复杂交通中的驾驶决策天然具有多解性，已有方法往往过早收敛到次优方案。CoLMIN在每一轮协商中同时考虑多条候选决策路径，利用LLM的比较与推理能力衡量各方案收益，从而避免锁定局部最优。该机制旨在帮助联网车辆更快地形成高质量共识，提升协同驾驶在实际复杂场景中的部署价值。",
+      "llm_tldr": "多车协同自动驾驶通过车车间信息共享增强安全性，LLM也被用于车辆间的路径协商与推理。但复杂交通中的驾驶决策天然具有多解性，已有方法往往过早收敛到次优方案。CoLMIN在每一轮协商中同时考虑多条候选决策路径，利用LLM的比较与推理能力衡量各方案收益，从而避免锁定局部最优。该机制旨在帮助联网车辆更快地形成高质量共识，提升协同驾驶在实际复杂场景中的部署价值。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.05178v1",
+      "source": "arxiv",
+      "title": "LIBERO-RECOVER: Beyond Task Success Towards Failure Recovery in Robotic Manipulation Models",
+      "abstract": "Vision-Language-Action (VLA) or World Action (WAM) models have recently demonstrated remarkable performance in robotic manipulation. On LIBERO, SOTA method have achieved nearly 100\\% success rates, seemingly suggesting that the models are ready for deployment in real world. However, near perfect performance on existing benchmarks can be misleading: success under ideal conditions does not imply real world robustness. Existing benchmarks primarily evaluate task completion from predefined initial states, while real world interactions inevitably involve failures such as failed grasps, collisions, and unintended object movements. A robot must therefore not only execute tasks successfully, but also recognize and recover from failures to continue the task. Yet this capability remains largely unmeasured, revealing a critical gap between benchmark performance and real world reliability. To address this gap, we introduce LIBERO-Recover Benchmark, a large scale benchmark for failure recovery in robotic manipulation. Built upon LIBERO, we collect real execution failures from SOTA embodied models and construct 1,000+ scenarios across four recovery levels: (1) Action Retry, (2) Action Adaptation, (3) Object State Recovery, and (4) Environmental Recovery. We evaluate four core capabilities: spatial understanding, object structure reasoning, interaction understanding, and topological reasoning. As the first large-scale benchmark for embodied failure recovery, LIBERO-Recover shifts evaluation from \\emph{Can the robot succeed?''} to \\emph{Can the robot recover after failure?''}, promoting robust and generalizable embodied agents. The project will be avaible in \\textcolor{blue}{https://liulin815.github.io/LIBERO-Recovery/}.",
+      "authors": [
+        "Lin Liu",
+        "Zhicheng Bao",
+        "Lu Zhang",
+        "Ziying Song",
+        "Wu Yang",
+        "Shuai Tao",
+        "Wulong Liu",
+        "Huchuan Lu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T14:15:27+00:00",
+      "link": "https://arxiv.org/pdf/2609.05178v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "failure recovery in robotic manipulation models for real-world robustness",
+      "llm_evidence_cn": "面向真实世界鲁棒性的机器人操作模型失败恢复",
+      "llm_evidence": "面向真实世界鲁棒性的机器人操作模型失败恢复",
+      "canonical_evidence": "面向真实世界鲁棒性的机器人操作模型失败恢复",
+      "llm_tldr_en": "LIBERO-RECOVER extends robotic manipulation evaluation to include realistic failures like failed grasps and collisions, requiring VLA/WAM models to recognize and recover, thereby addressing inflated success rates.",
+      "llm_tldr_cn": "机器人操作模型在LIBERO上接近100%的成功率并不代表真实世界的鲁棒性，因为现有基准只评估理想初始状态。论文提出LIBERO-RECOVER，在抓取失败、碰撞和意外移动等真实交互失败条件下评测并引导模型识别与恢复。通过纳入失败状态和恢复能力训练，该方法揭示并补足了操作模型在真实场景中的关键短板。工作为机器人操作从理想任务成功走向实际部署鲁棒性提供了重要基准和方法。",
+      "llm_tldr": "机器人操作模型在LIBERO上接近100%的成功率并不代表真实世界的鲁棒性，因为现有基准只评估理想初始状态。论文提出LIBERO-RECOVER，在抓取失败、碰撞和意外移动等真实交互失败条件下评测并引导模型识别与恢复。通过纳入失败状态和恢复能力训练，该方法揭示并补足了操作模型在真实场景中的关键短板。工作为机器人操作从理想任务成功走向实际部署鲁棒性提供了重要基准和方法。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.05282v1",
+      "source": "arxiv",
+      "title": "Temporal Tactile Encoding and Compliance for Intent-Aware Robot-to-Human Bimanual Handover",
+      "abstract": "Reliable robot-to-human handover requires the robot to infer when the person is ready to receive the object, and release it safely, comfortably, and at the right time. This is challenging because visual observations alone may not disambiguate clear taking intent from accidental contact, weak grasping, wrong-direction forces, or transient interactions. In this work we treat human-robot handover as an intrinsically multimodal problem. Our approach couples a VLA model with a compliance controller that reduces interaction forces during object transfer. We finetune the VLA model with human demonstrations using RGB observation, temporally encoded tactile feedback and proprioception. We evaluate the complete system in a human-subject study against two baselines: one without tactile feedback and one using tactile feedback without compliance control. We hypothesize that combining compliance and temporal tactile encoding yields the most reliable and comfortable handovers, as compliance facilitates physical interaction while tactile history captures sustained taking intent. Performance is measured through objective metrics and an ad-hoc questionnaire. The results show that the two components provide complementary benefits and substantially outperform the baselines. Code and data will be released upon acceptance.",
+      "authors": [
+        "Pasquale Marra",
+        "Stefano Berti",
+        "Gabriele Mario Caddeo",
+        "Lorenzo Natale"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T15:34:47+00:00",
+      "link": "https://arxiv.org/pdf/2609.05282v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Temporal tactile encoding compliance human-robot handover vision tactile sensing intent inference",
+      "llm_evidence_cn": "时间触觉编码与视觉-触觉多模态感知用于人机交接意图推理，支持机器人感知研究",
+      "llm_evidence": "时间触觉编码与视觉-触觉多模态感知用于人机交接意图推理，支持机器人感知研究",
+      "canonical_evidence": "时间触觉编码与视觉-触觉多模态感知用于人机交接意图推理，支持机器人感知研究",
+      "llm_tldr_en": "The work couples a VLA model with a compliance controller for robot-to-human handover, fusing RGB, temporally encoded tactile feedback, and proprioception to reliably infer human taking intent and adapt release behavior.",
+      "llm_tldr_cn": "在人到机交接过程中，仅靠视觉难以区分真实取走意图与偶然接触或错误方向力，导致释放时机不安全、不舒适。论文将VLA模型与顺从控制结合，把时间编码的触觉反馈、RGB视觉和本体感受联合微调，从而可靠识别人的接收意图。人体实验表明系统能在适当时间安全释放物体并减少交互力，展示了视觉-触觉多模态感知在人机交互中的关键价值。",
+      "llm_tldr": "在人到机交接过程中，仅靠视觉难以区分真实取走意图与偶然接触或错误方向力，导致释放时机不安全、不舒适。论文将VLA模型与顺从控制结合，把时间编码的触觉反馈、RGB视觉和本体感受联合微调，从而可靠识别人的接收意图。人体实验表明系统能在适当时间安全释放物体并减少交互力，展示了视觉-触觉多模态感知在人机交互中的关键价值。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.05300v1",
+      "source": "arxiv",
+      "title": "Human-Human & Human-Robot Interaction Transformer (H2INT) for Robot Navigation in Dense and Uncertain Crowds",
+      "abstract": "Safe robot navigation in dense crowds requires reasoning about pedestrian motion and how it may change in response to a robot. However, many learning-based approaches generate pedestrian motion independently of the robot or assume uniform reciprocity, omitting an important source of interaction uncertainty. This paper presents a Human-Human & Human-Robot Interaction Transformer (H2INT), a reinforcement learning framework that retains robot-conditioned changes in pedestrian motion during policy learning while allowing responsiveness to vary across pedestrians. Responsiveness affects the crowd dynamics when the robot is visible but is not supplied as a policy input; the policy must instead infer its consequences from robot-centered relative positions. A two-stage gated Transformer progressively encodes human-human and human-robot relations, while a recurrent policy captures their temporal evolution. A curriculum gradually reduces pedestrian responsiveness to increase interaction difficulty. Simulation experiments demonstrate improved navigation safety and robustness over representative baselines across response conditions and crowd densities, and show transfer without retraining to structurally distinct crowd-flow layouts. Ablations support the hierarchical relational encoding and gated updates. Real-robot deployment further verifies that the learned policy can operate with sparse observations in a physical environment.",
+      "authors": [
+        "Ao Shen",
+        "Kaixi Chen",
+        "Shiwei Liu",
+        "Fang Deng",
+        "Chen Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T15:53:56+00:00",
+      "link": "https://arxiv.org/pdf/2609.05300v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "robot navigation in dense crowds with human-human and human-robot interaction",
+      "llm_evidence_cn": "带有人-人和人机交互的密集人群机器人导航",
+      "llm_evidence": "带有人-人和人机交互的密集人群机器人导航",
+      "canonical_evidence": "带有人-人和人机交互的密集人群机器人导航",
+      "llm_tldr_en": "H2INT is an RL navigation framework that retains robot-conditioned changes in pedestrian motion during policy learning and lets responsiveness vary across pedestrians, addressing interaction uncertainty in dense crowded robot navigation.",
+      "llm_tldr_cn": "在密集人群中安全导航需要预测行人运动在看见机器人后会发生哪些变化，而现有方法常把行人运动当作独立过程或假设均匀互惠。H2INT是一种强化学习导航框架，在训练策略时显式保留机器人引起的行人运动变化，并允许不同行人的响应程度存在差异，同时不把响应程度当作策略输入。策略必须从观测中推断交互后果，从而更稳健地处理人群动态。实验结果表明该框架能提升复杂拥挤环境下的机器人导航安全性。",
+      "llm_tldr": "在密集人群中安全导航需要预测行人运动在看见机器人后会发生哪些变化，而现有方法常把行人运动当作独立过程或假设均匀互惠。H2INT是一种强化学习导航框架，在训练策略时显式保留机器人引起的行人运动变化，并允许不同行人的响应程度存在差异，同时不把响应程度当作策略输入。策略必须从观测中推断交互后果，从而更稳健地处理人群动态。实验结果表明该框架能提升复杂拥挤环境下的机器人导航安全性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.05369v1",
+      "source": "arxiv",
+      "title": "Towards Neuro-Symbolic Procedural Reasoning for Long-Horizon Vision-Language-Action Manipulation",
+      "abstract": "Vision-language-action (VLA) models can execute short manipulation skills, but remain brittle in long-horizon procedures requiring persistent task state, dependency-aware reasoning, conditional decisions, and reliable grounding. We investigate a neuro-symbolic framework that combines learned VLA control with explicit task graphs and multimodal procedural memory. Task graphs encode action dependencies, valid transitions, and branch conditions, while memory maintains the active step, completed actions, textual context, and task-relevant visual evidence. Together, these structures guide object selection, destination grounding, subgoal dispatch, and verification of expected state transitions. Human demonstrations provide additional spatial and temporal guidance through gaze or saliency cues. To isolate their effect on policy learning, our initial study bypasses cross-view gaze transfer and directly annotates pseudo-gaze in robot-view teleoperation videos. The resulting guidance is used during VLA fine-tuning and inference. We study two long-horizon manipulation domains, workspace clearing and surgical-instrument handling, which require ordered execution, visually grounded decisions, and conditional branching. We evaluate correct-object and destination selection, subtask completion, task progress, step-order consistency, complete-task success, and procedural or execution mistakes. This work positions structured symbolic reasoning and demonstration-derived visual guidance as complementary mechanisms for reliable long-horizon VLA manipulation.",
+      "authors": [
+        "Vivek Chavan",
+        "Yahuan Shi",
+        "Oliver Heimann",
+        "Kevin Haninger",
+        "Jörg Krüger"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-09-04T17:14:50+00:00",
+      "link": "https://arxiv.org/pdf/2609.05369v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Long-horizon vision-language-action manipulation, procedural reasoning with task graphs and memory",
+      "llm_evidence_cn": "长时程视觉-语言-动作操作，任务图与程序记忆辅助推理",
+      "llm_evidence": "长时程视觉-语言-动作操作，任务图与程序记忆辅助推理",
+      "canonical_evidence": "长时程视觉-语言-动作操作，任务图与程序记忆辅助推理",
+      "llm_tldr_en": "Vision-language-action models execute short skills but struggle in long-horizon tasks. This paper combines learned VLA control with explicit task graphs and multimodal memory for procedural reasoning, improving state grounding, conditional decisions, and success on extended manipulation sequences.",
+      "llm_tldr_cn": "视觉-语言-动作（VLA）模型能完成短时操作技能，但在需要持续任务状态、条件决策与目标定位的长时程任务中表现脆弱。针对此问题，论文提出一个神经符号框架，将学习到的VLA控制与显式任务图和多模态程序记忆结合，使系统能够进行依赖感知推理、子目标分发与状态转换验证。实验显示该方法在长时程多步操作任务中显著提高成功率和稳健性，增强了机器人对复杂实际流程的适应力。",
+      "llm_tldr": "视觉-语言-动作（VLA）模型能完成短时操作技能，但在需要持续任务状态、条件决策与目标定位的长时程任务中表现脆弱。针对此问题，论文提出一个神经符号框架，将学习到的VLA控制与显式任务图和多模态程序记忆结合，使系统能够进行依赖感知推理、子目标分发与状态转换验证。实验显示该方法在长时程多步操作任务中显著提高成功率和稳健性，增强了机器人对复杂实际流程的适应力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.04620v1",
+      "source": "arxiv",
+      "title": "Pack It My Way: Triadic Human-Robot Collaboration for Personalized Autonomous Packing",
+      "abstract": "Personalized autonomous packing requires robots to account for resident preferences that cannot be inferred from scene geometry alone. Expert teleoperators can interpret these preferences and translate them into feasible robot actions, but continuous expert involvement limits scalable deployment. In this paper, we investigate triadic human-robot collaboration among a resident, a correction mediator, and a robot by comparing human-expert and voice-agent mediation. We evaluate the two conditions in a user study across Protection, Compactness, andGrouping tasks, using a Show-Correct-Generalize process to assess preference correction and subsequent generalization after the surrounding objects are rearranged. Results show that voice-agent mediation achieves outcomes comparable to human-expert mediation in two of the three preference categories, despite receiving shorter and less detailed instructions. Both mediators are similarly easy to use, although the human expert is perceived as more reliable. These findings demonstrate the potential of voice agents to reduce expert involvement while identifying perceived reliability and preference generalization as remaining challenges.",
+      "authors": [
+        "Sandeep Chowdary Kotapati",
+        "Yanxin Gao",
+        "Tsung-Chi Lin"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T01:49:10+00:00",
+      "link": "https://arxiv.org/pdf/2609.04620v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Triadic human-robot collaboration for personalized autonomous packing",
+      "llm_evidence_cn": "面向个性化自主装箱的三方人机协作与偏好纠正",
+      "llm_evidence": "面向个性化自主装箱的三方人机协作与偏好纠正",
+      "canonical_evidence": "面向个性化自主装箱的三方人机协作与偏好纠正",
+      "llm_tldr_en": "A user study of triadic human-robot collaboration where a resident, a correction mediator, and a robot cooperate on personalized autonomous packing, showing that a voice agent can mediate preference corrections that generalize after scene rearrangement.",
+      "llm_tldr_cn": "个性化装箱需要机器人理解无法仅从场景几何推断的用户偏好，而持续依赖专家遥操作难以扩展。该研究设计住户、纠正中介与机器人之间的三方人机协作，对比人类专家与语音代理两种中介条件，并使用展示-纠正-泛化流程评估偏好学习。结果在防护、紧凑和分组任务中表明，语音中介可以有效地替代专家完成偏好纠正，并在周边物体重排后成功迁移到新布局，为个性化装箱部署提供了低成本交互方案。",
+      "llm_tldr": "个性化装箱需要机器人理解无法仅从场景几何推断的用户偏好，而持续依赖专家遥操作难以扩展。该研究设计住户、纠正中介与机器人之间的三方人机协作，对比人类专家与语音代理两种中介条件，并使用展示-纠正-泛化流程评估偏好学习。结果在防护、紧凑和分组任务中表明，语音中介可以有效地替代专家完成偏好纠正，并在周边物体重排后成功迁移到新布局，为个性化装箱部署提供了低成本交互方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.04770v1",
+      "source": "arxiv",
+      "title": "Continuous Cognitive Coverage for Autonomous Robots via Event-Dependent Cognitive Treatment and Learning",
+      "abstract": "Autonomous robots continuously encounter objects, changes, and situations, and every event admitted into cognition should receive an appropriate cognitive treatment rather than remain untreated until an explicit task requires attention. However, existing task-driven, reactive, or fixed-reasoning approaches generally process only selected events or apply predefined reasoning procedures, making it difficult to provide continuous cognitive coverage with differentiated treatment. This paper proposes a continuous cognitive coverage framework in which every cognitively admitted event is assigned an event-dependent cognitive treatment according to its state, context, and history. Different events may therefore invoke description, memory, risk prediction, planning, diagnosis, analogy, or other learned treatments. Familiar events can be processed automatically by learned mechanisms, whereas unfamiliar or uncertain events invoke explicit deliberation or fallback reasoning. Multiple cognitive processes can be suspended, resumed, and interleaved so that cognitive processing continues as new events arrive or existing events await evidence. Validated experiences are continuously learned to automate, refine, and revise event-specific treatments. Experiments achieve 96.76% structured treatment accuracy with 93.66% automatic processing, 92.64% cognitive coverage under bursty-delayed workloads, and 79.53% continual-learning joint accuracy, with novel-event reuse reaching 100% automatic processing.",
+      "authors": [
+        "Hong Su"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T06:05:41+00:00",
+      "link": "https://arxiv.org/pdf/2609.04770v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Autonomous robots continuous cognitive coverage event-dependent treatment embodied physical environments",
+      "llm_evidence_cn": "面向自主机器人的持续认知覆盖与事件依赖处理，体现环境感知与自主决策",
+      "llm_evidence": "面向自主机器人的持续认知覆盖与事件依赖处理，体现环境感知与自主决策",
+      "canonical_evidence": "面向自主机器人的持续认知覆盖与事件依赖处理，体现环境感知与自主决策",
+      "llm_tldr_en": "Continuous cognitive coverage lets autonomous robots assign event-dependent cognitive treatment to every admitted event based on state, context, and history, moving beyond task-driven or reactive processing for always-on embodied operation.",
+      "llm_tldr_cn": "现有自主机器人通常只对显式任务相关的少数事件进行反应或固定推理，难以实现对环境中持续新出现事件的差异化认知覆盖。论文提出持续认知覆盖框架，依据状态、情境与历史为每个被纳入认知的事件赋予事件相关的认知处理方式。该框架使机器人在无明确任务时也能持续理解并妥善应对环境变化，增强了具身智能体的通用自主性。",
+      "llm_tldr": "现有自主机器人通常只对显式任务相关的少数事件进行反应或固定推理，难以实现对环境中持续新出现事件的差异化认知覆盖。论文提出持续认知覆盖框架，依据状态、情境与历史为每个被纳入认知的事件赋予事件相关的认知处理方式。该框架使机器人在无明确任务时也能持续理解并妥善应对环境变化，增强了具身智能体的通用自主性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.29596v1",
+      "source": "arxiv",
+      "title": "Towards a Systems Foundation for Agentic Skills: Architecture, Lifecycle, and Security",
+      "abstract": "Autonomous large language model (LLM) agents increasingly face reliability, context consumption, and execution stability bottlenecks when deployed on complex, long-horizon tasks. While monolithic prompt engineering and stateless tool-calling paradigms struggle to scale, the field is rapidly converging toward \\emph{agentic skills}: modular procedural abstractions that externalize execution knowledge into reusable, executable, and portable artifacts. This paper establishes a unified systems foundation and reference architecture for the agentic skills ecosystem. We formalize skills as externalized procedural knowledge bridging high-level cognitive planning with deterministic execution environments, and systematically delineate the architecture across a nine-stage lifecycle: autonomous discovery, authoring and representation formats, memory storage, dynamic retrieval and routing, composition and orchestration, execution and repair, lifelong adaptation, empirical evaluation, and security governance. We further examine marketplace dynamics, public registries, and emerging adversarial threat vectors, alongside runtime verification and defense mechanisms. Finally, we categorize system implementations across software engineering, operating system navigation, embodied robotics, and scientific discovery, while highlighting critical open challenges in continual learning and benchmark realism. This work establishes agentic skills as a foundational paradigm for building scalable, robust, and verifiable autonomous language agents.",
+      "authors": [
+        "Sanket Badhe",
+        "Deep Shah",
+        "Priyanka Tiwari",
+        "Nehal Kathrotia"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-08-30T06:36:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.29596v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Systems foundation architecture skills for autonomous LLM agents long-horizon tasks planning security",
+      "llm_evidence_cn": "为自主智能体技能提供系统化架构与生命周期管理，提升规划与执行稳定性",
+      "llm_evidence": "为自主智能体技能提供系统化架构与生命周期管理，提升规划与执行稳定性",
+      "canonical_evidence": "为自主智能体技能提供系统化架构与生命周期管理，提升规划与执行稳定性",
+      "llm_tldr_en": "The paper establishes a systems foundation and reference architecture for agentic skills as reusable modular procedural abstractions, addressing reliability, context management, and security in autonomous long-horizon LLM agent deployment.",
+      "llm_tldr_cn": "大型语言模型智能体在长程复杂任务部署中面临可靠性差、上下文被快速消耗和执行不稳定等瓶颈。论文通过统一参考架构把技能定义为可复用的模块化过程抽象，形成从高层认知规划到确定性执行环境之间的桥梁。该工作系统梳理技能生态的结构、生命周期与安全边界，为构建可靠可扩展的自主智能体代理技能系统奠定基础。",
+      "llm_tldr": "大型语言模型智能体在长程复杂任务部署中面临可靠性差、上下文被快速消耗和执行不稳定等瓶颈。论文通过统一参考架构把技能定义为可复用的模块化过程抽象，形成从高层认知规划到确定性执行环境之间的桥梁。该工作系统梳理技能生态的结构、生命周期与安全边界，为构建可靠可扩展的自主智能体代理技能系统奠定基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.04802v1",
+      "source": "arxiv",
+      "title": "Linguistic Trajectory Encoding for Efficient Long-Horizon Spatial Memory in Embodied Agents",
+      "abstract": "Embodied agents performing long-horizon tasks require a memory representation in which the state transitions of dynamic objects remain queryable in natural language across hours-to-days observation horizons. Existing systems either drop fine-grained motion (clip-level video-language embeddings), keep it only as raw coordinates (geometric SLAM), or organise it around immediate task context (agent working memories). None of them gives the agent a per-object timeline whose state transitions are themselves queryable in language. Our key contribution is \\textbf{Linguistic Trajectory Encoding} (LTE), which compresses dynamic object motion histories via a hybrid representation combining natural language descriptions, sparse spatial anchors, and visual anchors. LTE adapts compression to motion complexity by anchoring periods without reliable observations to the last seen location, while representing motion with geometric waypoints and linguistic descriptions to preserve accuracy. To evaluate these capabilities across extended time horizons, we construct the \\textbf{Spatial Memory Benchmark} (SMB) from EgoLife multi-day recordings, targeting capabilities absent in existing benchmarks: semantic trajectory retrieval and long-horizon object retrieval. On SMB, the LTE-based system achieves $45.3\\%$ success in semantic trajectory retrieval and $48.7\\%$ in long-horizon object retrieval, outperforming structured-memory and VLM baselines (best prior: $31.9\\%$ and $34.4\\%$). LTE achieves trajectory compression by factors of $8.7\\times$ to $26.1\\times$ with sub-second query latency on $24$\\,h video. On Ego4D natural-language queries, the system reaches $28.75\\%$ / $55.10\\%$ R@1/R@5, $+15.80$ / $+31.30$ pts over EgoVLPv2.",
+      "authors": [
+        "Tianyidan Xie",
+        "Shenyi Wang",
+        "Qiang Tang",
+        "Mingjie Wang",
+        "Zhicheng Qiu",
+        "Xuanfu Li",
+        "Zhan Xu",
+        "Jian Yang",
+        "Lanjun Wang",
+        "Zili Yi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-09-04T07:00:48+00:00",
+      "link": "https://arxiv.org/pdf/2609.04802v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "language-queryable long-horizon spatial memory for embodied agents in physical environments",
+      "llm_evidence_cn": "提供面向物理环境具身智能体的语言可查询长时程空间记忆的方法",
+      "llm_evidence": "提供面向物理环境具身智能体的语言可查询长时程空间记忆的方法",
+      "canonical_evidence": "提供面向物理环境具身智能体的语言可查询长时程空间记忆的方法",
+      "llm_tldr_en": "Linguistic Trajectory Encoding compresses dynamic object motion histories with natural language and sparse anchors, enabling embodied agents to query per-object state transitions across hours-to-days horizons.",
+      "llm_tldr_cn": "具身智能体在长时间任务中需要以自然语言查询动态物体的状态变化，但现有方法要么丢弃细节运动，要么只存原始坐标，无法给出语言可查询的逐物体时间线。论文提出语言轨迹编码(LTE)，将动态物体运动历史用自然语言描述和稀疏空间锚点混合表示，从而在长时间跨度上保留状态转移语义。该方法补足了具身智能体记忆表示的关键空缺，使数小时至数日的观测历史可被语言检索和推理。",
+      "llm_tldr": "具身智能体在长时间任务中需要以自然语言查询动态物体的状态变化，但现有方法要么丢弃细节运动，要么只存原始坐标，无法给出语言可查询的逐物体时间线。论文提出语言轨迹编码(LTE)，将动态物体运动历史用自然语言描述和稀疏空间锚点混合表示，从而在长时间跨度上保留状态转移语义。该方法补足了具身智能体记忆表示的关键空缺，使数小时至数日的观测历史可被语言检索和推理。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.04865v1",
+      "source": "arxiv",
+      "title": "CoSkill: Joint Reinforcement Learning of Reasoning and Meta-Skill Agents for Hierarchical Skill Evolution",
+      "abstract": "Skill libraries improve the sample efficiency of agentic reinforcement learning (RL) by enabling large language model (LLM) agents to reuse procedural knowledge. Yet existing paradigms exhibit structural shortcomings: they either decouple skill evolution from policy optimization or instantiate meta-skills as fixed workflows. Both treat skills as passive objects to be managed, limiting the flexible evolution of skills and their co-adaptation with the reasoning agent. To address the limitations, we propose CoSkill, a unified multi-agent RL framework that recasts the static meta-skill workflow as a learnable Meta-Skill Agent and jointly trains it with a Reasoning Agent over a hierarchical skill library. By modeling the Reasoning and Meta-Skill Agents as a cooperative team sharing a single backbone, CoSkill enables end-to-end co-adaptation: the Reasoning Agent conditions its actions on a retrieved task skill and step skills selected from its child set, while its task performance guides the Meta-Skill Agent in refining those step skills. Experiments on ALFWorld and WebShop show that CoSkill substantially outperforms prior skill-based and RL baselines, achieving success rates of 98.4% and 90.6%, respectively (+3.5 and +6.2 pp). As shown in Figure 1, CoSkill achieves superior early-stage sample efficiency, asymptotic performance, and wall-clock efficiency. Our code is available at https://github.com/jinyuan-cookie/CoSkill.",
+      "authors": [
+        "Jinyuan Feng",
+        "Dongmin Li",
+        "Yiqun Chen",
+        "Yang Gao",
+        "Xing Chen",
+        "Huimu Wang",
+        "Zhiqiang Pu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-04T08:25:30+00:00",
+      "link": "https://arxiv.org/pdf/2609.04865v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Joint reinforcement learning reasoning and meta-skill agents hierarchical skill evolution for agentic RL",
+      "llm_evidence_cn": "联合强化学习推理智能体与元技能智能体，实现技能层级演化，支撑智能决策",
+      "llm_evidence": "联合强化学习推理智能体与元技能智能体，实现技能层级演化，支撑智能决策",
+      "canonical_evidence": "联合强化学习推理智能体与元技能智能体，实现技能层级演化，支撑智能决策",
+      "llm_tldr_en": "CoSkill jointly trains a Reasoning Agent and a learnable Meta-Skill Agent within hierarchical skill libraries, making skill evolution co-adaptive with policy optimization rather than treating skills as fixed passive workflows.",
+      "llm_tldr_cn": "现有技能库方法通常将技能演化与策略优化相分离，或把元技能实现为固定工作流，限制了技能与推理智能体的协同演进。CoSkill提出统一的多智能体强化学习框架，将静态元技能工作流重构为可学习的元技能智能体，并与推理智能体联合训练。该方法让技能层级能够随策略优化协同进化，从而提升智能体强化学习的样本效率和长程任务表现。",
+      "llm_tldr": "现有技能库方法通常将技能演化与策略优化相分离，或把元技能实现为固定工作流，限制了技能与推理智能体的协同演进。CoSkill提出统一的多智能体强化学习框架，将静态元技能工作流重构为可学习的元技能智能体，并与推理智能体联合训练。该方法让技能层级能够随策略优化协同进化，从而提升智能体强化学习的样本效率和长程任务表现。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.05133v1",
+      "source": "arxiv",
+      "title": "A Schema Bounded Language Model for Refining Robot Policies Without Destabilizing Local Learning",
+      "abstract": "This paper addresses navigation by composite heterogeneous robots in a decentralized system when policy reasoning and local control operate at different update levels. In a NetLogo--Python implementation, three robots share motion dynamics but use different LLM backends. Each robot independently combines a large language model (LLM) policy agent, an Upper Confidence Bound (UCB) bandit, and a Double Deep Q-Network (Double DQN) controller; no central LLM generates team actions. LLM inference is confined to round-level policy generation and refinement rather than tick-level action selection. The robots perform cross-LLM communication through a shared round summary containing policies, outcomes, and learning feedback. UCB performs refinement-mode selection, and the policy-conditioned Double DQN performs tick-level action selection from navigation variables, active policy parameters, and the LLM action prior. Each of the four configurations was evaluated over 30 rounds. In the fixed simulation, the complete configuration reached the goal in all 90 correlated robot--round records and achieved the lowest median completion time (42 ticks) and P90 (73.2 ticks); its median was 25.0--39.1\\% lower than those of the other configurations. These observations provide descriptive, configuration-level evidence from the evaluated configurations.",
+      "authors": [
+        "Chongwen Dong",
+        "Mithun Paul Saint-Germain",
+        "Pinjari Asif",
+        "Carlo R. daCunha"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-04T13:35:55+00:00",
+      "link": "https://arxiv.org/pdf/2609.05133v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLM-based round-level policy refinement combined with reinforcement learning for decentralized multi-robot navigation",
+      "llm_evidence_cn": "LLM回合级策略精化结合强化学习进行多机器人分散导航",
+      "llm_evidence": "LLM回合级策略精化结合强化学习进行多机器人分散导航",
+      "canonical_evidence": "LLM回合级策略精化结合强化学习进行多机器人分散导航",
+      "llm_tldr_en": "This paper combines an LLM policy agent, UCB bandit, and Double DQN controller on each decentralized heterogeneous robot; confining LLM inference to round-level strategizing and cross-robot summary communication improves multi-robot navigation policies without destabilizing local learning.",
+      "llm_tldr_cn": "在由异构机器人组成的分散式系统中，策略推理与局部控制往往以不同频率更新。本文在NetLogo-Python仿真中让三台共享运动动力学但使用不同LLM后端的机器人各自结合LLM策略体、UCB摇臂和Double DQN控制器，不设中央LLM生成团队动作。LLM只在回合级生成与精化策略，不干预逐时刻动作选择，同时通过共享回合摘要交换策略、结果和学习反馈。这样的分层设计既能发挥自然语言的沟通与推理能力，又能避免干扰局部强化学习，提升多机导航策略在异构条件下的稳定性和质量。",
+      "llm_tldr": "在由异构机器人组成的分散式系统中，策略推理与局部控制往往以不同频率更新。本文在NetLogo-Python仿真中让三台共享运动动力学但使用不同LLM后端的机器人各自结合LLM策略体、UCB摇臂和Double DQN控制器，不设中央LLM生成团队动作。LLM只在回合级生成与精化策略，不干预逐时刻动作选择，同时通过共享回合摘要交换策略、结果和学习反馈。这样的分层设计既能发挥自然语言的沟通与推理能力，又能避免干扰局部强化学习，提升多机导航策略在异构条件下的稳定性和质量。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.04894v1",
+      "source": "arxiv",
+      "title": "From Language Models to World-Acting Systems: Progress and Limits of Agentic AI across Digital, Social, Virtual, and Physical Environments",
+      "abstract": "Large language models become consequential agents when surrounding systems let outputs change external state. Models now call tools, operate interfaces, delegate work, retain state, inhabit generated worlds, and control robots or laboratory equipment. Such advances are often narrated as one march toward autonomy, conflating model competence, system integration, persistence, and safe authority. This critical review synthesizes primary research and official technical specifications available by 31 August 2026. We organize the evidence along delegated authority, temporal persistence, and environmental coupling, while separating model, harness, and environment. Within the evidence examined, action-interface expansion is documented more convincingly than robust completion, recovery, authorization, or independent verification. Model Context Protocol and Agent2Agent improve interoperability but do not establish trustworthy delegation; multi-agent organization adds specialization alongside cost and correlated failure. Persistent simulations and world models support training and planning but do not themselves demonstrate agency; robotics and self-driving laboratories establish bounded feasibility rather than unattended open-world reliability. We propose justified delegation as an analytical and normative heuristic, not an observed law or certified score: expand action scope only where evidence supports provenance, bounded authority, failure detection, safe recovery, and calibrated human control. This framing yields a research agenda for coupled model-harness evaluation, capability-based permissions, durable state, cross-agent accountability, and staged physical validation.",
+      "authors": [
+        "Linsen Zhu",
+        "Mengqing Cai"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-09-04T08:52:28+00:00",
+      "link": "https://arxiv.org/pdf/2609.04894v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Critical review of agentic AI controlling robots and physical environments",
+      "llm_evidence_cn": "综述智能体AI跨物理环境控制与实体机器人",
+      "llm_evidence": "综述智能体AI跨物理环境控制与实体机器人",
+      "canonical_evidence": "综述智能体AI跨物理环境控制与实体机器人",
+      "llm_tldr_en": "This critical review synthesizes research and official specifications on agentic AI across digital, social, virtual, and physical environments, analyzing delegated authority, temporal persistence, and environmental coupling while distinguishing model, harness, and environment.",
+      "llm_tldr_cn": "大语言模型在输出能改变外部状态时便成为行动型智能体，可调用工具、操作界面、控制机器人或实验设备，但这些进展常被简化为一场统一的走向自主的叙事。该综述基于截至2026年8月的研究和技术规格，在区分模型、支撑框架与环境的基础上，沿授权代理、时间持久性和环境耦合三个维度组织证据，梳理智能体在数字、社会、虚拟和物理环境中的能力边界与安全风险，为评估智能体真实自主性提供了分析框架。",
+      "llm_tldr": "大语言模型在输出能改变外部状态时便成为行动型智能体，可调用工具、操作界面、控制机器人或实验设备，但这些进展常被简化为一场统一的走向自主的叙事。该综述基于截至2026年8月的研究和技术规格，在区分模型、支撑框架与环境的基础上，沿授权代理、时间持久性和环境耦合三个维度组织证据，梳理智能体在数字、社会、虚拟和物理环境中的能力边界与安全风险，为评估智能体真实自主性提供了分析框架。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.05260v1",
+      "source": "arxiv",
+      "title": "One Word, Different Action: A Real-Robot Benchmark for Language-Conditioned Embodied Reasoning",
+      "abstract": "Natural-language instruction changes can directly alter robot behavior. A reliable embodied system should preserve its action when the task is unchanged and update it correctly when the task itself changes. We introduce One Word, Different Action, a real-robot benchmark built on physical decision states and executable actions, using task-preserving and task-changing instruction pairs to jointly evaluate Decision Invariance and Decision Sensitivity, with further evaluation under multi-constraint reasoning and real-RGB grounding. Experiments show that modern models are near saturation on single-constraint instruction changes, yet several models degrade noticeably when multiple task constraints must be integrated into one executable decision. These results suggest that the more salient remaining challenge is no longer recognizing an isolated instruction change, but reliably composing multiple task requirements into a correct robot action decision.",
+      "authors": [
+        "Yiwei Liu",
+        "Luwei Yang",
+        "Shunbo Lei"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T15:21:58+00:00",
+      "link": "https://arxiv.org/pdf/2609.05260v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "real-robot benchmark for language-conditioned embodied reasoning; evaluates physical decision states and executable actions",
+      "llm_evidence_cn": "真实机器人物理决策状态上的语言条件具身推理基准，评测决策不变性与敏感性",
+      "llm_evidence": "真实机器人物理决策状态上的语言条件具身推理基准，评测决策不变性与敏感性",
+      "canonical_evidence": "真实机器人物理决策状态上的语言条件具身推理基准，评测决策不变性与敏感性",
+      "llm_tldr_en": "One Word, Different Action is a real-robot benchmark built on physical decision states and executable actions, jointly measuring decision invariance and sensitivity via task-preserving and task-changing instruction pairs, and shows models degrade when multiple constraints must be integrated into one executable action.",
+      "llm_tldr_cn": "语言指令的细微变化会直接改变机器人动作，可靠系统应在任务内容不变时保持动作，在任务改变时正确更新动作。One Word Different Action构建了基于物理决策状态和可执行动作的真实机器人基准，利用任务保持与任务改变的指令对，联合评测决策不变性与决策敏感性，并引入多约束推理和真实RGB接地评测。结果表明现代模型在单约束指令改变上接近饱和，但在把多个约束整合进一个可执行动作时明显退化。该基准为语言条件具身推理提供了面向真实机器人场景的细粒度诊断。",
+      "llm_tldr": "语言指令的细微变化会直接改变机器人动作，可靠系统应在任务内容不变时保持动作，在任务改变时正确更新动作。One Word Different Action构建了基于物理决策状态和可执行动作的真实机器人基准，利用任务保持与任务改变的指令对，联合评测决策不变性与决策敏感性，并引入多约束推理和真实RGB接地评测。结果表明现代模型在单约束指令改变上接近饱和，但在把多个约束整合进一个可执行动作时明显退化。该基准为语言条件具身推理提供了面向真实机器人场景的细粒度诊断。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.05401v1",
+      "source": "arxiv",
+      "title": "Same Trajectory, Contradictory Rewards (ROBORMBENCH): Paraphrase Fragility in Vision Language Reward Models",
+      "abstract": "Vision-language models are increasingly used as reward functions for robotic learning, but this role requires paraphrase invariance: the same trajectory should receive the same reward under semantically equivalent goal descriptions. We show that current VLM reward models often violate this property. Paraphrasing the instruction alone can substantially change predicted progress scores, and can even flip identical robot behavior between failure and success. To measure this failure mode, we introduce ROBORMBENCH, a benchmark with 2,390 real-robot trajectories, ground-truth progress labels, and 21,673 verified paraphrases spanning lexical, syntactic, and action-goal rewrites. Across proprietary and open-source VLMs, paraphrase-induced instability is widespread and severe, grows under more divergent rewrites, and is not reliably reduced by scale or explicit reasoning. Dedicated reward models trained with trajectory-grounded supervision are substantially more stable. These results show that paraphrase robustness is a core requirement for reliable VLM-based reward modeling in robotics.",
+      "authors": [
+        "Wonje Jeung",
+        "Sangyeon Yoon",
+        "Hyesoo Hong",
+        "Yoonjun Cho",
+        "Dongjae Jeon",
+        "Bumjun Kim",
+        "Jean Oh",
+        "Youngjae Yu",
+        "Albert No"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CL"
+      ],
+      "published": "2026-09-04T17:47:58+00:00",
+      "link": "https://arxiv.org/pdf/2609.05401v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "benchmark exposing paraphrase fragility of vision-language reward models used in robot reinforcement learning",
+      "llm_evidence_cn": "针对机器人强化学习中的视觉语言奖励模型，揭示释义改写导致奖励不一致并构建基准",
+      "llm_evidence": "针对机器人强化学习中的视觉语言奖励模型，揭示释义改写导致奖励不一致并构建基准",
+      "canonical_evidence": "针对机器人强化学习中的视觉语言奖励模型，揭示释义改写导致奖励不一致并构建基准",
+      "llm_tldr_en": "Vision-language models used as robotic rewards should be paraphrase invariant, but this paper shows rewording semantically equivalent instructions can flip identical trajectories from success to failure, and introduces ROBORMBENCH with 2390 real-robot trajectories and 21673 paraphrases to benchmark this failure across VLM families.",
+      "llm_tldr_cn": "视觉语言模型常被当作机器人学习的奖励函数，而同一轨迹在语义等价指令下应得到相同奖励。论文发现当前VLM奖励模型普遍违背释义不变性，仅改写指令就可能把同一机器人行为从成功翻转为失败。为此构建ROBORMBENCH，含2,390条真实机器人轨迹与21,673条人工验证释义，覆盖词汇、句法和动作目标改写。实验揭示多种开源与专有VLM的奖励脆弱性，为机器人学习中的奖励建模提供稳健性诊断。",
+      "llm_tldr": "视觉语言模型常被当作机器人学习的奖励函数，而同一轨迹在语义等价指令下应得到相同奖励。论文发现当前VLM奖励模型普遍违背释义不变性，仅改写指令就可能把同一机器人行为从成功翻转为失败。为此构建ROBORMBENCH，含2,390条真实机器人轨迹与21,673条人工验证释义，覆盖词汇、句法和动作目标改写。实验揭示多种开源与专有VLM的奖励脆弱性，为机器人学习中的奖励建模提供稳健性诊断。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.05324v1",
+      "source": "arxiv",
+      "title": "RoboSPA: Can VLA Models Go Beyond Simple Scenes and Short-Horizon Tasks?",
+      "abstract": "Vision-Language-Action (VLA) models have shown promising progress in language-conditioned robotic manipulation. However, existing datasets and benchmarks mainly evaluate task completion under predefined settings, offering limited insight into model reasoning under increasing spatial and procedural complexity. We introduce \\textbf{RoboSPA} (\\textbf{Robo}t \\textbf{S}patial-\\textbf{P}rocedural \\textbf{A}ssessment), a large-scale robotic manipulation dataset and benchmark for diagnosing embodied reasoning in VLA models. \\texttt{RoboSPA} focuses on two core dimensions, Fine-Grained Spatial Reasoning and Long-Horizon Procedural Planning, covering 10 task categories and 56 base tasks. Each task is instantiated across five difficulty levels, yielding 280 variants with increasing spatial ambiguity and procedural complexity. We collect 527K trajectories across multiple embodiments and diverse scenes. Beyond binary success rate, \\texttt{RoboSPA} introduces diagnostic metrics for more detailed evaluation. Experiments on representative VLA models show that current systems still struggle with complex spatial relations, precise low-level execution, and memory-intensive planning. These results establish \\texttt{RoboSPA} as a challenging diagnostic benchmark for developing more capable, reliable, and generalizable embodied agents. Our data and code are available at https://github.com/fanzhenxuan/RoboSPA.",
+      "authors": [
+        "Zhenxuan Fan",
+        "Bo Zhang",
+        "Yutong Lin",
+        "Yuqian Yuan",
+        "Juekai Lin",
+        "Liang Liang",
+        "Zhuoyi Huang",
+        "Wenqiao Zhang",
+        "Juncheng Li",
+        "Siliang Tang",
+        "Jun Xiao",
+        "Yueting Zhuang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-09-04T16:19:01+00:00",
+      "link": "https://arxiv.org/pdf/2609.05324v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "large-scale robotic manipulation dataset and benchmark diagnosing VLA models on spatial reasoning and long-horizon procedural planning",
+      "llm_evidence_cn": "针对机器人操作中VLA模型的细粒度空间推理与长时程程序规划诊断数据集/基准",
+      "llm_evidence": "针对机器人操作中VLA模型的细粒度空间推理与长时程程序规划诊断数据集/基准",
+      "canonical_evidence": "针对机器人操作中VLA模型的细粒度空间推理与长时程程序规划诊断数据集/基准",
+      "llm_tldr_en": "RoboSPA is a large-scale robotic manipulation dataset and benchmark that evaluates VLA models on fine-grained spatial reasoning and long-horizon procedural planning across 10 task categories and 56 base tasks at five difficulty levels, yielding 280 variants.",
+      "llm_tldr_cn": "现有VLA模型在语言条件机器人操作上虽有进展，但数据与基准大多只在预设条件下评测任务完成，难以诊断模型在空间与过程复杂度增加时的推理能力。RoboSPA构建大规模机器人操作数据集与基准，聚焦细粒度空间推理和长时程程序规划两个核心维度，覆盖10个任务类别和56个基础任务，每个任务按5档难度实例化，共280种变体。该基准可系统暴露VLA模型在超越简单场景和短时程任务时的短板，并为操作具身推理研究提供评测基础。",
+      "llm_tldr": "现有VLA模型在语言条件机器人操作上虽有进展，但数据与基准大多只在预设条件下评测任务完成，难以诊断模型在空间与过程复杂度增加时的推理能力。RoboSPA构建大规模机器人操作数据集与基准，聚焦细粒度空间推理和长时程程序规划两个核心维度，覆盖10个任务类别和56个基础任务，每个任务按5档难度实例化，共280种变体。该基准可系统暴露VLA模型在超越简单场景和短时程任务时的短板，并为操作具身推理研究提供评测基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.05361v1",
+      "source": "arxiv",
+      "title": "Development of a Humanoid Robot Prototype for Multimodal Human-Robot Interaction",
+      "abstract": "Human-robot interaction (HRI) enables intuitive and intelligent collaboration between humans and robots in real-world environments. This paper introduces a humanoid robot prototype designed as a flexible testbed for developing and integrating artificial intelligence (AI) modules in HRI tasks. The system features a 12 degree-of-freedom (DOFs) dual-arm mechanism and a 2 DOFs head with an expressive LCD screen to express facial emotions. All hardware components are controlled by a custom-designed controller board with real-time AI processing supported by an onboard Jetson module. The system incorporates three AI modules: (1) gesture recognition using MediaPipe Pose and an LSTM classifier, (2) object detection with YOLO and 3D localization, and (3) voice-command processing through speech recognition and large language model(LLM)-based semantic parsing. The platform is validated through experiments on positioning accuracy, with results showing average manipulation errors of approximately 1.83 cm. To demonstrate its versatility, experimental results show over 90% task accuracy, with gesture recognition reaching 96%, speech recognition reaching 92%. The results confirm the effectiveness of the proposed system as a reproducible and accessible humanoid platform for research and prototyping in HRI.",
+      "authors": [
+        "Thang Tran Viet",
+        "Thanh Nguyen Canh",
+        "Huy Uong Gia",
+        "Phuc Dinh Van",
+        "Son Tran Duc",
+        "Ngoc Minh Do",
+        "Xiem HoangVan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-04T17:06:47+00:00",
+      "link": "https://arxiv.org/pdf/2609.05361v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Humanoid robot prototype integrating multimodal human-robot interaction modules",
+      "llm_evidence_cn": "集成多模态人机交互模块的人形机器人原型",
+      "llm_evidence": "集成多模态人机交互模块的人形机器人原型",
+      "canonical_evidence": "集成多模态人机交互模块的人形机器人原型",
+      "llm_tldr_en": "This paper develops a humanoid robot prototype for multimodal HRI with a 12-DoF dual arm and expressive 2-DoF head, integrating gesture recognition, object detection and 3D localization for real-time AI interaction.",
+      "llm_tldr_cn": "针对真实环境中直观且智能的人机协作需求，论文开发了一台可作为AI模块测试平台的人形机器人原型，具备12自由度双臂与2自由度带表情屏幕的头部。系统由定制控制板统一控制，并利用Jetson进行实时AI处理，集成了基于MediaPipe与LSTM的手势识别、基于YOLO的目标检测与3D定位等多种视觉理解模块。该原型可直接用于HRI行为的快速集成和评测。",
+      "llm_tldr": "针对真实环境中直观且智能的人机协作需求，论文开发了一台可作为AI模块测试平台的人形机器人原型，具备12自由度双臂与2自由度带表情屏幕的头部。系统由定制控制板统一控制，并利用Jetson进行实时AI处理，集成了基于MediaPipe与LSTM的手势识别、基于YOLO的目标检测与3D定位等多种视觉理解模块。该原型可直接用于HRI行为的快速集成和评测。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}
