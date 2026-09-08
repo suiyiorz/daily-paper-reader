@@ -1,0 +1,1431 @@
+Title: Mitigating Performance Discrepancy in Cross-Domain 3D Class-Incremental Learning
+
+URL Source: https://arxiv.org/pdf/2609.04860v1
+
+Published Time: Mon, 07 Sep 2026 00:41:02 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+# Mitigating Performance Discrepancy in Cross-Domain 3D Class-Incremental Learning 
+
+Jinge Ma 
+
+Purdue University 
+
+ma859@purdue.edu 
+
+Gautham Vinod 
+
+Purdue University 
+
+gvinod@purdue.edu 
+
+Bruce Coburn 
+
+Purdue University 
+
+coburn6@purdue.edu 
+
+Jui-Feng Chi 
+
+Purdue University 
+
+chi96@purdue.edu 
+
+Siddeshwar Raghavan 
+
+Purdue University 
+
+raghav12@purdue.edu 
+
+Fengqing Zhu 
+
+Purdue University 
+
+zhu0@purdue.edu 
+
+## Abstract 
+
+3D perception plays a crucial role in real-world applications such as autonomous driving, robotics, and AR/VR. In practical scenarios, 3D perception models need to continually adapt to newly emerging 3D object categories, making class-incremental learning (CIL) particularly important. However, unlike 2D images, 3D point clouds are inherently heterogeneous: objects from the same class may not only come from the clean CAD domain, but also from RGB-D camera scans of varying quality, video reconstructions, or even corrupted observations. We discover that such heterogeneity introduces a new challenge beyond catastrophic forgetting: the degree of performance degradation can vary substantially across domains, a phenomenon we term performance discrepancy . To investigate this problem, we establish the Domain3D-CIL training and evaluation protocol, which contains point cloud categories from heterogeneous domains. We further adapt a wide range of mainstream CIL methods to the 3D modality. The results demon-strate that this performance discrepancy consistently appears across these baselines. To mitigate this issue, we introduce PolyMem , an exemplar-free approach that implicitly models rich high-order statistics of the feature distribution to enhance cross-domain robustness. Experiments demonstrate that our method effectively alleviates the performance discrepancy while improving the model’s performance across domains. Code will be made publicly available upon acceptance. 
+
+## 1 Introduction 
+
+3D perception holds broad application value in real-world scenarios [17, 28, 2]. For example, autonomous driving systems require real-time recognition and classification of surrounding obstacles, while robots rely on 3D perception to understand and interact with complex physical environments. In practical deployments, 3D models must possess the capability to continually learn under constantly shifting data distributions. Class-Incremental Learning (CIL), a highly regarded branch in the field of continual learning, aims to enable models to incrementally learn new classes under the restricted condition where the historical data of old categories cannot be retained, while avoiding catastrophic forgetting of previously acquired knowledge [32, 18]. Catastrophic forgetting has been extensively studied in 2D CIL tasks, and it remains a core challenge for 3D CIL [4]. However, the inherent intra-class heterogeneity of 3D modalities poses unique challenges for CIL. Unlike 2D images primarily captured by cameras, the data sources for 3D objects are more diverse. Data may be sources from Computer-Aided Design (CAD) meshes, various RGB-D 3D scanners, video 3D reconstruction techniques, and so on [51, 6, 38]. Furthermore, due to the complexity of     
+
+> Preprint. arXiv:2609.04860v1 [cs.CV] 4 Sep 2026 13579
+> Task ID
+> 40 60 80 100
+> Acc (%)
+> Performance Discrepancy
+> ModelNet(CAD) ScanObjNN(Real) Joint-Training(CAD/Real)
+> 1
+
+(a) 40 60 80  
+
+> Last Acc. (%) on ModelNet(CAD)
+> 40 60 80
+> Last Acc. (%) on CO3D(Real)
+> Parity Line
+> Performance Discrepancy
+> Joint-Training PODNet ER DER iCaRL FOSTER BiC iNeMo WA
+> 1
+
+(b) 40 60 80  
+
+> Last Acc. (%) on ShapeNet(CAD)
+> 40 60 80
+> Last Acc. (%) on OmniObj3D(Real)
+> Parity Line
+> Performance Discrepancy
+> Joint-Training L2P DualPrompt CODA-Prompt SLCA PolyMem (Ours) SimpleCIL APER EASE RanPAC MOS TUNA
+> 1
+
+(c) 
+
+Figure 1: Visualization of performance discrepancy in 3D CIL. (a) Illustrates the performance discrepancy of APER [64] between CAD and real-scanned point clouds. As tasks progress, the performance gap between the CAD and the real-world domain gradually widens. In contrast, on Task 1 or under the joint-training setting, the performance across both domains is quite comparable. This demonstrates that the primary cause of the performance discrepancy is not static disparities in learning difficulty or in sample counts across domains. (b) and (c) demonstrate the prevalence of performance discrepancy across various baselines and different mixed datasets. 3D environments, real-world point clouds are highly susceptible to containing corrupted or artifact-laden samples [34]. In the context of CIL, these factors cause point clouds of the same category to often be a mixture of samples from heterogeneous domains [31], thereby triggering a severe imbalance in memory retention across different domains. As shown in Fig. 1a, as the number of tasks increases, the model not only exhibits overall catastrophic forgetting, but the degree of the model’s performance degradation also presents a significant gap between different domains. We formally define this phenomenon, where the performance structurally diverges across heterogeneous domains, as performance discrepancy , which serves as the primary focus of this paper. To systematically quantify and analyze the aforementioned challenges, we establish a comprehensive training and evaluation protocol, Domain3D-CIL . Under this protocol, the dataset consists of heterogeneous mixtures of clean CAD point clouds and real-world or corrupted point clouds. Samples from different data domains are mixed within shared semantic classes and share the same semantic labels. Detailed descriptions of Domain3D-CIL are provided in Sec. 3.2. Regarding the baselines, we adopt the widely used Pre-Trained Model (PTM)-based CIL paradigm [66], and systematically adapt representative methods under this paradigm to the 3D modality for fair comparison. As shown in Fig. 1b and Fig. 1c, experiments under Domain3D-CIL confirm that performance discrepancy is a prevalent phenomenon among existing baselines. We find that some PTM-based baselines achieve strong performance by memorizing low-order statistics of old classes(e.g., means or covariances) [64, 21]. Furthermore, we find that the performance discrepancy of these baselines with statistical memory stems from the inherent limitation of using low-order statistics to represent class distributions in the feature space: low-order statistics fail to fully characterize all statistical properties, while many cross-domain differences are contained in higher-order statistics. To this end, we introduce PolyMem . PolyMem leverages a structured polynomial approximation of the RBF kernel to capture higher-order feature interactions, thereby achieving robust learning for cross-domain 3D data. Evaluations show that PolyMem effectively mitigates performance discrepancy across heterogeneous 3D domains, while improving performance within each domain. In summary, the main contributions of this paper are as follows: • We formalize the phenomenon of performance discrepancy in 3D CIL, and establish the 
+
+Domain3D-CIL protocol with heterogeneous 3D data to simulate real-world scenarios. • We transfer widely used CIL baselines to the 3D modality, and analyze the mechanisms causing performance discrepancy of some baselines under cross-domain settings. • We propose the PolyMem framework. Our method effectively mitigates cross-domain performance discrepancy as well as within-domain catastrophic forgetting. 22 Related Works 
+
+3D Representation Learning and Data Heterogeneity. The evolution of 3D point cloud represen-tation learning has played a crucial role in modern 3D perception. Early representative works, such as PointNet and PointNet++, established a point-set processing framework based on shared multi-layer perceptrons [29, 30]. In recent years, Transformer-based architectures have further improved 3D representation learning through more effective global context modeling [63, 49, 48]. Building on these architectural advances, research has gradually shifted toward large-scale pre-trained models. Works such as Point-BERT have established self-supervised pre-training paradigms for 3D point clouds through masked point modeling [58, 23, 60]. On this basis, methods such as Uni3D further leverage multimodal alignment across text, images, and point clouds to learn semantically consistent 3D representations [54, 19, 55, 69]. As recent studies explore unified representation learning over heterogeneous 3D data sources [47, 61], 3D representation learning is extending to real-world scenarios, where data heterogeneity becomes increasingly prominent. Differences in data construction and acquisition processes (e.g., CAD modeling [51, 1], RGB-D scanning [39, 6, 46], LiDAR acquisition [12, 38], and multi-view reconstruction [33, 57]) introduce significantly different domain properties. As a result, samples from the same semantic class across datasets exhibit highly complex intra-class distributions in the feature space, with substantial variations in representativeness, diversity, noise patterns, and feature distributions, etc. This trend highlights the growing need for more robust 3D representations in complex real-world environments. 
+
+Class-incremental Learning. Class-incremental learning aims to continuously learn new classes while retaining knowledge of previously learned ones [66]. In the CIL setting, models are trained on a sequence of tasks, each introducing new classes, without access to full historical data. Early approaches address this challenge through exemplar replay [32, 50, 15, 20], parameter regulariza-tion [18, 16, 22], or architectural expansion [56, 40, 68] to mitigate inter-task interference. Although these strategies differ in implementation, strong baselines often still rely on storing replay exemplars from previous classes. Building on this line of research, Pre-Trained Model (PTM)-based CIL has recently emerged as an important paradigm [66]. These methods leverage a pre-trained backbone with strong generalization and typically follow a replay-free protocol, where no raw data from old classes are stored. The backbone is usually frozen, and incremental adaptation is achieved through parameter-efficient modules. Representative approaches include prompt-based strategies [45, 44, 36] as well as methods that enhance adaptation via feature calibration [59, 13], lightweight mappings [11, 37], or subspace expansion [67, 43, 65]. In the replay-free setting, some methods form statistical memory by recording feature-space statistics. Specifically, SimpleCIL [64] only retains the 1st-order statistics of feature distributions, while RanPAC [21] further combines 1st-order with 2nd-order feature statistics. In the 3D domain, existing incremental learning studies have mainly focused on few-shot set-tings [4, 3, 52]. Prior works have explored 2D domain-incremental [42, 41] or class-and-domain incremental learning [53, 24], but they mostly focus on domain shifts across tasks, while the cross-domain performance discrepancy induced by heterogeneous 3D data mixed within the same semantic class remains underexplored. In this work, we focus on analyzing this cross-domain performance discrepancy under the PTM-based CIL paradigm in heterogeneous 3D environments. 
+
+## 3 Preliminaries 
+
+3.1 Class-incremental Learning 
+
+We consider a sequence of class-incremental tasks {T t}Tt=1 . The training set of task t is denoted by 
+
+Dt = {(xt,i , y t,i )}nt
+
+> i=1
+
+, where xt,i and yt,i denote the i-th sample and its label in task t, respectively, 
+
+nt is the number of training samples in task t, and Yt denotes the label set of task t. In the CIL setting, the label sets of different tasks are mutually disjoint, i.e., Yt ∩ Y t′ = ∅ for any t̸ = t′. Let ft denote the model obtained after learning task t, which is evaluated on all classes observed so far, i.e., on Stτ =1 Yτ . Since the full datasets from previous tasks are no longer accessible in later stages, learning new tasks typically leads to catastrophic forgetting on old classes. Following the PTM-based CIL paradigm, the initial model f0 is built upon a pre-trained transformer-based backbone and follows a replay-free setting, where the model is trained at each stage using only the current task data Dt
+
+3chair plant car airplane  
+
+> CAD point clouds Real or corrupted point clouds
+
+(a) 0600 1200   
+
+> ModelNet ScanObjNN
+> 01000 2000
+> ModelNet CO3D
+> 10 1
+> 10 2
+> 10 3ShapeNet OmniObj3D
+> Class ID
+> 03000 6000
+> ShapeNet ShapeNet-C
+> Number of Samples
+> 1
+
+(b) 
+
+Figure 2: Visualization of Domain3D-CIL. (a) shows representative categories containing cross-domain samples from the mixed datasets. (b) shows the corresponding class distributions. without storing raw samples from previous classes. In this work, we instantiate this paradigm in the 3D domain using Uni3D-Base [69] pre-trained on Objaverse [7] as the backbone. Uni3D is adopted because it shares a transformer-based architectural design with Vision Transformer [8], which facilitates the adaptation of existing PTM-based CIL methods to 3D perception tasks. 
+
+3.2 Domain3D-CIL 
+
+Building upon the general CIL formulation above, we further establish a heterogeneous 3D training and evaluation protocol, termed Domain3D-CIL . For each task t, the training set is constructed by mixing samples from a canonical CAD domain and one additional domain, i.e., Dt = DCAD  
+
+> t
+
+∪ D O 
+
+> t
+
+,where DCAD  
+
+> t
+
+= {(xCAD  
+
+> t,i
+
+, y CAD  
+
+> t,i
+
+)}nCAD  
+
+> t
+> i=1
+
+and DO 
+
+> t
+
+= {(xO 
+
+> t,j
+
+, y O 
+
+> t,j
+
+)}nO
+
+> t
+> j=1
+
+. Here, the additional domain O
+
+is chosen from one of the following settings: real-world RGB-D point clouds, video-reconstructed point clouds, or corrupted CAD point clouds. In each experimental setting, only one such non-CAD domain is mixed with the CAD domain. For each task, the CAD subset is constructed over the full task label space Yt, while the non-CAD subset only contains samples that can be semantically matched to CAD categories. Let YO 
+
+> t
+
+denote the label space of the non-CAD subset, then YO 
+
+> t
+
+⊆ Y t.Samples with the same semantic meaning across different domains share the same class label and are not treated as new domain-specific categories. Non-CAD categories that cannot be matched to the current CAD label space are not included, while CAD categories without corresponding non-CAD samples are still retained in DCAD  
+
+> t
+
+.During training, the model only observes the mixed training set Dt together with semantic labels, while domain labels are not provided . During evaluation, we split the test data into domain-specific subsets, such as DCAD  
+
+> t, test
+
+and DO
+
+> t, test
+
+, and report performance separately on each domain over all observed classes Ct−1 = Stτ =1 Yτ . This design is based on two considerations. First, domain boundaries in real-world 3D data are often continuous and ambiguous; differences in acquisition devices, sampling conditions, and preprocessing pipelines can all introduce distribution shifts, making discrete domain labels difficult to define reliably. Second, 3D data in real applications may be collected from the web and usually lacks explicit domain labels. In this way, Domain3D-CIL provides a unified protocol for systematically evaluating both average performance and domain-wise performance discrepancy under heterogeneous 3D CIL data streams. Fig. 2 shows the mixed point cloud datasets constructed for experiments under Domain3D-CIL. Each row in Fig. 2a and Fig. 2b corresponds to the same mixed dataset, whose composition is indicated in the legend of Fig. 2b. From top to bottom, the four mixed datasets are ModelNet [51] + ScanObjectNN [39], ModelNet + CO3D [33], ShapeNet [1] + OmniObject3D [46], and ShapeNet + ShapeNet-C [34]. As shown in Fig. 2a, CAD point clouds such as ModelNet and ShapeNet are generally clean and complete, and high-quality RGB-D point clouds from OmniObject3D also exhibit relatively clear geometry. In contrast, low-quality RGB-D scans from ScanObjectNN, video-reconstructed point clouds from CO3D, and corrupted point clouds from ShapeNet-C contain more 4artifacts, including missing regions, redundant points, and perturbations. Fig. 2b further shows the class distributions of these mixed datasets, all of which exhibit clear long-tail characteristics. In particular, the 3rd row uses a logarithmic y axis, highlighting that the sample scale of OmniObject3D is much smaller than that of ShapeNet, since high-quality RGB-D point clouds are harder to collect and thus scarcer than CAD models. 
+
+## 4 Methodology 
+
+4.1 Statistical Memory in PTM-based CIL 
+
+As shown in Fig. 1a and Fig. 1c, we observe a cross-domain performance discrepancy of the PTM-based CIL baselines and the Domain3D-CIL protocol. In this section, we further investigate the underlying causes of this phenomenon. PTM-based CIL baselines benefit from powerful pre-trained backbones. Since their feature mappings can remain frozen and strictly stationary, some baselines can effectively represent and persistently memorize old classes by directly recording feature-space statistics, even without relying on raw exemplar replay. We refer to this as statistical memory .The most direct form of statistical memory is given by SimpleCIL [64]. Given a frozen pre-trained backbone, each sample xi is mapped to a stable feature vector Fi = f (xi) ∈ RD. For each class c,SimpleCIL summarizes the class distribution by its prototype, namely the class-wise mean in the feature space: 
+
+μc = 1
+
+Nc
+
+X
+
+> i:yi=c
+
+Fi, μc ∈ RD , (1) where Nc denotes the number of samples in class c, and μc denotes the prototype vector of class c.During inference, classification is performed by a prototype-based rule, equivalently by using these prototypes as classifier weights or by applying a nearest-mean decision rule. Therefore, SimpleCIL preserves only the 1st-order statistic (mean) of each class distribution in the feature space. Although this representation is mathematically concise, it only retains the 1st-order statistic and cannot explicitly characterize 2nd-order properties. It effectively treats all class distributions as having identical covariance and therefore fails to reflect intra-class diversity. 0.0 0.2 0.5 0.8 1.0 1.2 1.5 1.8 
+
+| d|
+
+> 0123456
+> Relative frequency (%)
+> CAD Real
+
+(a) 1st: Mean 0.0 0.5 1.0 1.5 2.0 2.5 3.0   
+
+> 2
+> d
+> 0246810 12 14
+> ×10 2
+> CAD Real
+
+(b) 2nd:Variance 0.0 0.2 0.4 0.6 0.8 1.0 1.2 
+
+| 1, d|  
+
+> 0246810 12 14 CAD Real
+
+(c) 3rd:Skewness 0.0 1.0 2.0 3.0 4.0 5.0   
+
+> 2, d
+> 0246810 12 14
+> CAD Real
+
+(d) 4th:Kurtosis 
+
+Figure 3: Histograms of 1st to 4th-order statistics on ShapeNet(CAD)+OmniObject3D(Real). We verify the failure mode of SimpleCIL under Domain3D-CIL by visualizing the feature space of the backbone. Fig. 3 shows the distributional differences of 1st- to 4th-order feature statistics between CAD and real domains on the mixed dataset of ShapeNet+OmniObject3D. We extract features from the two domains and compute the corresponding per-dimension statistics along the feature dimensions ( d ∈ { 1, . . . , 1024 }). For the 1st-order statistic, we compute the class mean within each domain and measure its per-dimension deviation from the overall class prototype μc,which is denoted as |∆μd| in Fig. 3a. For the remaining statistics, we compute the per-dimension variance σ2
+
+> d
+
+, absolute skewness |γ1,d |, and kurtosis γ2,d . The relative-frequency histograms of these statistics are averaged over 10 semantically matched classes. According to Fig. 3a, the CAD and real domains exhibit similar 1st-order statistical distributions, indicating that the per-dimension deviations of the domain-specific class means from the prototype are comparable, with no obvious domain gap. However, Fig. 3b shows a clear difference in 2nd-order statistics: more feature dimensions in the CAD domain are concentrated in the low-variance range, whereas the real domain contains more high-variance dimensions, suggesting stronger intra-class diversity in real scanned objects. Such 5diversity cannot be captured by 1st-order statistics alone, making real point clouds more vulnerable to interference from new-task prototypes and thereby contributing to performance discrepancy. A stronger form of statistical memory is introduced by RanPAC [21], which extends the 1st-order memory by preserving both 1st- and 2nd-order statistics in the lifted feature space through the accumulated statistics of ridge regression [14]: 
+
+Q =
+
+> N
+
+X
+
+> i=1
+
+F ′ 
+
+> i
+
+e⊤ 
+
+> yi
+
+, G =
+
+> N
+
+X
+
+> i=1
+
+F ′ 
+
+> i
+
+F ′
+
+> i
+> ⊤
+
+. (2) Here, eyi ∈ RC denotes the one-hot label vector of sample xi. The lifted feature of sample i is defined as F ′ 
+
+> i
+
+:= ϕ(Fi) = ϕ(f (xi)) ∈ RM , where ϕ : RD → RM denotes a random nonlinear mapping. Specifically, Q ∈ RM ×C aggregates 1st-order statistics in the lifted feature space; G ∈ RM ×M stores a global uncentered 2nd-order statistic, which characterizes the 2nd-order distributional structure in the lifted feature space and is closely related to the covariance structure. Based on these two statistics, RanPAC learns a linear predictor s(xi) = W ⊤F ′ 
+
+> i
+
+∈ RC , where the classifier is obtained by ridge regression: W = ( G + λI )−1Q. Here, λ is the ridge coefficient selected from a fixed grid using a validation split on the current task, and I is the identity matrix. The additional 2nd-order memory can better reflect intra-class diversity in Fig. 3b, thereby alleviating the performance discrepancy caused by the absence of 2nd-order statistics in SimpleCIL. This also explains why RanPAC usually exhibits a smaller performance discrepancy and stronger overall performance than other baselines in Sec. 5.2. 
+
+4.2 Proposed Method: PolyMem 
+
+As shown in Fig. 1c, the improvement of RanPAC over SimpleCIL suggests that incorporating 2nd-order statistics can alleviate cross-domain performance discrepancy. Moreover, RanPAC constructs an expanded feature space through random nonlinear projection, thereby implicitly introducing nonlinear feature interactions. However, such a randomly lifted space remains heuristic: although it may produce nonlinear interactions, it does not provide a structured, order-wise interpretation of how these interactions correspond to different orders of statistical structures. That is, the lifted representation in RanPAC is not explicitly tied to a theoretically grounded order-wise feature space. Based on this observation, a natural but naive extrapolation is to ask: if we could further memorize higher-order statistics of old classes, could we more faithfully characterize the 3D domain gap in complex feature distributions? For example, skewness ( 3rd-order statistic) reflects the asymmetry of a distribution [25]. In Fig. 3c, the real domain has larger absolute skewness in more feature dimensions. A possible explanation is that artifacts in real scanned point clouds are not random perturbations, but repeatedly appear along similar feature directions, thereby inducing structural asymmetry in the feature space. In Fig. 3d, kurtosis ( 4th-order statistic) reflects the heavy-tailed behavior of a distribution [26], and ShapeNet exhibits a more evident heavy-tailed effect than OmniObject3D. Although statistical memory eliminates the overhead of storing all raw features, explicitly storing higher-order statistics of feature distributions inevitably requires additional memory. For example, for a feature distribution in RD, explicitly recording its k-th order statistic requires maintaining a tensor with O(Dk) elements. As the recorded order k increases, the required storage capacity grows 
+
+exponentially . Polynomial interactions are natural feature-level building blocks for such high-order statistics. To avoid explicit storage of high-order statistics while moving beyond the heuristic random projection in RanPAC, we propose PolyMem . PolyMem replaces the random projection with a structured polynomial approximation of the RBF kernel [35], following the kernel approximation framework [5]. This framework was originally developed for fine-grained classification with end-to-end CNN training. We adapt this construction to PTM-based CIL: the lifted features are accumulated over a frozen pre-trained backbone for closed-form ridge regression, with kernel coefficients fixed at the RBF Taylor values rather than learned via backprop. In this way, PolyMem injects order-wise higher-order interactions into statistical memory, without storing high-order statistical tensors. Specifically, let Fi, F j ∈ RD denote two L2-normalized feature vectors in the backbone feature space. Rather than relying on an random lifted space, we seek a more structured feature space induced by a principled similarity prior. To this end, we consider the RBF kernel: 
+
+kRBF (Fi, F j ) = exp  −γ∥Fi − Fj ∥22
+
+ = exp( −γ∥Fi∥22) exp( −γ∥Fj ∥22) exp(2 γF ⊤ 
+
+> i
+
+Fj ). (3) 6We set γ by the median heuristic on normalized features. The last factor admits the Taylor expansion: 
+
+exp(2 γF ⊤ 
+
+> i
+
+Fj ) = 1 + 2 γ(F ⊤ 
+
+> i
+
+Fj )
+
+| {z }
+
+> 1st-order
+
++ (2 γ)2
+
+2! (F ⊤ 
+
+> i
+
+Fj )2
+
+| {z }
+
+> 2nd-order
+
++ (2 γ)3
+
+3! (F ⊤ 
+
+> i
+
+Fj )3
+
+| {z }
+
+> 3rd-order
+
++ · · · . (4) This expansion shows that the RBF kernel can be decomposed into polynomial feature interactions of different orders. The linear term captures 1st-order interactions between the two feature vectors, the quadratic term captures 2nd-order interactions, and higher-degree terms further encode increasingly complex feature interactions. Therefore, the RBF expansion provides a natural order-wise form for constructing structured feature representations. To obtain a controllable order-wise representation in the mapped feature space, PolyMem retains the Taylor expansion up to order L. For original features, this corresponds to the following finite-order polynomial kernel: 
+
+k(L)Poly (Fi, F j ) = e−2γLX
+
+> n=0
+
+(2 γ)n
+
+n! (F ⊤ 
+
+> i
+
+Fj )n. (5) Directly constructing the corresponding polynomial features would still be expensive. Therefore, PolyMem adopts TensorSketch [27] to approximate each polynomial term in a compact form. Let 
+
+TS n(Fi) ∈ RMn denote the sketch feature for the n-th order interaction, where 1 + PLn=1 Mn = M .The remaining dimensions are evenly allocated across orders. Then the lifted feature is defined as 
+
+ϕPoly (Fi) = 
+
+"
+
+e−γ , e −γ
+
+r 2γ
+
+1! TS 1(Fi), . . . , e −γ
+
+r (2 γ)L
+
+L! TS L(Fi)
+
+#
+
+∈ RM . (6) This mapping satisfies ϕPoly (Fi)⊤ϕPoly (Fj ) ≈ k(L)Poly (Fi, F j ), thereby approximating the first L
+
+orders of feature interactions within a fixed dimension M . Following the notation in Sec. 4.1, we define the resulting lifted feature of sample i as F ′ 
+
+> i
+
+:= ϕPoly (Fi) ∈ RM . PolyMem does not modify the underlying closed-form learning procedure. Instead, it directly substitutes this order-wise polynomial lifted feature into the same accumulated-statistics form underlying ridge regression. That is, by using F ′ 
+
+> i
+
+in Eq. 2, PolyMem accumulates Q and G in the mapped space without storing old samples, and obtains the classifier weights W through the same closed-form ridge regression solution. 
+
+We provide the theoretical background in the Appendix. 
+
+This design brings two key advantages. First, it replaces the heuristic random lifting in RanPAC with a structured order-wise polynomial mapping, making different orders of feature interactions explicit and analyzable. Second, it enables implicit high-order statistical modeling while retaining the same memory-efficient accumulated statistics. Although PolyMem still only accumulates Q
+
+and G, these statistics are computed over polynomially lifted features and therefore reflect richer feature interactions of the original feature distribution up to order L. Consequently, PolyMem improves the distribution modeling capacity of statistical memory while preserving the replay-free and memory-efficient advantages of ridge regression. 
+
+## 5 Experiments 
+
+5.1 Experimental Setup Baselines. We adopt the following PTM-based CIL methods as baselines: L2P [45], Dual-Prompt [44], CODA-Prompt [36], SLCA [59],SimpleCIL [64], APER [64], EASE [67], RanPAC [21], MOS [37], and TUNA [43]. For a fair comparison, as described in Sec. 4.1, these baselines use the same backbone. Datasets. We use 6 widely used public 3D datasets to construct cross-domain mixed 3D data. Specifically, ModelNet [51] and ShapeNet [1] belong to CAD domains, mainly consisting of clean 3D models collected from online sources. ShapeNet-C [34] is a corrupted point cloud domain built upon ShapeNet, designed to simulate common 3D corruptions. ScanObjectNN [39] contains real indoor object point clouds scanned by low-cost RGB-D cameras. CO3D [33] is collected from crowdsourced smartphone videos, with real object point clouds reconstructed via Structure-from-Motion. OmniObject3D [46] contains high-quality real-scanned 3D objects across multiple categories. The training and evaluation protocols follow Domain3D-CIL, as detailed in Sec. 3.2. Evaluation Metrics. We report performance on two domains, denoted as D1 and D2, where D1 corresponds 7to the CAD domain and D2 corresponds to the real or corrupted domain. Following standard CIL evaluation, we adopt two base metrics: Last Accuracy (LA) , the accuracy over all classes after the final incremental task, i.e., LA = aT ; and Cumulative Accuracy (CA) , the average accuracy over all incremental tasks, i.e., CA = 1
+
+T
+
+PTt=1 at. For each metric, we report the performance on D1, on D2,and their difference D1 − D2. We formally define performance discrepancy as this non-absolute cross-domain metric gap, i.e., Gap = Metric D1 − Metric D2 , where Metric ∈ { LA , CA }. A smaller metric gap indicates better cross-domain balance. All reported results are averaged over three runs. 
+
+5.2 Main Results 
+
+Table 1: Quantitative evaluation of PTM-based CIL baselines and PolyMem on Domain3D-CIL. Method ModelNet ( D1) + ScanObjectNN ( D2) ModelNet ( D1) + CO3D ( D2)Last Acc. Cum. Acc. Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓
+
+Joint-Training 93 .68 91 .48 2.20 - - - 92 .88 89 .21 3.67 - - -L2P [45] 62.44 52.49 9.95 78.49 72.54 5.95 52.03 24.63 27.40 68.21 53.16 15.04 DualPrompt [44] 58.59 45.92 12.67 78.88 74.65 4.23 52.07 23.13 28.94 72.07 54.93 17.14 CODA-Prompt [36] 61.14 51.69 9.45 77.51 69.49 8.02 58.43 36.51 21.92 72.63 55.20 17.44 SLCA [59] 85.05 72.96 12.09 92.13 84.41 7.72 80.88 58.41 22.47 89.81 77.23 12.59 SimpleCIL [64] 88.82 72.37 16.45 94.48 80.29 14.19 83.14 58.87 24.27 90.93 75.16 15.77 APER [64] 70.38 35.79 34.59 79.09 53.19 25.90 55.31 43.40 11.91 72.35 64.29 8.07 EASE [67] 65.68 52.88 12.80 75.07 70.65 4.42 49.39 31.97 17.42 65.64 55.05 10.59 RanPAC [21] 89.30 80.52 8.78 94.07 88.70 5.37 90.34 81.32 9.02 93.93 85.37 8.56 MOS [37] 91.07 81.50 9.57 95.38 91.06 4.32 88.01 76.51 11.50 94.38 87.00 7.38 TUNA [43] 88.82 80.52 8.30 94.46 91.69 2.77 87.24 66.10 21.14 93.41 79.74 13.67 PolyMem (Ours) 92.50 87.90 4.60 95.90 93.41 2.48 90.67 84.35 6.32 94.29 88.56 5.73 
+
+Method ShapeNet ( D1) + OmniObject3D ( D2) ShapeNet ( D1) + ShapeNet-C ( D2)Last Acc. Cum. Acc. Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓
+
+Joint-Training 88 .47 86 .11 2.36 - - - 87 .42 85 .01 2.41 - - -L2P [45] 57.08 34.03 23.05 75.58 50.31 25.27 61.96 50.93 11.03 80.22 72.06 8.16 DualPrompt [44] 59.61 35.42 24.19 79.54 51.67 27.87 62.69 52.37 10.32 77.15 68.33 8.82 CODA-Prompt [36] 65.96 44.44 21.52 82.71 61.87 20.84 69.28 56.98 12.30 84.06 74.72 9.34 SLCA [59] 79.03 59.03 20.00 91.19 71.64 19.55 78.20 63.35 14.85 91.18 82.00 9.18 SimpleCIL [64] 77.52 53.47 24.05 88.98 63.59 25.39 76.60 69.34 7.26 88.50 82.76 5.74 APER [64] 68.52 29.86 38.66 80.28 38.34 41.94 66.75 59.29 7.46 79.11 72.31 6.80 EASE [67] 58.74 44.44 14.30 75.29 61.92 13.37 68.82 52.07 16.75 84.79 69.73 15.06 RanPAC [21] 83.26 74.69 8.57 89.98 85.10 4.88 76.33 69.70 6.62 90.06 84.34 5.72 MOS [37] 81.95 70.14 11.81 92.29 78.01 14.28 82.16 72.29 9.87 92.40 86.53 5.87 TUNA [43] 84.48 65.28 19.20 93.20 76.53 16.67 83.13 75.36 7.77 92.81 88.16 4.65 PolyMem (Ours) 87.15 83.52 3.63 92.42 89.63 2.79 83.72 77.85 5.87 93.21 89.45 3.76 1 3 5 7 9    
+
+> Task ID
+> 40 60 80 100
+> Acc (%)
+> D1
+> L2P DualPrompt CODA-Prompt SLCA SimpleCIL APER EASE RanPAC MOS TUNA PolyMem(Ours) Joint-Training( D1/D2)
+> 13579
+> Task ID
+> D2
+> 1
+
+(a) ModelNet ( D1) + ScanObjectNN ( D2)1 3 5 7 9 11       
+
+> Task ID
+> 40 60 80 100
+> Acc (%)
+> D1
+> L2P DualPrompt CODA-Prompt SLCA SimpleCIL APER EASE RanPAC MOS TUNA PolyMem(Ours) Joint-Training( D1/D2)
+> 1357911
+> Task ID
+> D2
+> 1
+
+(b) ShapeNet ( D1) + OmniObject3D ( D2)
+
+Figure 4: Task-wise forgetting curves showing performance discrepancy between D1 and D2.As shown in Tab. 1, we report the results on Domain3D-CIL. The first row shows joint training (JT ). The datasets for evaluating JT are the same as those used to compute the LA of each baseline. Thus, JT serves as the performance upper bound without catastrophic forgetting. Across different mixed datasets, the static accuracy gap between D1 and D2 is only around 2–3%. For the other methods, the upper part of Tab. 1 uses the 10-task CIL setting of B4Inc4 , i.e., initial classes = 4 
+
+and increment = 4 . The lower part uses the 11-task setting of B5Inc5 . After introducing CIL, as 8shown in the other rows of Tab. 1, the performance drop on D2 is more severe than that on D1
+
+compared with JT. This is reflected by the larger LA gap of each method in Tab. 1, compared with JT. This verifies the prevalence of performance discrepancy. The dynamic trend of performance discrepancy is clearer in Fig. 4.Fig. 4a and Fig. 4b show the task-wise forgetting curves on two mixed datasets, respectively. The vertical axis denotes the accuracy on all seen classes after each task. Comparing the two forgetting curves of the same method across domains, we observe that the curve on D2 drops faster. The gap between D1 and D2 also tends to increase with the task ID. Comparing different methods on the same domain, all methods perform better and show smaller variance on D1.In contrast, on D2, different methods show clear performance differences. This demonstrates that continual learning on real or corrupted point clouds is a more challenging task. Next, we analyze the effectiveness of PolyMem. In Tab. 1, the best result in each column is highlighted in bold ,and the second-best result is underlined. PolyMem achieves the lowest LA and CA gaps across all mixed datasets, effectively mitigating performance discrepancy. Compared with any baseline, PolyMem achieves an average improvement of at least 6.8% on D2 in Tab. 1. This improvement is not obtained at the cost of performance on D1. Instead, PolyMem slightly improves or maintains a D1 performance close to JT. Fig. 4 further shows that the anti-forgetting advantage of PolyMem continues to increase in later tasks. 
+
+5.3 Ablation studies 1 2 3 4 5 6 7 8 9 10          
+
+> L
+> 80 85 90
+> Last Acc. (%)
+> ModelNet CO3D
+> 112345678910
+> L
+> 50 60 70 80 90
+> Last Acc. (%)
+> ShapeNet OmniObj3D
+> 1
+
+Figure 5: Ablation on L5 7.5 10 12.5 15 17.5 20   
+
+> M(×10 3)
+> 80 85 90
+> Last Acc. (%)
+> Gap = 6.88 3.44 3.63 2.23 2.23 3.01 2.69
+> D1
+> D2
+> 1
+
+Figure 6: Ablation on M0 1 2 3 4 
+
+> Time (h)
+> MOS TUNA EASE C-Prompt SLCA D-Prompt L2P APER Ours RanPAC SimpleCIL
+> 1
+
+Figure 7: Running Time In Sec. 5.2, the hyperparameters of PolyMem are fixed to L = 4 and M = 10000 . M is set the same as in RanPAC for a fair comparison. In this section, we further analyze the effect of the feature-interaction order L and the stability of PolyMem to the projected-space dimension M . Fig. 5 analyzes the effect of L on two mixed datasets. When L increases from 1 to 4, the performance improves clearly on both D1 and D2, with a smaller Last Acc. gap between the two domains. This suggests that the introduced higher-order interactions can better characterize the complex feature distributions of real or reconstructed point clouds, and even CAD point clouds. However, further increasing L does not lead to continuous gains. The performance on D1 gradually saturates, while that on D2 slightly decreases. This is because, under a fixed M , a larger L introduces higher-order feature interactions, but also reduces the sketch dimension Mn allocated to each order. As a result, the approximation quality of existing low- and middle-order interactions may decrease. Therefore, an overly large L
+
+cannot improve the discriminative ability without bound. Overall, L = 4 achieves a good balance between interaction modeling capacity and sketch approximation quality. This indicates that the gain of PolyMem mainly comes from moderate higher-order feature-interaction modeling, rather than simply using higher and higher orders. As shown in Fig. 6, the ablation on M shows that PolyMem remains stable once the M reaches a moderate scale. When M is small, e.g., M = 5000 , the overly limited sketch dimension leads to a large Last Acc. gap between D1 and D2. Under a fixed order L, a smaller M also reduces the Mn, increasing the approximation error of polynomial feature interactions at each order. Real point clouds are more sensitive to high-order feature-interaction modeling and require sufficient Mn. As M increases from a small value to a moderate scale, the performance on 
+
+D2 improves and the domain gap clearly decreases. Further increasing M yields stable performance, indicating that PolyMem does not rely on an overly large M . When M = 10000 , RanPAC and PolyMem store 110M and 100M parameters respectively. In contrast, directly storing explicit 3rd- or 4th-order feature interactions would require about 1B and 1T parameters. This highlights the benefit: PolyMem captures high-order interactions implicitly, instead of explicitly storing high-order tensors. Fig. 7 shows the time efficiency of different methods. The total training and testing time of PolyMem is much lower than that of most baselines, and is comparable to RanPAC. 9We provide implementation and dataset details, additional task-split experiments, results with different backbones, classic CIL baseline results in Fig. 1b, and more experimental details in the Appendix .
+
+## 6 Conclusion. 
+
+We formalize and study performance discrepancy in cross-domain 3D CIL, and introduce the Domain3D-CIL protocol to systematically evaluate this problem on heterogeneous point cloud. Experiments show that performance discrepancy is prevalent across CIL baselines. To address this issue, we propose PolyMem, which implicitly captures high-order interactions in heterogeneous 3D feature distributions. Experiments show that PolyMem improves performance on both domains while effectively reducing the cross-domain performance gap. However, this paper does not analyze all causes of performance discrepancy across all baselines. Future work will further investigate the mechanisms behind performance discrepancy in different methods. 10 References 
+
+[1] Angel X Chang, Thomas Funkhouser, Leonidas Guibas, Pat Hanrahan, Qixing Huang, Zimo Li, Silvio Savarese, Manolis Savva, Shuran Song, Hao Su, et al. Shapenet: An information-rich 3d model repository. 
+
+arXiv preprint arXiv:1512.03012 , 2015. [2] Qi Chen, Sihai Tang, Qing Yang, and Song Fu. Cooper: Cooperative perception for connected autonomous vehicles based on 3d point clouds. In 2019 IEEE 39th International Conference on distributed computing systems (ICDCS) , pages 514–524. IEEE, 2019. [3] Ali Cheraghian, Zeeshan Hayder, Sameera Ramasinghe, Shafin Rahman, Javad Jafaryahya, Lars Petersson, and Mehrtash Harandi. Canonical shape projection is all you need for 3d few-shot class incremental learning. In European Conference on Computer Vision , pages 36–53. Springer, 2024. [4] Townim Chowdhury, Ali Cheraghian, Sameera Ramasinghe, Sahar Ahmadi, Morteza Saberi, and Shafin Rahman. Few-shot class-incremental learning for 3d point cloud objects. In European Conference on Computer Vision , pages 204–220. Springer, 2022. [5] Yin Cui, Feng Zhou, Jiang Wang, Xiao Liu, Yuanqing Lin, and Serge Belongie. Kernel pooling for convolutional neural networks. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 2921–2930, 2017. [6] Angela Dai, Angel X Chang, Manolis Savva, Maciej Halber, Thomas Funkhouser, and Matthias Nießner. Scannet: Richly-annotated 3d reconstructions of indoor scenes. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 5828–5839, 2017. [7] Matt Deitke, Dustin Schwenk, Jordi Salvador, Luca Weihs, Oscar Michel, Eli VanderBilt, Ludwig Schmidt, Kiana Ehsani, Aniruddha Kembhavi, and Ali Farhadi. Objaverse: A universe of annotated 3d objects. In 
+
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 13142–13153, 2023. [8] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby. An image is worth 16x16 words: Transformers for image recognition at scale. In 
+
+International Conference on Learning Representations , 2021. [9] Arthur Douillard, Matthieu Cord, Charles Ollion, Thomas Robert, and Eduardo Valle. Podnet: Pooled outputs distillation for small-tasks incremental learning. In European conference on computer vision , pages 86–102. Springer, 2020. [10] Tom Fischer, Yaoyao Liu, Artur Jesslen, Noor Ahmed, Prakhar Kaushik, Angtian Wang, Alan L Yuille, Adam Kortylewski, and Eddy Ilg. inemo: Incremental neural mesh models for robust class-incremental learning. In European conference on computer vision , pages 357–374. Springer, 2024. [11] Qiankun Gao, Chen Zhao, Yifan Sun, Teng Xi, Gang Zhang, Bernard Ghanem, and Jian Zhang. A unified continual learning framework with general parameter-efficient tuning. In Proceedings of the IEEE/CVF International Conference on Computer Vision , pages 11483–11493, 2023. [12] Andreas Geiger, Philip Lenz, Christoph Stiller, and Raquel Urtasun. Vision meets robotics: The kitti dataset. The international journal of robotics research , 32(11):1231–1237, 2013. [13] Dipam Goswami, Yuyang Liu, Bartłomiej Twardowski, and Joost Van De Weijer. Fecam: Exploiting the heterogeneity of class distributions in exemplar-free continual learning. Advances in Neural Information Processing Systems , 36:6582–6595, 2023. [14] Arthur E Hoerl and Robert W Kennard. Ridge regression: Biased estimation for nonorthogonal problems. 
+
+Technometrics , 12(1):55–67, 1970. [15] Saihui Hou, Xinyu Pan, Chen Change Loy, Zilei Wang, and Dahua Lin. Learning a unified classifier incrementally via rebalancing. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 831–839, 2019. [16] James Kirkpatrick, Razvan Pascanu, Neil Rabinowitz, Joel Veness, Guillaume Desjardins, Andrei A Rusu, Kieran Milan, John Quan, Tiago Ramalho, Agnieszka Grabska-Barwinska, et al. Overcoming catastrophic forgetting in neural networks. Proceedings of the national academy of sciences , 114(13):3521–3526, 2017. [17] Alex H Lang, Sourabh Vora, Holger Caesar, Lubing Zhou, Jiong Yang, and Oscar Beijbom. Pointpillars: Fast encoders for object detection from point clouds. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 12697–12705, 2019. 
+
+11 [18] Zhizhong Li and Derek Hoiem. Learning without forgetting. IEEE transactions on pattern analysis and machine intelligence , 40(12):2935–2947, 2017. [19] Minghua Liu, Ruoxi Shi, Kaiming Kuang, Yinhao Zhu, Xuanlin Li, Shizhong Han, Hong Cai, Fatih Porikli, and Hao Su. Openshape: Scaling up 3d shape representation towards open-world understanding. Advances in neural information processing systems , 36:44860–44879, 2023. [20] Jinge Ma and Fengqing Zhu. Temporal imbalance of positive and negative supervision in class-incremental learning. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2026. [21] Mark D McDonnell, Dong Gong, Amin Parvaneh, Ehsan Abbasnejad, and Anton Van den Hengel. Ranpac: Random projections and pre-trained models for continual learning. Advances in Neural Information Processing Systems , 36:12022–12053, 2023. [22] Zichen Miao, Ze Wang, Wei Chen, and Qiang Qiu. Continual learning with filter atom swapping. In 
+
+International Conference on Learning Representations , 2021. [23] Yatian Pang, Eng Hock Francis Tay, Li Yuan, and Zhenghua Chen. Masked autoencoders for 3d point cloud self-supervised learning. World Scientific Annual Review of Artificial Intelligence , 1:2440001, 2023. [24] Min-Yeong Park, Jae-Ho Lee, and Gyeong-Moon Park. Versatile incremental learning: Towards class and domain-agnostic incremental learning. In European Conference on Computer Vision , pages 271–288. Springer, 2024. [25] Karl Pearson. Contributions to the mathematical theory of evolution. ii. skew variation in homogeneous material. Philosophical Transactions of the Royal Society of London. A , 186:343–414, 1895. [26] Karl Pearson. "Das Fehlergesetz und Seine Verallgemeinerungen durch Fechner und Pearson." A Rejoinder. 
+
+Biometrika , 4(1–2):169–212, 1905. [27] Ninh Pham and Rasmus Pagh. Fast and scalable polynomial kernels via explicit feature maps. In 
+
+Proceedings of the 19th ACM SIGKDD international conference on Knowledge discovery and data mining ,pages 239–247, 2013. [28] Charles R Qi, Or Litany, Kaiming He, and Leonidas J Guibas. Deep hough voting for 3d object detection in point clouds. In proceedings of the IEEE/CVF International Conference on Computer Vision , pages 9277–9286, 2019. [29] Charles R Qi, Hao Su, Kaichun Mo, and Leonidas J Guibas. Pointnet: Deep learning on point sets for 3d classification and segmentation. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 652–660, 2017. [30] Charles Ruizhongtai Qi, Li Yi, Hao Su, and Leonidas J Guibas. Pointnet++: Deep hierarchical feature learning on point sets in a metric space. Advances in neural information processing systems , 30, 2017. [31] Can Qin, Haoxuan You, Lichen Wang, C-C Jay Kuo, and Yun Fu. Pointdan: A multi-scale 3d domain adaption network for point cloud representation. Advances in Neural Information Processing Systems , 32, 2019. [32] Sylvestre-Alvise Rebuffi, Alexander Kolesnikov, Georg Sperl, and Christoph H Lampert. icarl: Incremental classifier and representation learning. In Proceedings of the IEEE conference on Computer Vision and Pattern Recognition , pages 2001–2010, 2017. [33] Jeremy Reizenstein, Roman Shapovalov, Philipp Henzler, Luca Sbordone, Patrick Labatut, and David Novotny. Common objects in 3d: Large-scale learning and evaluation of real-life 3d category reconstruction. In Proceedings of the IEEE/CVF international conference on computer vision , pages 10901–10911, 2021. [34] Jiawei Ren, Liang Pan, and Ziwei Liu. Benchmarking and analyzing point cloud classification under corruptions. In International Conference on Machine Learning , pages 18559–18575. PMLR, 2022. [35] Bernhard Schölkopf and Alexander J Smola. Learning with kernels: support vector machines, regulariza-tion, optimization, and beyond . MIT press, 2002. [36] James Seale Smith, Leonid Karlinsky, Vyshnavi Gutta, Paola Cascante-Bonilla, Donghyun Kim, Assaf Arbelle, Rameswar Panda, Rogerio Feris, and Zsolt Kira. Coda-prompt: Continual decomposed attention-based prompting for rehearsal-free continual learning. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 11909–11919, 2023. 
+
+12 [37] Hai-Long Sun, Da-Wei Zhou, Hanbin Zhao, Le Gan, De-Chuan Zhan, and Han-Jia Ye. Mos: Model surgery for pre-trained model-based class-incremental learning. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 39, pages 20699–20707, 2025. [38] Pei Sun, Henrik Kretzschmar, Xerxes Dotiwalla, Aurelien Chouard, Vijaysai Patnaik, Paul Tsui, James Guo, Yin Zhou, Yuning Chai, Benjamin Caine, et al. Scalability in perception for autonomous driving: Waymo open dataset. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,pages 2446–2454, 2020. [39] Mikaela Angelina Uy, Quang-Hieu Pham, Binh-Son Hua, Thanh Nguyen, and Sai-Kit Yeung. Revisiting point cloud classification: A new benchmark dataset and classification model on real-world data. In 
+
+Proceedings of the IEEE/CVF international conference on computer vision , pages 1588–1597, 2019. [40] Fu-Yun Wang, Da-Wei Zhou, Han-Jia Ye, and De-Chuan Zhan. Foster: Feature boosting and compression for class-incremental learning. In European conference on computer vision , pages 398–414. Springer, 2022. [41] Qiang Wang, Yuhang He, Songlin Dong, Xinyuan Gao, Shaokun Wang, and Yihong Gong. Non-exemplar domain incremental learning via cross-domain concept integration. In European Conference on Computer Vision , pages 144–162. Springer, 2024. [42] Yabin Wang, Zhiwu Huang, and Xiaopeng Hong. S-prompts learning with pre-trained transformers: An occam’s razor for domain incremental learning. Advances in Neural Information Processing Systems ,35:5682–5695, 2022. [43] Yan Wang, Da-Wei Zhou, and Han-Jia Ye. Integrating task-specific and universal adapters for pre-trained model-based class-incremental learning. In Proceedings of the IEEE/CVF International Conference on Computer Vision , pages 806–816, 2025. [44] Zifeng Wang, Zizhao Zhang, Sayna Ebrahimi, Ruoxi Sun, Han Zhang, Chen-Yu Lee, Xiaoqi Ren, Guolong Su, Vincent Perot, Jennifer Dy, et al. Dualprompt: Complementary prompting for rehearsal-free continual learning. In European conference on computer vision , pages 631–648. Springer, 2022. [45] Zifeng Wang, Zizhao Zhang, Chen-Yu Lee, Han Zhang, Ruoxi Sun, Xiaoqi Ren, Guolong Su, Vincent Perot, Jennifer Dy, and Tomas Pfister. Learning to prompt for continual learning. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 139–149, 2022. [46] Tong Wu, Jiarui Zhang, Xiao Fu, Yuxin Wang, Jiawei Ren, Liang Pan, Wayne Wu, Lei Yang, Jiaqi Wang, Chen Qian, et al. Omniobject3d: Large-vocabulary 3d object dataset for realistic perception, reconstruction and generation. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,pages 803–814, 2023. [47] Xiaoyang Wu, Daniel DeTone, Duncan Frost, Tianwei Shen, Chris Xie, Nan Yang, Jakob Engel, Richard Newcombe, Hengshuang Zhao, and Julian Straub. Sonata: Self-supervised learning of reliable point representations. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 22193–22204, 2025. [48] Xiaoyang Wu, Li Jiang, Peng-Shuai Wang, Zhijian Liu, Xihui Liu, Yu Qiao, Wanli Ouyang, Tong He, and Hengshuang Zhao. Point transformer v3: Simpler faster stronger. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 4840–4851, 2024. [49] Xiaoyang Wu, Yixing Lao, Li Jiang, Xihui Liu, and Hengshuang Zhao. Point transformer v2: Grouped vec-tor attention and partition-based pooling. Advances in Neural Information Processing Systems , 35:33330– 33342, 2022. [50] Yue Wu, Yinpeng Chen, Lijuan Wang, Yuancheng Ye, Zicheng Liu, Yandong Guo, and Yun Fu. Large scale incremental learning. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 374–382, 2019. [51] Zhirong Wu, Shuran Song, Aditya Khosla, Fisher Yu, Linguang Zhang, Xiaoou Tang, and Jianxiong Xiao. 3d shapenets: A deep representation for volumetric shapes. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 1912–1920, 2015. [52] Tuo Xiang, Xuemiao Xu, Bangzhen Liu, Jinyi Li, Yong Li, and Shengfeng He. Seeing 3d through 2d lenses: 3d few-shot class-incremental learning via cross-modal geometric rectification. In Proceedings of the IEEE/CVF International Conference on Computer Vision , pages 6761–6771, 2025. 
+
+13 [53] Jiangwei Xie, Shipeng Yan, and Xuming He. General incremental learning with domain-aware categorical representations. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,pages 14351–14360, 2022. [54] Le Xue, Mingfei Gao, Chen Xing, Roberto Martín-Martín, Jiajun Wu, Caiming Xiong, Ran Xu, Juan Carlos Niebles, and Silvio Savarese. Ulip: Learning a unified representation of language, images, and point clouds for 3d understanding. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 1179–1189, 2023. [55] Le Xue, Ning Yu, Shu Zhang, Artemis Panagopoulou, Junnan Li, Roberto Martín-Martín, Jiajun Wu, Caiming Xiong, Ran Xu, Juan Carlos Niebles, et al. Ulip-2: Towards scalable multimodal pre-training for 3d understanding. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 27091–27101, 2024. [56] Shipeng Yan, Jiangwei Xie, and Xuming He. Der: Dynamically expandable representation for class incremental learning. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 3014–3023, 2021. [57] Xianggang Yu, Mutian Xu, Yidan Zhang, Haolin Liu, Chongjie Ye, Yushuang Wu, Zizheng Yan, Chenming Zhu, Zhangyang Xiong, Tianyou Liang, et al. Mvimgnet: A large-scale dataset of multi-view images. In 
+
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 9150–9161, 2023. [58] Xumin Yu, Lulu Tang, Yongming Rao, Tiejun Huang, Jie Zhou, and Jiwen Lu. Point-bert: Pre-training 3d point cloud transformers with masked point modeling. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 19313–19322, 2022. [59] Gengwei Zhang, Liyuan Wang, Guoliang Kang, Ling Chen, and Yunchao Wei. Slca: Slow learner with classifier alignment for continual learning on a pre-trained model. In Proceedings of the IEEE/CVF International Conference on Computer Vision , pages 19148–19158, 2023. [60] Renrui Zhang, Ziyu Guo, Peng Gao, Rongyao Fang, Bin Zhao, Dong Wang, Yu Qiao, and Hongsheng Li. Point-m2ae: multi-scale masked autoencoders for hierarchical point cloud pre-training. Advances in neural information processing systems , 35:27061–27074, 2022. [61] Yujia Zhang, Xiaoyang Wu, Yixing Lao, Chengyao Wang, Zhuotao Tian, Naiyan Wang, and Hengshuang Zhao. Concerto: Joint 2d-3d self-supervised learning emerges spatial representations. In Advances in Neural Information Processing Systems , 2025. [62] Bowen Zhao, Xi Xiao, Guojun Gan, Bin Zhang, and Shu-Tao Xia. Maintaining discrimination and fairness in class incremental learning. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 13208–13217, 2020. [63] Hengshuang Zhao, Li Jiang, Jiaya Jia, Philip HS Torr, and Vladlen Koltun. Point transformer. In 
+
+Proceedings of the IEEE/CVF international conference on computer vision , pages 16259–16268, 2021. [64] Da-Wei Zhou, Zi-Wen Cai, Han-Jia Ye, De-Chuan Zhan, and Ziwei Liu. Revisiting class-incremental learning with pre-trained models: Generalizability and adaptivity are all you need. International Journal of Computer Vision , 133(3):1012–1032, 2025. [65] Da-Wei Zhou, Zi-Wen Cai, Han-Jia Ye, Lijun Zhang, and De-Chuan Zhan. Dual consolidation for pre-trained model-based domain-incremental learning. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 20547–20557, 2025. [66] Da-Wei Zhou, Hai-Long Sun, Jingyi Ning, Han-Jia Ye, and De-Chuan Zhan. Continual learning with pre-trained models: A survey. In Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence , pages 8363–8371, 2024. [67] Da-Wei Zhou, Hai-Long Sun, Han-Jia Ye, and De-Chuan Zhan. Expandable subspace ensemble for pre-trained model-based class-incremental learning. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 23554–23564, 2024. [68] Da-Wei Zhou, Qi-Wei Wang, Han-Jia Ye, and De-Chuan Zhan. A model or 603 exemplars: Towards memory-efficient class-incremental learning. In International Conference on Learning Representations ,2023. [69] Junsheng Zhou, Jinsheng Wang, Baorui Ma, Yu-Shen Liu, Tiejun Huang, and Xinlong Wang. Uni3d: Exploring unified 3d representation at scale. In The Twelfth International Conference on Learning Representations , 2023. 
+
+14 7 Appendix 
+
+7.1 Theoretical Background 
+
+This subsection provides background knowledge on distributional statistics, polynomial feature interactions, kernel approximation, and closed-form ridge regression. We emphasize that the materials in this subsection are standard concepts and tools, and are NOT methodological contributions of this work. 
+
+7.1.1 Distributional Statistics 
+
+A statistic is a quantity computed from data to summarize a property of an underlying distribution. Moments are a fundamental class of statistics that describe the shape of a distribution through expectations of powers of a random variable. For a scalar random variable X, the r-th raw moment and the r-th central moment are defined as 
+
+mr = E[Xr ], μr = E(X − μ)r , (7) where μ = E[X] is the mean. The mean and variance are the most common low-order summaries: 
+
+μ = E[X], σ2 = E(X − μ)2. (8) The mean describes the central location of a distribution, while the variance describes its dispersion. Beyond the first two orders, higher-order moments characterize more detailed properties of the distributional shape. The third central moment measures the asymmetry of a distribution around its mean. Its standardized form is known as skewness [25]: 
+
+γ1 = E(X − μ)3
+
+σ3 . (9) A positive skewness indicates that the distribution has a longer or heavier right tail, while a negative skewness indicates a longer or heavier left tail. When the distribution is symmetric around its mean, the third central moment is zero. Thus, skewness captures information that cannot be reflected by the mean or variance alone. The fourth central moment characterizes the concentration and tail behavior of a distribution. Its standardized form is called kurtosis [26]: 
+
+γ2 = E(X − μ)4
+
+σ4 . (10) A distribution with larger kurtosis typically places more probability mass in the tails and around the center, compared with a distribution with lighter tails. Kurtosis is therefore commonly used to describe heavy-tailed behavior and the frequency of extreme deviations from the mean. 
+
+7.1.2 Polynomial Feature Interactions 
+
+The previous subsection introduces moments as statistics obtained from expectations of powers of random variables. Polynomial feature interactions provide the corresponding feature-level building blocks for such statistics. The key distinction is that a polynomial interaction from a single sample is not yet a statistic; it becomes a statistic only after taking expectation over a distribution or empirical aggregation over samples. To see this in the simplest case, consider a scalar random variable X. The polynomial terms X2, X3,and X4 become raw moments after taking expectation: 
+
+E[X2], E[X3], E[X4]. (11) Central moments can be computed from these raw moments. For example, the second central moment is 
+
+E[( X − μ)2] = E[X2] − μ2, (12) and the third central moment is 
+
+E[( X − μ)3] = E[X3] − 3μE[X2] + 2 μ3. (13) 15 Thus, higher-order statistics such as variance and skewness are formed from aggregated polynomial terms, rather than from isolated single-sample products. For a vector F ∈ RD , the same idea extends to cross-dimensional statistics. An n-th order polynomial interaction is a degree-n product of feature dimensions: 
+
+Fd1 Fd2 · · · Fdn . (14) For a single sample, this is only a feature-level product. After aggregation, it forms a high-order raw moment or cross-moment: 
+
+E[Fd1 Fd2 · · · Fdn ] , 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Fi,d 1 Fi,d 2 · · · Fi,d n . (15) For example, second-order products FpFq give 
+
+1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Fi,p Fi,q , (16) which is a second-order raw cross-moment. When p = q, it reduces to a raw second moment of one feature dimension; after centering, the diagonal case corresponds to variance. Similarly, third-order products FpFq Fr give 
+
+1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Fi,p Fi,q Fi,r , (17) which is a third-order raw moment or cross-moment. After centering, the one-dimensional case 
+
+p = q = r corresponds to the numerator of skewness. Therefore, polynomial feature interactions are elementary components from which high-order distributional statistics can be constructed through sample-level aggregation. Polynomial interactions also arise naturally from polynomial kernels. Given two vectors Fi, F j ∈ RD ,the degree-n polynomial inner product 
+
+(F ⊤ 
+
+> i
+
+Fj )n (18) can be viewed as an inner product in a degree-n ordered monomial feature space, or equivalently a tensor-product feature space. For instance, the quadratic case expands as 
+
+(F ⊤ 
+
+> i
+
+Fj )2 =
+
+> D
+
+X
+
+> d=1
+
+Fi,d Fj,d 
+
+!2
+
+=
+
+> D
+
+X
+
+> p=1
+> D
+
+X
+
+> q=1
+
+Fi,p Fi,q Fj,p Fj,q . (19) This expansion shows that the quadratic kernel compares all ordered second-degree feature products between Fi and Fj . Higher-degree polynomial kernels analogously compare higher-degree ordered feature products. However, explicitly storing all polynomial interaction terms is impractical. A full ordered n-th order interaction tensor over a D-dimensional vector contains Dn entries. For D = 1024 , this gives 
+
+D2 = 1024 2 = 1 ,048 ,576 , (20) 
+
+D3 = 1024 3 = 1 ,073 ,741 ,824 , (21) and 
+
+D4 = 1024 4 = 1 ,099 ,511 ,627 ,776 (22) entries for second-, third-, and fourth-order interactions, respectively. Using 32-bit floating point storage, these correspond to approximately 4 MiB, 4 GiB, and 4 TiB for a single full tensor. The cost would further increase if such tensors were maintained separately for multiple classes. This distinction is important for PolyMem. PolyMem does not explicitly recover or store each high-order moment tensor. Instead, it constructs a compact polynomially lifted feature space and ac-cumulates ridge-regression statistics in that space. In this sense, polynomial feature interactions make high-order feature products available for statistical accumulation, while the compact approximation introduced in the next subsection keeps the representation memory-efficient. 16 7.1.3 RBF Kernel 
+
+A kernel function provides a way to measure the similarity between two inputs. From the perspective of kernel methods, a positive semi-definite kernel k(·, ·) corresponds to an implicit feature mapping 
+
+ϕ(·) such that 
+
+k(Fi, F j ) = ϕ(Fi)⊤ϕ(Fj ). (23) Therefore, a nonlinear similarity function in the original space can be interpreted as a linear inner product in a mapped feature space. This viewpoint is useful when the mapped feature space is high-dimensional or even infinite-dimensional, because the kernel value can be evaluated without explicitly constructing all mapped features. The radial basis function (RBF) kernel is one of the most widely used kernels. For two vectors 
+
+Fi, F j ∈ RD , it is defined as 
+
+kRBF (Fi, F j ) = exp  −γ∥Fi − Fj ∥22
+
+ , (24) where γ > 0 controls the bandwidth of the kernel. A larger γ makes the similarity decay faster as the distance between Fi and Fj increases, while a smaller γ gives a smoother similarity measure. In PolyMem, the backbone features are L2-normalized before constructing the polynomial mapping. For normalized features satisfying ∥Fi∥2 = ∥Fj ∥2 = 1 , the squared Euclidean distance can be written as 
+
+∥Fi − Fj ∥22 = ∥Fi∥22 + ∥Fj ∥22 − 2F ⊤ 
+
+> i
+
+Fj = 2 − 2F ⊤ 
+
+> i
+
+Fj . (25) Substituting this into the RBF kernel gives 
+
+kRBF (Fi, F j ) = exp  −γ(2 − 2F ⊤ 
+
+> i
+
+Fj )
+
+= exp( −2γ) exp(2 γF ⊤ 
+
+> i
+
+Fj ). (26) The second exponential term can be expanded using the Taylor series: 
+
+exp(2 γF ⊤ 
+
+> i
+
+Fj ) = 
+
+> ∞
+
+X
+
+> n=0
+
+(2 γ)n
+
+n! (F ⊤ 
+
+> i
+
+Fj )n. (27) Thus, the RBF kernel can be decomposed as 
+
+kRBF (Fi, F j ) = exp( −2γ)
+
+> ∞
+
+X
+
+> n=0
+
+(2 γ)n
+
+n! (F ⊤ 
+
+> i
+
+Fj )n. (28) This decomposition connects the RBF kernel to the polynomial feature interactions introduced in Appendix 7.1.2. The zeroth-order term is a constant term, the first-order term corresponds to linear interactions, the second-order term corresponds to quadratic interactions, and higher-order terms correspond to higher-degree polynomial interactions. Therefore, the RBF kernel provides an order-wise decomposition that contains polynomial interactions of all degrees. PolyMem uses a finite-order approximation by retaining the terms up to order L:
+
+k(L)Poly (Fi, F j ) = exp( −2γ)
+
+> L
+
+X
+
+> n=0
+
+(2 γ)n
+
+n! (F ⊤ 
+
+> i
+
+Fj )n. (29) The order L controls the maximum degree of polynomial interaction included in the mapped feature space. In this way, the RBF Taylor expansion provides a structured and order-wise basis for the PolyMem mapping, while the next subsection explains how these polynomial terms can be compactly approximated by TensorSketch. 
+
+7.1.4 Approximation by TensorSketch 
+
+The RBF Taylor expansion in Appendix 7.1.3 decomposes the RBF kernel into polynomial interactions of different orders. However, directly constructing the explicit monomial feature map for each order is impractical. For the n-th order term, the explicit feature map contains degree-n products of the input dimensions, whose size grows on the order of O(Dn). As discussed in Appendix 7.1.2, this cost becomes prohibitive even for moderate feature dimensions. 17 TensorSketch [27] provides a compact randomized approximation to such polynomial feature maps. Let ψn(F ) denote the explicit degree-n monomial feature map. It satisfies 
+
+ψn(Fi)⊤ψn(Fj ) = ( F ⊤ 
+
+> i
+
+Fj )n. (30) Instead of materializing ψn(F ), TensorSketch constructs a compact feature 
+
+TS n(F ) ∈ RMn , Mn ≪ Dn, (31) such that 
+
+TS n(Fi)⊤TS n(Fj ) ≈ (F ⊤ 
+
+> i
+
+Fj )n. (32) Therefore, TensorSketch keeps the polynomial-kernel inner product approximately available while avoiding the explicit O(Dn) expansion. PolyMem applies TensorSketch separately to each polynomial order in the finite-order RBF Taylor expansion. For the n-th order term, PolyMem uses a sketch feature TS n(F ) ∈ RMn and scales it according to the corresponding Taylor coefficient. Specifically, the order-n block is written as 
+
+e−γ
+
+r (2 γ)n
+
+n! TS n(F ). (33) The square-root scaling is used because the kernel approximation is obtained by taking an inner product between two mapped features. When two order-n blocks are multiplied, the product of the two scaling factors recovers the coefficient e−2γ (2 γ)n/n ! in the RBF Taylor expansion. By concatenating the constant term and all order-wise sketch features, PolyMem defines 
+
+ϕPoly (F ) = 
+
+"
+
+e−γ , e −γ
+
+r 2γ
+
+1! TS 1(F ), . . . , e −γ
+
+r (2 γ)L
+
+L! TS L(F )
+
+#
+
+∈ RM , (34) where the sketch dimensions satisfy 
+
+1 + 
+
+> L
+
+X
+
+> n=1
+
+Mn = M. (35) With this construction, the inner product between two PolyMem features approximates the finite-order RBF Taylor kernel: 
+
+ϕPoly (Fi)⊤ϕPoly (Fj ) ≈ e−2γLX
+
+> n=0
+
+(2 γ)n
+
+n! (F ⊤ 
+
+> i
+
+Fj )n
+
+= k(L)Poly (Fi, F j ).
+
+(36) Thus, TensorSketch enables PolyMem to retain structured order-wise polynomial interactions in a fixed-dimensional mapped feature space, without explicitly storing the full high-order interaction tensors. 
+
+7.1.5 Ridge Regression 
+
+The previous subsections explain how PolyMem constructs a compact mapped feature F ′ 
+
+> i
+
+=
+
+ϕPoly (Fi) ∈ RM that approximates the finite-order RBF Taylor feature space. After this map-ping is fixed, the remaining question is how to learn a classifier from these mapped features without storing previous-task samples. PolyMem follows the closed-form ridge regression formulation [14], which naturally supports additive statistic accumulation. For each sample xi, let F ′ 
+
+> i
+
+= ϕPoly (Fi) denote its mapped feature, and let eyi ∈ RC denote the one-hot label vector. A linear classifier in the mapped feature space predicts 
+
+s(xi) = W ⊤F ′ 
+
+> i
+
+, (37) where W ∈ RM ×C is the classifier weight matrix. Ridge regression learns W by minimizing the regularized squared loss: 
+
+min 
+
+> WN
+
+X
+
+> i=1
+
+W ⊤F ′ 
+
+> i
+
+− eyi 
+
+> 22
+
++ λ∥W ∥2 
+
+> F
+
+, (38) 18 where λ is the ridge coefficient. The regularization term improves numerical stability and controls the magnitude of the classifier weights. This objective has a closed-form solution. Taking the derivative with respect to W and setting it to zero gives the normal equation 
+
+(G + λI )W = Q, (39) where 
+
+G =
+
+> N
+
+X
+
+> i=1
+
+F ′ 
+
+> i
+
+F ′ 
+
+> i
+> ⊤
+
+∈ RM ×M , Q =
+
+> N
+
+X
+
+> i=1
+
+F ′ 
+
+> i
+
+e⊤ 
+
+> yi
+
+∈ RM ×C . (40) Thus, the classifier can be obtained as 
+
+W = ( G + λI )−1Q. (41) Here, G stores the uncentered second-order statistic of the mapped features, while Q stores the correlation between mapped features and class labels. The key property for class-incremental learning is that both G and Q are additive over samples. Suppose task t provides the current training set Dt. Instead of recomputing statistics from all previous data, we only need to add the current-task contributions: 
+
+G ← G + X
+
+> (xi,y i)∈D t
+
+F ′ 
+
+> i
+
+F ′
+
+> i
+> ⊤
+
+, Q ← Q + X
+
+> (xi,y i)∈D t
+
+F ′ 
+
+> i
+
+e⊤ 
+
+> yi
+
+. (42) After the update, solving (G + λI )W = Q gives the classifier over all classes represented in the accumulated statistics. Therefore, previous-task samples do not need to be stored. This additive formulation is valid only when all tasks are represented in a consistent feature space. This is why PolyMem initializes ϕPoly (·) once at the first task and keeps it fixed afterwards. With a fixed mapping, the statistics accumulated from different tasks are compatible, and the memory cost is determined by the stored matrices G ∈ RM ×M and Q ∈ RM ×C , rather than by the number of training samples. This directly leads to the task-wise PolyMem procedure summarized in Algorithm 1. 
+
+7.2 Algorithmic Description of PolyMem 
+
+We summarize the task-wise training procedure of PolyMem in Algorithm 1. The construction of the PolyMem mapping ϕPoly (·) follows the finite-order RBF Taylor expansion and the TensorSketch-based polynomial approximation introduced in Appendix 7.1.3 and Appendix 7.1.4. Here, we focus on how this fixed mapping is used for statistic accumulation and closed-form classifier estimation in the PTM-based CIL setting. Given an input sample xi, the pre-trained backbone extracts a feature Fi = f (xi) ∈ RD, which is mapped to F ′ 
+
+> i
+
+= ϕPoly (Fi) ∈ RM . The mapping ϕPoly (·) is initialized once at the first task and then kept fixed throughout the incremental learning process. This fixed-mapping design ensures that the accumulated statistics from all tasks are represented in the same polynomially lifted feature space. At each task, PolyMem only uses the current-task training samples to update the statistics Q and G
+
+defined in Eq. 2. The classifier is then obtained by the closed-form ridge regression solution described in Appendix 7.1.5. For a fair comparison with RanPAC [21], the ridge coefficient is selected from the same fixed candidate set Λ = {10 −8, 10 −7, . . . , 10 7, 10 8}. Therefore, PolyMem does not store raw samples or raw backbone features from previous tasks. 
+
+7.3 Dataset Details 
+
+This appendix summarizes the source datasets, mixed benchmarks, preprocessing, and semantic alignment used in Domain3D-CIL. Unless otherwise stated, point clouds are XYZ-only, resampled to 
+
+N =1024 points per shape, centered by subtracting the point-set centroid, and isotropically scaled by the maximum absolute coordinate so that all points fit inside [−1, 1] 3. We refer to this preprocessing as unit-cube normalization .
+
+Domain tag type vs. training. Each local HDF5 record stores a string field type indicating the data source or corruption type, e.g., clean , real , noisy , or a specific corruption identifier. The 
+
+type field is used only for bookkeeping and domain-stratified evaluation; it is not exposed to the model during incremental training , consistent with the main protocol where domain labels are unavailable during training. 19 Algorithm 1 PolyMem for PTM-based Class-Incremental Learning 
+
+Require: Incremental training sets {D t}T −1 
+
+> t=0
+
+; backbone f (·); total number of classes C; PolyMem dimension M ; Taylor order L; ridge candidate set Λ
+
+Ensure: Classifier weights for all seen classes after each task  
+
+> 1:
+
+Initialize Q ← 0 ∈ RM ×C , G ← 0 ∈ RM ×M , and PolyMem mapping parameters as empty  
+
+> 2:
+
+for t = 0 , 1, . . . , T − 1 do  
+
+> 3:
+
+Let Yt be the classes introduced at task t, and extract Fi = f (xi) for all (xi, y i) ∈ D t 
+
+> 4:
+
+if t = 0 then  
+
+> 5:
+
+Initialize the fixed mapping ϕPoly (·) with Taylor order L and dimension M ; set γ =
+
+ 2 median (i,j )∈P 0 ∥ ¯Fi − ¯Fj ∥22
+
+−1 on randomly sampled task-0 normalized feature pairs unless γ is manually specified  
+
+> 6:
+
+end if  
+
+> 7:
+
+Map current-task features as F ′ 
+
+> i
+
+= ϕPoly (Fi) ∈ RM and construct one-hot labels eyi ∈ RC 
+
+> 8:
+
+Update accumulated statistics: 
+
+Q ← Q + X
+
+> (xi,y i)∈D t
+
+F ′ 
+
+> i
+
+e⊤ 
+
+> yi
+
+, G ← G + X
+
+> (xi,y i)∈D t
+
+F ′ 
+
+> i
+
+F ′
+
+> i
+> ⊤
+
+. 
+
+> 9:
+
+Select λt ∈ Λ using a validation split of the current task and solve 
+
+Wt = ( G + λtI)−1Q.  
+
+> 10:
+
+Use the columns of Wt corresponding to seen classes Stj=0 Yj for classification  
+
+> 11:
+
+end for 7.3.1 Source Datasets ModelNet40 [51]. ModelNet40 contains synthetic CAD objects from common indoor and house-hold categories. We use the standard 40 -class split with train/test = 9,840/2,468 shapes, totaling 
+
+12,308 shapes. 
+
+ShapeNetCore(v2) [1]. We adopt a fixed 55-class point-cloud taxonomy, used consistently across ShapeNet, overlapping OmniObject3D categories, and ShapeNet-C. This taxonomy is not intended to enumerate the full ShapeNet synset inventory. The commonly used split contains train/validation/test = 35,708/5,158/10,261 shapes. Following our experimental protocol, we use only the training and test partitions, resulting in train/test = 35,708/10,261 shapes, totaling 45,969 shapes. The validation partition is not used in our benchmark construction. 
+
+ScanObjectNN [39]. ScanObjectNN contains real indoor object scans captured with RGB-D sensors. We use the 15 categories in the official shape_names_ext order distributed with the HKUST reference materials. The full split contains train/test = 2,309/581 scans, totaling 2,890 
+
+scans. 
+
+CO3D [33]. CO3D provides real object reconstructions from crowdsourced videos. We use the official sequence-level reconstructed point clouds in PLY format bundled with CO3D v2, typically corresponding to one fused reconstruction per video sequence rather than per-frame point clouds. For the ModelNet40 + CO3D benchmark, we retain 13 categories that can be aligned with ModelNet40. After an approximately 80/20 stratified split per class with a fixed random seed, the retained subset contains train/test = 8,823/2,205 point clouds, totaling 11,028 point clouds. 
+
+OmniObject3D [46]. OmniObject3D contains high-quality real-scanned 3D objects over 216 
+
+categories. Before semantic filtering and merging with ShapeNet, the split used here contains 
+
+train/test = 4,641/1,270 scans, totaling 5,911 scans. 
+
+ShapeNet-C. ShapeNet-C denotes corrupted ShapeNet counterparts constructed following PointCloud-C [34]. We use the complete ShapeNet-C bank constructed from ShapeNet, covering the following corruption families: scale , jitter , rotate , dropout_global , dropout_local ,20 Table 2: Semantic alignments to ModelNet40 for ModelNet40 + ScanObjectNN and ModelNet40 + CO3D.                                
+
+> (a) ScanObjectNN →ModelNet40
+> ScanObjectNN ModelNet40 bed bed box glass_box cabinet wardrobe chair chair desk desk display monitor door door shelf bookshelf sink sink sofa sofa table table toilet toilet
+> (b) CO3D →ModelNet40
+> CO3D ModelNet40 bench bench bottle bottle bowl bowl car car chair chair couch sofa cup cup keyboard keyboard laptop laptop plant plant toilet toilet plane airplane vase vase
+
+add_global , and add_local . In the ShapeNet + ShapeNet-C benchmark, corrupted samples are randomly selected from this ShapeNet-C bank following the mixing protocol described in §7.3.4. 
+
+7.3.2 Mixed Benchmarks: Filtered Cardinality 
+
+After semantic alignment, the number of non-CAD samples actually merged into each benchmark is as follows: • ModelNet40 + ScanObjectNN: total train/test = 11,844/2,971 . ModelNet40 contributes 
+
+9,840/2,468 CAD samples, and the semantically matched ScanObjectNN subset contributes 
+
+2,004/503 real scans. The full ScanObjectNN split is not entirely used; only categories with a ModelNet40 mapping are retained. • ModelNet40 + CO3D: total train/test = 18,663/4,673 . ModelNet40 contributes 9,840/2,468 
+
+CAD samples, and CO3D contributes 8,823/2,205 real reconstructed point clouds from the 13 aligned categories. • ShapeNet + OmniObject3D: total train/test = 36,231/10,405 . ShapeNet contributes 
+
+35,708/10,261 CAD samples, and the semantically matched OmniObject3D subset con-tributes 523/144 real scans. Only OmniObject3D categories listed in Table 3 are retained. • ShapeNet + ShapeNet-C: total train/test = 35,708/20,522 . The training split contains 
+
+17,854 clean ShapeNet samples and 17,854 corrupted ShapeNet-C samples under a non-overlap object split. The corrupted branch is randomly sampled from the complete ShapeNet-C bank using only objects not selected for the clean branch. The test split contains the full clean ShapeNet test set 10,261 and a corresponding corrupted ShapeNet-C test subset of 
+
+10,261 samples. 
+
+7.3.3 Semantic Mappings 
+
+Tables 2 and 3 summarize the semantic bridges used to merge non-CAD datasets into the correspond-ing CAD taxonomies. 
+
+7.3.4 ShapeNet + ShapeNet-C Generation Training split. Let Itrain be the ShapeNet training object index set. We randomly partition 
+
+Itrain into two disjoint equal-size subsets, Iclean and Icorr , such that 
+
+Iclean ∩ I corr = ∅, |I clean | = |I corr | = 17 ,854 .
+
+For indices in Iclean , we keep the original clean ShapeNet point clouds. For indices in Icorr , we randomly sample corresponding ShapeNet-C point clouds of the same underlying objects from the complete ShapeNet-C bank. When multiple corrupted candidates are available for an object, one 21 Table 3: Full OmniObject3D → ShapeNet55 name mapping used in ShapeNet + OmniObject3D.                                              
+
+> OmniObject3D ShapeNet55 OmniObject3D ShapeNet55 bed bed bottle bottle bowl bowl cabinet cabinet chair chair clock clock cup mug guitar guitar hat cap helmet helmet keyboard keyboard knife knife laptop laptop light lamp microwaveoven microwave monitor display picnic_basket basket pillow pillow remote_control remote_control skateboard skateboard sofa sofa speaker loudspeaker table table bus bus car car motorcycle motorcycle plane airplane train train
+
+candidate is randomly selected. Therefore, each physical CAD object appears in exactly one training branch, either clean or corrupted, but never both. 
+
+Test split. For evaluation, we concatenate the full clean ShapeNet test split with a corresponding ShapeNet-C test subset. Specifically, each of the 10,261 ShapeNet test objects appears once in the clean branch and once in the corrupted branch, giving 20,522 test samples in total. When multiple corrupted candidates are available for a test object, one candidate is selected using the same fixed-seed selection protocol. This design allows domain-wise evaluation between clean CAD point clouds and corrupted point clouds while preserving object-index correspondence. 
+
+7.3.5 Data Availability and Licensing 
+
+The source datasets used in this paper are available from their official providers, subject to their respective licenses or terms of use. We do not redistribute any official dataset files, raw point clouds, reconstructed point clouds, meshes, or processed HDF5 shards derived from these datasets. We will only provides the information needed to reproduce the benchmark construction after users obtain the official datasets themselves. Users are responsible for obtaining the source datasets from the official providers and complying with the corresponding licenses and terms of use. Thus, reproducing Domain3D-CIL requires following the mixed-benchmark protocol described above using properly obtained local copies of the source datasets. 
+
+7.4 PTM-based CIL Experiment Details 
+
+In this subsection, we report the run-to-run standard deviations of the results in the main paper. All entries are averaged over the same repeated runs used in Tab. 1, and are presented as mean ± standard deviation. For readability, we split the results by mixed benchmark: ModelNet + ScanObjectNN in Tab. 4, ModelNet + CO3D in Tab. 5, ShapeNet + OmniObject3D in Tab. 6, and ShapeNet + ShapeNet-C in Tab. 7. We further clarify the cross-domain Last Accuracy gap used in the main paper. For clarity and direct interpretability, the main paper reports the raw performance difference between the CAD domain and the corresponding real or corrupted domain: 
+
+Gap LA = LA D1 − LA D2 ,
+
+where D1 denotes the CAD domain and D2 denotes the real or corrupted domain. This raw gap directly reflects the observed cross-domain performance discrepancy after incremental learning. As shown by the joint-training results 1 in the main paper, the static gap between the two domains is relatively small compared with the gaps produced by most CIL methods, so the raw gap provides a simple and intuitive summary of the phenomenon. For completeness, we also report a static-gap-normalized version of the LA Gap in this appendix. Let LA JT  
+
+> D1
+
+and LA JT  
+
+> D2
+
+denote the joint-training Last Accuracy on the two domains of the same mixed 22 Table 4: Mean and standard deviation on ModelNet + ScanObjectNN. 
+
+Method Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap † 
+
+> LA
+
+↓ D1↑ D2↑ Gap CA ↓
+
+Joint-Training 93 .68 91 .48 0.00 - - -L2P [45] 62 .44 ±0.69 52 .49 ±1.06 7.75 ±0.58 78 .49 ±0.33 72 .54 ±0.82 5.95 ±0.44 
+
+DualPrompt [44] 58 .59 ±0.42 45 .92 ±1.24 10 .47 ±1.05 78 .88 ±0.61 74 .65 ±0.70 4.23 ±0.51 
+
+CODA-Prompt [36] 61 .14 ±0.83 51 .69 ±0.57 7.25 ±0.91 77 .51 ±0.29 69 .49 ±0.96 8.02 ±1.18 
+
+SLCA [59] 85 .05 ±0.44 72 .96 ±0.72 9.89 ±0.53 92 .13 ±0.18 84 .41 ±0.69 7.72 ±0.84 
+
+SimpleCIL [64] 88 .82 ±0.31 72 .37 ±1.10 14 .25 ±0.76 94 .48 ±0.26 80 .29 ±0.73 14 .19 ±0.69 
+
+APER [64] 70 .38 ±0.92 35 .79 ±1.38 32 .39 ±1.02 79 .09 ±0.58 53 .19 ±1.21 25 .90 ±1.34 
+
+EASE [67] 65 .68 ±0.47 52 .88 ±0.91 10 .60 ±1.31 75 .07 ±0.73 70 .65 ±0.44 4.42 ±0.79 
+
+RanPAC [21] 89 .30 ±0.29 80 .52 ±0.67 6.58 ±0.45 94 .07 ±0.12 88 .70 ±0.51 5.37 ±0.28 
+
+MOS [37] 91 .07 ±0.26 81 .50 ±0.41 7.37 ±0.89 95 .38 ±0.21 91 .06 ±0.37 4.32 ±0.53 
+
+TUNA [43] 88 .82 ±0.18 80 .52 ±0.74 6.10 ±0.32 94 .46 ±0.27 91 .69 ±0.46 2.77 ±0.44 
+
+PolyMem (Ours) 92.50 ±0.27 87.90 ±0.55 2.40 ±0.34 95.90 ±0.17 93.41 ±0.42 2.48 ±0.31 
+
+Table 5: Mean and standard deviation on ModelNet + CO3D. 
+
+Method Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap † 
+
+> LA
+
+↓ D1↑ D2↑ Gap CA ↓
+
+Joint-Training 92 .88 89 .21 0.00 - - -L2P [45] 52 .03 ±1.18 24 .63 ±2.04 23 .73 ±1.47 68 .21 ±0.77 53 .16 ±1.41 15 .04 ±1.09 
+
+DualPrompt [44] 52 .07 ±0.96 23 .13 ±1.83 25 .27 ±2.22 72 .07 ±0.49 54 .93 ±1.28 17 .14 ±1.53 
+
+CODA-Prompt [36] 58 .43 ±0.74 36 .51 ±1.62 18 .25 ±1.31 72 .63 ±0.67 55 .20 ±1.05 17 .44 ±1.43 
+
+SLCA [59] 80 .88 ±0.56 58 .41 ±1.14 18 .80 ±0.92 89 .81 ±0.36 77 .23 ±0.93 12 .59 ±1.18 
+
+SimpleCIL [64] 83 .14 ±0.47 58 .87 ±1.36 20 .60 ±1.04 90 .93 ±0.41 75 .16 ±0.82 15 .77 ±1.23 
+
+APER [64] 55 .31 ±1.09 43 .40 ±1.21 8.24 ±0.86 72 .35 ±0.70 64 .29 ±1.02 8.07 ±0.74 
+
+EASE [67] 49 .39 ±0.84 31 .97 ±1.69 13 .75 ±1.84 65 .64 ±0.91 55 .05 ±1.13 10 .59 ±0.96 
+
+RanPAC [21] 90 .34 ±0.35 81 .32 ±0.79 5.35 ±0.48 93 .93 ±0.19 85 .37 ±0.64 8.56 ±0.73 
+
+MOS [37] 88 .01 ±0.28 76 .51 ±0.66 7.83 ±0.91 94.38 ±0.24 87 .00 ±0.49 7.38 ±0.44 
+
+TUNA [43] 87 .24 ±0.52 66 .10 ±1.07 17 .47 ±0.82 93 .41 ±0.31 79 .74 ±0.88 13 .67 ±1.06 
+
+PolyMem (Ours) 90.67 ±0.31 84.35 ±0.68 2.65 ±0.44 94 .29 ±0.22 88.56 ±0.46 5.73 ±0.39 
+
+benchmark. We define Gap LA = LA D1 − LA D2 and Gap JT LA = LA JT 
+
+D1 − LA JT 
+
+D2 . The normalized LA Gap is then defined as the difference between the incremental-learning performance drops on the two domains: 
+
+Gap †
+
+LA =  LA JT 
+
+D2 − LA D2
+
+ −  LA JT 
+
+D1 − LA D1
+
+ = Gap LA − Gap JT LA .
+
+This quantity measures how much more the real or corrupted domain degrades than the CAD domain when moving from joint training to class-incremental learning. A smaller Gap †
+
+LA indicates that a method introduces less additional cross-domain imbalance beyond the joint-training reference. Accordingly, the LA Gap columns in Tabs. 4, 5, 6, and 7 report Gap †
+
+LA , while the Cum. Acc. Gap columns retain the raw cumulative gap because joint training does not define an incremental cumulative-accuracy trajectory. The main paper reports task-wise forgetting curves for two representative mixed benchmarks, Model-Net + ScanObjectNN and ShapeNet + OmniObject3D in Fig. 4a and Fig. 4b. Here, we provide the complementary curves for ModelNet + CO3D and ShapeNet + ShapeNet-C in Fig. 8a and Fig. 8b. Fig. 9 summarizes the overall performance of different PTM-based CIL methods on the four mixed datasets of Domain3D-CIL. For each method, we aggregate the final-task results over the two domains and over all mixed datasets, so as to jointly compare overall recognition performance and cross-domain balance. Specifically, the left panel reports the cross-domain average Last Accuracy (LA), defined as 
+
+LA = 1
+
+|B| 
+
+X
+
+b∈B 
+
+LA bD1 + LA bD2
+
+2 ,
+
+where B denotes the set of four mixed datasets, and D1 and D2 denote the CAD domain and the corresponding real or corrupted domain, respectively. This metric measures the overall classification 23 Table 6: Mean and standard deviation on ShapeNet + OmniObject3D. 
+
+Method Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap † 
+
+> LA
+
+↓ D1↑ D2↑ Gap CA ↓
+
+Joint-Training 88 .47 86 .11 0.00 - - -L2P [45] 57 .08 ±1.31 34 .03 ±2.24 20 .69 ±1.73 75 .58 ±0.86 50 .31 ±1.87 25 .27 ±2.10 
+
+DualPrompt [44] 59 .61 ±1.05 35 .42 ±2.03 21 .83 ±2.37 79 .54 ±0.79 51 .67 ±1.61 27 .87 ±1.92 
+
+CODA-Prompt [36] 65 .96 ±0.91 44 .44 ±1.74 19 .16 ±1.28 82 .71 ±0.69 61 .87 ±1.30 20 .84 ±1.56 
+
+SLCA [59] 79 .03 ±0.64 59 .03 ±1.47 17 .64 ±1.03 91 .19 ±0.44 71 .64 ±1.12 19 .55 ±1.35 
+
+SimpleCIL [64] 77 .52 ±0.78 53 .47 ±1.62 21 .69 ±1.84 88 .98 ±0.52 63 .59 ±1.09 25 .39 ±1.47 
+
+APER [64] 68 .52 ±1.26 29 .86 ±2.58 36 .30 ±2.06 80 .28 ±0.94 38 .34 ±2.14 41 .94 ±1.73 
+
+EASE [67] 58 .74 ±0.87 44 .44 ±1.52 11 .94 ±1.96 75 .29 ±0.74 61 .92 ±1.24 13 .37 ±0.91 
+
+RanPAC [21] 83 .26 ±0.48 74 .69 ±0.92 6.21 ±0.71 89 .98 ±0.33 85 .10 ±0.69 4.88 ±0.56 
+
+MOS [37] 81 .95 ±0.37 70 .14 ±0.81 9.45 ±1.02 92 .29 ±0.29 78 .01 ±0.76 14 .28 ±0.67 
+
+TUNA [43] 84 .48 ±0.53 65 .28 ±1.11 16 .84 ±0.88 93.20 ±0.34 76 .53 ±0.91 16 .67 ±1.12 
+
+PolyMem (Ours) 87.15 ±0.42 83.52 ±0.86 1.27 ±0.51 92 .42 ±0.24 89.63 ±0.63 2.79 ±0.47 
+
+Table 7: Mean and standard deviation on ShapeNet + ShapeNet-C. 
+
+Method Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap † 
+
+> LA
+
+↓ D1↑ D2↑ Gap CA ↓
+
+Joint-Training 87 .42 85 .01 0.00 - - -L2P [45] 61 .96 ±0.88 50 .93 ±1.23 8.62 ±0.74 80 .22 ±0.61 72 .06 ±0.92 8.16 ±1.05 
+
+DualPrompt [44] 62 .69 ±0.73 52 .37 ±1.06 7.91 ±1.18 77 .15 ±0.66 68 .33 ±0.83 8.82 ±0.69 
+
+CODA-Prompt [36] 69 .28 ±0.64 56 .98 ±0.94 9.89 ±0.81 84 .06 ±0.47 74 .72 ±0.71 9.34 ±0.96 
+
+SLCA [59] 78 .20 ±0.52 63 .35 ±0.81 12 .44 ±1.04 91 .18 ±0.36 82 .00 ±0.58 9.18 ±0.62 
+
+SimpleCIL [64] 76 .60 ±0.39 69 .34 ±0.71 4.85 ±0.43 88 .50 ±0.31 82 .76 ±0.63 5.74 ±0.55 
+
+APER [64] 66 .75 ±0.81 59 .29 ±1.12 5.05 ±0.77 79 .11 ±0.58 72 .31 ±0.86 6.80 ±0.91 
+
+EASE [67] 68 .82 ±0.79 52 .07 ±1.35 14 .34 ±1.11 84 .79 ±0.69 69 .73 ±0.97 15 .06 ±1.26 
+
+RanPAC [21] 76 .33 ±0.34 69 .70 ±0.66 4.21 ±0.37 90 .06 ±0.21 84 .34 ±0.52 5.72 ±0.61 
+
+MOS [37] 82 .16 ±0.29 72 .29 ±0.62 7.46 ±0.54 92 .40 ±0.25 86 .53 ±0.46 5.87 ±0.43 
+
+TUNA [43] 83 .13 ±0.36 75 .36 ±0.78 5.36 ±0.68 92 .81 ±0.28 88 .16 ±0.57 4.65 ±0.49 
+
+PolyMem (Ours) 83.72 ±0.24 77.85 ±0.49 3.46 ±0.41 93.21 ±0.19 89.45 ±0.44 3.76 ±0.36 
+
+performance after all incremental tasks are completed. The right panel reports the average LA Gap across the four mixed datasets: 
+
+Gap LA = 1
+
+|B| 
+
+X
+
+b∈B 
+
+
+
+LA bD1 − LA bD2
+
+
+
+,
+
+which measures the degree of cross-domain performance discrepancy. An ideal method should achieve a high LA while maintaining a small Gap LA . As shown in Fig. 9, PolyMem achieves a favorable trade-off: it maintains strong overall performance while effectively reducing the cross-domain performance discrepancy. 
+
+7.5 Additional Task-Split Experiments 
+
+To further evaluate the robustness of PolyMem under different class-incremental task partitions, we conduct additional experiments with task splits that differ from the default settings used in the main paper. Specifically, we consider two representative settings: ModelNet + CO3D with B20Inc4, where the base task contains 20 classes and each subsequent task introduces 4 new classes, resulting in 6 tasks in total; and ShapeNet + ShapeNet-C with B7Inc2, where the base task contains 7 classes and each subsequent task introduces 2 new classes, resulting in 25 tasks in total. Compared with the default task splits, the former uses a larger base task and fewer incremental stages, while the latter uses a smaller increment size and many more incremental stages. These two settings therefore provide complementary stress tests for examining whether the effectiveness of PolyMem depends on a particular task partition. Tables 8 and 9 report the quantitative results under these two additional task splits. The evaluation metrics follow the main experiments: we report Last Accuracy (LA), Cumulative Accuracy (CA), 24 1 3 5 7 9    
+
+> Task ID
+> 20 40 60 80 100
+> Acc (%)
+> D1
+> L2P DualPrompt CODA-Prompt SLCA SimpleCIL APER EASE RanPAC MOS TUNA PolyMem(Ours) Joint-Training( D1/D2)
+> 13579
+> Task ID
+> D2
+> 1
+
+(a) ModelNet ( D1) + CO3D( D2)1 3 5 7 9 11       
+
+> Task ID
+> 40 60 80 100
+> Acc (%)
+> D1
+> L2P DualPrompt CODA-Prompt SLCA SimpleCIL APER EASE RanPAC MOS TUNA PolyMem(Ours) Joint-Training( D1/D2)
+> 1357911
+> Task ID
+> D2
+> 1
+
+(b) ShapeNet ( D1) + ShapeNet-C ( D2)
+
+Figure 8: Task-wise forgetting curves showing performance discrepancy between D1 and D2.D-Prompt L2P EASE APER C-Prompt SLCA SimpleCIL TUNA RanPAC MOS Ours JT 
+
+> 45 50 55 60 65 70 75 80 85 90
+> Average Last Acc. (%)
+> 1
+
+(a) APER D-Prompt SimpleCIL L2P SLCA C-Prompt EASE TUNA MOS RanPAC Ours JT  
+
+> 0510 15 20
+> Last Acc. Gap (%)
+> 1
+
+(b) 
+
+Figure 9: Overall comparison of PTM-based CIL methods on Domain3D-CIL. Left: average Last Accuracy over both domains and all four mixed datasets. Right: average Last Accuracy Gap over the four mixed datasets. Higher average Last Accuracy and lower Last Accuracy Gap indicate better overall performance and stronger cross-domain balance. Table 8: Quantitative results on ModelNet + CO3D under the B20Inc4 task split. 
+
+Method Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓
+
+Joint-Training 92 .88 89 .21 3.67 - - -L2P [45] 64 .29 ±0.72 38 .15 ±1.16 26 .14 ±0.93 74 .44 ±0.48 54 .53 ±0.84 19 .91 ±0.71 
+
+DualPrompt [44] 70 .06 ±0.61 43 .06 ±1.02 27 .00 ±1.28 79 .49 ±0.44 58 .61 ±0.76 20 .88 ±0.65 
+
+CODA-Prompt [36] 62 .15 ±0.58 54 .82 ±0.95 7.33 ±0.62 70 .77 ±0.39 65 .23 ±0.68 5.54 ±0.49 
+
+SLCA [59] 82 .54 ±0.41 69 .89 ±0.86 12 .65 ±0.77 87 .47 ±0.25 74 .25 ±0.58 13 .23 ±0.67 
+
+SimpleCIL [64] 82 .98 ±0.33 59 .03 ±0.73 23 .95 ±0.96 86 .24 ±0.29 61 .13 ±0.52 25 .11 ±0.74 
+
+APER [64] 75 .08 ±0.63 70 .29 ±0.82 4.79 ±0.55 83 .93 ±0.47 83 .80 ±0.69 0.14 ±0.31 
+
+EASE [67] 57 .13 ±0.79 28 .98 ±1.08 28 .15 ±1.36 74 .24 ±0.52 59 .88 ±0.74 14 .36 ±0.86 
+
+RanPAC [21] 91 .57 ±0.22 85 .27 ±0.49 6.30 ±0.42 94.14 ±0.16 83 .52 ±0.36 10 .61 ±0.31 
+
+MOS [37] 91 .30 ±0.28 86 .37 ±0.44 4.93 ±0.51 92 .69 ±0.20 88 .08 ±0.31 4.61 ±0.37 
+
+TUNA [43] 89 .02 ±0.37 78 .46 ±0.62 10 .56 ±0.58 92 .36 ±0.24 83 .27 ±0.48 9.09 ±0.45 
+
+PolyMem (Ours) 92.27 ±0.21 88.28 ±0.46 3.99 ±0.33 93 .69 ±0.15 89.14 ±0.38 4.55 ±0.29 
+
+and the corresponding domain gap between the CAD domain D1 and the reconstructed or corrupted domain D2. Across both settings, the results are consistent with the observations in the main paper. Existing PTM-based CIL baselines still exhibit clear performance discrepancy between the two domains, whereas PolyMem achieves strong performance on both domains and reduces the cross-domain gap. Fig. 10 further visualizes the task-wise cross-domain average accuracy under the two additional task splits. To highlight the overall incremental learning performance, we report only one cross-domain curve for each method, obtained by averaging the two domain-specific accuracies at each incremental task. After learning task t, the model is evaluated on all classes observed so far. We denote the corresponding accuracy on domain Dk as atDk , where k ∈ { 1, 2}. The cross-domain average accuracy 25 Table 9: Quantitative results on ShapeNet + ShapeNet-C under the B7Inc2 task split. 
+
+Method Last Acc. Cum. Acc. 
+
+D1↑ D2↑ Gap ↓ D1↑ D2↑ Gap ↓
+
+Joint-Training 87 .42 85 .01 2.41 - - -L2P [45] 42 .35 ±1.42 34 .72 ±1.85 7.63 ±1.22 62 .33 ±0.94 54 .84 ±1.31 7.48 ±0.88 
+
+DualPrompt [44] 45 .33 ±1.26 35 .11 ±1.72 10 .22 ±1.85 65 .83 ±0.82 57 .59 ±1.18 8.24 ±1.27 
+
+CODA-Prompt [36] 42 .34 ±1.18 33 .56 ±1.58 8.78 ±1.06 58 .21 ±0.91 49 .03 ±1.09 9.18 ±1.21 
+
+SLCA [59] 75 .29 ±0.74 57 .00 ±1.28 18 .29 ±1.52 83 .40 ±0.55 70 .18 ±0.96 13 .21 ±0.83 
+
+SimpleCIL [64] 76 .27 ±0.62 58 .82 ±1.17 17 .45 ±1.34 83 .91 ±0.46 68 .03 ±0.81 15 .88 ±1.05 
+
+APER [64] 64 .24 ±1.07 51 .28 ±1.43 12 .96 ±1.16 75 .26 ±0.71 65 .57 ±1.05 9.69 ±0.79 
+
+EASE [67] 28 .71 ±1.58 20 .83 ±2.06 7.88 ±1.48 48 .20 ±1.12 43 .89 ±1.33 4.32 ±0.94 
+
+RanPAC [21] 81 .78 ±0.53 72 .24 ±0.97 9.54 ±0.74 88 .63 ±0.34 82 .64 ±0.68 5.98 ±0.59 
+
+MOS [37] 84 .99 ±0.49 75 .90 ±0.88 9.09 ±0.96 90 .41 ±0.31 83 .79 ±0.59 6.62 ±0.46 
+
+TUNA [43] 81 .76 ±0.66 74 .64 ±1.04 7.12 ±0.81 87 .72 ±0.42 82 .59 ±0.74 5.13 ±0.52 
+
+PolyMem (Ours) 86.51 ±0.38 78.85 ±0.76 7.66 ±0.62 91.40 ±0.27 86.32 ±0.58 5.08 ±0.41 4 8 12 16 20 24 28 32 36 40 
+
+> Number of Classes
+> 020 40 60 80 100
+> Average Accuracy (%)
+> L2P DualPrompt CODA-Prompt SLCA SimpleCIL APER EASE RanPAC MOS TUNA PolyMem (Ours) Joint-Training
+> 1
+
+(a) ModelNet + CO3D, B20Inc4 5 10 15 20 25 30 35 40 45 50 55  
+
+> Number of Classes
+> 020 40 60 80 100
+> Average Accuracy (%)
+> L2P DualPrompt CODA-Prompt SLCA SimpleCIL APER EASE RanPAC MOS TUNA PolyMem (Ours) Joint-Training
+> 1
+
+(b) ShapeNet + ShapeNet-C, B7Inc2 
+
+Figure 10: Cross-domain average accuracy under additional task splits. Each curve reports the average accuracy over the CAD domain and the corresponding reconstructed or corrupted domain at each incremental task. Left: ModelNet + CO3D with B20Inc4 and 6 tasks. Right: ShapeNet + ShapeNet-C with B7Inc2 and 25 tasks. PolyMem maintains stronger average accuracy across the incremental process, confirming its robustness to different task-split designs. at task t is then defined as 
+
+AvgAcc t = 12
+
+ atD1 + atD2
+
+ .
+
+This visualization focuses on the overall incremental learning performance under different task partitions, rather than separately showing the degradation on the two domains. Fig. 10a shows ModelNet + CO3D under B20Inc4 with 6 tasks, while Fig. 10b shows ShapeNet + ShapeNet-C under B7Inc2 with 25 tasks. Across both settings, PolyMem consistently maintains higher cross-domain average accuracy throughout the incremental process, especially in later tasks where catastrophic forgetting becomes more severe. These results indicate that the advantage of PolyMem is not tied to the default task split used in the main paper, but remains stable under both fewer-task and many-task incremental settings. 
+
+7.6 Parameter Analysis 
+
+We further analyze the number of learnable parameters and the auxiliary params cost of different PTM-based CIL methods. Since all methods use the same frozen pre-trained backbone, we exclude the backbone parameters and report only the method-specific additional cost. This analysis is conducted under the ShapeNet + ShapeNet-C B7Inc2 setting corresponding to Fig. 10b. We adopt a two-column accounting protocol. The first column, Learnable Params , counts the accumulated newly introduced learnable parameters, such as prompts, adapters, or classifier-related learnable parameters. The second column, Auxiliary Params , counts non-backbone auxiliary params; these entries are not trainable parameters, but are explicitly stored and involved in computation, 26 Table 10: Learnable parameters and auxiliary params of PTM-based CIL methods. The frozen pre-trained backbone is excluded. All values are reported in M , where 1M = 10 6 scalar entries. Method Learnable Params (M) Auxiliary Params (M) L2P [45] 1.88 88.96 DualPrompt [44] 0.97 88.96 CODA-Prompt [36] 3.10 –SLCA [59] 0.05 32.44 SimpleCIL [64] 0.05 –MOS [37] 7.34 32.44 TUNA [43] 7.65 32.44 RanPAC [21] 0.53 111.04 APER [64] 89.07 88.96 EASE [67] 0.98 –PolyMem (Ours) 0.53 100.57 such as feature statistics or covariance-like matrices. For methods that keep a complete copy or adapter-side reference of the Uni3D-Base feature extractor, the corresponding auxiliary params is counted as 88 .961 M , which is the parameter count of Uni3D-Base under our implementation. All values are reported in M , where 1M = 10 6 scalar entries. For statistical-memory methods, the main auxiliary params comes from the accumulated matrices used for closed-form classification. Similar to RanPAC, PolyMem stores 
+
+G ∈ RM ×M , Q ∈ RM ×Ctot ,
+
+where M = 10000 is the lifted feature dimension and Ctot = 55 is the total number of classes in the ShapeNet-based setting. Therefore, G + Q contains 
+
+M 2 + M C tot = 100 .550 M
+
+scalar entries. In addition, PolyMem uses fixed TensorSketch descriptors to construct polynomial lifted features. With Taylor order L = 4 and backbone feature dimension D = 1024 , the hash indices and random signs occupy 
+
+2 × L(L + 1) 2 D = 2 × 10 × 1024 = 20480 ≈ 0.021 M
+
+scalar entries in total. Thus, the total auxiliary params of PolyMem is 
+
+100 .550 M + 0 .021 M = 100 .571 M. 
+
+As shown in Tab. 10, PolyMem introduces the same number of additional learnable parameters as RanPAC under this accounting protocol, since both methods rely on a frozen backbone and a closed-form classifier in the lifted feature space. The main auxiliary params cost of PolyMem comes from the accumulated statistical memory G + Q, while the TensorSketch descriptors add only 0.021 M scalar entries, which is negligible compared with the M 2-scale matrix G. Therefore, PolyMem improves the expressiveness of statistical memory through structured polynomial lifting without introducing substantial additional parameter or storage overhead. 
+
+7.7 Experiment with Different Backbones 
+
+To further verify that the effectiveness of PolyMem is not specific to the Uni3D-Base backbone used in the main experiments, we conduct additional experiments with two publicly available 3D pre-trained backbones: Point-BERT [58] and Point-MAE [23]. These two backbones follow different 3D pre-training paradigms from Uni3D, and therefore provide complementary evidence for evaluating the backbone generality of PolyMem. We evaluate the two backbones on two object-level Domain3D-CIL mixed benchmarks: ModelNet + ScanObjectNN and ModelNet + CO3D. For each backbone and each mixed benchmark, we report four representative settings: Joint-Training, SimpleCIL, RanPAC, and PolyMem. Joint-Training serves as the non-incremental reference, while SimpleCIL and RanPAC are selected as representative statistical-memory baselines. SimpleCIL stores first-order class prototypes, RanPAC performs random 27 Table 11: Backbone generalization analysis on Domain3D-CIL. We evaluate Point-BERT and Point-MAE on ModelNet + ScanObjectNN and ModelNet + CO3D. D1 denotes the CAD domain and D2
+
+denotes the real-scanned or reconstructed domain. Method ModelNet ( D1) + ScanObjectNN ( D2) ModelNet ( D1) + CO3D ( D2)Last Acc. Cum. Acc. Last Acc. Cum. Acc.                                                                                                                
+
+> D1↑D2↑Gap ↓D1↑D2↑Gap ↓D1↑D2↑Gap ↓D1↑D2↑Gap ↓
+> Point-BERT Backbone
+> Joint-Training 91 .45 82 .52 8.93 ---91 .53 84 .76 6.77 ---SimpleCIL [64] 90.64 37.97 52.67 94.82 44.33 50.49 89.26 25.94 63.32 93.88 33.31 60.57 RanPAC [21] 90.93 66.38 24.55 94.79 79.14 15.65 90.24 65.07 25.17 93.04 71.26 21.78 PolyMem (Ours) 91.00 73.96 17.04 95.02 83.04 11.98 91.53 70.39 21.14 94.11 75.06 19.05 Point-MAE Backbone
+> Joint-Training 90 .84 86 .72 4.12 ---90 .73 86 .39 4.34 ---SimpleCIL [64] 77.48 65.23 12.25 87.91 77.91 10.00 62.44 39.23 23.21 71.62 48.95 22.67 RanPAC [21] 88.19 77.93 10.26 92.66 82.29 10.37 88.82 73.67 15.15 92.71 78.35 14.36 PolyMem (Ours) 90.60 83.30 7.30 94.54 87.72 6.82 89.06 76.87 12.19 93.83 81.07 12.76
+
+lifted-space ridge regression, and PolyMem replaces the random lifting with structured polynomial feature interactions while following the same replay-free PTM-based CIL protocol. Tab. 11 reports the results. Although the absolute performance varies across different pre-trained backbones, the performance discrepancy phenomenon consistently appears: the accuracy on D2
+
+is generally lower than that on D1, especially after class-incremental learning. More importantly, PolyMem consistently improves over RanPAC under both Point-BERT and Point-MAE, showing higher accuracy on the non-CAD domain and a smaller cross-domain gap. These results indicate that PolyMem is not tied to a particular backbone architecture or pre-training recipe, but provides a general feature-space statistical modeling strategy for mitigating performance discrepancy in Domain3D-CIL. 
+
+7.8 Compute Resources 
+
+The running-time comparison in Fig. 7 and the parameter analysis in Tab. 10 are measured under the same computational environment described below. All experiments were conducted on compute nodes equipped with 8× NVIDIA A40 GPUs. Each GPU provides 46,068 MiB of memory, i.e., about 48 GB. The NVIDIA driver version is 570.195.03, and the CUDA compatibility version reported by the driver is 12.8. This reported CUDA version indicates the highest CUDA toolkit level supported by the driver, and does not necessarily correspond to the CUDA version used to compile a specific deep learning framework. For each random seed, a single training run uses only one GPU. We do not use multi-GPU data parallelism within a single run. Multiple GPUs on the same node are used only to execute different experiments in parallel, such as different methods, random seeds, or hyperparameter configurations. 
+
+7.9 Classic CIL Paradigm 
+
+In addition to the PTM-based CIL experiments in Tab. 1, as shown in Fig. 1b, we also evaluate a set of classic CIL baselines on Domain3D-CIL. These methods are adapted to the 3D setting by replacing the 2D backbone with PointNet++ and training the model from scratch on point clouds. Following the common replay-based protocol for classic CIL methods, we use an exemplar memory budget of 10 samples per class. Since these methods rely on from-scratch training and exemplar replay, while the main experiments follow the PTM-based replay-free paradigm with a frozen Uni3D backbone, the two groups of methods are not directly comparable under a strictly fair protocol. Therefore, we report the classic CIL results in the appendix rather than including them in the main experimental comparison. Tab. 12 reports the results on the object-level Domain3D-CIL mixed benchmarks. We use the same notation as in the main experiments: D1 denotes the CAD domain, D2 denotes the corresponding real-scanned or reconstructed domain, and Gap = D1 − D2 measures the cross-domain performance discrepancy. Compared with the results in Tab. 1, the joint-training performance of PointNet++ without pre-training is slightly lower than that of pre-trained Uni3D on both domains, especially on 28 D2. The static performance gap under joint training is also slightly larger, around 4% –5% . Moreover, the performance discrepancy induced by CIL becomes more pronounced. Unlike the PTM-based setting, where strong baselines such as RanPAC, MOS, and TUNA can partially alleviate the gap, most classic CIL baselines exhibit Last Acc. and Cum. Acc. gaps above 20% .Although classic CIL methods follow a different training paradigm, the results still show a clear and consistent performance discrepancy: the accuracy on D2 is usually much lower than that on D1, and compared with joint training, the accuracy drop on D2 is substantially larger than that on D1. This indicates that CIL baselines without pre-training suffer from more severe catastrophic forgetting and performance discrepancy. These results suggest that the performance discrepancy phenomenon is not specific to PTM-based CIL methods. When heterogeneous 3D domains are mixed within shared semantic classes, the same issue also appears in classic CIL. Future work may further investigate this more challenging setting. Table 12: Quantitative evaluation of classic CIL baselines on Domain3D-CIL. All methods use PointNet++ trained from scratch with a replay budget of 10 exemplars per class. Method ModelNet ( D1) + ScanObjectNN ( D2) ModelNet ( D1) + CO3D ( D2)Last Acc. Cum. Acc. Last Acc. Cum. Acc.                                                                                                                            
+
+> D1↑D2↑Gap ↓D1↑D2↑Gap ↓D1↑D2↑Gap ↓D1↑D2↑Gap ↓
+> Joint-Training 90 .72 86 .51 4.21 ---91 .21 86 .62 4.59 ---ER 69.00 40.95 28.05 74.17 46.38 27.79 66.17 35.28 30.89 67.53 38.53 29.00 iCaRL [32] 72.20 39.88 32.32 79.29 53.63 25.66 65.15 39.41 25.74 72.66 48.99 23.67 BiC [50] 60.94 38.57 22.37 63.60 40.67 22.93 61.39 38.46 22.93 61.39 42.92 18.47 WA [62] 71.03 38.67 32.36 79.18 51.73 27.45 68.68 46.17 22.51 75.77 52.87 22.90 PODNet [9] 68.68 38.17 30.51 80.13 52.04 28.09 62.93 36.33 26.60 79.10 51.08 28.02 DER [56] 74.59 44.33 30.26 83.99 56.60 27.39 67.10 55.74 11.36 78.41 61.81 16.60 FOSTER [40] 65.19 43.94 21.25 72.18 50.93 21.25 64.14 44.08 20.06 75.37 50.23 25.14 iNeMo [10] 69.98 35.39 34.59 76.88 46.08 30.80 57.74 42.49 15.25 63.82 46.30 17.52
+
+7.10 Baseline Implementation Details 
+
+The PTM-based CIL baselines in the main paper are implemented by adapting the official LAMDA-PILOT codebase [66] to the 3D setting. Since Uni3D [69] follows the same architecture with ViT , its interface is largely compatible with the vision-transformer backbones used in LAMDA-PILOT. Therefore, most baselines require only minimal modifications, mainly replacing the original 2D image encoder with the frozen Uni3D point-cloud encoder and adapting the data loader, feature extraction, and evaluation pipeline to point-cloud inputs. We keep the core algorithmic components of each baseline unchanged whenever possible, including prompt selection, prototype/statistical memory construction, classifier update rules, and evaluation metrics. The incomplete implementation of the PTM-based CIL baselines used for review is included in the supplementary materials . The complete and cleaned codebase including the proposed method PolyMem will be publicly released upon acceptance. 29

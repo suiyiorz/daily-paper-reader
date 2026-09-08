@@ -1,0 +1,418 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-08T21:32:20.494000+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 7,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2608.31029v1",
+      "source": "arxiv",
+      "title": "Driving on Memory",
+      "abstract": "End-to-end autonomous driving models plan future trajectories from raw sensor input. While earlier driving benchmarks often measured deviation from the human trajectory, current benchmarks such as NAVSIM and Bench2Drive evaluate models with richer simulation-based metrics intended to capture safe and compliant driving. A high benchmark score should reflect that a model can understand the scene in front of it and act accordingly. But how much of that score specifically comes from reacting to the dynamic part of that scene?   To probe this, we remove a model's camera input and replace it with memories from prior drives at the same location. The retrieved memories can provide persistent scene information, including road layout and location-conditioned regularities, but not the current traffic state. Surprisingly, memory is nearly sufficient on NAVSIM, reaching or even exceeding the performance of leading end-to-end methods without actually observing the evaluated scene. Our results suggest that a high NAVSIM score does not require a planner to react to the current traffic scene and should be treated with caution. This effect is benchmark-dependent: driving from memory causes substantially larger performance drops on Bench2Drive and RealEngine. We provide our code at https://github.com/boschresearch/MemoryDrivoR .",
+      "authors": [
+        "Christian Löwens",
+        "Thorben Funke",
+        "Alexandru Paul Condurache"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG",
+        "cs.RO"
+      ],
+      "published": "2026-08-31T16:10:04+00:00",
+      "link": "https://arxiv.org/pdf/2608.31029v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "End-to-end autonomous driving evaluation probes whether high benchmark scores come from dynamic traffic or static location-conditioned memory",
+      "llm_evidence_cn": "自动驾驶评测探针实验：用同位置先验记忆替代摄像头输入，检验仿真高分是否来自对动态交通场景的实时反应",
+      "llm_evidence": "自动驾驶评测探针实验：用同位置先验记忆替代摄像头输入，检验仿真高分是否来自对动态交通场景的实时反应",
+      "canonical_evidence": "自动驾驶评测探针实验：用同位置先验记忆替代摄像头输入，检验仿真高分是否来自对动态交通场景的实时反应",
+      "llm_tldr_en": "End-to-end autonomous driving models score highly on NAVSIM/Bench2Drive, but whether scores reflect reacting to dynamic traffic is unclear. This paper removes camera input and substitutes memories of prior drives at the same location, which provide static layout and location-conditioned regularities but not current traffic. Results suggest high scores may be substantially supported by persistent memory, challenging current evaluation metrics.",
+      "llm_tldr_cn": "端到端自动驾驶模型在NAVSIM、Bench2Drive等仿真基准上得到的高分，被认为反映其对安全与合规驾驶的理解，但这些分数多少来自对当前动态交通的反应仍不清楚。论文为此移除了模型的相机输入，只提供同一地点先前行驶的记忆，这些记忆能保留道路布局和位置条件规律，却不含当前交通状态。通过观察模型是否仍能取得高分，可把“场景动态感知”与“位置记忆”的贡献分离开。实验结果提示，部分高仿真得分可能并非来自实时反应动态交通，这为当前驾驶评测指标的有效性提出了重要警示。",
+      "llm_tldr": "端到端自动驾驶模型在NAVSIM、Bench2Drive等仿真基准上得到的高分，被认为反映其对安全与合规驾驶的理解，但这些分数多少来自对当前动态交通的反应仍不清楚。论文为此移除了模型的相机输入，只提供同一地点先前行驶的记忆，这些记忆能保留道路布局和位置条件规律，却不含当前交通状态。通过观察模型是否仍能取得高分，可把“场景动态感知”与“位置记忆”的贡献分离开。实验结果提示，部分高仿真得分可能并非来自实时反应动态交通，这为当前驾驶评测指标的有效性提出了重要警示。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.00539v1",
+      "source": "arxiv",
+      "title": "Exploring Nonlinear Body Oscillations for Natural Quadruped Gaits",
+      "abstract": "Animals' body morphology shapes the gait patterns they can perform, where mechanical resonance reduces the need for active control. By tuning posture and muscle stiffness, they leverage their embodied intelligence to achieve effective gaits for different speeds. In contrast, most quadruped robots are not specifically designed to exploit mechanical resonance due to the complexity of nonlinear dynamics and require dedicated locomotion controllers. To provide an alternative, we present a proof of concept framework making the nonlinear dynamics of a robot predictable in the design process and show how this knowledge can be leveraged such that multi-gait locomotion can emerge from nonlinear resonances, shaped by gravity, inertia, and elasticity. We present the highly compliant quadruped robot eBert, on which we identify six nonlinear normal modes (NNMs) using our new theoretical tools and validate their existence in simulation and hardware. With black-box optimization to determine step length, simulations show how each NNM naturally develops into a distinct gait, manifesting different speeds, which also largely transfers to the robotic hardware. Our experiments show that eBert can exploit its mechanics to generate task-specific movements which may serve as foundation for designing a new generation of agile and efficient robots leveraging embodied intelligence.",
+      "authors": [
+        "Annika Schmidt",
+        "Davide Calzolari",
+        "Florian Loeffl",
+        "Arne Sachtler",
+        "Daniel Seidel",
+        "Milan Herrmann",
+        "Robert Burger",
+        "Thomas Gumpert",
+        "Antonin Raffin",
+        "Tristan Ehlert",
+        "Maximilian Pries",
+        "David Wandinger",
+        "Florian Schmidt",
+        "Manuel Keppler",
+        "Jinoh Lee",
+        "Alin Albu-Schäffer"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-01T01:25:11+00:00",
+      "link": "https://arxiv.org/pdf/2609.00539v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Exploiting embodied body resonance for natural quadruped robot locomotion",
+      "llm_evidence_cn": "利用本体的非线性共振产生四足机器人自然步态",
+      "llm_evidence": "利用本体的非线性共振产生四足机器人自然步态",
+      "canonical_evidence": "利用本体的非线性共振产生四足机器人自然步态",
+      "llm_tldr_en": "Demonstrates a design-time framework that makes nonlinear body dynamics predictable, enabling multiple natural quadruped gaits to emerge from mechanical resonances shaped by gravity, inertia and elasticity, reducing reliance on dedicated locomotion controllers.",
+      "llm_tldr_cn": "动物的运动形态与肌肉刚度可通过机械共振减少主动控制需求，而多数四足机器人因非线性动力学复杂而难以利用该原理，只能依赖专门的运动控制器。本文提出概念验证框架，令非线性动力学在机器人设计过程中可预测，进而让重力、惯性和弹性塑造的非线性共振自然激发多种步态。除演示外，该工作为运动与形态协同的具身智能控制器提供了设计依据，可降低对复杂控制的仰赖。",
+      "llm_tldr": "动物的运动形态与肌肉刚度可通过机械共振减少主动控制需求，而多数四足机器人因非线性动力学复杂而难以利用该原理，只能依赖专门的运动控制器。本文提出概念验证框架，令非线性动力学在机器人设计过程中可预测，进而让重力、惯性和弹性塑造的非线性共振自然激发多种步态。除演示外，该工作为运动与形态协同的具身智能控制器提供了设计依据，可降低对复杂控制的仰赖。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.00771v1",
+      "source": "arxiv",
+      "title": "Non-Prehensile Throwing: A Reinforcement Learning Perspective",
+      "abstract": "Robotic throwing enables fast object transport and extends a robot's reachable workspace beyond traditional pick-and-place. While prehensile (grasp-based) throwing works well for graspable items, non-prehensile (grasp-free) throwing is better suited for large, heavy, and/or deformable objects. Existing approaches rely on model-based optimization with simplified contact models (e.g., dynamic grasping) and low-dimensional trajectory parameterizations, which limit solution quality and reachable workspace. We propose a reinforcement learning approach that additionally leverages sliding and rolling contact modes and directly optimizes joint-space trajectories without analytical contact models or custom parameterizations. The Markov Decision Process (MDP) is formulated as a dynamical system that evolves the robot's joint state conditioned on the throwing target, object model, and initial configuration. Joint-jerk trajectories are planned offline at a low control rate and upsampled into smooth, high-rate velocity commands for deployment. For sim-to-real transfer, we minimize the robot-dynamics gap through minimum-jerk system identification and train uncertainty-aware policies to mitigate object-modeling errors, particularly sensitivity to dynamic friction. In simulation, the policy achieves 99% success across thousands of configurations and generalizes to unseen objects. Sensitivity analysis shows robustness to mass uncertainty but high sensitivity to dynamic friction, consistent with the sliding-based release mechanism. Deployed zero-shot on a UR5e operating near its physical limits (5 m/s end-effector velocity), our method throws diverse objects including heavy (790 g) and large (20x20x28 cm) items to targets up to 350 cm distance or 180 cm elevation, achieving a 97% real-world success rate.",
+      "authors": [
+        "Abdullah Mustafa",
+        "Ryo Hanai",
+        "Ixchel G. Ramirez-Alpizar",
+        "Floris Erich",
+        "Ryoichi Nakajo",
+        "Yukiyasu Domae",
+        "Tetsuya Ogata"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-01T06:00:33+00:00",
+      "link": "https://arxiv.org/pdf/2609.00771v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Reinforcement learning for non-prehensile robotic throwing as object manipulation",
+      "llm_evidence_cn": "用强化学习优化非抓取式机器人投掷操作，属机器人操作与强化学习直接相关",
+      "llm_evidence": "用强化学习优化非抓取式机器人投掷操作，属机器人操作与强化学习直接相关",
+      "canonical_evidence": "用强化学习优化非抓取式机器人投掷操作，属机器人操作与强化学习直接相关",
+      "llm_tldr_en": "Non-prehensile throwing fits large or deformable objects, but model-based methods rely on simplified contact models and low-dimensional trajectories. This paper formulates it as an MDP and uses reinforcement learning to directly optimize joint-space trajectories with sliding and rolling contacts, without analytical contact models.",
+      "llm_tldr_cn": "抓取式投掷只适合可抓取物体，大型、重型或可变形物体更适合非抓取投掷；现有模型优化依赖简化接触模型和低维参数化，限制了工作空间和解质量。本文把非抓取投掷构建为马尔可夫决策过程，用强化学习在关节空间直接优化轨迹，无需分析接触模型并额外利用滑动与滚动接触模式。该方案可拓展高速物体运输的可达工作空间，为非抓取式机器人操作提供端到端学习新途径。",
+      "llm_tldr": "抓取式投掷只适合可抓取物体，大型、重型或可变形物体更适合非抓取投掷；现有模型优化依赖简化接触模型和低维参数化，限制了工作空间和解质量。本文把非抓取投掷构建为马尔可夫决策过程，用强化学习在关节空间直接优化轨迹，无需分析接触模型并额外利用滑动与滚动接触模式。该方案可拓展高速物体运输的可达工作空间，为非抓取式机器人操作提供端到端学习新途径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.01659v1",
+      "source": "arxiv",
+      "title": "Beyond Textual Chain-of-Thought: A Survey on Action-Grounded Reasoning in Autonomous Driving",
+      "abstract": "Chain-of-thought (CoT) reasoning powers generative models by eliciting intermediate steps before producing an answer. In autonomous driving, the answer is a continuous action. Thus its reasoning must share the same spatiotemporal structure as the physical world. This survey studies the resulting shift from textual CoT to action-grounded reasoning. Surveying 171 papers, including 130 method papers and 41 benchmarks, datasets, surveys, and analysis papers, we propose a representation-centered taxonomy that treats the form of the intermediate state as the organizing axis. We systematize the 130 methods into four categories: language-based, visual-spatial, latent-dynamic, and externalized reasoning, further divided into 13 subtypes tied to distinct regions of interests. Our synthesis shows that the open frontier of reasoning in driving agents lies in intermediate representations that can be grounded in the real world, coupled to real-time action, and verified under safety-critical systems. Project page: https://github.com/tangzhengxu/awesome-av-cot.",
+      "authors": [
+        "Zhengxu Tang",
+        "Xiaozhou Zhang",
+        "Guofeng Cui",
+        "Ziyu Gong",
+        "Zi Wang",
+        "Yunfei Shi",
+        "Ruifeng Deng",
+        "Chengzhi Qi",
+        "Ke Chen",
+        "Sachin Patil",
+        "Tianjun Xiao",
+        "Langechuan Liu",
+        "Pichao Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CL",
+        "cs.RO"
+      ],
+      "published": "2026-08-31T18:16:11+00:00",
+      "link": "https://arxiv.org/pdf/2609.01659v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Survey on action-grounded reasoning in autonomous driving",
+      "llm_evidence_cn": "自动驾驶行动接地推理综述，系统梳理感知决策中的推理方法",
+      "llm_evidence": "自动驾驶行动接地推理综述，系统梳理感知决策中的推理方法",
+      "canonical_evidence": "自动驾驶行动接地推理综述，系统梳理感知决策中的推理方法",
+      "llm_tldr_en": "Autonomous driving reasoning must be action-grounded rather than purely textual. Surveying 171 papers, this work proposes a representation-centered taxonomy covering language-based, visual-spatial, latent-dynamic, and externalized action-grounded reasoning for driving decisions.",
+      "llm_tldr_cn": "自动驾驶的推理输出是连续动作，因此不能停留在文本链式思维，而应与物理世界的时空结构对齐。该综述调研171篇文献，以中间状态表征形式为组织轴提出表示中心分类法，将130种方法分为基于语言、视觉空间、潜在动态和外置化推理四大类、13个子类，并归纳相关基准与评测。它为理解自动驾驶生成模型如何从感知走向行动的系统性推理提供了较完整的路线图。",
+      "llm_tldr": "自动驾驶的推理输出是连续动作，因此不能停留在文本链式思维，而应与物理世界的时空结构对齐。该综述调研171篇文献，以中间状态表征形式为组织轴提出表示中心分类法，将130种方法分为基于语言、视觉空间、潜在动态和外置化推理四大类、13个子类，并归纳相关基准与评测。它为理解自动驾驶生成模型如何从感知走向行动的系统性推理提供了较完整的路线图。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.03591v1",
+      "source": "arxiv",
+      "title": "Scaling Bimanual Household Manipulation from 1,500 hours of Demonstrations to On-Policy Corrections",
+      "abstract": "Learning generalist policies for robust bimanual manipulation is bottlenecked by the scarcity of high quality large scale human demonstration data. In this work, we release 1,500 hours of diverse bimanual manipulation demonstrations covering everyday household tasks, and use this comprehensive corpus to train XR-2, a powerful vision-language-action (VLA) model. Enabled by a purpose built high throughput data pipeline and a carefully designed multi stage training paradigm, XR-2 attains strong manipulation performance in our systematic experiments while retaining favorable training efficiency and high data utilization. We further study two critical scaling axes: varying the amount of expert demonstration data, and post training on DAgger correction data from real time human interventions. In both settings, task success rate improves steadily over the data ranges we probe, exhibiting a clear consistent scaling trend at our current data scale. These results validate both the learning capacity of XR-2 and the promising scaling properties of the released dataset, which we open source to support reproducible research on bimanual robot manipulation learning.",
+      "authors": [
+        "Jiafeng Xu",
+        "Qi Li",
+        "Yan Shen",
+        "Yiyu Ren",
+        "Travis Davies",
+        "Shaowen He",
+        "Ze Wang",
+        "Yifan Yang",
+        "Ran Cheng",
+        "Hao Dong"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-03T09:37:09+00:00",
+      "link": "https://arxiv.org/pdf/2609.03591v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "large-scale demonstrations and on-policy post-training for bimanual household manipulation",
+      "llm_evidence_cn": "利用1500小时示范及在线策略校正训练双臂家庭操作",
+      "llm_evidence": "利用1500小时示范及在线策略校正训练双臂家庭操作",
+      "canonical_evidence": "利用1500小时示范及在线策略校正训练双臂家庭操作",
+      "llm_tldr_en": "This work releases 1,500 hours of diverse bimanual household demonstrations and trains XR-2, a VLA model, using a high-throughput data pipeline and multi-stage training. It studies demonstration-data scaling and post-training corrections, attaining strong manipulation performance with favorable training efficiency.",
+      "llm_tldr_cn": "论文针对双臂家庭操作通用策略因高质量人类示范数据稀缺而受限的问题，发布了1500小时多样化的双臂家务示范数据，并据此训练XR-2视觉-语言-动作模型。作者搭建了高吞吐数据流水线与多阶段训练范式，使XR-2在家务操作上取得较强的性能，同时保持较高的训练效率和数据利用率。论文还系统研究了示范数据量变化与后训练校正两条扩展维度。该工作为构建可扩展的通用家务机器人提供了大规模数据和训练范例。",
+      "llm_tldr": "论文针对双臂家庭操作通用策略因高质量人类示范数据稀缺而受限的问题，发布了1500小时多样化的双臂家务示范数据，并据此训练XR-2视觉-语言-动作模型。作者搭建了高吞吐数据流水线与多阶段训练范式，使XR-2在家务操作上取得较强的性能，同时保持较高的训练效率和数据利用率。论文还系统研究了示范数据量变化与后训练校正两条扩展维度。该工作为构建可扩展的通用家务机器人提供了大规模数据和训练范例。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.02462v1",
+      "source": "arxiv",
+      "title": "VIPS: Vehicle-Infrastructure Cooperative Planning Benchmark via Pseudo-Simulation",
+      "abstract": "End-to-end autonomous driving in urban environments requires robust decision-making under partial observability and complex multi-agent interactions. Severe occlusions and dense traffic at intersections limit the perception capability of single-agent systems, motivating recent efforts on Vehicle-to-Infrastructure (V2I) cooperation for perception and planning. However, existing evaluation protocols face a fundamental trade-off: open-loop evaluation fails to capture error accumulation and recovery from deviations, while closed-loop evaluation is costly, difficult to scale, and often relies on simulated environments that may suffer from domain gaps. To bridge this gap, we propose VIPS, a benchmark for cooperative autonomous driving in V2I settings based on pseudo-simulation. VIPS extends pseudo-simulation by integrating vehicle and infrastructure observations. This enables scalable yet realistic evaluation of robustness and error propagation without full simulation. We further present CoS-V2X, a cooperative planning framework based on sparse representations. CoS-V2X models vehicle-infrastructure interactions using compact features for efficient communication and robust decision-making under heterogeneous observations. Code and dataset are available at https://vips2026.github.io.",
+      "authors": [
+        "Hoonhee Cho",
+        "Jae-Young Kang",
+        "Giwon Lee",
+        "Hyemin Yang",
+        "Heejun Park",
+        "Kuk-Jin Yoon"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-09-02T11:32:52+00:00",
+      "link": "https://arxiv.org/pdf/2609.02462v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Benchmark for V2I cooperative autonomous driving planning under partial observability",
+      "llm_evidence_cn": "部分可观测条件下V2I协同自动驾驶规划基准",
+      "llm_evidence": "部分可观测条件下V2I协同自动驾驶规划基准",
+      "canonical_evidence": "部分可观测条件下V2I协同自动驾驶规划基准",
+      "llm_tldr_en": "VIPS is a pseudo-simulation benchmark for cooperative autonomous driving that combines V2I perception and planning, enabling scalable closed-loop evaluation of decisions under occlusion-prone partial observability while avoiding expensive replay or simulation costs.",
+      "llm_tldr_cn": "端到端自动驾驶在城市交叉口常受遮挡和密集交通影响，单车感知不足催生车路协同（V2I）合作方案，但评估方法在开环与闭环间难以兼顾。本文提出VIPS基准，利用伪仿真技术在不依赖高成本完整模拟器的情况下，对V2I协同感知与规划进行闭环评测。该基准可捕捉误差累积和恢复过程，且易于扩展，为部分可观测条件下的自动驾驶决策研究提供可靠评估手段。这有助于推动车路协同从感知升级到规划控制的系统化发展。",
+      "llm_tldr": "端到端自动驾驶在城市交叉口常受遮挡和密集交通影响，单车感知不足催生车路协同（V2I）合作方案，但评估方法在开环与闭环间难以兼顾。本文提出VIPS基准，利用伪仿真技术在不依赖高成本完整模拟器的情况下，对V2I协同感知与规划进行闭环评测。该基准可捕捉误差累积和恢复过程，且易于扩展，为部分可观测条件下的自动驾驶决策研究提供可靠评估手段。这有助于推动车路协同从感知升级到规划控制的系统化发展。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.03276v1",
+      "source": "arxiv",
+      "title": "R2S-Eval: Robot Evaluation with Real-to-Sim Calibration via Vision-Language Models",
+      "abstract": "Evaluating robot manipulation policies is becoming increasingly important as generalist models, particularly vision-language-action (VLA) models, are deployed on physical robots. However, conventional real-world evaluation remains labor-intensive, unstable, and insufficiently informative. It requires repeated hardware trials, manual scene resets, and continuous operator monitoring, may produce different policy rankings across repeated evaluations, and primarily relies on success-rate metrics that provide limited information about execution quality. In contrast, humans assess robot performance by observing and comparing complete behaviors rather than relying solely on binary success outcomes. To this end, we propose R2S-Eval, an evaluation pipeline that combines real-to-sim calibration with vision-language model (VLM) preference evaluation. The real-to-sim component efficiently generates rollout videos in a simulator calibrated to the real-world evaluation setting, thereby reducing the need for repeated hardware trials. The VLM evaluator assesses the execution quality of rollout videos and produces pairwise preferences, which are subsequently aggregated into policy rankings. We further introduce a protocol to assess whether the proposed evaluation pipeline yields validated policy conclusions while mitigating the key challenges of conventional real-world evaluation. Experiments in both simulation and real-world settings demonstrate that R2S-Eval produces reliable and stable policy conclusions, achieves agreement with human preferences, substantially reduces repeated hardware-operation effort, and reveals behavior-quality differences that are not captured by binary success labels. In general, R2S-Eval advances robot evaluation from manual success counting toward automated, statistically stable, and quality-aware evaluation of robot behavior. Project page: https://r2s-eval.github.io.",
+      "authors": [
+        "Yidi Wang",
+        "Feixiang Ruan",
+        "Ruoqu Chen",
+        "Jie Yin",
+        "Yang Yu",
+        "Mengdi Xu",
+        "Kaifeng Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-03T02:08:16+00:00",
+      "link": "https://arxiv.org/pdf/2609.03276v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "evaluating robot manipulation VLA policies; real-to-sim calibration via vision-language models to reduce real-world trials",
+      "llm_evidence_cn": "机器人操作VLA策略评估，利用视觉语言模型进行真实到仿真校准",
+      "llm_evidence": "机器人操作VLA策略评估，利用视觉语言模型进行真实到仿真校准",
+      "canonical_evidence": "机器人操作VLA策略评估，利用视觉语言模型进行真实到仿真校准",
+      "llm_tldr_en": "R2S-Eval addresses costly, unstable real-world evaluation of robot manipulation VLA policies by using VLMs to calibrate real-to-sim transfer; it supports behavior-level evaluation of complete robotic behavior rather than binary success rates alone.",
+      "llm_tldr_cn": "真实环境评估通用机器人操作策略需要反复硬件试验和人工重置，成本高且受成功率指标局限。R2S-Eval提出使用视觉语言模型对真实与仿真环境进行校准，把部分实机评测转移到仿真中。机器人评估由此能关注完整行为过程而非二值成败，提升评估的稳定性与信息量，为大规模评测物理世界的VLA操作模型提供可行方案。",
+      "llm_tldr": "真实环境评估通用机器人操作策略需要反复硬件试验和人工重置，成本高且受成功率指标局限。R2S-Eval提出使用视觉语言模型对真实与仿真环境进行校准，把部分实机评测转移到仿真中。机器人评估由此能关注完整行为过程而非二值成败，提升评估的稳定性与信息量，为大规模评测物理世界的VLA操作模型提供可行方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.30179v1",
+      "source": "arxiv",
+      "title": "Open-Source Autonomous Driving System Analysis and Multi-Disciplinary Hardware-in-the-Loop Research Paradigm with Reinforcement-Learning Testing and Large Language Models",
+      "abstract": "Open-source autonomous driving systems provide an inspectable software foundation for intelligent vehicle research. Under real-vehicle deployment conditions, the recording and review of experimental conditions are important for interpreting system behavior and reusing experimental results. However, in a shared real-vehicle environment involving multiple vehicles, task processes, code modifications, and hardware testing feedback are often distributed across different teams and experimental stages, making it challenging to maintain continuous and reviewable experimental records. To address this limitation, this paper examines an Apollo-on-Hongqi EV environment and proposes a real-vehicle experimental framework. The framework connects multi-vehicle experiments, repository-based code reuse and software-hardware testing feedback within a unified review process. Large language models and RL-based testing serve as auxiliary components for record organization, anomaly summarization, and simulation-based candidate scenario generation. Based on this setting, this paper analyzes preliminary evidence from multi-vehicle collaborative experimentation, code and experimental-skill sharing, and software-hardware collaborative testing. The analysis shows that experimental records can be examined together with their operating conditions, providing a reviewable basis for Apollo-on-Hongqi EV research.",
+      "authors": [
+        "Dianjing Cheng",
+        "Yike Li",
+        "Lan Yang",
+        "Shan Fang",
+        "Wenjia Niu",
+        "Xiangyu Shi",
+        "Xinyi Zhao",
+        "Yunzhe Tian",
+        "XingYu Wu",
+        "Xiaoshu Cui",
+        "Yuanwan Chen",
+        "Jialu Sun",
+        "Zhongli Wang",
+        "Biao Liu",
+        "Jiaqi Yang",
+        "Jinghui Feng",
+        "Feifei Su",
+        "Juan Du",
+        "Shuangde Fang",
+        "Yi Qian",
+        "Huiyun Li",
+        "Yuansheng Liu",
+        "Peng Sun",
+        "Mingming Wan",
+        "Nan Chen",
+        "Ruipeng Gao"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.RO"
+      ],
+      "published": "2026-08-31T02:58:20+00:00",
+      "link": "https://arxiv.org/pdf/2608.30179v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Hardware-in-the-loop research paradigm for open-source autonomous driving systems with RL testing and LLM-assisted records.",
+      "llm_evidence_cn": "针对真实车辆环境中的开源自动驾驶系统，提出结合强化学习测试与 LLM 的硬件在环实验纪录与复盘范式。",
+      "llm_evidence": "针对真实车辆环境中的开源自动驾驶系统，提出结合强化学习测试与 LLM 的硬件在环实验纪录与复盘范式。",
+      "canonical_evidence": "针对真实车辆环境中的开源自动驾驶系统，提出结合强化学习测试与 LLM 的硬件在环实验纪录与复盘范式。",
+      "llm_tldr_en": "Real-vehicle autonomous driving experiments are often fragmented; this Apollo-on-Hongqi study develops a multi-disciplinary hardware-in-the-loop paradigm integrating RL testing and LLMs to keep task, code, and hardware records continuous and reviewable.",
+      "llm_tldr_cn": "开源自动驾驶系统为智能车辆研究提供可检查的软件基础，但真实车辆共享环境中，实验任务、代码修改和硬件测试反馈分散在不同团队和阶段，难以形成连续可审阅的记录。文章以 Apollo-on-Hongqi EV 环境为对象，分析了这类实验管理的挑战，并提出一种多学科硬件在环研究范式，将强化学习测试和大型语言模型引入实验条件记录与复盘流程。该范式有助于在真实车辆部署中维持连续、可审查且便于复用实验结果的研究闭环。",
+      "llm_tldr": "开源自动驾驶系统为智能车辆研究提供可检查的软件基础，但真实车辆共享环境中，实验任务、代码修改和硬件测试反馈分散在不同团队和阶段，难以形成连续可审阅的记录。文章以 Apollo-on-Hongqi EV 环境为对象，分析了这类实验管理的挑战，并提出一种多学科硬件在环研究范式，将强化学习测试和大型语言模型引入实验条件记录与复盘流程。该范式有助于在真实车辆部署中维持连续、可审查且便于复用实验结果的研究闭环。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.04860v1",
+      "source": "arxiv",
+      "title": "Mitigating Performance Discrepancy in Cross-Domain 3D Class-Incremental Learning",
+      "abstract": "3D perception plays a crucial role in real-world applications such as autonomous driving, robotics, and AR/VR. In practical scenarios, 3D perception models need to continually adapt to newly emerging 3D object categories, making class-incremental learning (CIL) particularly important. However, unlike 2D images, 3D point clouds are inherently heterogeneous: objects from the same class may not only come from the clean CAD domain, but also from RGB-D camera scans of varying quality, video reconstructions, or even corrupted observations. We discover that such heterogeneity introduces a new challenge beyond catastrophic forgetting: the degree of performance degradation can vary substantially across domains, a phenomenon we term performance discrepancy. To investigate this problem, we establish the Domain3D-CIL training and evaluation protocol, which contains point cloud categories from heterogeneous domains. We further adapt a wide range of mainstream CIL methods to the 3D modality. The results demonstrate that this performance discrepancy consistently appears across these baselines. To mitigate this issue, we introduce PolyMem, an exemplar-free approach that implicitly models rich high-order statistics of the feature distribution to enhance cross-domain robustness. Experiments demonstrate that our method effectively alleviates the performance discrepancy while improving the model's performance across domains. Code will be made publicly available upon acceptance.",
+      "authors": [
+        "Jinge Ma",
+        "Gautham Vinod",
+        "Bruce Coburn",
+        "Jui-Feng Chi",
+        "Siddeshwar Raghavan",
+        "Fengqing Zhu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-09-04T08:20:00+00:00",
+      "link": "https://arxiv.org/pdf/2609.04860v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "cross-domain 3D class-incremental learning for point-cloud perception applicable to robotics and autonomous driving",
+      "llm_evidence_cn": "面向机器人与自动驾驶等应用的三维点云跨域类增量学习感知方法",
+      "llm_evidence": "面向机器人与自动驾驶等应用的三维点云跨域类增量学习感知方法",
+      "canonical_evidence": "面向机器人与自动驾驶等应用的三维点云跨域类增量学习感知方法",
+      "llm_tldr_en": "3D class-incremental learning in real applications must handle heterogeneous point-cloud domains. This paper uncovers cross-domain performance discrepancy and proposes mitigation strategies so perception models can continually add categories across CAD, RGB-D, and corrupted scans.",
+      "llm_tldr_cn": "三维点云感知在自动驾驶、机器人等真实应用中需要不断适应新类别，而同一类别可能来自干净CAD域、不同质量的RGB-D相机扫描、视频重建甚至损坏数据。该研究发现这种域异构性会在传统类增量学习之外带来新挑战：性能下降程度随域变化，称为性能差异现象。论文关注并研究该现象的缓解策略，以提升跨域三维感知的持续学习表现。这对真实环境中需持续新增类别的机器人或自动驾驶感知系统具有方法价值。",
+      "llm_tldr": "三维点云感知在自动驾驶、机器人等真实应用中需要不断适应新类别，而同一类别可能来自干净CAD域、不同质量的RGB-D相机扫描、视频重建甚至损坏数据。该研究发现这种域异构性会在传统类增量学习之外带来新挑战：性能下降程度随域变化，称为性能差异现象。论文关注并研究该现象的缓解策略，以提升跨域三维感知的持续学习表现。这对真实环境中需持续新增类别的机器人或自动驾驶感知系统具有方法价值。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
