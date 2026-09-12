@@ -6,54 +6,59 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-11
-- 运行时间：2026-09-11 21:33:44 UTC
+- 最新运行日期：2026-09-12
+- 运行时间：2026-09-12 20:56:35 UTC
 - 运行状态：成功
-- 本次总论文数：10
-- 精读区：6
-- 速读区：4
+- 本次总论文数：13
+- 精读区：5
+- 速读区：8
 
 ### 今日简报（AI）
-今日筛出 10 篇（精读 6、速读 4），主题集中在具身多模态大模型的反应式决策、扩散策略泛化与安全约束，以及灵巧手写字等技能学习。
-
-最值得看的是两篇 8.0 精读：ReactHuman 提出物理接地的类人反应决策基准，ObstaDiff 用障碍物感知表征提升扩散策略的泛化性，二者一测一学正好互补。
-
-普通读者可先读这两篇的摘要与实验设定，再顺着速读里的 Safety-aware Skill Adaptation 与 ActSafeGuard 了解"动态环境安全"这条线，判断是否与自己的场景相关。
-- 详情：[/202609/11/README](/202609/11/README)
+2026-09-12 日报：从13篇中筛出5篇精读、8篇速读，
+- 详情：[/202609/12/README](/202609/12/README)
 
 ### 精读区论文标签
-1. [ReactHuman: A Physics-Grounded Benchmark for Human-Like Reactive Decision-Making in Embodied Multimodal LLMs](/202609/11/2609.10895v1-reacthuman-a-physics-grounded-benchmark-for-human-like-reactive-decision-making-in-embodied-multimodal-llms)  
+1. [OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments](/202609/12/2609.08159v1-omninav-robust-long-horizon-target-navigation-in-dynamic-environments)  
    标签：评分：8.0/10、query:ad
-   evidence：具身多模态大模型反应式决策的物理基础基准
-2. [ObstaDiff: Generalizable Diffusion Policy Learning via Obstacle-aware Representations](/202609/11/2609.10918v1-obstadiff-generalizable-diffusion-policy-learning-via-obstacle-aware-representations)  
+   evidence：动态环境中的长时程自主目标导航
+2. [RoboCousin: Build Your Own Simulation Playground for Robust Bimanual Robotic Manipulation](/202609/12/2609.08339v1-robocousin-build-your-own-simulation-playground-for-robust-bimanual-robotic-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人操作泛化的障碍物感知扩散策略
-3. [LTLDiff: Finite Linear Temporal Logic-Guided Data Generation and Diffusion Policies for Multi-agent Robotic Manipulation](/202609/11/2609.11043v1-ltldiff-finite-linear-temporal-logic-guided-data-generation-and-diffusion-policies-for-multi-agent-robotic-manipulation)  
+   evidence：面向双臂机器人操作的可扩展仿真数据平台
+3. [PlannerForge: LLM Agents for Scenario-Based Testing of Motion Planners in Autonomous Driving](/202609/12/2609.08965v1-plannerforge-llm-agents-for-scenario-based-testing-of-motion-planners-in-autonomous-driving)  
    标签：评分：8.0/10、query:ad
-   evidence：结合时序逻辑与扩散策略的多智能体机器人操作
-4. [Harness Robotic OS: A Unified Embodied-Agent Runtime for Closed-Loop Quadruped Inspection](/202609/11/2609.11225v1-harness-robotic-os-a-unified-embodied-agent-runtime-for-closed-loop-quadruped-inspection)  
+   evidence：面向自动驾驶运动规划器场景测试的LLM智能体
+4. [HuRo: Robotizing Human Videos for Scalable VLA Pretraining](/202609/12/2609.10706v1-huro-robotizing-human-videos-for-scalable-vla-pretraining)  
    标签：评分：8.0/10、query:ad
-   evidence：面向闭环四足巡检的统一具身智能体运行时
-5. [Beyond Noise Steering: Dual-Latent Space Reinforcement Learning for Generative Robot Policy](/202609/11/2609.11270v1-beyond-noise-steering-dual-latent-space-reinforcement-learning-for-generative-robot-policy)  
+   evidence：将人类视频机器人化用于VLA预训练
+5. [SEED-UMI: Sharing the Exoskeleton between human and robot for onE-to-one Dexterous demonstration](/202609/12/2609.11753v1-seed-umi-sharing-the-exoskeleton-between-human-and-robot-for-one-to-one-dexterous-demonstration)  
    标签：评分：8.0/10、query:ad
-   evidence：面向生成式机器人策略的强化学习框架
-6. [2AM: Grounding Agent-Side Memory as Guidance for Steerable Action Models in Long-Horizon Manipulation](/202609/11/2609.11308v1-2am-grounding-agent-side-memory-as-guidance-for-steerable-action-models-in-long-horizon-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向长时程机器人操作的智能体记忆与动作模型
+   evidence：共享外骨骼实现一对一灵巧操作演示与模仿学习
 
 ### 速读区论文标签
-1. [Safety-aware Skill Adaptation for Reinforcement Learning in Dynamic Environments](/202609/11/2609.11433v1-safety-aware-skill-adaptation-for-reinforcement-learning-in-dynamic-environments)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向机器人技能自适应的安全强化学习
-2. [ActSafeGuard: Differentiable and Training-Aligned Constraint Enforcement for Flow-Matching Policies](/202609/11/2609.11697v1-actsafeguard-differentiable-and-training-aligned-constraint-enforcement-for-flow-matching-policies)  
-   标签：评分：8.0/10、query:ad
-   evidence：机器人操作策略的安全约束执行
-3. [Rapid Learning of Dexterous In-Hand Pen Writing through Real-Time Jacobian Estimation](/202609/11/2609.11775v1-rapid-learning-of-dexterous-in-hand-pen-writing-through-real-time-jacobian-estimation)  
-   标签：评分：8.0/10、query:ad
-   evidence：真实机器人上的灵巧手内操作与具身控制
-4. [Geometric Distributional Control: Learning Progress with Partial Structural Knowledge](/202609/11/2609.06331v1-geometric-distributional-control-learning-progress-with-partial-structural-knowledge)  
+1. [Phase-and-First-Arrival VLM Feedback for Sparse-Reward Reinforcement Learning in Surgical Manipulation](/202609/12/2609.07211v1-phase-and-first-arrival-vlm-feedback-for-sparse-reward-reinforcement-learning-in-surgical-manipulation)  
    标签：评分：7.0/10、query:ad
-   evidence：面向部分知识系统的控制方法，含自动驾驶与机器人
+   evidence：面向手术机器人操作的稀疏奖励强化学习与VLM反馈
+2. [Monkey See, Can Monkey Do? A Benchmark for Evaluating Robot Skill Learning by Observation](/202609/12/2609.08209v2-monkey-see-can-monkey-do-a-benchmark-for-evaluating-robot-skill-learning-by-observation)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向机器人操作技能观察学习的基准
+3. [CAST: Alternating State-Value Targets and Expanded Policy Gradients for Model-Based Reinforcement Learning](/202609/12/2609.08853v1-cast-alternating-state-value-targets-and-expanded-policy-gradients-for-model-based-reinforcement-learning)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向机器人、结合规划引导值学习的基于模型强化学习
+4. [CT-SAFR: Safe and Interpretable Chain-of-Thought Reasoning for Autonomous Robots: A Multi-Layered Verification Framework for Trustworthy AI-Driven Robotic Decision Making](/202609/12/2609.09692v1-ct-safr-safe-and-interpretable-chain-of-thought-reasoning-for-autonomous-robots-a-multi-layered-verification-framework-for-trustworthy-ai-driven-robotic-decision-making)  
+   标签：评分：7.0/10、query:ad
+   evidence：自主机器人的安全可解释推理
+5. [Memory as Plans: World-Action Modeling with Memory-Grounded Planning](/202609/12/2609.11561v1-memory-as-plans-world-action-modeling-with-memory-grounded-planning)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向长时程机器人操作的记忆锚定规划
+6. [Adaptive Cost-Sensitive Machine Learning for Autonomous Robot Navigation Failure Prediction: When Not All Errors Are Equal](/202609/12/2609.05593v1-adaptive-cost-sensitive-machine-learning-for-autonomous-robot-navigation-failure-prediction-when-not-all-errors-are-equal)  
+   标签：评分：6.0/10、query:ad
+   evidence：自主机器人导航失效预测
+7. [Generalist Open-World Temporal Perception](/202609/12/2609.06823v1-generalist-open-world-temporal-perception)  
+   标签：评分：6.0/10、query:ad
+   evidence：从原始多模态流进行通用开放世界时序感知
+8. [Autonomy, Social Norms, and Alignment: Towards a Developmental Framework for Autonomous Artificial Agents](/202609/12/2609.11660v1-autonomy-social-norms-and-alignment-towards-a-developmental-framework-for-autonomous-artificial-agents)  
+   标签：评分：6.0/10、query:ad
+   evidence：具身智能体通过与环境的交互获取知识
 
 
 <div class="dpr-home-promo-card">

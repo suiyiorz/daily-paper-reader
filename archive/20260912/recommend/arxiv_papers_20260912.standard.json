@@ -1,0 +1,530 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-12T20:48:30.684316+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 8,
+    "quick_skim_target": 11,
+    "quick_selected": 8
+  },
+  "deep_dive": [
+    {
+      "id": "2609.08159v1",
+      "source": "arxiv",
+      "title": "OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments",
+      "abstract": "Long-horizon target navigation requires a robot to sustain task execution across evolving observations, decisions, and physical interactions. This requires three coupled capabilities: maintaining valid scene memory, revising target beliefs under partial observability, and selecting interaction-feasible navigation endpoints. However, the state underlying each capability is only conditionally valid: scene representations become stale when objects move or disappear, unsuccessful searches alter beliefs over target locations, and geometrically convenient endpoints may still be infeasible for manipulation. To address these challenges, we present OmniNav, which formulates long-horizon navigation as continual inference over a factorized task state posterior coupling scene validity, target belief, and interaction feasibility. For representation, OmniNav incrementally constructs an updatable 3D object scene memory, preventing stale scene evidence from propagating to subsequent decisions. For exploration, it introduces an evidence-aware Bayesian belief-revision mechanism that derives dependency-aware region priors from semantic context, incorporates unsuccessful searches as negative evidence, and updates them for posterior-guided frontier selection. For interaction, OmniNav incorporates manipulation reachability and collision constraints into navigation-endpoint selection and propagates execution feedback through hierarchical closed-loop recovery. Extensive experiments demonstrate that OmniNav achieves the highest success rates among the compared methods on semantic ObjectNav and fine-grained instance navigation benchmarks, remains robust to target relocation, and improves real-world pick-and-place success from 53.3% to 71.7% over an adapted open-loop baseline. The project page of OmniNav is available at https://omni-nav.github.io/.",
+      "authors": [
+        "Yujie Tang",
+        "Meiling Wang",
+        "Jinhao Jiang",
+        "Sibo Zuo",
+        "Yinan Deng",
+        "Xinyu Zhang",
+        "Yufeng Yue"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-08T02:43:48+00:00",
+      "link": "https://arxiv.org/pdf/2609.08159v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "long-horizon autonomous target navigation in dynamic environments",
+      "llm_evidence_cn": "动态环境中的长时程自主目标导航",
+      "llm_evidence": "动态环境中的长时程自主目标导航",
+      "canonical_evidence": "动态环境中的长时程自主目标导航",
+      "llm_tldr_en": "Presents OmniNav, which formulates long-horizon target navigation as continual inference over a factorized task state posterior, jointly maintaining scene memory, revising target beliefs under partial observability, and selecting interaction-feasible endpoints.",
+      "llm_tldr_cn": "长时程目标导航要求机器人在演化的观测、决策与物理交互中持续执行任务，需要同时维护有效场景记忆、在部分可观测下修正目标信念并选择可交互的导航终点。针对这三类状态仅条件有效的问题，本文提出OmniNav，将长时程导航建模为对因式分解任务状态后验的持续推理，联合更新记忆、信念与终点可行性。该方法提升了动态环境中长时程目标导航的鲁棒性，为需要与场景交互的自主导航提供了统一框架。",
+      "llm_tldr": "长时程目标导航要求机器人在演化的观测、决策与物理交互中持续执行任务，需要同时维护有效场景记忆、在部分可观测下修正目标信念并选择可交互的导航终点。针对这三类状态仅条件有效的问题，本文提出OmniNav，将长时程导航建模为对因式分解任务状态后验的持续推理，联合更新记忆、信念与终点可行性。该方法提升了动态环境中长时程目标导航的鲁棒性，为需要与场景交互的自主导航提供了统一框架。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.08339v1",
+      "source": "arxiv",
+      "title": "RoboCousin: Build Your Own Simulation Playground for Robust Bimanual Robotic Manipulation",
+      "abstract": "Bimanual manipulation policies require large and diverse training datasets, yet collecting demonstrations on physical robots is expensive and difficult to scale. Simulation can generate data efficiently, but existing pipelines typically operate within closed asset libraries and predefined scenes: adding a newly observed object or environment still requires substantial effort to reconstruct geometry, specify physical and semantic properties, annotate interactions, and integrate the result into executable tasks. We present RoboCousin, an extensible simulation-based data-generation platform that turns user-provided observations into reusable assets, scenes, and expert trajectories for bimanual manipulation. Built on RoboTwin~2.0, RoboCousin converts object images into simulation-ready assets with visual and collision geometry, semantic and physical metadata, and automatically generated grasp-contact candidates. It further constructs digital cousins that vary compatible objects, backgrounds, layouts, and language instructions while preserving task-relevant affordances and spatial relations. The same asset system supports tabletop and room-level scene construction, with collision-aware base control for interaction beyond a fixed workspace. We release RoboCousin-OBD, containing more than 3,000 annotated object instances and 50 background environments, and use RoboCousin to generate over one million expert trajectories across 50 tasks. Simulation and real-robot experiments show that the automatically generated interaction annotations are comparable to curated annotations, generated assets provide effective sim-to-real supervision, and tabletop cousins can improve transfer beyond training on a single reconstructed scene. RoboCousin therefore provides a practical path for expanding both the scale and coverage of synthetic bimanual manipulation data.",
+      "authors": [
+        "Jingxuan Zhu",
+        "Jingyi Li",
+        "LiangLiang Chen",
+        "Zhiyuan Jing",
+        "Jidong Zhang",
+        "Hongming Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-08T07:13:07+00:00",
+      "link": "https://arxiv.org/pdf/2609.08339v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "simulation playground for bimanual robotic manipulation",
+      "llm_evidence_cn": "面向双臂机器人操作的可扩展仿真数据平台",
+      "llm_evidence": "面向双臂机器人操作的可扩展仿真数据平台",
+      "canonical_evidence": "面向双臂机器人操作的可扩展仿真数据平台",
+      "llm_tldr_en": "RoboCousin builds an extensible simulation data-generation platform that turns user observations into reusable assets and expert trajectories for bimanual manipulation.",
+      "llm_tldr_cn": "双臂操作策略依赖大量多样演示数据，但真实机器人采集成本高，现有仿真流程受限于封闭资产库与预设场景，新增物体与环境需大量人工重建。论文提出RoboCousin，一个可扩展的仿真数据生成平台，能将用户提供的观测转化为可复用资产、场景与专家轨迹。基于RoboTwin 2.0构建，它降低了扩展仿真环境的门槛，为鲁棒双臂操作策略训练提供高效数据支撑。",
+      "llm_tldr": "双臂操作策略依赖大量多样演示数据，但真实机器人采集成本高，现有仿真流程受限于封闭资产库与预设场景，新增物体与环境需大量人工重建。论文提出RoboCousin，一个可扩展的仿真数据生成平台，能将用户提供的观测转化为可复用资产、场景与专家轨迹。基于RoboTwin 2.0构建，它降低了扩展仿真环境的门槛，为鲁棒双臂操作策略训练提供高效数据支撑。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.08965v1",
+      "source": "arxiv",
+      "title": "PlannerForge: LLM Agents for Scenario-Based Testing of Motion Planners in Autonomous Driving",
+      "abstract": "Ensuring the safety of autonomous driving is a critical challenge. Scenario-based testing is a systematic process used to validate Autonomous Driving Systems (ADSs), but it remains a fragmented modular pipeline in which scenario generation, retrieval, modification, ADS execution, and results analysis are performed by separate tools with little interaction. Large Language Model (LLM) agents have shown promise across ADS sub-systems such as perception, planning, and control. However, no prior work covers the whole scenario-based testing pipeline for ADSs with a unified LLM-agent framework. We present PlannerForge, an LLM-agent framework that extends all scenario-based testing stages (from Scenario Generation to ADS Assessment) and adds two further LLM-enhanced stages: ADS Enhancement and ADS Benchmarking. We evaluate PlannerForge with 10 off-the-shelf LLMs across all tasks (Generation, Selection, Modification, Module Routing, Planner Testing, and Enhancement) under 5 prompt conditions. Best-per-task scores range from 0.88 to 1.00, and open-source 20-35B backends match commercial APIs on most tasks. Open-source models such as Qwen3.6:35B match commercial APIs on three of the five tasks. Chaining the modules end-to-end retains 83% / 78% of seed queries (commercial / open). It outperforms Scenario Factory 2.0 (Finkeldei et al., 2025) on natural-language generation (193 vs. 144 executable of 200) and realises 92-96% of requested city, road and vehicle attributes. It outperforms BM25 (Robertson and Zaragoza, 2009) at rank 1 selection (92.0% vs. 67.5%) and From-Words-to-Collisions (Gao et al., 2025) on physically valid edits (>=94% vs. 31%). At N=400, cost-tuning lifts planner success from 50.4% to 70.2% and cuts collisions from 19.0% to 8.4%, without domain-specific fine-tuning.",
+      "authors": [
+        "Yuan Gao",
+        "Sebastian Müller",
+        "Mattia Piccinini",
+        "Marc Kaufeld",
+        "Yuchen Zhang",
+        "Finn Rasmus Schäfer",
+        "Qunying Song",
+        "Johannes Betz"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.RO"
+      ],
+      "published": "2026-09-08T16:19:06+00:00",
+      "link": "https://arxiv.org/pdf/2609.08965v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLM agents for scenario-based testing of autonomous driving motion planners",
+      "llm_evidence_cn": "面向自动驾驶运动规划器场景测试的LLM智能体",
+      "llm_evidence": "面向自动驾驶运动规划器场景测试的LLM智能体",
+      "canonical_evidence": "面向自动驾驶运动规划器场景测试的LLM智能体",
+      "llm_tldr_en": "PlannerForge unifies the fragmented autonomous driving scenario-based testing pipeline, from generation to assessment, using a single LLM-agent framework that covers perception, planning and control subsystems.",
+      "llm_tldr_cn": "针对自动驾驶系统安全验证中场景生成、检索、修改、执行与结果分析各自割裂、缺乏统一框架的问题，本文提出PlannerForge，用统一的LLM智能体框架覆盖场景测试全流程。该方法将场景生成到自动驾驶系统评估的各阶段整合，并利用LLM智能体贯穿感知、规划与控制子系统。工作表明单一智能体框架可端到端支撑自动驾驶运动规划器的场景化测试，为系统安全验证提供一体化工具。",
+      "llm_tldr": "针对自动驾驶系统安全验证中场景生成、检索、修改、执行与结果分析各自割裂、缺乏统一框架的问题，本文提出PlannerForge，用统一的LLM智能体框架覆盖场景测试全流程。该方法将场景生成到自动驾驶系统评估的各阶段整合，并利用LLM智能体贯穿感知、规划与控制子系统。工作表明单一智能体框架可端到端支撑自动驾驶运动规划器的场景化测试，为系统安全验证提供一体化工具。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.10706v1",
+      "source": "arxiv",
+      "title": "HuRo: Robotizing Human Videos for Scalable VLA Pretraining",
+      "abstract": "Human video datasets have emerged as a compelling alternative to expensive real-robot data, offering rich diversity at scale. To bridge the human-to-robot embodiment gap, existing approaches either robotize videos in task-matched settings or address observation and action alignment separately at scale. In this work, we systematically examine whether robotized human videos can provide effective and scalable supervision for pretraining vision-language-action (VLA) policies. To this end, we develop a robotization pipeline that converts heterogeneous human videos into robot-aligned observations and action trajectories while inferring missing intermediate signals across annotation levels. Using this pipeline, we construct the HuRo dataset, comprising about 630K robotized episodes and 142M processed frames from five human-video sources. Across four real-world manipulation tasks, increasing robotized pretraining scale improves overall completion from 51.5% to 80.3% and OOD completion under spatial and visual shifts from 34.9% to 72.2%. Ablations further show that visual robotization improves OOD robustness and that end-to-end pretraining with retargeted actions outperforms visual-only transfer. Code and data are released on our website: https://3587jjh.github.io/HuRo.",
+      "authors": [
+        "Jinho Jeong",
+        "Se June Joo",
+        "Jaehyun Kang",
+        "Dongyun Kim",
+        "Yena Kim",
+        "Hanjung Kim",
+        "Seon Joo Kim"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-09-09T18:02:05+00:00",
+      "link": "https://arxiv.org/pdf/2609.10706v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "robotizing human videos for scalable VLA pretraining",
+      "llm_evidence_cn": "将人类视频机器人化用于VLA预训练",
+      "llm_evidence": "将人类视频机器人化用于VLA预训练",
+      "canonical_evidence": "将人类视频机器人化用于VLA预训练",
+      "llm_tldr_en": "Examines whether robotized human videos provide scalable supervision for vision-language-action policies, building a pipeline that converts heterogeneous human videos into robot-aligned observations and action trajectories and releasing the 630K-sample HuRo dataset.",
+      "llm_tldr_cn": "针对真实机器人数据昂贵、人-机器人具身鸿沟难以弥合的问题，本文系统研究将人类视频机器人化后能否为视觉-语言-动作策略提供可扩展的预训练监督。作者构建机器人化流水线，将异构人类视频转换为机器人对齐的观测与动作轨迹，并推断缺失的中间信号，据此建立约63万样本的HuRo数据集。结果表明机器人化人类视频可作为有效且可扩展的VLA预训练监督，为低成本大规模策略学习提供了新方案。",
+      "llm_tldr": "针对真实机器人数据昂贵、人-机器人具身鸿沟难以弥合的问题，本文系统研究将人类视频机器人化后能否为视觉-语言-动作策略提供可扩展的预训练监督。作者构建机器人化流水线，将异构人类视频转换为机器人对齐的观测与动作轨迹，并推断缺失的中间信号，据此建立约63万样本的HuRo数据集。结果表明机器人化人类视频可作为有效且可扩展的VLA预训练监督，为低成本大规模策略学习提供了新方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.11753v1",
+      "source": "arxiv",
+      "title": "SEED-UMI: Sharing the Exoskeleton between human and robot for onE-to-one Dexterous demonstration",
+      "abstract": "Imitation learning for dexterous hands is bottlenecked by the difficulty of collecting contact-rich demonstrations that transfer faithfully to the robot. Prior wearable-exoskeleton systems record only on the human side and retarget via open-loop mappings calibrated in free space, which degrade under contact. We present SEED-UMI, a framework in which both the human and the robot wear the same exoskeleton: joint encoders become a physically shared measurement, and wrist cameras mounted to the exoskeleton observe the same outer mechanism during both human data collection and robot policy rollouts. This turns retargeting into paired cross-embodiment supervision and lets policies train directly on raw exoskeleton-centric wrist images, without segmentation or inpainting. On five contact-rich tasks, SEED-UMI achieves 3.0x greater data collection efficiency than exoskeleton-based teleoperation and a 70.0% average rollout success rate.",
+      "authors": [
+        "Tengbo Yu",
+        "Jiahao Wu",
+        "Daohan Li",
+        "Bingxu Chen",
+        "Hao Liu",
+        "Xiaojian Ma",
+        "Hangxin Liu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-10T16:08:58+00:00",
+      "link": "https://arxiv.org/pdf/2609.11753v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "shared exoskeleton for one-to-one dexterous manipulation demonstration and imitation learning",
+      "llm_evidence_cn": "共享外骨骼实现一对一灵巧操作演示与模仿学习",
+      "llm_evidence": "共享外骨骼实现一对一灵巧操作演示与模仿学习",
+      "canonical_evidence": "共享外骨骼实现一对一灵巧操作演示与模仿学习",
+      "llm_tldr_en": "SEED-UMI lets both human and robot wear the same exoskeleton, turning retargeting into paired cross-embodiment supervision so dexterous manipulation policies train on shared joint and wrist-camera measurements.",
+      "llm_tldr_cn": "灵巧手模仿学习的瓶颈在于难以采集能忠实迁移到机器人的接触丰富演示。现有可穿戴外骨骼仅在人类侧记录，再以自由空间标定的开环映射重定向，接触时性能下降。SEED-UMI让人与机器人共穿同一外骨骼，使关节编码器成为物理共享测量，腕部相机在人类采集与机器人执行时观察同一机构，从而把重定向变为配对跨具身监督。策略可直接在原始外骨骼腕部图像上训练，提升接触条件下演示迁移的保真度。",
+      "llm_tldr": "灵巧手模仿学习的瓶颈在于难以采集能忠实迁移到机器人的接触丰富演示。现有可穿戴外骨骼仅在人类侧记录，再以自由空间标定的开环映射重定向，接触时性能下降。SEED-UMI让人与机器人共穿同一外骨骼，使关节编码器成为物理共享测量，腕部相机在人类采集与机器人执行时观察同一机构，从而把重定向变为配对跨具身监督。策略可直接在原始外骨骼腕部图像上训练，提升接触条件下演示迁移的保真度。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.07211v1",
+      "source": "arxiv",
+      "title": "Phase-and-First-Arrival VLM Feedback for Sparse-Reward Reinforcement Learning in Surgical Manipulation",
+      "abstract": "Sparse outcome feedback limits what robots can learn from unsuccessful attempts at complex manipulation. Failed multi-stage surgical attempts can contain grasps, lifts, or transfers worth reusing. In sparse-reward reinforcement learning, terminal rewards collapse such attempts to the same outcome, while scalar vision-language model (VLM) ratings reveal neither what progress merits credit nor when it occurred. We introduce phase-and-first-arrival feedback: one VLM query per recorded episode identifies the furthest visually verified task phase and when that phase is first reached, allowing the learner to reuse partial behavior and localize credit. We instantiate it in SurgPhaseBench, a phase-structured suite spanning rigid and deformable tasks, and evaluate it in simulation and hardware. Across five simulated tasks, our method reaches 75.2% mean success, compared with 52.1% for a reward based on Contrastive Language-Image Pre-training (CLIP) using the same visual input; the advantage persists when only the feedback representation changes. On hardware, the same record supports autonomous block picking and slip recovery. Together, these results show that trajectory-level visual supervision can preserve partial progress while providing the temporal credit needed for sparse-reward control.",
+      "authors": [
+        "Wanli Liuchen",
+        "Fangyuan Wang",
+        "Bin Li",
+        "Anqing Duan",
+        "Yunhui Liu",
+        "Peng Zhou",
+        "David Navarro-Alarcon"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-07T08:29:59+00:00",
+      "link": "https://arxiv.org/pdf/2609.07211v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "sparse-reward reinforcement learning for surgical robotic manipulation with VLM feedback",
+      "llm_evidence_cn": "面向手术机器人操作的稀疏奖励强化学习与VLM反馈",
+      "llm_evidence": "面向手术机器人操作的稀疏奖励强化学习与VLM反馈",
+      "canonical_evidence": "面向手术机器人操作的稀疏奖励强化学习与VLM反馈",
+      "llm_tldr_en": "Sparse terminal rewards collapse multi-stage manipulation attempts; phase-and-first-arrival VLM feedback identifies the furthest verified phase and its timing, reusing partial behavior and localizing credit.",
+      "llm_tldr_cn": "复杂手术操作中稀疏的终端奖励会把包含抓取、抬升、转移等有价值步骤的失败尝试一并抹平，难以对部分成功行为进行信用分配。本文提出阶段与首次到达反馈机制，仅用一次视觉语言模型查询即可识别任务中视觉验证到的最远阶段及其首次到达时刻，从而复用部分行为并定位信用。作者构建了阶段化的SurgPhaseBench基准进行验证，结果表明该方法能有效利用失败轨迹中的可复用片段，提升稀疏奖励下机器人操作的样本效率与学习效果。",
+      "llm_tldr": "复杂手术操作中稀疏的终端奖励会把包含抓取、抬升、转移等有价值步骤的失败尝试一并抹平，难以对部分成功行为进行信用分配。本文提出阶段与首次到达反馈机制，仅用一次视觉语言模型查询即可识别任务中视觉验证到的最远阶段及其首次到达时刻，从而复用部分行为并定位信用。作者构建了阶段化的SurgPhaseBench基准进行验证，结果表明该方法能有效利用失败轨迹中的可复用片段，提升稀疏奖励下机器人操作的样本效率与学习效果。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.05593v1",
+      "source": "arxiv",
+      "title": "Adaptive Cost-Sensitive Machine Learning for Autonomous Robot Navigation Failure Prediction: When Not All Errors Are Equal",
+      "abstract": "Autonomous robot navigation failures differ not only in categorical severity but also in the physical context in which they occur. A near-miss at low speed under reliable sensing is not equivalent to the same event during rapid motion, close obstacle approach or degraded perception. This paper reframes navigation failure prediction as consequence-sensitive forecasting. We first establish a fixed baseline in which training weights are modulated by categorical severity, then introduce an adaptive extension defining a state-dependent consequence function combining severity with normalised velocity, obstacle proximity and sensing uncertainty, together with a risk-sensitivity term that rises as conditions deteriorate. We evaluate on 2,000 simulated differential-drive episodes (~1,000,000 timesteps) using episode-level GroupKFold, with external validation on the UCI SCITOS G5 dataset. Fixed weighting raises Logistic Regression high-severity recall from 0.851 to 0.985 and reduces missed consequence cost from 1,940 to 313; the adaptive extension reaches 0.998 and 82. Under matched false-positive conditions, however, the discriminative advantage is modest (0.986 versus 0.984), so most of the gain reflects a more conservative operating point rather than better ranking. The effect is consistent across all five folds and stable across a threefold span of context coefficients. Because the primary simulation produced no collisions, we add a controlled extension in which 108 of 600 episodes terminate in contact: collision recall rises from 0.850 to 0.966 (fixed) and 0.984 (adaptive), with missed collision cost falling from 1,000 to 105, at false-positive rates of 0.413 and 0.799, respectively. Context-dependent consequence modelling thus provides a principled mechanism for allocating conservatism by physical risk.",
+      "authors": [
+        "Rifa Ferzana"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-04T17:45:51+00:00",
+      "link": "https://arxiv.org/pdf/2609.05593v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Failure prediction for autonomous robot navigation",
+      "llm_evidence_cn": "自主机器人导航失效预测",
+      "llm_evidence": "自主机器人导航失效预测",
+      "canonical_evidence": "自主机器人导航失效预测",
+      "llm_tldr_en": "This paper reframes autonomous robot navigation failure prediction as consequence-sensitive forecasting, using adaptive cost-sensitive learning that combines severity with velocity, obstacle proximity, and sensing uncertainty.",
+      "llm_tldr_cn": "自主导航失效在严重程度与物理情境上差异显著，低速近距事件与高速降级感知下的事件后果并不等价。论文将导航失效预测重构为后果敏感预测，先建立按类别严重度加权的基线，再引入结合速度、障碍物接近度与感知不确定性的状态相关后果函数及风险敏感项。该方法旨在让预测更贴合真实风险后果。",
+      "llm_tldr": "自主导航失效在严重程度与物理情境上差异显著，低速近距事件与高速降级感知下的事件后果并不等价。论文将导航失效预测重构为后果敏感预测，先建立按类别严重度加权的基线，再引入结合速度、障碍物接近度与感知不确定性的状态相关后果函数及风险敏感项。该方法旨在让预测更贴合真实风险后果。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.08209v2",
+      "source": "arxiv",
+      "title": "Monkey See, Can Monkey Do? A Benchmark for Evaluating Robot Skill Learning by Observation",
+      "abstract": "Learning from Observation (LfO) is a fundamental robotic capability that replicates how humans and animals socially learn from each other. Beyond its biological parallels, this modality provides a practical solution for data scaling in sample-inefficient and data-starved domains like robotics. Recent work has demonstrated promising results in learning manipulation skills from human videos, yet progress in this area remains difficult to assess. Existing methods vary widely in assumptions, hardware choices, and environment setups making it difficult to draw meaningful comparisons and identify advances in the field. To address these challenges, we introduce RoboReel: a unified benchmark for evaluating models that learn policies from human videos. RoboReel consists of bundled real-world human demonstration videos, simulated robot trajectories, and evaluation environments on ten manipulation tasks. We develop four test suites to evaluate the models' performance on multiple axes, including the robustness to visual distractors and the ability to complete long-horizon tasks. Our benchmark covers learning-from-observation models from different categories, and studies the effectiveness of multiple representation choices in our benchmark evaluation that covers over seven state-of-the-art algorithms (including our VLA based variants) in the field of LfO. Finally, we present an analysis of the different types of algorithms showing that long-horizon tasks and tasks with low tolerances are still challenging for current models. Webpage: https://roboreel.github.io",
+      "authors": [
+        "Weiwei Gu",
+        "Anmol Gupta",
+        "Anant Sah",
+        "Ryan Varghese",
+        "Lalitha Shreya Vanam",
+        "Prabhath Adireddi",
+        "Peter Karkus",
+        "Nakul Gopalan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-08T03:48:44+00:00",
+      "link": "https://arxiv.org/pdf/2609.08209v2",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "benchmark for robot manipulation skill learning from observation",
+      "llm_evidence_cn": "面向机器人操作技能观察学习的基准",
+      "llm_evidence": "面向机器人操作技能观察学习的基准",
+      "canonical_evidence": "面向机器人操作技能观察学习的基准",
+      "llm_tldr_en": "Progress in learning manipulation skills from human videos is hard to assess; RoboReel provides a unified benchmark standardizing assumptions, hardware and environments to enable meaningful comparison.",
+      "llm_tldr_cn": "针对机器人从人类视频中学习操作技能的研究因假设、硬件与环境差异大而难以比较评估的问题，本文提出统一基准RoboReel。该基准规范化学习自观察任务中的模型评测流程，聚焦机器人操作技能从人类视频中的策略学习。通过统一评测设置，工作使不同方法可在同一框架下公平对比，从而更清晰地识别领域进展与瓶颈。其贡献在于为数据稀缺的机器人技能学习提供可复现的评测基础设施。",
+      "llm_tldr": "针对机器人从人类视频中学习操作技能的研究因假设、硬件与环境差异大而难以比较评估的问题，本文提出统一基准RoboReel。该基准规范化学习自观察任务中的模型评测流程，聚焦机器人操作技能从人类视频中的策略学习。通过统一评测设置，工作使不同方法可在同一框架下公平对比，从而更清晰地识别领域进展与瓶颈。其贡献在于为数据稀缺的机器人技能学习提供可复现的评测基础设施。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.06823v1",
+      "source": "arxiv",
+      "title": "Generalist Open-World Temporal Perception",
+      "abstract": "The next generation of artificial intelligence systems will likely be natively temporal and multimodal in both inputs and outputs: able to converse, perceive, predict, reason, and synthesize through a shared world representation. Realizing this requires a temporal perceptual substrate integrating sensory streams, language, and structured outputs within a multimodal world model. We seek a generalist open-world perceptual system that represents biological forms, natural physical structures, and artifacts, and their interactions, as a coherent, temporally persistent process. The model should infer geometry, articulation, semantics, interaction structure, and uncertainty from raw multimodal streams; maintain identity through occlusion and viewpoint change; generalize across species, forms, mechanisms, and materials; and abstain or expand its ontology when encountering the unknown. The objective is a structured world state supporting understanding, prediction, counterfactual reasoning, and controllable synthesis. Recent work suggests that some cross-modal and reasoning-like capabilities can emerge from large-scale generative video pretraining, reminiscent of language-model scaling. Yet these capabilities are often accessed through language probes or expressed through photorealistic video, leaving explicit semantic, geometric, or temporal structure largely unexposed. This paper articulates an alternative and complementary paradigm: perception and synthesis as distinct conditionings within a shared Generalist Open-World Temporal Perception Architecture (GOWTPA). Recognition, structured prediction, and simulation arise as different conditionings of the same generative substrate, while reasoning and embodiment-specific policies build upon the resulting world state. This positions generalist temporal perception as a potential foundation layer for broader multimodal intelligence and physical AI.",
+      "authors": [
+        "Cristian Sminchisescu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-09-06T20:38:08+00:00",
+      "link": "https://arxiv.org/pdf/2609.06823v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generalist open-world temporal perception from raw multimodal streams",
+      "llm_evidence_cn": "从原始多模态流进行通用开放世界时序感知",
+      "llm_evidence": "从原始多模态流进行通用开放世界时序感知",
+      "canonical_evidence": "从原始多模态流进行通用开放世界时序感知",
+      "llm_tldr_en": "This paper envisions a generalist open-world temporal perception system that integrates sensory streams, language and structured outputs in a multimodal world model to infer geometry, semantics and interaction.",
+      "llm_tldr_cn": "现有感知系统多针对静态或单模态输入，难以支撑未来原生时序多模态的智能系统。本文提出通用开放世界时序感知系统，在统一的多模态世界模型中整合传感流、语言与结构化输出，从原始数据推断几何、关节、语义、交互结构与不确定性，并在遮挡和视角变化下维持身份一致。该系统面向生物形态、自然结构与人工制品及其交互，旨在跨物种泛化，为具身智能的时序感知基座提供研究方向。",
+      "llm_tldr": "现有感知系统多针对静态或单模态输入，难以支撑未来原生时序多模态的智能系统。本文提出通用开放世界时序感知系统，在统一的多模态世界模型中整合传感流、语言与结构化输出，从原始数据推断几何、关节、语义、交互结构与不确定性，并在遮挡和视角变化下维持身份一致。该系统面向生物形态、自然结构与人工制品及其交互，旨在跨物种泛化，为具身智能的时序感知基座提供研究方向。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.08853v1",
+      "source": "arxiv",
+      "title": "CAST: Alternating State-Value Targets and Expanded Policy Gradients for Model-Based Reinforcement Learning",
+      "abstract": "Model-based reinforcement learning (MBRL) is a family of RL methods that learn a model of the environment and use it for action selection, making it well suited to robotics due to its sample efficiency. Combining learned models with online planning can further improve action selection, as the planner can exploit the model to find better actions than the learned policy alone. Recent methods combining learned policies with online planning typically learn the value of the policy rather than the stronger planner-guided behavior. We present CAST (Critic with Alternating State-value Target), which uses planner-guided behavior to improve value learning while regularizing the value estimate with the current policy. CAST replaces the action-value critic with a state-value critic, trained using a target that combines a real planner-guided transition and an imagined transition under the current policy. The resulting value function corresponds to an alternating process between planner-guided behavior and the current policy, allowing it to benefit from the stronger planner behavior while being regularised by the policy being learned. We evaluate CAST on the DeepMind Control and HumanoidBench Suites against several state-of-the-art methods, and demonstrate successful transfer to a physical Unitree Go2 quadruped performing a dynamic handstand.",
+      "authors": [
+        "Pietro Noah Crestaz",
+        "Mohamed Yassine Kabouri",
+        "Nicolas Mansard",
+        "Andrea Del Prete"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-08T15:05:16+00:00",
+      "link": "https://arxiv.org/pdf/2609.08853v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "model-based reinforcement learning with planner-guided value learning for robotics",
+      "llm_evidence_cn": "面向机器人、结合规划引导值学习的基于模型强化学习",
+      "llm_evidence": "面向机器人、结合规划引导值学习的基于模型强化学习",
+      "canonical_evidence": "面向机器人、结合规划引导值学习的基于模型强化学习",
+      "llm_tldr_en": "CAST improves model-based RL for robotics by learning values from planner-guided behavior while regularizing with the current policy, better exploiting online planning than policy-value-only methods.",
+      "llm_tldr_cn": "针对基于模型的强化学习中，结合在线规划的方法通常只学习策略值、未能利用更强的规划引导行为的问题，本文提出CAST方法。CAST利用规划引导行为改进值学习，同时用当前策略对值估计进行正则化，使值函数更贴近规划器所能达到的性能。该方法面向机器人等需要样本效率的场景，将学习模型与在线规划结合以提升动作选择质量。工作为基于模型强化学习中融合规划与策略学习提供了新思路。",
+      "llm_tldr": "针对基于模型的强化学习中，结合在线规划的方法通常只学习策略值、未能利用更强的规划引导行为的问题，本文提出CAST方法。CAST利用规划引导行为改进值学习，同时用当前策略对值估计进行正则化，使值函数更贴近规划器所能达到的性能。该方法面向机器人等需要样本效率的场景，将学习模型与在线规划结合以提升动作选择质量。工作为基于模型强化学习中融合规划与策略学习提供了新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.11660v1",
+      "source": "arxiv",
+      "title": "Autonomy, Social Norms, and Alignment: Towards a Developmental Framework for Autonomous Artificial Agents",
+      "abstract": "In recent years, artificial intelligence has made extraordinary progress thanks to large-scale models capable of generalization and the generation of complex outputs. However, transferring this potential into embodied agents reveals a significant limitation: the most advanced systems rely on pre-existing datasets and human feedback strategies that are powerful but insufficient in dynamic or unknown contexts. To adapt, an agent must acquire knowledge through direct interaction with its environment. One strategy to address this challenge involves introducing higher-level mechanisms, such as intrinsic motivations, which leverage curiosity and competence, to guide exploration and learning in complex environments. While this flexibility expands autonomy, it complicates the task of ensuring agents remain aligned with human goals. Alignment, already a challenge for artificial systems in general, becomes even more complex in unstructured and dynamic contexts where predefined rules prove insufficient. To be effective and adaptable, norms must be rooted in experience through an epistemological process that starting from simple, situated principles allows for the gradual construction of more complex rules through experience, autonomous learning, and cooperation with other moral agents. Similarly to children learning social norms by exploring their environment and participating in collective practices, artificial agents must also be educated toward alignment. Following Dennett, the status of a moral agent is not innate but is attributed gradually based on the ability to responsibly manage increasing degrees of freedom. From this perspective, the regulatory sandboxes can be viewed as pedagogical environments for AI: dynamic spaces where alignment develops as a formative process, progressively shaping autonomous behaviors through interaction and cooperation in scenarios of increasing complexity.",
+      "authors": [
+        "Marica Notte",
+        "Ludovica Marinucci",
+        "Vieri Giuliano Santucci"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-10T15:02:52+00:00",
+      "link": "https://arxiv.org/pdf/2609.11660v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "embodied agents acquiring knowledge through environmental interaction",
+      "llm_evidence_cn": "具身智能体通过与环境的交互获取知识",
+      "llm_evidence": "具身智能体通过与环境的交互获取知识",
+      "canonical_evidence": "具身智能体通过与环境的交互获取知识",
+      "llm_tldr_en": "Transferring large-model potential into embodied agents is limited by reliance on static datasets; this developmental framework uses intrinsic motivation such as curiosity to guide autonomous exploration and alignment.",
+      "llm_tldr_cn": "针对将大模型能力迁移到具身智能体时依赖既有数据集与人类反馈、难以适应动态未知环境的问题，本文提出面向自主人工智能体的发展式框架。该框架主张智能体需通过与环境直接交互获取知识，并引入好奇心与胜任感等内在动机机制引导复杂环境中的探索与学习，同时考虑自主性、社会规范与对齐。工作为具身智能体在开放环境中的持续学习与价值对齐提供了理论框架。",
+      "llm_tldr": "针对将大模型能力迁移到具身智能体时依赖既有数据集与人类反馈、难以适应动态未知环境的问题，本文提出面向自主人工智能体的发展式框架。该框架主张智能体需通过与环境直接交互获取知识，并引入好奇心与胜任感等内在动机机制引导复杂环境中的探索与学习，同时考虑自主性、社会规范与对齐。工作为具身智能体在开放环境中的持续学习与价值对齐提供了理论框架。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.09692v1",
+      "source": "arxiv",
+      "title": "CT-SAFR: Safe and Interpretable Chain-of-Thought Reasoning for Autonomous Robots: A Multi-Layered Verification Framework for Trustworthy AI-Driven Robotic Decision Making",
+      "abstract": "Chain-of-Thought (CoT) prompting enables LLMs to perform explicit, step-by-step reasoning, creating opportunities for sophisticated autonomous robots. However, recent research reveals that reasoning models verbalize their actual decision processes only 25-39% of the time, with faithfulness degrading 44% on complex tasks. This paper presents CT-SAFR (Chain-of-Thought Safety and Faithfulness for Robotics), a multi-layered verification framework achieving 94.2% hallucination detection (n = 500, 95% CI: 91.8-95.9%) with sub-500ms latency. Through a warehouse robot case study, this work demonstrates 87% reduction in unsafe reasoning outputs (p < 0.001) and provides recommendations for responsible deployment of reasoning-capable autonomous robots.",
+      "authors": [
+        "Cagri Temel"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-09T04:15:20+00:00",
+      "link": "https://arxiv.org/pdf/2609.09692v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "safe interpretable reasoning for autonomous robots",
+      "llm_evidence_cn": "自主机器人的安全可解释推理",
+      "llm_evidence": "自主机器人的安全可解释推理",
+      "canonical_evidence": "自主机器人的安全可解释推理",
+      "llm_tldr_en": "Presents CT-SAFR, a multi-layered verification framework for chain-of-thought reasoning in autonomous robots, achieving 94.2 percent hallucination detection and an 87 percent reduction in unsafe reasoning outputs in a warehouse robot case study.",
+      "llm_tldr_cn": "链式思维提示让大模型能逐步推理，但其真实决策过程常被掩盖，忠实度在复杂任务中显著下降，给自主机器人带来安全隐患。本文提出CT-SAFR，一个面向机器人链式思维的安全与忠实性多层验证框架，在仓库机器人案例中实现94.2%的幻觉检测率与亚500毫秒延迟，并将不安全推理输出减少87%。该工作提升了AI驱动机器人决策的可信度，为真实场景中的自主智能体安全部署提供保障。",
+      "llm_tldr": "链式思维提示让大模型能逐步推理，但其真实决策过程常被掩盖，忠实度在复杂任务中显著下降，给自主机器人带来安全隐患。本文提出CT-SAFR，一个面向机器人链式思维的安全与忠实性多层验证框架，在仓库机器人案例中实现94.2%的幻觉检测率与亚500毫秒延迟，并将不安全推理输出减少87%。该工作提升了AI驱动机器人决策的可信度，为真实场景中的自主智能体安全部署提供保障。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.11561v1",
+      "source": "arxiv",
+      "title": "Memory as Plans: World-Action Modeling with Memory-Grounded Planning",
+      "abstract": "Mainstream robotic policies often adopt a Markovian formulation, but many complex real-world manipulation tasks are inherently non-Markovian, requiring long-horizon memory beyond the current observation. Existing memory mechanisms often rely on language summaries, growing visual windows, or their combinations, and may therefore lose fine-grained visual evidence or face a trade-off between history coverage and execution efficiency. We introduce MaP-WAM, a Memory-as-Plans framework that decomposes memory-dependent world-action modeling into memory-grounded planning and plan-conditioned execution, and uses long-term multimodal episodic context as planning-time evidence rather than repeatedly conditioning the executor on the full history. MaP-WAM represents memory as completed segment records containing language instructions and sparse visual context, and converts this episodic memory into compact plans comprising the next segment-level language plan and corresponding visual guidance. A World-Action-Progress (WAP) model executes each plan over an unknown duration by jointly predicting action chunks and corresponding execution progress at inference time, calibrating predicted progress through plan-observation alignment for adaptive segment transitions and closed-loop context updates. MaP-WAM keeps the executor context length fixed, while structured attention further enables key-value caching in both planning and execution. MaP-WAM achieves state-of-the-art performance on RMBench with an 83.3% success rate and attains 78.0% success on real-robot tasks, while maintaining approximately constant executor inference latency as task history grows.",
+      "authors": [
+        "Sizhe Zhao",
+        "Haozhe Xie",
+        "Weiyu Zhao",
+        "Chenchu Zhang",
+        "Huan Wang",
+        "Chenyang Wang",
+        "Qinglin Liu",
+        "Shengping Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-10T13:52:51+00:00",
+      "link": "https://arxiv.org/pdf/2609.11561v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Memory-grounded planning for long-horizon robotic manipulation",
+      "llm_evidence_cn": "面向长时程机器人操作的记忆锚定规划",
+      "llm_evidence": "面向长时程机器人操作的记忆锚定规划",
+      "canonical_evidence": "面向长时程机器人操作的记忆锚定规划",
+      "llm_tldr_en": "MaP-WAM addresses non-Markovian long-horizon manipulation by decomposing world-action modeling into memory-grounded planning and plan-conditioned execution using long-term multimodal episodic context.",
+      "llm_tldr_cn": "主流机器人策略多采用马尔可夫假设，但许多真实操作任务本质非马尔可夫，需要超出当前观测的长时程记忆。现有记忆机制依赖语言摘要或扩张视觉窗口，易丢失细粒度视觉证据或难以兼顾历史覆盖与执行效率。论文提出MaP-WAM记忆即规划框架，将记忆依赖的世界-动作建模分解为记忆锚定规划与计划条件执行，以长期多模态情景上下文作为规划证据。",
+      "llm_tldr": "主流机器人策略多采用马尔可夫假设，但许多真实操作任务本质非马尔可夫，需要超出当前观测的长时程记忆。现有记忆机制依赖语言摘要或扩张视觉窗口，易丢失细粒度视觉证据或难以兼顾历史覆盖与执行效率。论文提出MaP-WAM记忆即规划框架，将记忆依赖的世界-动作建模分解为记忆锚定规划与计划条件执行，以长期多模态情景上下文作为规划证据。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
