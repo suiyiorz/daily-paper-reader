@@ -6,59 +6,53 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-12
-- 运行时间：2026-09-12 20:56:35 UTC
+- 最新运行日期：2026-09-13
+- 运行时间：2026-09-13 21:42:15 UTC
 - 运行状态：成功
-- 本次总论文数：13
-- 精读区：5
-- 速读区：8
+- 本次总论文数：11
+- 精读区：6
+- 速读区：5
 
 ### 今日简报（AI）
-2026-09-12 日报：从13篇中筛出5篇精读、8篇速读，
-- 详情：[/202609/12/README](/202609/12/README)
+今日精选11篇机器人/自驾论文，精读6篇、速读5篇，重点聚焦端到端自动驾驶安全与语言引导操作。最值得看的是《Data-Driven Risk Fields for Safer End-to-End Autonomous Driving》（9.0/10）提出的风险场方法，以及《RefGuard》（8.0/10）用联合目标-锚点-框架定位提升机器人操作的身份感知能力。普通读者可优先关注这两篇，理解AI如何在动态环境中更安全地感知与执行任务。
+- 详情：[/202609/13/README](/202609/13/README)
 
 ### 精读区论文标签
-1. [OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments](/202609/12/2609.08159v1-omninav-robust-long-horizon-target-navigation-in-dynamic-environments)  
+1. [Data-Driven Risk Fields for Safer End-to-End Autonomous Driving](/202609/13/2609.10377v1-data-driven-risk-fields-for-safer-end-to-end-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：端到端自动驾驶风险感知规划
+2. [RefGuard: Identity-Aware Language-Guided Robot Manipulation via Joint Target-Anchor-Frame Grounding](/202609/13/2609.06221v1-refguard-identity-aware-language-guided-robot-manipulation-via-joint-target-anchor-frame-grounding)  
    标签：评分：8.0/10、query:ad
-   evidence：动态环境中的长时程自主目标导航
-2. [RoboCousin: Build Your Own Simulation Playground for Robust Bimanual Robotic Manipulation](/202609/12/2609.08339v1-robocousin-build-your-own-simulation-playground-for-robust-bimanual-robotic-manipulation)  
+   evidence：身份感知的语言引导机器人操作接地
+3. [SkillX: Unified Multi-Skill Policy Learning for Humanoid Soccer](/202609/13/2609.06718v1-skillx-unified-multi-skill-policy-learning-for-humanoid-soccer)  
    标签：评分：8.0/10、query:ad
-   evidence：面向双臂机器人操作的可扩展仿真数据平台
-3. [PlannerForge: LLM Agents for Scenario-Based Testing of Motion Planners in Autonomous Driving](/202609/12/2609.08965v1-plannerforge-llm-agents-for-scenario-based-testing-of-motion-planners-in-autonomous-driving)  
+   evidence：面向人形全身控制的统一强化学习策略
+4. [CLFTv2: Efficient Camera-LiDAR Fusion for Semantic Segmentation via Hierarchical Feature Pyramids](/202609/13/2609.09881v1-clftv2-efficient-camera-lidar-fusion-for-semantic-segmentation-via-hierarchical-feature-pyramids)  
    标签：评分：8.0/10、query:ad
-   evidence：面向自动驾驶运动规划器场景测试的LLM智能体
-4. [HuRo: Robotizing Human Videos for Scalable VLA Pretraining](/202609/12/2609.10706v1-huro-robotizing-human-videos-for-scalable-vla-pretraining)  
+   evidence：面向自动驾驶语义分割的相机-激光雷达融合
+5. [Assembling Two Parts in One Hand](/202609/13/2609.10137v1-assembling-two-parts-in-one-hand)  
    标签：评分：8.0/10、query:ad
-   evidence：将人类视频机器人化用于VLA预训练
-5. [SEED-UMI: Sharing the Exoskeleton between human and robot for onE-to-one Dexterous demonstration](/202609/12/2609.11753v1-seed-umi-sharing-the-exoskeleton-between-human-and-robot-for-one-to-one-dexterous-demonstration)  
+   evidence：面向单手内灵巧装配的强化学习与手指协同控制
+6. [UniMPA: A Unified Memory-Prediction-Action Model via Action-Grounded Transition Modeling](/202609/13/2609.11875v1-unimpa-a-unified-memory-prediction-action-model-via-action-grounded-transition-modeling)  
    标签：评分：8.0/10、query:ad
-   evidence：共享外骨骼实现一对一灵巧操作演示与模仿学习
+   evidence：统一记忆-预测-动作模型提升VLA机器人操作
 
 ### 速读区论文标签
-1. [Phase-and-First-Arrival VLM Feedback for Sparse-Reward Reinforcement Learning in Surgical Manipulation](/202609/12/2609.07211v1-phase-and-first-arrival-vlm-feedback-for-sparse-reward-reinforcement-learning-in-surgical-manipulation)  
+1. [From LLM-Generated Specifications to Learned Quadruped Locomotion](/202609/13/2609.07111v1-from-llm-generated-specifications-to-learned-quadruped-locomotion)  
    标签：评分：7.0/10、query:ad
-   evidence：面向手术机器人操作的稀疏奖励强化学习与VLM反馈
-2. [Monkey See, Can Monkey Do? A Benchmark for Evaluating Robot Skill Learning by Observation](/202609/12/2609.08209v2-monkey-see-can-monkey-do-a-benchmark-for-evaluating-robot-skill-learning-by-observation)  
+   evidence：大语言模型生成时序逻辑规约用于四足机器人运动策略学习
+2. [EvoNav-Bench: Benchmarking Lifelong Navigation in Evolving Environments](/202609/13/2609.08292v1-evonav-bench-benchmarking-lifelong-navigation-in-evolving-environments)  
    标签：评分：7.0/10、query:ad
-   evidence：面向机器人操作技能观察学习的基准
-3. [CAST: Alternating State-Value Targets and Expanded Policy Gradients for Model-Based Reinforcement Learning](/202609/12/2609.08853v1-cast-alternating-state-value-targets-and-expanded-policy-gradients-for-model-based-reinforcement-learning)  
+   evidence：具身导航基准
+3. [Actuator Dynamics Curricula for Narrow-Viability Tasks in Legged Robot Learning](/202609/13/2609.09492v1-actuator-dynamics-curricula-for-narrow-viability-tasks-in-legged-robot-learning)  
    标签：评分：7.0/10、query:ad
-   evidence：面向机器人、结合规划引导值学习的基于模型强化学习
-4. [CT-SAFR: Safe and Interpretable Chain-of-Thought Reasoning for Autonomous Robots: A Multi-Layered Verification Framework for Trustworthy AI-Driven Robotic Decision Making](/202609/12/2609.09692v1-ct-safr-safe-and-interpretable-chain-of-thought-reasoning-for-autonomous-robots-a-multi-layered-verification-framework-for-trustworthy-ai-driven-robotic-decision-making)  
-   标签：评分：7.0/10、query:ad
-   evidence：自主机器人的安全可解释推理
-5. [Memory as Plans: World-Action Modeling with Memory-Grounded Planning](/202609/12/2609.11561v1-memory-as-plans-world-action-modeling-with-memory-grounded-planning)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向长时程机器人操作的记忆锚定规划
-6. [Adaptive Cost-Sensitive Machine Learning for Autonomous Robot Navigation Failure Prediction: When Not All Errors Are Equal](/202609/12/2609.05593v1-adaptive-cost-sensitive-machine-learning-for-autonomous-robot-navigation-failure-prediction-when-not-all-errors-are-equal)  
+   evidence：足式机器人强化学习控制
+4. [Resilient Control Loops in Autonomous Vehicles Under Adversarial Jamming via Spectral Perception and Network-Layer Failover](/202609/13/2609.05739v1-resilient-control-loops-in-autonomous-vehicles-under-adversarial-jamming-via-spectral-perception-and-network-layer-failover)  
    标签：评分：6.0/10、query:ad
-   evidence：自主机器人导航失效预测
-7. [Generalist Open-World Temporal Perception](/202609/12/2609.06823v1-generalist-open-world-temporal-perception)  
+   evidence：对抗干扰下自动驾驶车辆的弹性控制回路
+5. [Contextual Observer Grounding: Evaluating Situated Spatial Reasoning in Vision-Language Models](/202609/13/2609.06880v1-contextual-observer-grounding-evaluating-situated-spatial-reasoning-in-vision-language-models)  
    标签：评分：6.0/10、query:ad
-   evidence：从原始多模态流进行通用开放世界时序感知
-8. [Autonomy, Social Norms, and Alignment: Towards a Developmental Framework for Autonomous Artificial Agents](/202609/12/2609.11660v1-autonomy-social-norms-and-alignment-towards-a-developmental-framework-for-autonomous-artificial-agents)  
-   标签：评分：6.0/10、query:ad
-   evidence：具身智能体通过与环境的交互获取知识
+   evidence：面向具身机器人任务的情境化空间推理
 
 
 <div class="dpr-home-promo-card">

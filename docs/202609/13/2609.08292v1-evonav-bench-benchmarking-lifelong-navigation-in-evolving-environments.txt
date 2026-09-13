@@ -1,0 +1,356 @@
+Title: EvoNav-Bench: Benchmarking Lifelong Navigation in Evolving Environments
+
+URL Source: https://arxiv.org/pdf/2609.08292v1
+
+Published Time: Wed, 09 Sep 2026 03:01:44 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# EvoNav-Bench: Benchmarking Lifelong Navigation in Evolving Environments 
+
+Xilin Wang 1∗, Guoxi Zhang 1∗, Hongming Xu 1, Zhuofan Zhang 1,2, Tianxu Wang 1, Lifeng Fan 1†
+
+> 1
+
+State Key Laboratory of General Artificial Intelligence, BIGAI 2Tsinghua University 
+
+Abstract: Lifelong navigation (LN) requires an embodied agent to solve a se-quence of navigation subtasks in the same environment. Since solving each sub-task from scratch incurs redundant exploration, an LN agent must consolidate experience from earlier stages and reuse it in later stages, often through persis-tent scene representations such as scene graphs or visual snapshots. However, existing approaches typically assume a stationary environment, whereas in real-world LN settings, human activities can cause the environment to evolve. With the stationary assumption violated, existing methods may fuse outdated prior ob-servations with new observations, yet current benchmarks cannot reveal this fail-ure mode. In this paper, we present EvoNav-Bench , which extends the GOAT-Bench [1] style LN formulation in the context of evolving environments. Built on the ProcTHOR framework, EvoNav-Bench introduces environment modifications between navigation tasks, making prior experience useful but not fully reliable. This design enables controlled evaluation of how environment evolution affects LN agents that reuse prior scene observations. Using EvoNav-Bench, we bench-mark three recent methods that build and reuse scene representations for naviga-tion. We also compare three simple heuristic strategies for handling environment evolution: Frontier-Update, Fail-then-Update, and Stage-Reset. Our results show that existing methods are brittle under environment evolution, while the heuristic strategies enable a controlled analysis of how agents can adapt to scene changes and mitigate their impact. 
+
+Keywords: Lifelong navigation, Environment evolution, Embodied navigation 
+
+## 1 Introduction 
+
+Following GOAT-Bench [1], we consider lifelong navigation (LN) [2] as a sequence of consecutive navigation tasks in which an agent learns about its environment and consolidates collected experi-ences. The lifelong aspect highlights the importance of consolidating experience, since solving each stage from scratch causes redundant exploration. This task-level formulation complements other views of lifelong navigation centered on continual policy learning [3], cross-session adaptation [4], or persistent localization [5]. Real-world systems such as GOAT [6] show that navigation perfor-mance improves as experience accumulates, suggesting the practical value of LN for long-term home robot deployment. Existing LN methods often aggregate past observations into persistent scene representations, such as multi-view images [7], feature maps [8], scene graphs [9], or retrieved long-term experi-ences [10, 11]. A common assumption behind these approaches is that the environment remains unchanged across stages. For instance, 3D-Mem [7] directly fuses point clouds from new obser-vations with existing ones when updating its scene representation. However, lifelong navigation is distinguished by extended operation over time, during which the agent’s visited environment may evolve due to human activity. Consider the assistant-robot scenario in Fig. 1, where a previously visited room is rearranged before a later navigation stage. In this case, prior scene information 
+
+> *
+
+Equal contribution. †Corresponding author. arXiv:2609.08292v1 [cs.RO] 8 Sep 2026 Observed Object  Observed Object     
+
+> Stage k-1 Stage k
+> I remember the house! Room seems
+> different…
+
+Figure 1: An illustration of lifelong navigation in an evolving environment. While navigating to the target object in stage k − 1, the agent observes objects such as a TV, a sofa, a desk, and chairs, consolidating experience that can support future navigation. While the agent is in the bedroom, humans rearrange the living room. In this case, the agent should not blindly fuse new observations of the living room with prior experience. In such settings, prior observations can reduce redundant exploration, but they can also mislead later navigation when parts of the scene have evolved. can become outdated, while re-exploration from scratch remains inefficient because changes are often local. This setting exposes a failure mode that remains largely hidden in static benchmarks: prior scene information can support efficient lifelong navigation, but it can also become misleading under environment evolution. Environmental change itself has long been studied in dynamic and lifelong SLAMs [5, 3, 4]; our focus is its interaction with cross-stage scene-representation reuse in goal-directed navigation. Existing consecutive-navigation benchmarks [1, 12] still assume static environments, and thus do not systematically evaluate LN agents in evolving environments. In this paper, we present EvoNav-Bench , which extends the GOAT-Bench style LN formulation with controlled environment evolution between navigation stages. EvoNav-Bench is built on Proc-THOR [13], which offers a collection of procedurally generated indoor household environments. Each episode in EvoNav-Bench takes place in a single unseen house environment and consists of multiple object navigation stages. Between the stages, the environment is modified by relocating objects to plausible new positions in a room while preserving overall navigability. Agents are not informed about environment evolution, so they need to detect and adapt to evolved scene states in subsequent tasks. Since evolution is applied probabilistically, EvoNav-Bench contains both static and evolving stage transitions. In this way, EvoNav-Bench creates a LN setting where prior experi-ence is useful for navigation but can be unreliable. Using EvoNav-Bench, we benchmark three recent navigation agents, UniGoal [14], 3D-Mem [7] and MSGNav [9] and find that they are brittle when the environment evolves. We further compare three simple heuristic strategies for handling environment evolution: Frontier-Update, Fail-then-Update, and Stage-Reset. The results suggest that re-exploration and revising storing object entries are effective mechanisms for adapting to scene evolution. Analysis on target relocation suggests the trade-off between reusing and reseting prior scene information. A controlled analysis further analyzes how environment evolution can substantially affect LN agents that reuse accumulated scene information across stages, especially when retained information becomes outdated. Experiments also show that perception quality can outweigh the influence of environment evolution. In summary, our contributions are as follows. • We extend the GOAT-style LN formulation with controlled between-stage environment evolution, enabling evaluation of its interaction with cross-stage experience reuse. 2• We introduce EvoNav-Bench , a benchmark for LN in evolving environments. • We benchmark UniGoal [14], 3D-Mem [7] and MSGNav [9] on EvoNav-Bench and compare three simple heuristic strategies for handling environment evolution. 
+
+## 2 Related Work 
+
+Lifelong Navigation In literature, LN can be formulated as a sequence of object navigation tasks. MultiON [15] represent the multiple objects with one-hot vectors for object categories. GOAT-Bench [1] extends this setting to multimodal goal specifications and provides agents with object categories, language descriptions, and images. Meanwhile, another thread of work formulates LN as a continual learning problem: the learning phase consists of several stages, but in each episode there is only one goal object. C-Nav [12] instantiates this view as class incremental learning—agents gradually learn new target categories as learning proceeds, and LENL [16] extends C-Nav to learning new scenes and instruction styles. Despite these different formulations, these benchmarks assume static environments. As a result, they cannot evaluate how environment evolution affects LN agents. LN centers on experience consolidation, making navigation methods that build scene representa-tions and long-term memories directly relevant. Scene representation methods, such as 3D-Mem [7], TANGO [8], MSGNav [9], MTU3D [17], and MLFM [18], are applicable if the representation is made persistent across stages. Persistent representations can take other forms as well, including topological graphs [19], spatial-semantic graphs [20], self-refining graph memories [21], or com-pressed visual contexts [22]. Similarly, methods that construct long-term trajectory memories [10], behavior memories [11], or episodic-semantic memories [23] are also applicable. However, these methods overlook potential changes in the underlying environment, making them insufficient for real-world LN applications. EvoNav-Bench provides an evaluation setting for studying LN agents under environment evolution. 
+
+Dynamic and Lifelong SLAM Environmental changes have long been studied in SLAM. Dy-namic SLAM handles moving objects during operation [5, 24], while lifelong SLAM address cross-session changes and persistent localization [4, 25]. These works primarily evaluate localization, mapping, or change estimation. EvoNav-Bench instead evaluates how unobserved between-stage changes affect cross-stage experience reuse in closed-loop ObjectNav. 
+
+Related Benchmarks A large body of non-lifelong navigation benchmarks studies how agents un-derstand and ground diverse goals. ObjectNav [26] and HM3D-OVON [27] evaluate category-level and open-vocabulary object search, while LangNav [28], SG3D [29], and LangMap [30] extend nav-igation to language-specified, sequential, and hierarchical goals. Vision-and-language navigation benchmarks analyze route-following perspective, spanning instruction following in R2R [31], re-mote object grounding in REVERIE [32], and continuous-environment navigation in VLN-CE [33]. Closer to our setting, two recent benchmarks also introduce temporal changes into navigation and object search. Portable ObjectNav [34] considers dynamic object placement in a given topological graph, whereas EvoNav-Bench involves exploration in continuous environment. STARBench [35] studies object retrieval in known environment with a given navigation policy, but EvoNav-Bench studies navigation in a unknown environment. 
+
+## 3 EvoNav-Bench 
+
+3.1 Task Formulation 
+
+Each task in EvoNav-Bench consists of 3–5 stages in a single unseen environment, and each stage is assigned its own step budget T . The kth stage prescribes a target object xk to be navigated to, de-scribed with its category, adjacent objects, appearance description, and an image. A stage terminates either when the agent determines that the target has been reached or when its budget is exhausted; if another stage remains, the next target is then released regardless of the previous stage’s success. Starting from a random position, at each step t, an agent receives RGB-D observations ot and nav-34321         
+
+> SALIENT_OBJECT RETAIN_GROUP FULL_SHUFFLE
+> Reference Trajectory Low High
+> Stage k-1 Room Selection Room Modification Goal Sampling
+> Sampling Probability Selected Target Selected Modification
+
+Figure 2: Scene evolution and goal sampling from stage k − 1 to stage k in EvoNav-Bench. (1) Reference trajectory: during task generation, a reference trajectory is used to determine visited rooms and the transition room before stage k. (2) Room selection: a room is sampled using room assets, visited rooms, the transition room, and recent evolution history. (3) Room modification: 
+
+one of three modification approaches is applied to the selected room. SALIENT OBJECT relocates a large object, such as the yellow desk in the figure, together with objects placed on it; RETAIN GROUP 
+
+relocates all objects in the room while retaining asset groups, such as the desk and the white chair; and FULL SHUFFLE relocates all objects independently. (4) Goal sampling: after room modifica-tion, the target object for stage k is sampled, and it may or may not reside in the changed room. igates either by taking discrete actions at from MOVE FORWARD , TURN LEFT , and TURN RIGHT or heading towards a target position pt.In an EvoNav-Bench task, a subset of objects may be randomly relocated to feasible positions be-tween consecutive stages after the current stage terminates. No information of the object relocation is released to the agent. This design simulates the case where human activities occur outside the robot’s observation, leaving the agent to infer environment evolution only from later observations. To isolate the challenge of lifelong navigation from online obstacle avoidance, we keep the envi-ronment stationary within each stage. Under this formulation, agents are evaluated on navigation performance when environment evolution can make prior observations partially outdated. 
+
+3.2 Task Generation Scenes and Tasks EvoNav-Bench is built on ProcTHOR-10k [13], a collection of procedurally generated indoor scenes with editable specifications. Each ProcTHOR-10k scene contains one to ten rooms and assets drawn from 108 categories, providing diverse indoor layouts and object arrange-ments for object navigation. More importantly, each scene is exposed as a structured configuration that specifies the floor plan, object instances, and object placements. This editability allows EvoNav-Bench to generate controlled local scene evolution by modifying object placements within a scene. We construct each EvoNav-Bench task from one ProcTHOR-10k scene and filter out single-room scenes so that scene evolution can occur outside the agent’s current room. For each retained scene, we generate a 3–5-stage object-navigation task, following the principles and details described below. 
+
+Scene Evolution Principles Recall that EvoNav-Bench targets the LN scenario in which accu-mulated experience is useful but potentially unreliable . This goal motivates four design dimensions for scene evolution. For locality , each evolution is limited to one selected room, leaving the rest of the scene unchanged so that majority of accumulated experience can remain useful. For expe-rience relevance , affected objects are chosen from previously explored areas, allowing outdated object locations or local layout cues to conflict with later observations. For observability , evolution occurs outside the agent’s current observation, so changes must be inferred later rather than directly observed. Finally, post-evolution validity requires the evolved scene to remain physically plausible and navigable. Specifically, AI2-THOR’s shortest-path planner are used to verify the reachability of goals after evolution. 
+
+Task Generation Details EvoNav-Bench runs task generation and agent evaluation stage by stage. The generation process produces a stage-wise evolution schedule and the corresponding scene con-4figurations for each task, which are used for evaluation. During evaluation, after each stage ter-minates by success or budget exhaustion, EvoNav-Bench saves the agent’s current pose, loads the scene configuration for the next stage, and re-spawns the agent at the saved pose. Constructing this schedule requires selecting which room, if any, should evolve at each stage transi-tion. Since the decision should not rely on any particular agent rollout, we use a reference trajectory 
+
+during task generation, as shown in the first panel of Fig. 2. The reference trajectory is generated stage by stage. At stage k = 1 , we use the initial position of the corresponding ProcTHOR house and sample the first goal, then compute the first trajectory segment from the initial position to the goal using the GetShortestPathToPoint function in AI2-THOR. For each later stage, after scene evolution and goal sampling, we append a shortest-path segment from the previous reference end-point to the new goal. The accumulated trajectory is used only during task generation to determine visited rooms and the transition room, which guide subsequent scene evolution and goal sampling. We next describe how the room to be modified is sampled, which is illustrated in the second panel of Fig. 2. The dataset-generation parameters are fixed to balance three properties: environment evolution should occur frequently enough to affect multi-stage navigation, changes should remain local, and goals should be related to evolved regions without always being relocated objects. For each transition from stage k−1 to stage k, scene evolution is triggered with probability pevolve = 0 .5.When evolution is triggered, we sample a room from a categorical distribution: 
+
+pevolved room  
+
+> j
+
+∝ qasset  
+
+> j
+
+qvisited  
+
+> j
+
+qcurrent  
+
+> j
+
+qevolved  
+
+> j
+
+. (1) The asset term qasset  
+
+> j
+
+is the number of assets in the jth room, encouraging evolution in rooms with richer object layouts. Let I(·) denote the indicator function. The other terms use the reference trajectory and recent evolution history to favor previously visited rooms, exclude the transition room, and avoid repeatedly modifying the same room: 
+
+qvisited  
+
+> j
+
+= f visited I(room j has been visited ) + (1 − I(room j has been visited )) 
+
+qcurrent  
+
+> j
+
+= 1 − I(room j is the transition room )
+
+qevolved  
+
+> j
+
+= f evolved I(room j was sampled at k − 2) + (1 − I(room j was sampled at k − 2)) .
+
+(2) We set f visited = 3 and f evolved = 0 .5, with all constants fixed before agent evaluation to define the benchmark distribution. Together, this room-sampling mechanism implements locality , expe-rience relevance , and observability , while reducing repeated evolution of the same room across consecutive stages. After room selection, we apply one of three room modification approaches, as shown in the third panel of Fig. 2. SALIENT OBJECT relocates one salient object together with smaller objects placed on it, whereas RETAIN GROUP and FULL SHUFFLE relocate all objects in the room while either pre-serving semantic groups or moving objects independently. All relocation positions are selected with the ProcTHOR placement algorithm to ensure navigability. 
+
+Goal Sampling We sample navigation goals to make them both unambiguous and likely to reflect the influence of scene evolution, a step illustrated in the goal-sampling panel of Fig. 2. To reduce goal ambiguity, we define a target score for each object based on its uniqueness. The score is 2 if the object is unique in the entire scene, 1.5 if it is unique within its room but not in the entire scene, and 1 otherwise. We use these scores to sample goals hierarchically, first sampling a goal room from a categorical distribution. The weight of each room is the sum of target scores of objects in that room, multiplied by 9 if the room is modified for the current stage and by 0.2 if it is the same goal room as in the previous stage. This biases goals toward evolved rooms while discouraging consecutive stages from selecting the same goal room, but it does not force the target to be a relocated object. Within the sampled goal room, candidate objects are sampled uniformly by default. If the current stage uses SALIENT OBJECT , the moved object is assigned weight 9, further increasing the chance that the goal is affected by scene evolution. 
+
+Statistics and Examples Fig. 3 shows an example task in EvoNav-Bench. EvoNav-Bench inherits its training, validation, and test splits from the ProcTHOR-10k dataset. After filtering out single-room scenes, we generate 7,924 training tasks with 31,797 stages, 751 validation tasks with 3,003 5Navigate to the light -         
+
+> colored wooden stand
+> with shelves and
+> compartments directly
+> below the television.
+> Navigate to the tall, rectangular, gray garbage can with a smooth surface positioned next to the plunger near the toilet.
+> Navigate to the gray chair with a rounded seat and black legs, also with a glass bottle on.
+> Approach the light wooden bed with a blue cylindrical pillow resting on a white sheet.
+> Stage 1Stage 2Stage 3Stage 4
+> Start Position Target Evolved Room
+
+Figure 3: An Example task in EvoNav-Bench. This task occurs in a house with four rooms. The goal of each stage is described with an image and a short description consisting of category, adjacent objects, and appearance description. At stage 3, the bottom left room is modified with 
+
+RETAIN GROUP method. At stage 4, the bottom left room is changed with SALIENT OBJECT method. 0 1 2 3 4
+
+#Evolution 
+
+> 010 20 30 40
+> Tasks (%)
+> 14.1% 37.5% 32.6% 13.4% 2.4%
+
+(a) Environment evolution count. 37.9% 62.1%   
+
+> Relocated Not Relocated
+
+(b) Stage-goal objects. 0 5 10 20 40 60 80 100  
+
+> Relocated Objects (%)
+> 010 20 30
+> Tasks (%)
+> 14.2% 10.5% 12.9% 19.0% 26.2% 10.7% 4.3% 2.2%
+
+(c) Relocated-object ratio. 
+
+Figure 4: Environment-evolution statistics in EvoNav-Bench. Scene evolution occurs in 85.9% of episodes, with 48.4% containing two or more evolved stage transitions. Among stage-goal objects, 37.9% have been relocated before being assigned as targets. Across episodes, the relocated-object ratio spans from no relocation to over 80% of house objects, with median value within 10%-20%, showing that EvoNav-Bench covers both mild and substantial scene changes. stages, and 776 test tasks with 3,098 stages. As shown in Fig. 4a, scene evolution occurs at least once in 85.9% of tasks and two or more times in 48.4% of tasks, indicating that agents frequently face evolving environments. Nevertheless, 49.4% of the stages are static. At the same time, Fig. 4b shows that 62.1% of stage goals have not been relocated in previous stages, indicating that prior experience can still provide useful navigation cues. Finally, Fig. 4c shows that the relocated-object ratio ranges from 0% to over 80%, with a median below 20%, indicating that EvoNav-Bench mostly produces localized scene evolution. Together, these statistics indicate that the generation parameters do not make EvoNav-Bench a relocated-object search benchmark: most tasks contain environment evolution, but most stage goals have not themselves been relocated, and scene changes remain lo-calized in typical episodes. 
+
+## 4 Experiments 
+
+We use EvoNav-Bench to evaluate whether agents that reuse accumulated scene representations re-main reliable when scenes evolve between stages. We compare three representative agents: UniGoal, 3D-Mem, and MSGNav. We also design three simple heuristics: Frontier-Update, Fail-then-Update and Stage-Reset. These experiments characterize how prior experience affect performance under scene evolution. 64.1 Experimental Setup Data and Metrics For computational feasibility, we evaluate agents on a 10% subset of the EvoNav-Bench test split, containing 90 unique scenes and 365 stages. This subset remains on the same order of magnitude as the GOAT-Bench experiments reported in [7], which use 36 scenes and 278 navigation subtasks. We report success rate (SR) and success-weighted path length (SPL) at the stage level. SR measures whether the agent reaches the target object within the stage budget, while SPL weights successful stages by path efficiency, using the shortest path to the stage target as reference. We aggregate both metrics over stages. To isolate the influence of perception quality, we evaluate all methods under two settings: GT setting, where object masks and semantic labels are provided by ground truth, and Prediction setting, where they are produced by vision models. 
+
+Compared Methods We compare three recent agents with persistent scene representations. 
+
+UniGoal [14] builds an online scene graph, converts category, image, and language goals into object-relation goal graphs, and uses graph matching with LLM reasoning for exploration and target verification. 3D-Mem [7] represents explored regions as visual snapshots and unexplored regions as frontier snapshots, then uses a VLM to select relevant snapshots for navigation and exploration. MS-GNav [9] builds a multi-modal 3D scene graph, introduces several mechanisms to handle perception error, and a VLM is used for navigation, exploration and target verification. We also provides three simple heuristics for handling environment evolution and diagnosis. Specif-ically, the Frontier-Update (FU) method maintains accumulated object instances, an occupancy map across stages, and frontiers extracted from occupancy map. When current observations conflict with the current occupancy map, e.g., when a previously occupied cell becomes free, the occupancy map is rebuilt from subsequent observations and all exploration frontiers are reset. This keeps ex-ploration frontiers consistent with the evolved environment. Fail-then-Update (FTU) is built upon FU, checking whether the target is present upon reaching its stored location and revising the entry only if the target is absent. Once the stale instance is revised, the agent continues to find the tar-get. Stage-Reset clears both FU’s object entries and occupancy map at the beginning of each stage, which means the agent searches from scratch. Consequently, it is not affected by stale object entries, but it also cannot leverage any prior experience. 
+
+Implementation Details For UniGoal, 3D-Mem and MSGNav, we use their original implementa-tions, but the occupancy map is provided by the simulator. All heuristics share the same pipeline for constructing ConceptGraph-like object instances, using the occupancy map from simulator, generat-ing frontiers, and executing navigation. Under Prediction setting, this shared pipeline uses the same vision models as in the case of 3D-Mem, consisting of YOLO-World [36] to detect object boxes, SAM [37] to predict object masks, and OpenCLIP [38] to associate new detections with stored ob-ject entries. The agent’s final pose from the previous stage may lie in the evolved room. We preserve it if it remains navigable; otherwise, we move the agent to the nearest navigable position to ensure continuity. 
+
+4.2 Results Evaluated baselines are brittle under scene evolution, heuristics are more effective. As shown in Tab. 1, all heuristics outperform the evaluated baselines under GT setting, suggesting that base-lines built without considering environment evolution are vulnerable to scene changes. Despite maintaining accumulated object entries, FU performs better considering that it adapts exploration frontiers to the evolved environment, which allows re-exploration in the evolved scene. Stage-Reset performs comparably to FU without maintaining cross-stage representations. However, since it ex-plores from scratch at each stage, it achieves lower SPL than FU. FTU performs best among the methods, suggesting the reactive correction strategy that revising stale object entries is effective in handling scene evolution. 
+
+Perception error can outweigh the influence of environment evolution. Under Prediction setting, MSGNav which considers perception error performs best, suggesting that perception error can out-weigh the influence of environment evolution. 3D-Mem can outperform FU with its robust snapshot 7Table 1: Main Results of evaluated baselines and heuristic strategies. Heuristics performs better than evaluated baselines under GT setting, while MSGNav which considers perception error per-forms best under Prediction setting.                                       
+
+> Setting Metric Evaluated Baselines Heuristic Strategies
+> UniGoal 3D-Mem MSGNav FU Stage-Reset FTU
+> GT SR ↑20.0 47.7 59.2 61.1 61.9 67.4
+> SPL ↑14.9 42.5 41.3 48.8 45.1 53.3 Prediction SR ↑12.9 44.1 54.8 42.2 46.8 49.0 SPL ↑7.9 37.7 38.2 32.5 29.6 35.8
+
+Table 2: Impact of target relocation on navigation performance. We report the success rate (SR) of evaluated methods, split by whether the target object is relocated. All methods suffer a performance drop on relocated targets, and FTU performs best.                                  
+
+> Perception Target Status UniGoal 3D-Mem MSGNav FU Stage-Reset FTU GT Relocated 12.8 40.4 51.4 54.1 60.6 68.8
+> Not Relocated 18.7 56.0 64.5 65.1 61.4 66.3 Prediction Relocated 9.2 40.4 50.7 29.4 44.0 52.3
+> Not Relocated 10.8 48.1 57.8 50.0 49.4 47.9
+
+based approach, and Stage-Reset can also outperform FU since it does not accumulate cross-stage object entries that can be wrong or stale. The performance of agents can be influenced by both erro-neous object entries caused by perception error and stale object entries caused by scene evolution. 
+
+Impact of target relocation. We split stages that may involve scene evolution by whether the target object is relocated as shown in Tab. 2. When the target is relocated, all methods suffer a performance drop. In the GT setting, Stage-Reset improves performance on relocated targets over FU but drops on non-relocated targets, exposing the reset-reuse trade-off. FTU improves performance on relocated targets while remaining close to FU on non-relocated targets, suggesting that reactive correction mainly recovers failures caused by target relocation. FTU still performs best on relocated targets in the Prediction setting, indicating that memory correction strategy is beneficial for handling scene evolution. 
+
+4.3 Controlled Analysis for Environment Evolution 
+
+We conduct a controlled analysis to isolate the influence of environment evolution from accumulated experience in previous stage and perception quality. 
+
+Setup We evaluate 90 ProcTHOR-10k test scenes under GT perception. For each scene, agents are first exposed with Stage-1 and Stage-2 goals. Then, agents are forced to navigate to the Stage-2 goal, then navigate to the Stage-1 goal, following the AI2-THOR’s shortest-path planner. Concurrently, agents receive observations along the trajectory and update their scene representations. We then evaluate the same Stage-2 goal under two variants: Fixed , where the scene remains unchanged, and Not Fixed , where the scene evolves between stages following Sec. 3.2. We report second-stage results for 3D-Mem, MSGNav, FU, Stage-Reset, and FTU, and omit UniGoal due to its poor performance. 
+
+Retained object entries can become harmful after scene evolution. Experiment setting allow the agent to construct entry of Stage-2 goal in advance. Fig. 5 shows that methods maintaining ob-ject entries (3D-Mem, MSGNav, FU, FTU) outperform Stage-Reset when the environment is Fixed, which demonstrates the benefit of reusing accumulated scene representations. However, when the environment evolves, these methods drop significantly, while Stage-Reset maintains it performance with 2.2% SR drop, suggesting that retained object entries can mislead navigation after scene evo-lution. 83D-Mem MSGNav FU Stage-Reset FTU 020 40 60 80 100     
+
+> SR (%)
+> 92.2 81.1 87.8 60.0 87.8 40.0 45.6 47.8 57.8 74.4
+> Unchanged Changed SR drop
+
+Figure 5: Retained object entries help in fixed scenes but can mislead navigation after scene evolution. Performance drops after scene evolution. FU outperforms Stage-Reset when the environ-ment evolution is disabled, but drops below Stage-Reset after scene evolution. MSGNav and FTU drops relatively less despite maintaining object entries. . 
+
+Target verification and reactive correction strategy can mitigate the negative impact of stale object entries. MSGNav and FTU drop relatively less than 3D-Mem and FU. MSGNav equips a target verification module to check whether the target is reached, which can somehow prevent the mismatch between the stored representation and the current scene. FTU revises object entries after a verification on the staleness of the chosen target. FTU performs better since it can revise the stale object entries but MSGNav still maintains these entries. This suggests that target verification and reactive correction strategy can mitigate the negative impact of stale object entries. Handling staleness is the key problem in lifelong navigation with evolving environments. 
+
+## 5 Conclusion 
+
+We introduce EvoNav-Bench, a benchmark for evaluating lifelong navigation in environments that evolve between navigation stages. Through controlled object relocation without notifying the agent, EvoNav-Bench creates a setting in which accumulated scene representations remain useful but can become outdated. Evaluations of three recent navigation agents and three diagnostic heuristic strate-gies show that methods relying on persistent scene representations can be brittle under environment evolution. The main results expose a trade-off between reusing prior information and re-exploring changed scenes, while the predicted-perception setting shows that perception errors can outweigh the influence of environment evolution. The controlled Fixed/Not Fixed analysis further isolates the effect of stale object entries: retaining entries improves navigation when the environment remains unchanged, but can substantially degrade performance after evolution. Reactive entry correction can mitigate this degradation. Together, these findings suggest that lifelong navigation in evolving environments requires agents to balance experience reuse with the revision of stale information and perception errors. 
+
+Limitations EvoNav-Bench currently models environment evolution through simulated object relocation, which may not fully reflect real-world rearrangements and does not cover object inser-tion and removal, articulated-state changes, or object-relocation strategies from human activity data. While ProcTHOR enables controlled scene generation, its simulated environments are less realis-tic than real-world settings. Future work can migrate EvoNav-Bench to higher-fidelity simulators such as Isaac Sim or adopt Real2Sim pipelines. The evaluated update strategies are also reactive and remain sensitive to prediction errors. Future work can extend EvoNav-Bench with richer evolu-tion mechanisms and develop LN agents with proactive strategies that perform reliably in evolving environments. 9References 
+
+[1] M. Khanna, R. Ramrakhya, G. Chhablani, S. Yenamandra, T. Gervet, M. Chang, Z. Kira, D. S. Chaplot, D. Batra, and R. Mottaghi. Goat-bench: A benchmark for multi-modal lifelong navigation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 16373–16383, 2024. [2] W. Churchill and P. Newman. Practice makes perfect? managing and leveraging visual ex-periences for lifelong navigation. In 2012 IEEE International Conference on Robotics and Automation , pages 4525–4532, 2012. doi:10.1109/ICRA.2012.6224596. [3] B. Liu, X. Xiao, and P. Stone. A lifelong learning approach to mobile robot navigation. IEEE Robotics and Automation Letters , 6(2):1090–1096, 2021. doi:10.1109/LRA.2021.3056373. [4] X. Shi, D. Li, P. Zhao, Q. Tian, Y. Tian, Q. Long, C. Zhu, J. Song, F. Qiao, L. Song, Y. Guo, Z. Wang, Y. Zhang, B. Qin, W. Yang, F. Wang, R. H. M. Chan, and Q. She. Are we ready for service robots? the OpenLORIS-Scene datasets for lifelong SLAM. In 2020 International Conference on Robotics and Automation (ICRA) , pages 3139–3145, 2020. [5] D. Wolf and G. Sukhatme. Online simultaneous localization and mapping in dynamic envi-ronments. In IEEE International Conference on Robotics and Automation, 2004. Proceedings. ICRA ’04. 2004 , volume 2, pages 1301–1307 Vol.2, 2004. doi:10.1109/ROBOT.2004.1308004. [6] M. Chang, T. Gervet, M. Khanna, S. Yenamandra, D. Shah, S. Y. Min, K. Shah, C. Paxton, S. Gupta, D. Batra, R. Mottaghi, J. Malik, and D. S. Chaplot. GOAT: GO to Any Thing. In 
+
+Proceedings of Robotics: Science and Systems , Delft, Netherlands, July 2024. doi:10.15607/ RSS.2024.XX.073. [7] Y. Yang, H. Yang, J. Zhou, P. Chen, H. Zhang, Y. Du, and C. Gan. 3d-mem: 3d scene memory for embodied exploration and reasoning. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 17294–17303, 2025. [8] F. Ziliotto, T. Campari, L. Serafini, and L. Ballan. Tango: Training-free embodied ai agents for open-world tasks. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 24603–24613, 2025. [9] X. Huang, S. Zhao, Y. Wang, X. Lu, W. Zhang, R. Qu, W. Li, Y. Wang, and C. Wen. Msgnav: Unleashing the power of multi-modal 3d scene graph for zero-shot embodied navigation, 2026. [10] Y. Wang, S. Zhang, K. Zhang, X. Song, S. Du, and S. Jiang. Trajrag: Retrieving geometric-semantic experience for zero-shot object navigation, 2026. [11] Y. Xu, Y. Pan, and Z. Liu. Dream to recall: Imagination-guided experience retrieval for memory-persistent vision-and-language navigation. IEEE Transactions on Pattern Analysis and Machine Intelligence , 2026. doi:10.1109/TPAMI.2026.3679426. [12] M. Yu, F. Zhu, W. Liu, Y. Yang, Q. Wang, w. wu, and J. Liu. C-nav: Towards self-evolving continual object navigation in open world. In D. Belgrave, C. Zhang, H. Lin, R. Pascanu, P. Koniusz, M. Ghassemi, and N. Chen, editors, Advances in Neural Information Processing Systems , volume 38, pages 126181–126207. Curran Associates, Inc., 2025. [13] M. Deitke, E. VanderBilt, A. Herrasti, L. Weihs, J. Salvador, K. Ehsani, W. Han, E. Kolve, A. Farhadi, A. Kembhavi, and R. Mottaghi. ProcTHOR: Large-scale embodied ai using pro-cedural generation. In Advances in Neural Information Processing Systems , volume 35, pages 5982–5994, 2022. doi:10.52202/068431-0433. [14] H. Yin, X. Xu, L. Zhao, Z. Wang, J. Zhou, and J. Lu. Unigoal: Towards universal zero-shot goal-oriented navigation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 19057–19066, June 2025. doi:10.1109/CVPR52734. 2025.01775. 10 [15] S. Wani, S. Patel, U. Jain, A. Chang, and M. Savva. Multion: Benchmarking semantic map memory using multi-object navigation. In Advances in Neural Information Processing Systems ,volume 33, pages 9700–9712, 2020. [16] X. Wang, J. Dong, B. Liu, Q. Lyu, L. Liu, and Z. Han. Lifelong embodied navigation learning. In The Fourteenth International Conference on Learning Representations , 2026. [17] Z. Zhu, X. Wang, Y. Li, Z. Zhang, X. Ma, Y. Chen, B. Jia, W. Liang, Q. Yu, Z. Deng, S. Huang, and Q. Li. Move to understand a 3d scene: Bridging visual grounding and exploration for efficient and versatile embodied navigation. In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) , pages 8120–8132, October 2025. [18] S. Raychaudhuri, E. Cancelli, T. Campari, L. Ballan, M. Savva, and A. X. Chang. MLFM: Multi-layered feature maps for richer language understanding in zero-shot semantic navigation, 2025. [19] R. R. Wiyatno, A. Xu, and L. Paull. Lifelong topological visual navigation. IEEE Robotics and Automation Letters , 7(4):9271–9278, 2022. doi:10.1109/LRA.2022.3189164. [20] H. Niu, L. Zhang, X. Ji, R. Ying, P. Liu, and F. Wen. SSMG-Nav: Enhancing lifelong object navigation with semantic skeleton memory graph, 2026. [21] Z. Ji, H. Lin, and Y. Gao. DyNaVLM: Zero-shot vision-language navigation system with dynamic viewpoints and self-refining graph memory, 2025. [22] B. Ren, J. Hu, X. Xue, M. Luo, J. Chen, H. Bai, L. You, and M. Xu. AstraNav-Memory: Contexts compression for long memory, 2025. [23] J. Li, B. Wang, J. Xia, M. Li, and S. Hu. HIMM: Human-inspired long-term memory modeling for embodied exploration and question answering, 2026. [24] B. Bescos, J. M. Facil, J. Civera, and J. Neira. Dynaslam: Tracking, mapping, and in-painting in dynamic scenes. IEEE Robotics and Automation Letters , 3(4):4076–4083, Oct. 2018. ISSN 2377-3774. doi:10.1109/lra.2018.2860039. URL http://dx.doi.org/10. 1109/LRA.2018.2860039 .[25] J. Qian, V. Chatrath, J. Servos, A. Mavrinac, W. Burgard, S. L. Waslander, and A. P. Schoellig. Pov-slam: Probabilistic object-aware variational slam in semi-static environments, 2023. URL 
+
+https://arxiv.org/abs/2307.00488 .[26] D. Batra, A. Gokaslan, A. Kembhavi, O. Maksymets, R. Mottaghi, M. Savva, A. Toshev, and E. Wijmans. ObjectNav revisited: On evaluation of embodied agents navigating to objects, 2020. [27] N. Yokoyama, R. Ramrakhya, A. Das, D. Batra, and S. Ha. HM3D-OVON: A dataset and benchmark for open-vocabulary object goal navigation. In 2024 IEEE/RSJ Interna-tional Conference on Intelligent Robots and Systems (IROS) , pages 5543–5550, 2024. doi: 10.1109/IROS58592.2024.10802709. [28] B. Pan, R. Panda, S. Jin, R. Feris, A. Oliva, P. Isola, and Y. Kim. Langnav: Language as a perceptual representation for navigation. In Findings of the Association for Computational Linguistics: NAACL 2024 , pages 950–974, 2024. [29] Z. Zhang, Z. Zhu, J. Li, P. Li, T. Wang, T. Liu, X. Ma, Y. Chen, B. Jia, S. Huang, and Q. Li. Task-oriented sequential grounding and navigation in 3d scenes, 2024. [30] B. Miao, W. Liu, J. Luo, L. Shinnick, J. Liu, T. Hamilton-Smith, Y. Yang, Z. Wu, V. Videnovic, F. Dayoub, and A. van den Hengel. LangMap: A hierarchical benchmark for open-vocabulary goal navigation, 2026. 11 [31] P. Anderson, Q. Wu, D. Teney, J. Bruce, M. Johnson, N. S¨ underhauf, I. Reid, S. Gould, and A. van den Hengel. Vision-and-language navigation: Interpreting visually-grounded naviga-tion instructions in real environments. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR) , pages 3674–3683, June 2018. [32] Y. Qi, Q. Wu, P. Anderson, X. Wang, W. Y. Wang, C. Shen, and A. v. d. Hengel. REVERIE: Remote embodied visual referring expression in real indoor environments. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 9982– 9991, June 2020. [33] J. Krantz, E. Wijmans, A. Majumdar, D. Batra, and S. Lee. Beyond the nav-graph: Vision-and-language navigation in continuous environments. In Computer Vision – ECCV 2020 , volume 12373 of Lecture Notes in Computer Science , pages 104–120. Springer, 2020. doi:10.1007/ 978-3-030-58604-1 7. [34] V. S. Dorbala, B. Patel, A. S. Bedi, and D. Manocha. Personalized embodied navigation for portable object finding, 2026. [35] T. Chen, S. Kumar, J. Xu, G. Pavlakos, J. Biswas, and R. Mart´ ın-Mart´ ın. Searching in space and time: Unified memory-action loops for open-world object retrieval, 2025. [36] T. Cheng, L. Song, Y. Ge, W. Liu, X. Wang, and Y. Shan. Yolo-world: Real-time open-vocabulary object detection. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 16901–16911, June 2024. [37] A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland, L. Gustafson, T. Xiao, S. Whitehead, A. C. Berg, W.-Y. Lo, P. Dollar, and R. Girshick. Segment anything. In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) , pages 4015–4026, October 2023. [38] M. Cherti, R. Beaumont, R. Wightman, M. Wortsman, G. Ilharco, C. Gordon, C. Schuhmann, L. Schmidt, and J. Jitsev. Reproducible scaling laws for contrastive language-image learning. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 2818–2829, June 2023. [39] R. Yang, H. Chen, J. Zhang, M. Zhao, C. Qian, K. Wang, Q. Wang, T. V. Koripella, M. Mova-hedi, M. Li, H. Ji, H. Zhang, and T. Zhang. Embodiedbench: Comprehensive benchmarking multi-modal large language models for vision-driven embodied agents. In Forty-second Inter-national Conference on Machine Learning , 2025. URL https://openreview.net/forum? id=DgGF2LEBPS .[40] E. Kolve, R. Mottaghi, W. Han, E. VanderBilt, L. Weihs, A. Herrasti, M. Deitke, K. Ehsani, D. Gordon, Y. Zhu, A. Kembhavi, A. Gupta, and A. Farhadi. AI2-THOR: An interactive 3d environment for visual ai, 2022. [41] W. Abdulla. Mask r-cnn for object detection and instance segmentation on keras and tensor-flow. https://github.com/matterport/Mask_RCNN , 2017. [42] T. Ren, S. Liu, A. Zeng, J. Lin, K. Li, H. Cao, J. Chen, X. Huang, Y. Chen, F. Yan, Z. Zeng, H. Zhang, F. Li, J. Yang, H. Li, Q. Jiang, and L. Zhang. Grounded sam: Assembling open-world models for diverse visual tasks, 2024. [43] Q. Gu, A. Kuwajerwala, S. Morin, K. M. Jatavallabhula, B. Sen, A. Agarwal, C. Rivera, W. Paul, K. Ellis, R. Chellappa, et al. Conceptgraphs: Open-vocabulary 3d scene graphs for perception and planning. In 2024 IEEE International Conference on Robotics and Automation (ICRA) , pages 5021–5028. IEEE, 2024. 12 A Benchmark Details 
+
+A.1 EvoNav-Bench Task Generation Pipeline 
+
+Algorithm 1 abstracts the stage-wise generation pipeline described in Sec. 3.2. Here, H is the source ProcTHOR [13] house, K is the number of stages, and Θ is the fixed generation hyperpa-rameter set listed in Table 3. The stage house H(k) is obtained by applying a scene-change record 
+
+∆Hk to the previous house state; S AMPLE SCENE EVOLUTION corresponds to the room-selection and room-modification steps in Fig. 2, and returns an empty ∆Hk when evolution is not triggered. SAMPLE STAGE TASK corresponds to goal sampling: it returns the evaluator-side stage task τk, in-cluding the target object and reference pose, together with the public goal input gk, which contains text descriptions and the reference image. The generation state S stores reference-trajectory-derived information used only during generation, including visited rooms, recent changed rooms, recent goal rooms, and the previous reference pose. The output manifest M records the public stage input, evaluator-only oracle fields, and ∆Hk, while H stores the generated per-stage house configurations. 
+
+Algorithm 1 EvoNav-Bench task generation. 
+
+Require: ProcTHOR house H, number of stages K, generation hyperparameters Θ
+
+Ensure: Sequence manifest M and stage houses H
+
+1: Initialize H(0) ← H, sequence manifest M, stage-house set H ← ∅ , and generation state S
+
+2: for k = 1 to K do 
+
+3: if k = 1 then 
+
+4: ∆Hk ← ∅ 
+
+5: else 
+
+6: ∆Hk ← SAMPLE SCENE EVOLUTION (H(k−1) , S, Θ) 
+
+7: end if 
+
+8: H(k) ← UPDATE (H(k−1) , ∆Hk )
+
+9: sk ← SELECT START POSE (H(k), S)
+
+10: (τk , g k ) ← SAMPLE STAGE TASK (H(k), s k , S, Θ) 
+
+11: M ← APPEND STAGE RECORD (M, ∆Hk , τ k , g k , S)
+
+12: H ← H ∪ { H(k)}
+
+13: S ← UPDATE GENERATION STATE (S, H (k), s k , τ k )
+
+14: end for 
+
+15: return (M, H)
+
+A.2 Generation Hyperparameters 
+
+The generator uses the same fixed hyperparameter set Θ for all generated sequences. Table 3 lists each value and the generation step where it is applied. These hyperparameters control stage evolu-tion, room sampling, and goal sampling, and therefore affect the final generated data distribution. Table 3: Generation hyperparameters. Each hyperparameter is applied at the corresponding pipeline step described in Sec. 3.2 and Appendix A.1.                           
+
+> Pipeline step Hyperparameter Value Stage transition pevolve 0.5 Generation state Changed-room history window 2Generation state Goal-room history window 2Evolved-room sampling fvisited 3.0 Evolved-room sampling fevolved 0.2 Evolution-type sampling SALIENT OBJECT 0.5 Evolution-type sampling RETAIN GROUP 0.4 Evolution-type sampling FULL SHUFFLE 0.1 Goal-room sampling Changed-room multiplier 9.0 Goal-room sampling Previous-goal-room multiplier 0.2 Goal-object sampling Moved-object multiplier 9.0
+
+13 A.3 Task Manifest 
+
+The task manifest is organized as a sequence-level header followed by one record per stage. The sequence-level header stores dataset identity, source-scene identity, random seed, number of stages, split, and the fixed generation parameters Θ. Each stage record corresponds to a stage house file, and separates the public stage input gk from evaluator-only metadata. gk contains the reference start pose 
+
+sk, text goal descriptions and the associated reference image. The evaluator-only portion records the hidden scene-change record ∆Hk, a snapshot of the generation state S, and the oracle stage task τk.The oracle task includes the target instance, target category, target room, and the reference pose. During evaluation, only gk is provided to the agent, while the rest of the stage record is hidden and used for computing metrics and diagnostics. 
+
+A.4 Goal Description Generation 
+
+For each sampled target object, the generator first selects a reference pose for constructing the visual goal input. It enumerates reachable agent positions in the target room, keeps candidates whose horizontal distance to the target is 1.0–1.5 meters, and accepts a pose only when the target instance is visible from that pose. If no such pose exists for the sampled target, the generator rejects the candidate and samples another target. A reference RGB image is then rendered from the accepted pose at a resolution of 300 ×300 pixels, using the ProcTHOR default embodiment. Inspired by EmbodiedBench-style [39] multimodal goal specification, we create three instructions for the same target given a reference image. The basic instruction is generated deterministically from the ProcTHOR object category and relation context, for example “Please navigate to the mug in the kitchen on the countertop next to the sink.”. The relation context may include the room type when the category is not globally unique, the support object when the target is on a receptacle, and nearby anchors within fixed distance thresholds; the implementation keeps at most two nearby anchors, one structural anchor, and one wall-mounted anchor. The appearance instruction 
+
+and unified instruction are generated from the same reference image using gpt-4o with the following prompts.        
+
+> Appearance prompt. Given the target category, the basic instruction, and the reference image, write one short navigation instruction that identifies the target mainly by visible appearance, including shape and color first, and material, texture, size, or distinctive parts when helpful. Do not mention coordi-nates, object IDs, simulator terms, or invisible attributes.
+> Unified prompt. Given the basic instruction, the appearance instruction, and the reference image, write one concise navigation instruction that combines spatial relations with visual appearance. Keep relations such as on ,next to ,near , or below only when they are supported by the image.
+
+A.5 Comparison with Related Navigation Benchmarks 
+
+Table 4 focuses on the lifelong navigation benchmarks and temporally dynamic benchmarks dis-cussed in the main paper. We compare them along six task properties: whether the setting is life-long, whether agents navigate in continuous environments, whether the environment is unknown to the agent, whether the task includes temporal environment or object evolution, whether it changes the scene layout, and whether goals are specified through multiple modalities. A ✓indicates that the corresponding property is part of the benchmark setting; △ denotes local object-layout changes while preserving room topology and overall navigability. 14 Table 4: Diagnostic comparison with related benchmarks. EvoNav-Bench combines lifelong navigation with scene evolution and local object-layout change.                                              
+
+> Benchmark Lifelong Continuous Unknown env. Temporal evolution Layout change Multimodal goal MultiON [15] ✓✓✓×××
+> GOAT-Bench [1] ✓✓✓××✓
+> C-Nav [12] ✓✓✓×××
+> LENL [16] ✓✓✓×××
+> Portable ObjectNav [34] ×××✓××
+> STARBench [35] ×✓×✓××
+> EvoNav-Bench ✓✓✓✓△✓
+
+## B Evaluation and Implementation Details 
+
+B.1 Multi-stage Evaluation Protocol 
+
+Evaluation replays the stage houses and public stage inputs stored in the manifest, but uses the evaluated agent’s own trajectory to connect stages. At stage k = 1 , the agent is initialized at the manifest start pose. For every later stage, the evaluator first records the terminal pose from stage 
+
+k − 1, loads the next stage house H(k), and initializes the agent at that recorded pose. If the recorded position is no longer reachable after the hidden scene change, the evaluator snaps it to the nearest reachable position while preserving the carried-over orientation. This fallback is used only to keep the physical rollout valid after local object relocation; the requested and effective start poses are both recorded for diagnostics. At the beginning of each stage, the agent receives only the public goal input gk. In the reported experiments, the stage input is the unified instruction . The scene-change record ∆Hk, target instance, reference pose, and other oracle fields remain evaluator-only. The stage terminates when the agent stops or when the stage budget is exhausted, and the next stage is released regardless of whether the stop is evaluated as successful. The budget is reset at each stage boundary, while the agent’s internal state is preserved unless a baseline variant explicitly resets part of it. No observation is provided during the stage transition itself, so an agent can discover scene evolution only through subsequent RGB-D observations in the new stage. This evaluation transition is separate from the reference trajectory used during task generation: the reference trajectory fixes the stage schedule, whereas evaluation uses the agent’s actual movement. 
+
+B.2 Metric Computation 
+
+We compute all reported metrics at the stage level. Let K be the set of evaluated stages, pterm  
+
+> k
+
+be the agent pose at the end of stage k, and xk be the target. Stage success is defined by the evaluator-side distance condition at termination: 
+
+Sk = I d2D 
+
+ pterm  
+
+> k
+
+, x k
+
+ < r succ 
+
+ , (3) where d2D is Euclidean distance on the simulator x–z ground plane, and rsucc = 2 .0 m is the success radius. Let Lk denote the executed path length in stage k, and let L⋆k denote the evaluator reference path length from the effective stage start pose to xk in the corresponding stage house. The evaluator queries AI2-THOR [40] for a shortest path to xk. The per-stage SPL is 
+
+SPL k = Sk
+
+L⋆k
+
+max ( Lk, L ⋆k) . (4) Finally, SR and SPL are averaged over stages: 
+
+SR = 1
+
+|K| 
+
+X
+
+> k∈K
+
+Sk, SPL = 1
+
+|K| 
+
+X
+
+> k∈K
+
+SPL k. (5) 15 B.3 Adapting Existing Agents to EvoNav-Bench UniGoal. We adapt UniGoal [14] by replacing its original simulator interface with the EvoNav-Bench stage protocol while preserving its graph-based navigation loop. The agent uses the discrete action interface, with MoveAhead by 0.25 m, RotateLeft by 15 ◦, RotateRight by 15 ◦, and Stop 
+
+as its primitive actions. We set the per-stage budget to 500 primitive actions. Each stage maps the public goal through UniGoal’s original goal-graph construction procedure into a target subgraph. RGB-D observations are accumulated into the existing representations, but stale scene-graph entries and outdated occupied regions may also be retained. We implement gpt-4o as UniGoal’s VLM. Under GT Perception, ProcTHOR object types are mapped into UniGoal’s semantic-map and scene-graph category spaces. Predicted Perception follows UniGoal’s original Mask R-CNN [41] and Grounded-SAM [42] perception stack. 
+
+3D-Mem. We retain 3D-Mem’s [7] memory and decision-loop components, replacing the observa-tion source with ProcTHOR RGB-D observations, camera poses, and detections. We also replace the TSDF-based occupancy map with occupancy map extracted through ray-casting on oracle occu-pancy map provided by simulator. The original 3D-Mem implementation extracts occupancy map from a single horizontal slice of the TSDF map, which does not capture the agent’s full collision volume. For example, a slice through the empty space beneath a tabletop may label the area as free even though the agent cannot traverse it. The accumulated occupancy map and snapshot memory are not proactively reconstructed at stage boundaries, allowing both useful prior observations and stale evidence to persist. 3D-Mem’s decision-level control structure is preserved: each decision round asks the VLM gpt-4o to select a snapshot or frontier, and the selected candidate is converted into a target position. The decision-round budget is set to 50 per stage. Because 3D-Mem does not directly output primitive actions, the adapter executes each selected target by following planner way-points with AI2-THOR TeleportFull updates, preserving the original decision-round semantics. GT Perception uses evaluator-provided object masks and semantic labels, while Predicted Percep-tion follows the original 3D-Mem detector stack with YOLOv8x-World [36], SAM ViT-L [37], and OpenCLIP [38]. 
+
+MSGNav. Since MSGNav [9] itself is built on 3D-Mem, we adapt it to EvoNav-Bench by following the same procedure as 3D-Mem. Following MSGNav, we also replace the text-only edge with image edges. We maintain the original MSGNav decision loop, and incorporate the four navigation modules: KSS, AVU, CLR and VVD. 
+
+B.4 Heuristic Implementations Frontier-Update (FU) Implementation. Frontier-Update (FU) follows the same high-level deci-sion loop as 3D-Mem: it maintains an occupancy map, derives exploration frontiers, accumulates object entries, and asks the VLM to select navigation targets from object or frontier candidates. FU adapts this loop to evolving scenes through two changes. First, while following 3D-Mem’s object creation procedure, it exposes object-level memory rather than snapshots as the primary evidence for object candidates, because a snapshot can bind an object to stale surrounding context after scene evolution. Second, FU rebuilds the occupancy map and resets the frontier set when current observa-tion contradicts the current occupancy map, enabling the agent to re-explore changed rooms while retaining reusable object entries. Concretely, FU follows ConceptGraph [43] to perform a series of object segmentation, spatial trans-formations, matching, and merging, to produce an object entries with semantic labels, visual evi-dence, 3D locations, and point clouds. FU also utilizes the occupancy map provided by the simulator. When incoming occupancy map conflicts with the accumulated occupancy map, FU treats the accu-mulated occupancy map as outdated, abandons the active navigation target, and regenerates frontiers from subsequent observations. The next decision is then made over the retained object entries and the updated frontier set, allowing the agent to navigate to reliable object entries when available and to re-explore changed regions otherwise. To keep the VLM input compact, FU uses CLIP simi-larity to pre-rank stored objects and forwards only the top five object entries to the VLM. If the 16 Fixed  Not Fixed  
+
+> Trajectory Start Position Target Object
+
+Figure 6: Qualitative FU rollouts in the Fixed/Not Fixed controlled analysis. Each row com-pares the Fixed condition (left) and the Not Fixed condition (right) for the same Stage-2 task. The two evaluations share the same Stage-1 reference trajectory and the same Stage-2 goal; following Sec. 4.3, this goal is sampled from objects observed along the shared reference trajectory. VLM selects an object whose location is not supported by the currently explored map, FU routes the agent to the nearest current frontier. FU uses the same decision-round budget, waypoint-based 
+
+TeleportFull execution, and GT/Predicted Perception settings as 3D-Mem. 
+
+Stage-Reset Implementation. Stage-Reset shares a similar pipeline with FU. However, at the be-ginning of each stage, Stage-Reset clears the accumulated object entries and occupancy map, forcing the agent to explore each stage from scratch. Consequently, Stage-Reset does not retain any prior information across stages. Stage-Reset would neither benefit from reusable object entries nor suffer from stale entries after scene evolution, and therefore serves as a baseline for evaluating the effect of retained information. 
+
+Fail-then-Update(FTU) Implementation. FTU is built upon FU. FTU adds a verification step after the agent reaches the predicted location of a selected object entry. If the VLM judges that the current observation does not support the existence of store object entry, FTU removes the entry and starts a new decision round. 17 C Visualizing the Effect of Environment Evolution 
+
+To complement the controlled Fixed/Not Fixed analysis in Sec. 4.3, Fig. 6 provides qualitative FU rollouts under the same paired setting. Each row compares the same Stage-2 task under two con-ditions: Fixed , where the scene remains unchanged after the Stage-1 reference trajectory, and Not Fixed , where the scene evolves before Stage-2 evaluation. Because the two rollouts in each row share the same Stage-1 reference trajectory and the same Stage-2 goal, their trajectory differences mainly reflect whether scene evolution invalidates retained object entries. In the Fixed condition, the target location remains consistent with the previous-stage observations, so retained object entries can guide FU directly toward the target. In the Not Fixed condition, however, a moved target can leave a plausible but outdated object entry at its previous location. The first two examples show this failure mode: FU follows stale retained evidence toward the old target location while the current target has moved elsewhere. The last example shows a recovery case, where FU eventually reaches the updated target location through additional exploration. Together, these examples visualize the mechanism behind the quantitative finding in Sec. 4.3: retained object entries are useful in fixed scenes but can become harmful after scene evolution. 18
