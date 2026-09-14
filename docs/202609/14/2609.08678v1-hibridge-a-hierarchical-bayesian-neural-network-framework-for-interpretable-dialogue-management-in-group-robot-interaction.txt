@@ -1,0 +1,803 @@
+Title: HiBRIDGE: A Hierarchical Bayesian Neural Network Framework for Interpretable Dialogue Management in Group-Robot Interaction
+
+URL Source: https://arxiv.org/pdf/2609.08678v1
+
+Published Time: Wed, 09 Sep 2026 04:01:26 GMT
+
+Number of Pages: 28
+
+Markdown Content:
+# HiBRIDGE: A Hierarchical Bayesian Neural Network Framework for Interpretable Dialogue Management in Group–Robot Interaction 
+
+Massimiliano Nigro a, ∗, Hatice Gunes b, Micol Spitale a, †, Fethiye Irmak Dogan b, †
+
+> aDepartment of Electronics, Information and Bioengineering, Politecnico di Milano, Italy
+> bAff ective Intelligence and Robotics (AFAR) Lab, Department of Computer Science and Technology, University of Cambridge, UK
+
+Abstract 
+
+In multi-party human-robot interaction, a robot must continuously decide whom to address and what to say to partici-pate e ff ectively in the conversation. In real-world interactions, this is challenging because several behaviours may be plausible at the same time: a robot might continue a topic with one participant, involve another through a question, or address the whole group, with the appropriate choice depending on both whom it addresses and the interaction context. Current approaches remain limited in representing uncertainty when several behaviours are plausible and in structuring decisions into semantically meaningful intermediate steps that make robot decisions easier to interpret. Addressing these, we present HiBRIDGE , a hierarchical Bayesian neural network framework for group-robot dia-logue management. Its Bayesian formulation enables uncertainty-aware prediction and robust learning from limited interaction data, while the hierarchical approach formulates behaviour selection as a structured, multi-stage decision process. We further use decision-tree surrogates to investigate whether this structure can support more interpretable explanations. Across three o ffl ine group-HRI datasets, our findings show that Bayesian formulations outperform their deterministic counterparts and several state-of-the-art baselines. Next, through an online study ( N = 20), we show that explanations derived from the hierarchical model are rated as more helpful for understanding robot behaviour and are preferred over those derived from the flat model. Finally, through our in-person study ( N = 12), we demonstrate the feasibility of HiBRIDGE for autonomous real-time group interaction, with both hierarchical and flat Bayesian variants positively perceived. Overall, HiBRIDGE combines strong predictive performance with a structured deci-sion process that supports more interpretable explanations of robot behaviour. Our code will be publicly available at https: // github.com /Massimilianonigro /HiBridge. 
+
+1. Introduction 
+
+When interacting with a group, a robot must contin-uously decide both whom to address and what to say to support a smooth and appropriate interaction [1, 2, 3]. In real-world multi-party conversations, however, sev-eral behaviours may be reasonable at the same moment. As illustrated in Figure 1, the robot might continue a topic with one participant, involve another through a question, or address the whole group with a new topic.      
+
+> ∗This research and the proposed technical methodology was initi-ated and completed in part while M. Nigro was a visiting PhD student at the AFAR Lab, Department of Computer Science and Technology, University of Cambridge.
+> †Equal senior authorship.
+> Email addresses: massimiliano.nigro@polimi.it
+> (Massimiliano Nigro), hg410@cam.ac.uk (Hatice Gunes),
+> micol.spitale@polimi.it (Micol Spitale), fid21@cam.ac.uk
+> (Fethiye Irmak Dogan)
+
+These choices are interdependent: what is appropri-ate to say depends partly on who is addressed, while the intended conversational content can in turn shape the choice of addressee. Appropriate behaviour also depends on the interaction context: a robot providing information in a clinic may primarily respond to user questions [4], whereas a robot moderating a discussion may need to intervene proactively and involve di ff erent participants [5, 6]. Group dialogue management there-fore requires choosing among multiple plausible, inter-dependent, and context-sensitive behaviours [7, 8]. This also makes transparency important: when a robot se-lects one behaviour over other reasonable alternatives, users should be able to understand the rationale for that choice and judge whether it was appropriate for the in-teraction. Recent work on group-robot dialogue management has mainly followed two main directions: large lan-arXiv:2609.08678v1 [cs.RO] 8 Sep 2026 guage models (LLMs) and supervised learning ap-proaches [2, 3]. LLM-based systems can generate flu-ent, context-sensitive behaviour and have been success-fully deployed in multi-party robotic interactions [4]. However, when dialogue management is delegated di-rectly to an LLM, controlling the robot’s behaviour and explaining why a particular action was selected remain di ffi cult. Supervised approaches instead can learn what to say and whom to address from interaction demon-strations, o ff ering greater control over the resulting be-haviour [3]. Prior work has modelled dependencies be-tween these decisions through sequential prediction [3], but does not explicitly structure the decision process into semantically meaningful intermediate levels that can support interpretation. In addition, supervised mod-els are typically trained on small HRI datasets [9], making generalisation di ffi cult, while deterministic for-mulations tend to be overconfident while uncertain in selecting among multiple plausible conversational be-haviours [10]. These limitations motivate models that can learn robustly from limited interaction data while providing a structured, probabilistic decision process whose intermediate stages can support explanations of robot behaviour. In this work, we present HiBRIDGE , a hierarchi-cal Bayesian neural network framework for deciding 
+
+what to say and whom to address in multi-party human– robot interaction. The Bayesian formulation repre-sents network parameters probabilistically, improving robustness when learning from limited HRI data. We further formulate behaviour selection as a hierarchical classification problem that decomposes the robot’s de-cision into semantically meaningful stages, including whether its conversational act is initiative or responsive and whether it addresses an individual or the group. To capture the dependency between what to say and 
+
+whom to address , we investigate both possible order-ings: predicting the addressee before the dialogue act and predicting the dialogue act before the addressee. Fi-nally, to assess whether this structured decision process supports interpretability, we fit decision-tree surrogate models [8] to the model predictions and use their de-cision paths to generate explanations of the robot’s be-haviour. Our work makes three main contributions. First, we introduce and evaluate HiBRIDGE across three group-HRI datasets, comparing Bayesian and deterministic formulations, their hierarchical and flat variants against LLM baselines, and a state-of-the-art supervised ap-proach ( Contribution 1 ). Our models outperform these state-of-the-art baselines, with the Bayesian formula-tion consistently improving predictive performance over Follow up to left participant to continue previous topic 
+
+> Question to both to spark interaction
+> Question to right participant to include in conversation
+> Figure 1: Example of di ff erent plausible behaviours in a group conversation. Image taken from our in-person study.
+
+its deterministic counterpart. Second, we investigate whether the intermediate structure exposed by the hi-erarchy can support more interpretable explanations of robot behaviour ( Contribution 2 ). Using decision-tree surrogates to generate explanations from hierarchical and flat models, our online study shows that hierar-chical explanations are perceived more favourably and are preferred over those produced by the flat model. Third, we integrate HiBRIDGE with an LLM-based re-sponse generator in a fully autonomous robotic system and evaluate it in an in-person group interaction study (Contribution 3 ). Both hierarchical and flat Bayesian models are positively perceived, demonstrating the fea-sibility of the framework for real-time group interaction. Overall, our results show that Bayesian modelling im-proves predictive performance, while hierarchical mod-elling provides a structured basis for more interpretable explanations without compromising predictive or inter-action performance. 
+
+2. Background and Related Works 
+
+2.1. Modeling Group-Robot Interaction 
+
+For a robot to take part in an ongoing multi-party con-versation, it must continuously decide whom to address 
+
+and what to say [1, 2, 3]. This group-robot dialogue management problem has largely been tackled from two directions in the literature: leveraging Large Language Models (LLMs) to select and generate conversational behaviour, or learning such behaviour directly from ob-served data through supervised models [3]. One direc-tion relies on LLMs, often combined with rule-based or perception components, to manage the robot’s conversa-tional behaviour [4, 2, 11]. Addlesee et al. [4] and Abbo et al. [2], for example, incorporated LLMs into di ff er-ent architectures for multi-party interaction. Addlesee et al. [4] developed an LLM-based dialogue system for a 2robot that answers patient questions in a memory clinic. Their approach determines whether the robot is being addressed in a multi-party conversation and, when ap-propriate, generates an LLM-based response. Abbo et al. [2] instead considered general open-ended conversa-tions, integrating an LLM as a high-level dialogue man-ager alongside subsystems that provide contextual infor-mation. Given conversation transcripts, speaker labels, and the output of a turn-taking model indicating whether the robot should take or yield the turn, the LLM selects the robot’s conversational behaviour. While these ap-proaches o ff er substantial flexibility, relying on LLMs for behaviour selection makes the resulting behaviour more di ffi cult to control and the rationale behind indi-vidual decisions harder to interpret [12]. An alternative is to formulate group-robot dialogue management as a supervised prediction problem, learn-ing appropriate behaviour from observations of group interactions [3, 13, 14]. Gillet et al. [3], for example, use Graph Neural Networks to learn whom to address 
+
+and what to say while supporting groups of di ff erent sizes. They model the two decisions sequentially: a first Graph Neural Network predicts the addressee, and its output is then provided to a second network that predicts what the robot should say. Such approaches provide greater control over robot behaviour through the train-ing observations, but are constrained by the small size of typical HRI datasets, which are costly to collect and can make supervised models susceptible to overfitting. Moreover, although these classifiers can achieve strong predictive performance, their decision process is not ex-plicitly structured to support interpretation, making it di ffi cult to explain how a particular robot behaviour was selected. In our work, we build on the controllability of su-pervised learning while addressing these limitations through Bayesian neural networks and hierarchical clas-sification. The Bayesian formulation supports robust learning from limited HRI data, while the hierarchical formulation exposes semantically meaningful interme-diate stages of the decision process that can support in-terpretation. We further retain the flexibility of LLMs: we use the learned model to determine the dialogue act (what to say ) and addressee ( whom to address ), while delegating only the generation of a contextually appro-priate utterance to the LLM. 
+
+2.2. Dialogue Acts Taxonomies 
+
+Dialogue acts can be understood as the atomic units of a conversation, capturing the specific communica-tive intent behind an interaction [15]. A dialogue act is typically characterised by two main components: its semantic content and its communicative function. The semantic content refers to the objects, propositions, or events that the act is about, while the communicative function specifies how the addressee should use this content to update their information state [16, 17]. Sev-eral annotation schemes and taxonomies for dialogue acts have been proposed. One well-known example is Dialogue Act Markup in Several Layers (DAMSL) [18], which represents dialogue acts along multiple di-mensions: communicative status, indicating whether an utterance is intelligible and complete; information level, describing its semantic content; forward-looking function, capturing how the utterance constrains future beliefs and actions; and backwards-looking function, specifying how it relates to the preceding discourse. Recently, the Machine Interaction Dialogue Act Scheme (MIDAS) [19] taxonomy has been developed specifically for human–machine interaction, with a par-ticular emphasis on open-domain conversational set-tings. MIDAS is designed to support systems with lim-ited capabilities for understanding their human inter-locutors. It features a hierarchical structure, supports multi-label annotation, and distinguishes between two annotation layers: a semantic layer (e.g., questions, an-swers) and a functional layer (e.g., social conventions, incomplete requests). This taxonomy has been used in a variety of conversational systems for intent classifi-cation and utterance generation [20, 21, 22]. In this work, we chose to focus on annotating specifically the semantic layer. As the hierarchical structure of MIDAS is particularly appealing for its expandability, we chose to adapt this taxonomy specifically for social robot in-teractions, combining relevant semantic elements from MIDAS with features from DAMSL to better fit our use case. Dialogue acts allow us to formulate the what-to-say problem in terms of high-level categories appropri-ate for social robot interactions. 
+
+2.3. Bayesian Neural Network and Hierarchical Clas-sification Approaches 
+
+Bayesian Neural Networks (BNNs) [23] are proba-bilistic extensions of traditional neural networks that in-corporate uncertainty estimation through prior distribu-tions over weights. Their uncertainty-aware structure allows them to be robust against overfitting and perform well on unseen data, even with small datasets [24, 25]. This makes them particularly suited for Human-Robot Interaction (HRI) settings, where data collection is often limited by real-world deployment constraints and ethi-cal considerations. In the HRI field, they have been used to learn spatial relations among objects in a human-robot collaboration task [26] or to learn repulsive be-3Addressee-first  Dialogue-act-first Figure 2: Representation of addressee-first and dialogue-act-first hierarchies. 
+
+haviours for safe hand avoidance in robotic arms [27]. They have also been applied to tasks such as learning spatial relationships in human–robot collaboration [26] and modelling repulsive behaviours for safe hand avoid-ance in robotic arms [27]. In both cases, they demon-strated strong generalisation performance and robust-ness when applied to new, unseen scenarios. Hierarchical classification methods [28] address the challenge of assigning instances to labels organised within a predefined taxonomy or hierarchy, allowing predictions at multiple levels of abstraction. A key ad-vantage of these methods is their ability to capture and exploit correlations among classes at di ff erent hierarchi-cal levels, in contrast to traditional classification (named flat) approaches that treat class labels as independent and unrelated [28, 29]. To the best of our knowledge, our work is the first to apply hierarchical classifica-tion in the Human–Robot Interaction domain, lever-aging its multi-level structure to expose intermediate stages of the robot’s decision process, thereby improv-ing transparency. In our paper, we investigate whether combining Bayesian Neural Networks with hierarchi-cal classification can improve interpretability and pre-dictive performance in our setting, where data is both limited and severely imbalanced. 
+
+3. Problem Formulation 
+
+3.1. Task Definition 
+
+We formalise the problem of determining both what dialogue act to perform and whom to address as a hi-erarchical classification task over a composite hierar-chy. At each conversational step t, given the conver-sational state xt, the robot first decides whether to speak or remain silent. We denote this decision as st ∈ { 0, 1},where st = 0 corresponds to remaining silent and st = 1proceeds to conversational behaviour selection. When 
+
+st = 1, the robot predicts a complete conversational be-haviour: 
+
+yt = (dt, at), dt ∈ D , at ∈ A , (1) where D denotes the set of dialogue-act classes and A
+
+the set of addressee classes. The composite hierarchy contains one component dedicated to the choice of the 
+
+addressee and another dedicated to the choice of the 
+
+dialogue act .We define two alternative hierarchical structures, cor-responding to the two possible orderings of these deci-sions: 
+
+H ∈ {H A→D, HD→A} , (2) where HA→D prioritises addressee selection followed by dialogue-act choice ( addressee-first ), while HD→A re-verses this ordering ( dialogue-act-first ) – see Figure 2. In both cases, a complete behaviour corresponds to a unique root-to-leaf path: 
+
+πt = (v0, v1, v2, . . . , vK ) ∈ Π(H), (3) where Π(H) denotes the set of valid paths through the hierarchy. The classification objective is therefore to identify the path ˆ πt corresponding to the robot’s com-plete decision. The addressee component of the hierarchy distin-guishes between addressing the entire group and ad-dressing an individual. Although the general formu-lation may further resolve the individual branch into specific participants, in the streamlined hierarchy used in this work we restrict the addressee space to A =
+
+{All , Individual }.The dialogue-act component follows the semantic taxonomy detailed in the next section. Given the lim-ited size of human–robot interaction datasets, we adopt a streamlined version of the hierarchy to mitigate data imbalance and reduce the number of unique classes. The first dialogue-act level distinguishes between ini-tiative and responsive behaviour while the second level predicts the corresponding dialogue-act category: 4d(1)  
+
+> t
+
+∈ D (1) = {Initiative , Responsive }, (4) 
+
+d(2)  
+
+> t
+
+∈
+
+
+
+{Question , Statement }, d(1)  
+
+> t
+
+= Initiative ,
+
+(Acknowledgement ,
+
+Follow -up , Answer 
+
+)
+
+, d(1)  
+
+> t
+
+= Responsive ,
+
+(5) 
+
+d(2)  
+
+> t
+
+corresponds to the final dialogue-act prediction dt.The addressee and dialogue-act hierarchies are com-bined by attaching the leaf nodes of the first component to the root of the second component and subsequently pruning the redundant root node. As a result, the two possible decision paths can be summarised as follows: 
+
+πt =
+
+
+
+Speak → at → d(1)  
+
+> t
+
+→ d(2)  
+
+> t
+
+, addressee-first ,
+
+Speak → d(1)  
+
+> t
+
+→ d(2)  
+
+> t
+
+→ at, dialogue-act-first .
+
+(6) The S peak root is fixed conditional on st = 1, and the subsequent nodes constitute the behaviour-selection de-cisions. Therefore, together with the preliminary speak-or-silence decision, the complete task can be repre-sented as xt → st → πt → (dt, at), where hierarchical behaviour prediction is performed only when st = 1, when the robot needs to speak. These structures repre-sent the task-specific instantiations of the generic hierar-chy used by HiBRIDGE, defined formally in Section 4. 
+
+3.2. Dialog Act Taxonomy 
+
+Our dialogue act taxonomy preserves the core seman-tic structure of MIDAS [19], particularly the distinction between initiative and responsive acts, while introduc-ing targeted modifications to better suit social, multi-party human–robot interaction. These adjustments are largely inspired by DAMSL [18] and by analysis of the three multi-party human–robot interaction datasets used in this work. Our taxonomy includes initiative and re-sponsive acts. First, initiative acts begin new conversation threads: in our taxonomy, they consist of Questions and State-ments. Questions include factual questions (seeking specific information, e.g., “How many landers does Ger-many have?”), opinion questions (eliciting subjective responses, e.g., “How was your time at the mall to-day?”), o ff ers (e.g., “Would you like to try a quiz?”), and small talk (e.g., “How are you?”). Statements in-troduce new topics or fulfil social conventions through declarative contributions (e.g., “Hello there” or “I see you have bags with you”). To formulate our taxonomy, starting from MIDAS, we removed the command cate-gory, as it was not representative of the multi-party in-teraction settings we examine. To maintain adequate coverage, we introduce a broader Statement category, inspired by DAMSL, to capture declarative contribu-tions that initiate or shift conversational topics. We also extend the Question category to subsume functions pre-viously covered by commands, incorporating O ff er (fol-lowing DAMSL) and adding Small Talk to capture so-cially motivated, non-information-seeking utterances. Next, responsive acts continue existing conversa-tional threads: in our taxonomy, they are divided into Acknowledgements, Follow-ups, and Answers. Ac-knowledgements address prior contributions through brief comments that a ffi rm without elaboration (e.g., “That’s great”) or opinions that add evaluative content (e.g., “Oh, that’s lovely”). Follow-ups extend the di-alogue by posing related questions (e.g., “Is that your final answer?”). Answers respond directly to prior ques-tions and are categorised as positive, negative, or other. In our taxonomy, we group MIDAS Opinions and non-opinionated Statements (renamed comments) into a uni-fied Acknowledgement category, as both serve similar functions in signalling understanding and grounding. We also introduce a Follow-up category to reflect pat-terns in our data where participants and robots extend prior turns through clarifying or elaborative questions. Overall, the changes in initiative and responsive acts preserve the strengths of MIDAS while improving its ability to capture the semantic and interactional patterns observed in our data. 
+
+4. HiBRIDGE Framework 
+
+HiBRIDGE models group-robot dialogue manage-ment as a mapping from the current conversational state to a robot behaviour. At each decision step t, the input is a feature vector xt describing the recent interaction. The system first determines whether the robot should speak (Section 4.2) and, when it does, outputs a joint predic-tion of the dialogue act dt (what to say ) and addressee 
+
+at (whom to address ). For the subsequent behaviour-prediction stage, we consider both flat and hierarchi-cal architectures (Section 4.3.1), and instantiate each architecture using deterministic and Bayesian neural networks (Section 4.3.2). We further use decision-tree surrogate models to extract interpretable decision paths from the learned models (Section 4.4). The overall HiBRIDGE pipeline can be seen in Figure 3. While Section 3.1 specifies the particular dialogue-act and ad-dressee hierarchy used in this work, the HiBRIDGE for-5Obtain conversation history, Ct                
+
+> Construct feature representation, xt
+> Speak or Silence? Remain Silent HiBridge Model
+> •Flat, Deterministic
+> •Flat, Bayesian
+> •Addressee-first, Deterministic
+> •Addressee-first, Bayesian
+> •Dialogue-act-first, Deterministic
+> •Dialogue-act-first, Bayesian
+> instantiated as
+> Predicted behaviour ( ˆ dt,ˆat)Decision-tree surrogates extract decision paths Natural-language explanation
+> (A) Feature Representation (B) Speak-or-Silence Prediction (C) Conversational Behaviour Prediction (D) Explanation Generation
+> Silence Speak
+> Figure 3: Overall HiBRIDGE pipeline. The system first encodes the current conversation Ctinto a feature representation xtand determines whether the robot should speak. If the robot remains silent, no further behaviour is selected. Otherwise, the HiBridge model predicts the dialogue act and addressee, ( ˆ dt,ˆat); HiBridge is instantiated as one of six trained variants, combining a behaviour ordering (flat, addressee-first, or dialogue-act-first) with an inference strategy (deterministic or Bayesian), as listed in the legend. Decision-tree surrogates subsequently extract the corresponding decision paths from predicted behaviour, which are then used to generate a natural-language explanation.
+
+mulation below is agnostic to the semantics and depth of the hierarchy. 
+
+4.1. Feature Representation 
+
+At each decision step t, the feature vector xt is built by combining information from two time horizons. A sliding window keeps the six most recent conversational turns; for each turn in the window, we record who spoke, who was addressed, the dialogue act performed, the utterance’s duration, and the length of any preceding silence. As the conversation progresses, this window is updated incrementally: the oldest turn is dropped, and the newest is added, so xt always reflects the most re-cent local context. Positions in the window with no cor-responding turn (e.g. at the start of a conversation) are padded with a dedicated placeholder value. In parallel, we maintain a set of interaction-level statistics that summarise the conversation as a whole, rather than any single turn. We represent the group as a directed graph in which each node is a group mem-ber (including the robot) and each edge weight is the cumulative time that member has spent speaking di-rectly to another. From this graph, we derive, for every group member, the total time they have spent address-ing each other member (the graph’s edges), the total time they have been addressed by anyone (in-degree), and the total time they have spent speaking to anyone (out-degree). Unlike the turn-level window, these statis-tics are cumulative: they are updated after every turn and never discarded, so they capture patterns of partic-ipation over the whole interaction rather than only its recent history. All features are computed assuming a maximum group size of four (three people and a robot), the largest group size across our datasets; conversations with fewer participants have the unused positions padded. Cate-gorical features (speaker, addressee, dialogue act) are one-hot encoded, while numerical features (durations, silences, and the interaction-level statistics) are stan-dardised using the mean and standard deviation of each feature within its dataset. More details on the resulting composition of the final 158-dimensional representation are in the appendix section Appendix A. 
+
+4.2. Speak-or-Silence Prediction 
+
+To mitigate the class imbalance that arises when com-paring every instance in which the robot remains silent against each individual addressee /dialogue-act combi-nation, we decompose the decision process into two stages, beginning with a speak /no-speak decision. Be-fore selecting a dialogue act and addressee, the system determines whether the robot should take a conversa-tional turn. We model this as a separate binary classifi-cation problem, st ∈ { 0, 1}, where st = 1 indicates that the robot should speak and st = 0 that it should remain silent, using a feedforward network: 
+
+p(st = 1 | xt) = σ  fspeak (xt) , (7) where σ(·) denotes the sigmoid function. The network is trained using binary cross-entropy: 
+
+LBCE = −
+
+> N
+
+X
+
+> i=1
+
+si log pi + (1 − si) log(1 − pi) . (8) If ˆst = 1, the system enters the conversational behaviour-selection hierarchy at the S peak root and pro-ceeds to predict the dialogue act and addressee. 6FLAT Input layer 
+
+> Embedding Block
+> Classification Head
+> Concatenation
+
++
+
+> Model Weights
+
+++
+
+> STATEMENT
+> QUESTION
+> +
+> INITIATIVE
+> RESPONSIVE
+> ACKNOWLEDGMENT
+> ANSWER
+> FOLLOW UP
+> INDIVIDUAL
+> ALL
+
+HIERARCHICAL 
+
+> ACKNOWLEDGMENT/IND
+> ANSWER/IND
+> FOLLOW UP/IND
+> STATEMENT/IND
+> QUESTION/IND
+> ACKNOWLEDGMENT/ALL
+> ANSWER/ALL
+> FOLLOW UP/ALL
+> STATEMENT/ALL
+> QUESTION/ALL
+
+Figure 4: Flat and hierarchical (dialogue-act-first) architectures for HiBRIDGE conversational behaviour prediction. Each model weight is drawn from a learned gaussian distribution. In the flat architecture (left), a single classification head predicts one of the ten joint dialogue-act /addressee classes directly. In the hierarchical architecture (right), each classification head instead predicts one level of the hierarchy (initiative /responsive, then dialogue-act category, then addressee), with its embedding concatenated back with the original input at each subsequent level. 
+
+4.3. Conversational Behaviour Prediction 
+
+Conditioned on the robot deciding to speak ( ˆ st = 1), conversational behaviour prediction proceeds from the Speak root. Let D denote the set of dialogue-act classes and A the set of addressee classes. The complete robot behaviour is represented as: 
+
+yt = (dt, at), dt ∈ D , at ∈ A , (9) where dt denotes the final dialogue-act outcome, ab-stracting over any intermediate dialogue-act levels de-fined by the task-specific hierarchy. We investigate three architectures for estimating p(yt | xt): a flat model, an addressee-first hierarchical model, and a dialogue-act-first hierarchical model. Each architecture is imple-mented in both deterministic and Bayesian form, result-ing in six model variants. 
+
+4.3.1. Flat and Hierarchical Architectures 
+
+We first describe flat and hierarchical neural network architectures used for predicting the dialogue act and addressee selection. 
+
+Flat Architecture: The flat architecture treats each valid dialogue-act–addressee combination as a single class. Let Y ⊆ D × A denote the set of valid joint be-haviours. A feedforward neural network first maps the conversational features to a latent representation: 
+
+h(0) = xt, (10) 
+
+h(l) = ϕ(l) W(l)h(l−1) + b(l) , l = 1, . . . , L. (11) where each hidden layer is followed by dropout and batch normalisation. The logits produced by the final layer, the probability of each joint behaviour and the se-lected behaviour are obtained as: 
+
+z = W(o)h(L) + b(o), (12) 
+
+p(yt = c | xt) = exp( zc)
+
+Pc′∈Y exp( zc′ ) , (13) ˆyt = arg max  
+
+> c∈Y
+
+p(yt = c | xt). (14) In this formulation, the dialogue act and addressee are predicted jointly without exposing intermediate de-cisions. 
+
+Hierarchical Architecture: The hierarchical formu-lation instead represents a robot behaviour as a path through a hierarchy. Let H = (V, E) denote the hier-archy, where V contains decision nodes and E defines parent–child relationships. The nodes in V may rep-resent any sequence of intermediate decisions; in our task, they correspond to the addressee and dialogue-act decisions defined in Section 3.1. Conditioned on ˆst = 1, let v0 = Speak denote the root node of the hierarchy. A complete behaviour from the root to a leaf node corresponds to a path as described before: 
+
+π = (v0, v1, v2, . . . , vK ), where v1, . . . , vK denote the suc-cessive decisions made by the behaviour-selection hier-archy. At each hierarchical level k, HiBRIDGE contains an embedding block and classification heads (see Fig-ure 4). The embedding at level k is computed from the 7original conversational representation and the embed-ding inherited from the parent level: 
+
+hk = fk
+
+[xt; hpa( k)] , (15) where [ ·; ·] denotes concatenation and fk(·) is a feed-forward embedding block composed of hidden layers, dropout, and batch normalisation. For a parent node v,the corresponding classification head produces a condi-tional distribution over its children: 
+
+p(u | v, xt) = softmax ( gv(hk)) u , u ∈ ch( v), (16) where ch( v) denotes the children of node v. The proba-bility of a complete behaviour is obtained from the con-ditional decisions along its path: log p(π | xt) =
+
+> K
+
+X
+
+> k=1
+
+log p(vk | vk−1, xt). (17) Finally, the predicted behaviour corresponds to the valid path with maximum probability: ˆπt = arg max  
+
+> π∈Π(H)
+
+p(π | xt). (18) where Π(H) denotes the set of valid root-to-leaf paths. We consider two orderings of the hierarchy: 
+
+p(dt, at | xt) =
+
+
+
+p(at | xt) p(dt | at, xt), addressee-first ,
+
+p(dt | xt) p(at | dt, xt), dialogue-act-first .
+
+(19) The dialogue-act component is itself hierarchical. It first distinguishes between initiative and responsive be-haviour before predicting the corresponding dialogue-act category. The addressee component distinguishes whether the robot addresses an individual or the entire group. Consequently, unlike the flat formulation, the hierarchical architecture exposes the intermediate deci-sions leading to the final behaviour. 
+
+4.3.2. Deterministic and Bayesian Formulations 
+
+The architectures described above are instantiated us-ing both deterministic and Bayesian neural networks. 
+
+Deterministic Formulation: In the deterministic formulation, the network parameters are represented by fixed values learned during training, and the standard classification objective is cross-entropy: 
+
+θ = {W(l), b(l)}Ll=1, (20) 
+
+LCE = −
+
+> N
+
+X
+
+> i=1
+
+log pθ(yi | xi). (21) We additionally evaluate class-weighted cross-entropy to account for the strong imbalance in dialogue-act–addressee combinations. For hierarchical models, we also consider a hierarchical penalty that takes into account the distance between the predicted and target classes in the hierarchy. Let dH (yi, ˆyi) denote this dis-tance; the training objective can be written as follows: 
+
+Ldet = LCE + λH LH , (22) where λH controls the contribution of the hierarchical penalty. This assigns smaller penalties to errors between nearby classes in the hierarchy than to errors across more distant branches. 
+
+Bayesian Formulation: In the Bayesian formula-tion, network parameters are represented probabilisti-cally. Rather than learning a single parameter esti-mate θ, we place distributions over the network weights, 
+
+θ ∼ p(θ), using zero-centred Gaussian priors. Predic-tions therefore marginalise over possible parameter val-ues: 
+
+p(y | x, T ) =
+
+Z
+
+p(y | x, θ)p(θ | T ) dθ, (23) where T denotes the training data. For hierarchical models, y corresponds to a valid path π ∈ Π(H), whose probability is obtained from the conditional predictions along the hierarchy. Because the exact posterior p(θ |T ) is intractable for the neural networks considered here, the Bayesian models are trained using Stochas-tic Variational Inference (SVI) [30]. An approximate posterior qϕ(θ) is learned by maximising the Evidence Lower Bound (ELBO): 
+
+LELBO = Eqϕ(θ)
+
+log p(y | X, θ) − DKL 
+
+hqϕ(θ) ∥ p(θ)i .
+
+(24) The first term encourages the sampled networks to explain the observed behaviours, while the KL-divergence term regularises the learned parameter dis-tribution toward the prior. For hierarchical Bayesian models, the same hierarchy-based penalty used in the deterministic formulation is added to the optimisation objective. 
+
+4.4. Explanation Generation for Behaviour Selection 
+
+The hierarchy exposes intermediate predictions, but the neural network itself does not directly provide feature-level explanations for these predictions. We therefore use decision-tree surrogate models [31] to ap-proximate the learned decision functions. For the flat architecture, we fit a single surrogate tree Tflat using the 8conversational features as inputs and the flat neural net-work’s predictions as targets: 
+
+Tflat : x → ˆyflat , (25) For the hierarchical architecture, a separate surrogate tree is fitted to each prediction head. For a hierarchi-cal decision node v, a surrogate tree can be denoted as 
+
+Tv : x → ˆyv. Thus, rather than approximating only the final joint prediction, the surrogate representation pre-serves the intermediate decisions exposed by the hierar-chy. The corresponding surrogate decision paths can be written as follows: 
+
+ρv(x) = {rv,1, rv,2, . . . , rv,m}, (26) where each rv, j denotes a feature-based split encoun-tered along the decision-tree path. For a hierarchical prediction, the paths associated with the relevant pre-diction heads are combined, providing a structured rep-resentation of the factors associated with the model’s intermediate and final decisions: 
+
+R(x) =
+
+> K−1
+
+[
+
+> k=0
+
+ρvk (x). (27) For the interpretability experiments, the extracted de-cision paths are provided to GPT-5.4, which converts them into natural-language explanations. In the flat con-dition, the LLM receives the single surrogate path as-sociated with the final joint behaviour prediction, for example explaining why the robot selected a partic-ular dialogue act–addressee combination. In the hi-erarchical condition, it instead receives all surrogate paths associated with the prediction heads traversed along the selected hierarchy, allowing the explanation to reflect the sequence of intermediate decisions lead-ing to the final behaviour. For example, separate paths may describe why the robot selected an initiative act, then a question, and finally the whole group as ad-dressee. The system prompt additionally provides the feature definitions and task context, including the def-initions of the dialogue-act and addressee categories – full prompt provided in Appendix B. The same prompt and explanation-generation procedure are used for both conditions, allowing us to investigate whether exposing the intermediate hierarchical decision structure leads to more interpretable explanations. Examples of gener-ated explanations along with the decision paths of the surrogate decision tree model(s) are available in Ap-pendix Appendix C. Algorithm 1 summarises hierar-chical Bayesian behaviour prediction together with the subsequent post-hoc explanation-generation procedure used in the interpretability study. 
+
+Algorithm 1 HiBRIDGE Hierarchical Bayesian Behaviour Prediction and Explanation Generation Pipeline. 
+
+Require: Current conversation history Ct
+
+— Speak-or-Silence Prediction —  
+
+> 1:
+
+Encode Ct as conversational feature vector xt 
+
+> 2:
+
+Predict whether the robot should speak: ˆst ← arg max  
+
+> s∈{ 0,1}
+
+p(s | xt) 
+
+> 3:
+
+if ˆst = 0 then  
+
+> 4:
+
+return Remain Silent  
+
+> 5:
+
+end if — Conversational Behaviour Prediction —  
+
+> 6:
+
+Propagate xt through the hierarchical Bayesian net-work  
+
+> 7:
+
+Compute the posterior predictive probability of each valid path: 
+
+p(π | xt, T ) ≈ Eqϕ(θ)
+
+
+
+> K
+
+Y
+
+> k=1
+
+pθ(vk | vk−1, xt)
+
+ 
+
+> 8:
+
+Select the most probable behaviour path: ˆπt ← arg max  
+
+> π∈Π(H)
+
+p(π | xt, T ) 
+
+> 9:
+
+Decode ˆ πt into dialogue act ˆ dt and addressee ˆ at
+
+— Explanation Generation —  
+
+> 10:
+
+Extract and combine the surrogate decision paths: 
+
+R(xt) ←
+
+> K−1
+
+[
+
+> k=0
+
+ρvk (xt) 
+
+> 11:
+
+Generate explanation: et ← LLM( R(xt))  
+
+> 12:
+
+return ( ˆ dt, ˆat, et)
+
+5. O ffl ine Dataset Experiments and Results 
+
+This section presents the o ffl ine group-HRI datasets, baseline methods, and results across these datasets, comparing hierarchical and flat variants of HIBRIDGE against several state-of-the-art baselines, thereby sup-porting our Contribution 1 .
+
+5.1. O ffl ine Datasets 
+
+In our work, we selected datasets based on three in-clusion criteria: the interactions had to involve a con-versation, include at least one robot, and involve at least two people. Within this scope, we chose three datasets representing distinct interaction contexts in 9which robot behaviour di ff ers substantially: (i) MuM-MER dataset [32] where a robot entertains groups of people in a shopping mall, (ii) Addlesee dataset [33] where a robot provides information in hospitals, and (iii) Spitale dataset where a robot moderates a group negotiation task [34]. First, the MuMMER dataset [32] consists of 33 con-versations (1,733 speaking turns) involving two or three participants interacting with a robot in a shopping mall environment. The robot engages users through jokes, quizzes, news updates, and directions. The dataset in-cludes video, audio, and sensor data; however, tran-scripts were generated from video using the Whisper model (turbo variant) [35] and subsequently corrected manually. Second, the Addlesee dataset [33] contains 30 conversations (1,050 speaking turns) between two participants and a robot in a memory clinic setting. The robot responds to patient questions about the facility and appointments. This dataset is text-only, with ad-dressee annotations already provided. Third, the Spitale dataset [34] comprises 28 conversations (1,043 speak-ing turns) in which two or three participants interact with two robots, which are treated as a single conver-sational agent for the purposes of this work. The robots facilitate a negotiation game in which participants de-cide how and at what price to sublet rooms in a shared apartment. This dataset is also text-only, with addressee annotations available for robot utterances only. When annotations were not present, a human annotator (the first author of the paper) labelled dialogue acts and ad-dressees for all utterances across datasets, covering both robot and participant turns, to support feature extrac-tion. Addressee was determined by whom the utter-ance’s content was directed toward, e.g. a name, a direct question, or content clearly relevant to a single partici-pant, and labelled as ALL whenever the utterance was phrased to include the whole group rather than one indi-vidual. Dialogue acts were assigned by matching each utterance against the category definitions given in our taxonomy (Section 2.2). Although the MuMMER dataset originally included video, it was collected for person re-identification, and the camera motion made visual features unstable. Pre-liminary experiments using audio features did not yield improvements over text-based conversational structure features. For this reason, we restrict all analyses to tex-tual data across datasets. 
+
+5.2. Baselines for O ffl ine Datasets 
+
+The baselines we chose are two LLM baselines, deepseek-chat 1 and gpt-4.1-mini 2, as well as a super-vised learning approach, i.e., a state-of-the-art model in multi-party human–robot interaction (Gillet et al [3]). 
+
+LLMs : For the LLM baselines, we adopted a prompt structure inspired by Addlesee et al. [4]. Each prompt included: (i) an explanation of the dataset context and the prediction task (addressee and dialogue act classi-fication); (ii) a specification of the valid labels for ad-dressees and dialogue acts, along with their definitions; (iii) the dialogue history; (iv) a list of previously se-lected answers to avoid; and (v) three examples. The models were asked to predict a joint combination of ad-dressee and dialogue act for each prompt. The dialogue history was truncated to the five most recent turns. All LLMs were queried with a temperature of 1, top-p of 1, and a maximum output length of 40 tokens. 
+
+Gillet et al. : For the Gillet et al. [3] baseline, we used the architecture provided in the authors’ public GitHub repository 3 and adapted our dataset and feature repre-sentations to match their framework. This required de-sign choices to align our computed features and anno-tations with those used in their work. Gillet et al.’s ap-proach [3], based on a Graph Neural Network (GNN), organises features into three categories: node features, representing individual participants; edge features, cap-turing interactions between participants; and global fea-tures, encoding group-level information. For node fea-tures, we included the total time spoken by each partic-ipant and the total time they were addressed. For edge features, we included the amount of time one partici-pant addressed another. All remaining features, includ-ing speaker identity, addressee, and dialogue act labels from previous turns, and robot speaking and addressing times, were treated as global features. In Gillet et al., the task of deciding who to address and what to say is divided between two models. For addressee prediction, a GNN outputs a binary decision (addressed vs. not ad-dressed) for each participant, assuming only individual addressees rather than a group-level label. To accom-modate this, during training, we converted instances an-notated with addressing the whole group by duplicat-ing them once for each participant. At inference time, we followed the rule described in Gillet et al. [3]: if all participants were predicted as being addressed, the addressee was set as the whole group. To make the 
+
+> 1https://www.deepseek.com/
+> 2https://platform.openai.com/docs/models
+> 3https://github.com/sarahgillet/TGM-SmallGroups
+
+10 Gillet et al. [3] baseline comparable to our models, we retrained their entire architecture from scratch, using the leaf-level classes of our own dialogue-act taxonomy (Section 2.2) as the classes for the what-to-say compo-nent, instead of the original ten classes describing the robot’s social behavior toward the addressed participant 
+
+pwho (e.g., agree with pwho , ask pwho to elaborate, praise 
+
+pwho ). 
+
+5.3. Implementation Details 
+
+Data Augmentation: To reduce overfitting to the limited interaction data, we augment the training rep-resentations by perturbing randomly selected numerical features with Gaussian noise [36]. For a numerical fea-ture x j, an augmented value is given by 
+
+x′ 
+
+> j
+
+= x j + ϵ j, ϵ j ∼ N (0 , σ 2aug ),
+
+where σaug controls the magnitude of the perturbation and is selected during hyperparameter optimisation. 
+
+Training Procedure: All datasets were partitioned into ten randomly stratified folds to preserve the distri-bution of dialogue act–addressee combinations across splits. Within each fold, the training portion was fur-ther divided into 80% training and 20% validation sets, maintaining stratification. This results in an overall split of 72% training, 18% validation, and 10% test data. Deterministic models were implemented in PyTorch and trained using Adam for up to 1000 epochs, with early stopping using a patience of 15 epochs. The Bayesian architectures were implemented in Pyro [37] and trained for up to 1000 epochs, using early stopping with a patience of 100 epochs. Gradient clipping and learning-rate decay were used to stabilise optimisation. For the Gillet et al. baseline, as in our other experi-ments, models were trained for up to 1000 epochs with early stopping using a patience of 15 epochs. 
+
+Hyperparameter Optimisation: For all the models used in this work, we performed hyperparameter tun-ing using Optuna [38], with 75 trials per model. We selected hyperparameters based on average validation accuracy obtained via 10-fold cross-validation on the largest dataset used in our experiments, the MuMMER dataset. The hyperparameter search spaces varied by type of model. For our proposed deterministic models , the tuned hy-perparameters included the number of hidden layers, the number of neurons per layer, dropout rate, L2 regular-isation strength, the choice and weighting of the loss function (including class-weighted cross-entropy), the number of augmented data copies, the magnitude of in-jected noise, and the penalty coe ffi cient used in the hi-erarchical loss. For our proposed Bayesian models , the tuned hyper-parameters included the number of hidden layers and neurons per layer, dropout rate, learning rate, the stan-dard deviations of the priors for weights and biases, the number of augmented data copies, the magnitude of in-jected noise, the weighting of the cross-entropy compo-nent, and the penalty coe ffi cient used in the hierarchical loss. For our proposed model that decides whether the robot should speak or remain silent , the hyperparameter search space included the number of hidden layers, the number of neurons per layer, dropout rate, L2 regular-isation strength, the number of augmented data copies, and the magnitude of the injected noise. For the Gillet et al. baseline [3] we followed the pa-rameter ranges specified by the hyperparameter tuning the original paper, with the addition of data augmen-tation parameters used previously, namely the number of dataset replications and the amount of noise injected into feature columns. Full hyperparameter configurations and model weights are available in the Appendix D. 
+
+5.4. Evaluation Procedure on O ffl ine Datasets 
+
+The o ffl ine evaluation is designed to answer three central questions. First, we assess whether the pro-posed models can outperform the baseline approaches, establishing that if any observed gains are statistically significant. Second, we investigate the impact of for-mulating the neural networks within a Bayesian frame-work, to determine whether this yields a measurable im-provement in overall performance. Finally, we examine whether hierarchical architectures provide any advan-tage over a flat formulation, and which hierarchical or-dering leads to better performance. To investigate these questions, we evaluated three architectural paradigms: flat classification, hierarchical addressee-first, and hier-archical dialogue-act-first, each implemented with both Bayesian neural networks and standard (non-Bayesian) neural networks, resulting in a total of six model vari-ants. 
+
+Metrics: Model performance was evaluated across all three datasets on the test splits obtained from 10-fold stratified cross-validation. We report the accuracy in Hit@1, Hit@3, and Hit@5, measuring whether the correct behaviour appears among the model’s top 1, 3, or 5 predictions, respectively. These metrics are stan-dard for similar tasks such as utterance selection [39] and are well-suited to group conversations, where mul-tiple combinations of dialogue acts and addressees may be equally valid. 11 Statistical Testing: To assess whether the observed di ff erences among proposed and baseline models are statistically significant, we conduct pairwise statisti-cal comparisons between every proposed model and each baseline. Specifically, we apply Welch’s t-tests [40] when normality assumptions are satisfied, and Mann–Whitney U tests [41] otherwise, evaluat-ing performance on Hit@1, Hit@3, and Hit@5 (result-ing in three comparisons per proposed model). All p-values are adjusted using the Benjamini–Hochberg cor-rection [42]. Further, to isolate the individual contributions of the Bayesian and hierarchical design choices, and specif-ically to determine whether the Bayesian formulation yields a significant positive e ff ect on performance, we perform a 2 ×3 factorial ANOVA. The two factors are model type (deterministic vs. Bayesian) and hierarchi-cal structure (flat, hierarchical with addressee-first, and hierarchical with dialogue-act-first); this factorial de-sign lets us disentangle the e ff ect of the Bayesian formu-lation from that of the hierarchical ordering, rather than conflating the two. This analysis is conducted across all datasets and evaluation metrics. When the assump-tions of normality and homogeneity of variance are vi-olated, we instead use the Scheirer–Ray–Hare test [43]. A 2 ×3 factorial ANOVA serves as the primary frame-work, after which the e ff ects of the Bayesian and hi-erarchical factors are examined separately only if they are significant in the 2 ×3 factorial ANOVA. To examine the individual e ff ect of a significant factor, we perform post hoc pairwise comparisons using Welch’s t-test, or the Mann–Whitney U test when normality is violated. When the Bayesian factor is significant, these compar-isons are run between the deterministic and Bayesian variants within each architecture, for every evaluation metric. When the hierarchical architecture factor is sig-nificant, comparisons are instead run pairwise between the three architectures (flat, hierarchical addressee-first, and hierarchical dialogue-act-first) within each mod-elling type (deterministic and Bayesian), with correc-tion for multiple comparisons applied given the three pairwise tests involved. 
+
+5.5. Results on O ffl ine Datasets 5.5.1. Proposed Models versus Baselines 
+
+As shown in Table 1, the proposed models gener-ally achieve higher mean performance than the baseline methods across all evaluation metrics and datasets. Pair-wise Welch’s t-tests (or Mann–Whitney U tests when normality assumptions were violated) confirm that the proposed approaches consistently outperform the base-line methods by a statistically significant margin (all 
+
+p < 0.05). The only exception occurs for the hi-erarchical dialogue-act-first model ( Hierarchical NN (DACT →ADDR) ) on the Hit@1 metric in the Spitale dataset when compared to the Gillet et al. baseline; however, the proposed model still achieves a higher mean performance. This indicates that, overall, our pro-posed models are well-suited for this task. From the performance of our best-performing mod-els, we observe that Hit@1 scores reach 0.6396 for MuMMER, 0.678 for Spitale and 0.8019 for Addle-see. Given that the Addlesee dataset achieves the high-est overall performance, the task of learning appropriate robot behaviour in this setting can be considered com-paratively easier than in the other datasets. This inter-pretation is further supported by the nature of the inter-action scenarios: in the Addlesee setting, the robot as-sumes a relatively passive role, primarily responding to participants’ questions, whereas the Spitale and MuM-MER datasets involve more dynamic and demanding behaviours—in Spitale, the robot (or pair of robots) ac-tively manages the flow of the conversation, while in MuMMER the robot must handle a wider range of func-tions, including entertaining users with quizzes, main-taining small talk, and answering users’ questions. 
+
+5.5.2. E ff ects of Bayesian and Hierarchical Modelling 
+
+To examine the respective contributions of Bayesian modelling and hierarchical architecture to predictive performance, we analysed the e ff ects of the two design choices using the 2 ×3 factorial ANOVA or Scheirer– Ray–Hare test described in Section 5.4. In general, these tests do not show any significant e ff ect of hierar-chical modelling for any evaluation metric. In contrast, they frequently indicate that Bayesian modelling has a significant positive e ff ect on predictive performance, al-though the strength of this e ff ect di ff ers depending on the dataset and metric. For the Spitale and MuMMER datasets, the pattern is consistent: Bayesian modelling always has a significant eff ect on predictive performance (MuMMER: Hit@1 
+
+H = 19 .75; Hit@3 F = 29 .38; Hit@5 F = 51 .50; Spitale: Hit@1 H = 18 .48; Hit@3 F = 23 .12; Hit@5 
+
+F = 6.02; all p < . 05). To further examine this ef-fect, we conducted post hoc comparisons (Welch’s t-test, or the Mann–Whitney U test when normality was violated) between the deterministic and Bayesian vari-ants of each architecture, for every metric. The only ex-ception to this trend occurred at the Hit@5 metric in the Spitale dataset, where Bayesian neural networks were not significantly better than their deterministic counter-parts for the flat ( U = 61 .5, p = .202) and hierarchical addressee-first ( U = 72 .0, p = .052) architectures. This 12 Table 1: O ffl ine evaluation results across Mummer [32], Addlesee [33], and Spitale [34] datasets. Top row shows mean Hit@k, bottom row shows standard deviation in parentheses; bold marks the best result per column. ∗ p < . 05, ∗∗ p < . 01, ∗∗∗ p < . 001 (Welch’s t-test, or Mann–Whitney U
+
+where normality /variance assumptions were violated; Benjamini-Hochberg corrected) indicate that a proposed model significantly outperforms all three baselines, reflecting the least significant of the three comparisons                                                                                                                                                                        
+
+> Model Mummer [32] Addlesee [33] Spitale [34] Hit@1 Hit@3 Hit@5 Hit@1 Hit@3 Hit@5 Hit@1 Hit@3 Hit@5
+> Baselines
+> deepseek-chat [4] 0.2051 0.2605 0.3194 0.3056 0.3513 0.4014 0.1208 0.2226 0.2758 (0.0116) (0.0124) (0.0161) (0.0205) (0.0295) (0.0238) (0.0232) (0.0285) (0.0230) gpt-4.1-mini [4] 0.1525 0.2946 0.3571 0.1880 0.2489 0.2816 0.0723 0.1849 0.2628 (0.0049) (0.0064) (0.0110) (0.0200) (0.0198) (0.0213) (0.0186) (0.0220) (0.0269) Gillet et al. [3] 0.4781 0.5708 0.6464 0.5781 0.6250 0.7312 0.4906 0.5625 0.5844 (0.0312) (0.0497) (0.0509) (0.0646) (0.0489) (0.1044) (0.1063) (0.1179) (0.1122)
+> Ours
+> Flat NN 0.5494 ∗∗∗ 0.6969 ∗∗∗ 0.7683 ∗∗∗ 0.7408 ∗∗∗ 0.8621 ∗∗∗ 0.9175 ∗∗∗ 0.5987 ∗0.7494 ∗∗∗ 0.8246 ∗∗∗
+> (0.0319) (0.0324) (0.0254) (0.0355) (0.0464) (0.0272) (0.0659) (0.0634) (0.0616) Hierarchical NN (DACT →ADDR) 0.532 ∗∗∗ 0.6975 ∗∗∗ 0.7613 ∗∗∗ 0.7621 ∗∗∗ 0.8650 ∗∗∗ 0.8835 ∗∗∗ 0.555 0.6819 ∗0.7751 ∗∗∗
+> (0.0261) (0.0290) (0.0192) (0.0324) (0.0362) (0.0355) (0.0561) (0.0746) (0.0648) Hierarchical NN (ADDR →DACT) 0.5756 ∗∗∗ 0.7225 ∗∗∗ 0.7858 ∗∗∗ 0.7583 ∗∗∗ 0.8903 ∗∗∗ 0.9039 ∗∗∗ 0.5937 ∗0.7146 ∗∗ 0.8068 ∗∗∗
+> (0.0352) (0.0241) (0.0263) (0.0435) (0.0311) (0.0244) (0.0582) (0.0570) (0.0727) Flat Bayesian NN 0.6396 ∗∗∗ 0.8137 ∗∗∗ 0.8409 ∗∗∗ 0.8019 ∗∗∗ 0.9087 ∗∗∗ 0.9184 ∗∗∗ 0.678 ∗∗∗ 0.8158 ∗∗∗ 0.8415 ∗∗∗
+> (0.0616) (0.0472) (0.0282) (0.0530) (0.0334) (0.0279) (0.0936) (0.1131) (0.0934) Hierarchical Bayesian NN (DACT →ADDR) 0.596 ∗∗∗ 0.7748 ∗∗∗ 0.8195 ∗∗∗ 0.7864 ∗∗∗ 0.8922 ∗∗∗ 0.9097 ∗∗∗ 0.6502 ∗∗ 0.8148 ∗∗∗ 0.8504 ∗∗∗
+> (0.0488) (0.0517) (0.0388) (0.0434) (0.0395) (0.0330) (0.0804) (0.1048) (0.0744) Hierarchical Bayesian NN (ADDR →DACT) 0.632 ∗∗∗ 0.8073 ∗∗∗ 0.8294 ∗∗∗ 0.7816 ∗∗∗ 0.9019 ∗∗∗ 0.9126 ∗∗∗ 0.671 ∗∗ 0.8336 ∗∗∗ 0.8554 ∗∗∗
+> (0.0682) (0.0611) (0.0441) (0.0437) (0.0319) (0.0263) (0.0799) (0.0847) (0.0732)
+
+suggests that as the task becomes easier (i.e., when mul-tiple attempts are allowed), the advantage of Bayesian modelling may diminish, even though it remains impor-tant for more challenging settings such as Hit@1 and Hit@3. A similar but more pronounced trend is observed in the Addlesee dataset. The 2 ×3 ANOVA (or the Scheirer–Ray–Hare test when assumptions are violated) indicates a significant e ff ect of Bayesian modelling for Hit@1 ( F = 10 .94, p = .002) and Hit@3 ( F = 8.99, 
+
+p = .004), but not for Hit@5 ( F = 2.50, p = .119). Post hoc comparisons further show that di ff erences between Bayesian and deterministic models are significant only for the flat architecture at Hit@1 and Hit@3. Together, these results suggest that the advantage of Bayesian modelling may diminish as task di ffi culty de-creases. This pattern is consistent with the compar-atively higher performance observed in the Addlesee dataset and with the reduced Bayesian advantage at Hit@5, where multiple predictions are accepted. 
+
+6. Online Interpretability Study and Results 
+
+This section presents an interpretability study de-signed to assess whether our hierarchical architecture yields tangible benefits for explainability of our system, supporting our Contribution 2 . This section details the study design and presents its results. 
+
+6.1. Online Study Design 6.1.1. Hypotheses 
+
+Prior work suggests that decomposing a model into modular components and exposing intermediate out-puts can improve interpretability [44, 45], while hier-archically structured explanations have been perceived as more interpretable than flat ones [46]. We there-fore expect explanations from the hierarchical model to be more interpretable than those from the flat model. Specifically, we hypothesise that hierarchical explana-tions will be perceived as more understandable, coher-ent, and useful ( H1 ), and accordingly participants will prefer hierarchical over flat explanations when directly comparing the two ( H2 ). Beyond perceived interpretability, prior work shows that explanations of robot behaviour can help people predict subsequent robot behaviour [47]. Together with our expectation that hierarchical explanations are more interpretable than flat explanations (H1), we hypothe-sise that participants will achieve higher accuracy in in-ferring robot behaviour when given hierarchical rather than flat explanations ( H3 ). More generally, we hy-pothesise that participants will achieve higher accuracy when aided by an explanation than when no explanation is provided ( H4 ). 
+
+6.2. Online Study Participants and Procedure 
+
+Having established in Contribution 1 that our pro-posed models outperform state-of-the-art baselines, we 13 turn in the online evaluation to assessing their inter-pretability. In particular, we investigated whether ex-planations derived from a hierarchical model provide greater clarity and usefulness than those from a flat model. To this end, we conducted a within-subjects on-line study to evaluate the quality of explanations cor-responding to robot behaviour in recorded interaction clips from the in-person study. The study was conducted using an online question-naire hosted on Qualtrics, with participants recruited via Prolific. In an initial pilot phase, six individuals re-cruited via personal contacts completed an early version of the questionnaire. Their feedback was used to refine and improve the study design and survey structure. Fol-lowing finalisation of the questionnaire, a sample of 20 participants was recruited through Prolific. Eligibility criteria included English as a first language, age over 18, and a minimum approval rating of 99%. We also se-lected a balanced distribution of male and female partic-ipants (i.e., 10M:10F). The questionnaire took approx-imately 30 minutes to complete, and each participant was compensated according to an hourly rate of £12. The study consisted of three main tasks. 
+
+6.3. Online Study Tasks 
+
+To evaluate our hypotheses, we structured the online study into three tasks. In each task, participants watched video clips depicting a robot interacting with two peo-ple (the videos were obtained from the in-person study described in the next section). The interactions were in-spired by the MuMMER dataset, in which participants were instructed to imagine themselves in a shopping mall while the robot interacted with them by provid-ing directions, asking questions for entertainment, and engaging in small talk. Participants watched a total of 14 clips, each ranging from 30 to 50 seconds in length. Each clip included all the contextual information avail-able to the model when making its decisions, consisting of a maximum of the five preceding turns of conversa-tion. 
+
+Task 1 aimed to obtain a qualitative assessment of explanation quality. Participants viewed, in a coun-terbalanced order, two blocks of three clips (one per model: flat or hierarchical). In each clip, participants were shown an explanation of the robot’s behaviour, and after watching it, they completed six custom-designed questions evaluating explanation quality (shown in Ap-pendix E). These questions assessed understandabil-ity, perceived usefulness for interpreting the robot’s be-haviour, the extent to which the explanation clarified the selected dialogue act and addressee, and the coherence between the explanation and the robot’s choices of di-alogue act and addressee within the context of the clip. At the end of each block, participants completed the val-idated Explanation Satisfaction Scale (ESS) question-naire [48]. 
+
+Task 2 was designed to provide a more objective measure of understanding and to assess whether ex-planations supported participants’ ability to infer the robot’s behaviour. Participants watched four clips de-picting interactions that paused immediately before the robot’s intervention. After each clip, they were shown an explanation of the robot’s subsequent decision, while the specific addressee (individual or group) and in-tended dialogue act were masked. Participants were then asked to infer the missing information by indicat-ing whom the robot would address and what it would say (selected from a predefined set of dialogue acts). Of the four clips, two were paired with explanations gen-erated by the hierarchical model and two with explana-tions generated by the flat model. Both the assignment of model type to clips and the order of presentation were randomised and counterbalanced across participants. 
+
+Task 3 evaluated whether participants had learned the robot’s behavioural patterns and enabled a direct com-parison between hierarchical and flat explanations for the same interaction context. As in the second task, par-ticipants viewed four clips in which interactions paused immediately before the robot’s intervention. However, in this case, they were first asked to predict the robot’s decision without any explanatory information. They were then shown two full explanations for the same in-teraction—one generated by the hierarchical model and one by the flat model—and asked to indicate which ex-planation better aligned with the robot’s behaviour. The order of explanation presentation was randomised and counterbalanced across participants. To control for po-tential order e ff ects, the sequence of the second and third tasks was also randomised across participants. Ex-amples of the tasks in the online study can be found in the appendix Appendix F. 
+
+6.4. Online Study Metrics 
+
+To test H1 , we evaluated the results from Task 1. Specifically, we analysed the ESS scores by summing the responses for each item to obtain a total score, from which a mean score is calculated. We then compared the hierarchical and flat conditions using a Wilcoxon signed-rank test. Additionally, we apply Wilcoxon signed-rank tests to each item of the self-designed ques-tions separately to examine which specific dimensions di ff er between conditions. To account for the multiple 14 comparisons across these tests, we applied a Benjamini-Hochberg false discovery rate correction. These di-mensions include explanation understandability, useful-ness for interpreting the robot’s behaviour, the extent to which the explanation clarifies the selected dialogue act and addressee, and the coherence between the explana-tion and the robot’s choice of dialogue act and addressee within the context of the clip. To test H2 , we analysed the results from Task 3. Specifically, we compared the number of times hierar-chical or flat explanations are preferred across all ques-tions for each participant. A paired t-test was conducted if the data met the normality assumption; otherwise, a Wilcoxon signed-rank test was applied. To test H3 , we analysed the scores obtained from Task 2. Specifically, we compared participants’ accu-racy in correctly selecting robot behaviour after viewing hierarchical versus flat explanations, using a paired t-test when the data was normally distributed; otherwise, we used a Wilcoxon signed-rank test. To test H4 , we compared participants’ accuracy scores with and without explanations between Task 2 and Task 3. A paired t-test is used if the data are nor-mally distributed; otherwise, a Wilcoxon signed-rank test is conducted. 
+
+6.5. Online Study Results 
+
+To evaluate H1 , we compared participants’ ratings of the Explanation Satisfaction Scale (ESS) as well as the scores from the self-designed questionnaire between the hierarchical and flat explanation conditions. Contrary to our expectations, although the hierarchical explanations received a higher average rating ( M = 3.59) than the flat explanations ( M = 3.34) no statistically significant di ff erence was found in the ESS scores between the two conditions ( p > . 05). One possible explanation is that the e ff ect size is relatively small and that a larger sam-ple would be required to detect a significant di ff erence. A similar pattern emerged for the self-designed ques-tionnaire. Overall, hierarchical explanations received slightly higher ratings ( M = 4.28) than flat explanations (M = 4.18), but the overall di ff erence was not statisti-cally significant ( p > . 05). To evaluate H2 , we examined participants’ prefer-ences when the hierarchical and flat explanations were presented side by side for the same clip; for each clip, participants could choose the hierarchical explanation, the flat explanation, both (if they judged the two equally acceptable), or neither. As we can see in Figure 5, across 20 participants and four comparison clips each (80 judgements in total) the hierarchical explanation was chosen on 45 occasions and the flat explanation 
+
+> Figure 5: Participants’ explanation preferences in Task 3 of the on-line interpretability study, where the hierarchical and flat explanations were shown side by side for each of four video clips. Each bar rep-resents one participant; the stacked segments show how many of their four choices went to the hierarchical explanation, the flat explanation, or “Both” when they judged the two explanations equally good.
+
+on 23, with both explanations judged equally acceptable in 7 cases and neither acceptable in 5. To test whether this di ff erence was reliable, we computed for each par-ticipant how many of their four judgements favoured the hierarchical explanation versus the flat explanation, counting a “both” judgement toward each side; this gave per-participant means of M = 2.60 for hierarchical and M = 1.50 for flat. A Wilcoxon signed-rank test on these paired per-participant scores confirmed that hierarchical explanations were selected significantly more often than flat explanations (W = 21.00, p = .014). Together, these results support H2 , indicating that participants preferred the hierarchical explanations over the flat ones. To evaluate H3 and H4 , we analysed partic-ipants’ accuracy in predicting the robot’s deci-sions. No significant di ff erences were found between the no-explanation, hierarchical-explanation, and flat-explanation conditions. Participants’ prediction accu-racies were comparable across all three conditions, in-dicating that neither hierarchical nor flat explanations improved participants’ ability to infer the robot’s future behaviour. One possible explanation is that the predic-tion task was inherently challenging, with several pos-sible behaviours being plausible at the same time. 
+
+7. In-person Study and Results 
+
+This section describes the integration of our mod-els into a real-time robotic system and its evaluation through an in-person user study aimed at assessing whether the system was well perceived by users, sup-porting our Contribution 3 . We first detail the system implementation, then present the study protocol, and fi-nally present its findings. 15 Speech  
+
+> Transcription
+> Speaker
+> Identification
+> Dialogue
+> Manager
+> Utterance
+> Conversation
+> Logs
+> Utterance
+> Speaker
+> Addr + Dact
+> Addressee
+> Dialogue Act
+> Inference
+> Audio
+> Video
+> Perception Module
+> Features  Speak-or-
+> Silence Model
+> Conversational
+> Behaviour
+> Model
+> Utterance
+> generation Text-to-speech
+> synthesis
+> Decision
+> to speak
+> Step 7:
+> HiBridge Models
+> Behaviour Generation Module
+> Feature
+> Extraction
+> Interaction
+> level
+> features
+> Per-turn
+> features
+> Step 8:
+> Addressee, Dialogue Act
+> Step 1:
+> Step 3:
+> Step 2:
+> Step 4: Step 5:
+> Step 6:
+> Utterance
+
+Figure 6: System architecture used in the in-person study, following the HARMONI framework [49]. The Perception Module (right) transcribes speech, identifies speakers, infers each utterance’s addressee and dialogue act, and extracts the features required by the HiBridge models. The Behaviour Generation Module (left) uses the HiBridge models to decide whether to intervene in the conversation and, if so, select the robot’s addressee and dialogue act, then prompts an LLM to generate the resulting utterance, which is synthesised into speech. 
+
+7.1. Robotics Deployment 
+
+To integrate our trained models into a real-time sys-tem, we used the open-source HARMONI framework [49]. The system was divided into two parts: a
+
+perception module , responsible for understanding the group conversation, followed by a behaviour genera-tion module , responsible for producing the robot’s re-sponses. Alternation between the two modules was gov-erned by fixed silence windows: a two-second silence indicated that a participant’s turn had ended, while a three-second window following the robot’s turn allowed another speaker to take the floor. The perception module 
+
+performed the following steps: 
+
+• Step 1 (Speech transcription): Each utterance was transcribed in real time using the Google Speech-to-Text (STT) service, which also per-formed speaker diarization. A fixed one-second si-lence threshold was used to segment and finalise each utterance. 
+
+• Step 2 (Addressee and dialogue act inference): 
+
+For each participant utterance, GPT-4.1-mini was used to infer the addressee and dialogue act of the previous turn, conditioned on the conversation transcript so far. 
+
+• Step 3 (Speaker identification): Speaker identity was determined by combining the diarization out-put with facial-feature-based speaker identification using dlib [50]. 
+
+• Step 4 (Feature extraction): The features re-quired by our models were computed from the cur-rent state of the conversation transcript. The behaviour generation module then performed the following steps: 
+
+• Step 5 (Speak-or-Silence Model): A binary clas-sifier trained o ffl ine determined whether the robot should speak at all ( HiBRIDGE Speak-or-Silence Model ). 
+
+• Step 6 (Conversational Behaviour Model): If the classifier decided the robot should speak, the pre-viously trained o ffl ine models were used to select the robot’s addressee and dialogue act ( HiBRIDGE Conversational Behaviour Model ). 
+
+• Step 7 (Utterance generation): A large lan-guage model (specifically GPT-4.1-mini) was then prompted with the predicted dialogue act, the se-lected addressee, and the list of current speakers to generate the robot’s utterance. If the addressee was not the entire group, GPT-4.1-mini was also asked to explicitly resolve the intended individual addressee from the list of available speakers. 
+
+• Step 8 (Text-to-speech synthesis): The generated utterance was then converted into speech using the voice "Amy" from Amazon Polly, which the robot used to deliver the response. Figure 6 shows the overall architecture used in the in-person study. The architecture described above is platform-independent; we now describe the specific platform used in our in-person study. The robot plat-form used was a Misty II 4, which provided three actu-ators to support the interaction: head movement, arm movement, and a light on its chest. The robot’s gaze de-pended on the selected addressee: it oriented its head to-wards the addressed participant’s face when speaking to an individual, and towards the midpoint between partic-ipants when addressing the group. Arm movement was 
+
+> 4
+
+https://www.mistyrobotics.com/misty-ii 
+
+16 included to add a degree of physical movement to the interaction. We handcrafted a small set of fixed arm ges-tures, each mapped to a specific dialogue act (e.g. rais-ing both arms at di ff erent angles, raising a single arm); these gestures were not designed to be meaningfully dis-tinguishable from one another and served purely to in-troduce movement rather than to convey additional in-formation. Finally, the robot’s chest light indicated its internal state to participants, who were informed of this convention beforehand: it was green while the percep-tion module was active (i.e. while the robot was listen-ing) and red while the behaviour generation module was active (i.e. while the robot was speaking). 
+
+7.2. In-Person Study Participants and Procedure 
+
+In the in-person study, we examined whether our models, in combination with an LLM, could adequately manage the robot’s behaviour in a group conversation setting. The study was approved by the institutional ethics committee of Politecnico di Milano. We recruited a total of 12 participants (7 male, 5 female), aged 24–35, from a convenience sample of PhD students, postdoc-toral researchers, research assistants, and master’s stu-dents. The 12 participants were organised into six pairs and engaged with a robot in interactions inspired by the MuMMER dataset. The MuMMER dataset was used as the basis for the interaction design because it contained the largest number of samples among the datasets included in the o ffl ine evaluation. As explained in Section 6.3, in these interactions, participants were instructed to imagine themselves in a shopping mall, where the robot engaged with them by providing direc-tions, entertaining them with quizzes, and making small talk. We selected the best-performing model from the offl ine evaluation, namely the Bayesian flat neural network. In addition, we investigated whether the best-performing Bayesian hierarchical neural network (addressee-first formulation) could be perceived simi-larly to the flat model during interaction, beyond of-fline performance di ff erences. Each interaction lasted approximately three minutes, comparable to the longest conversations in the MuMMER dataset. Participants interacted with both the flat and hier-archical models in a randomised, counterbalanced or-der. Following the interactions, participants took part in semi-structured interviews to collect qualitative feed-back on the interaction experience. They also com-pleted a questionnaire consisting of six self-designed items assessing perceived usefulness, appropriateness of the agent’s behaviour, e ff ectiveness in managing con-versational flow, the agent’s contribution to the interac-useful appropriateness conv. mgmt contribution inclusivity balance 024 Condition 
+
+> Hierarchical Flat Score (Higher is better)
+> Figure 7: Box plot showing questionnaire scores for each item for the hierarchical and flat model during the in-person study.
+
+tion, and its ability to balance participation within the group – the questionnaire is provided in Appendix G. We opted for a self-designed scale to capture aspects specific to robotic group interaction management that existing scales do not address. The questionnaire was administered separately for each of the two interaction conditions. To evaluate di ff erences between the two models, we analysed each questionnaire item using the paired Wilcoxon signed-rank test [51]. 
+
+7.3. In-person Study Results 
+
+The results from the in-person study are shown in Figure 7. Overall, participants perceived both models favourably, with most questionnaire items scoring above the midpoint of the scale (3 out of 5), and the hierar-chical model consistently outperforming the flat model, albeit by moderate margins. Appropriateness ratings were highest for the hierar-chical model (M = 4.00, SD = 0.60) relative to the flat model (M = 3.42, SD = 1.16). Agent contribution followed a similar pattern, with the hierarchical model again rated somewhat higher (M = 3.83, SD = 0.94) than the flat model (M = 3.58, SD = 1.08). Perceived usefulness showed the same trend, favouring the hierar-chical model (M = 4.00, SD = 0.60) over the flat model (M = 3.33, SD = 1.07). Ratings for conversation management were more moderate for both models (hierarchical: M = 3.25, SD =
+
+0.87; flat: M = 2.92, SD = 0.90), and conversation bal-ancing and inclusivity received the lowest scores over-all. Still, the hierarchical model held a small but consis-tent edge, with means of 2.83 (SD = 1.40) versus 2.42 (SD = 1.08) for balance, and 2.75 (SD = 1.36) versus 2.50 (SD = 0.90) for inclusivity. Despite this consistent advantage for the hierarchi-cal addressee-first Bayesian model, Wilcoxon signed-rank tests found no statistically significant di ff erences between the two models across any of the six question-naire dimensions (all p > . 05). Taken together, these 17 results suggest that both models were perceived by par-ticipants as satisfactory and that the robot was able to interact e ff ectively with participants regardless of which model was driving its behavior. 
+
+8. Summary and Discussion 
+
+Our results, taken together, point to complemen-tary roles for the Bayesian and hierarchical components of HiBRIDGE. The Bayesian formulation drives pre-dictive accuracy , as shown in the o ffl ine evaluation. The hierarchical formulation, by contrast, drives in-terpretability , as reflected in the online study. The in-person study extended these findings further, show-ing that both formulations together support real-time group interaction .The benefit of Bayesian modelling is particularly relevant to HRI, where interaction data are often costly to collect and consequently limited [25, 24]. Group interaction introduces an additional challenge because several behaviours can be reasonable in the same con-versational state, making the mapping from interaction context to robot behaviour inherently di ffi cult to learn from sparse observations. Consistent with this, the ad-vantage of Bayesian modelling is strongest on the more demanding Hit@1 and Hit@3 settings and in the MuM-MER [32] and Spitale [34] datasets, and weaker under the more lenient Hit@5 metric and in the comparatively constrained Addlesee setting [4]. This suggests that Bayesian approaches may be particularly useful when HRI systems must learn from limited data while oper-ating in heterogeneous or ambiguous social situations, such as group moderation [5], educational settings [52], or open-ended social interaction [2]. Although our ex-periments do not evaluate uncertainty calibration di-rectly, they indicate that probabilistic parameter mod-elling can provide a useful predictive advantage in sparse HRI datasets. The contributions of the hierarchical formulation 
+
+instead emerge more clearly in how robot decisions can be explained. Prior work suggests that expos-ing intermediate computations through modular struc-tures [44, 45] and organising explanations hierarchi-cally [46] can facilitate interpretation. Our findings sup-port this in HRI, with participants preferring hierarchi-cal explanations over flat ones. We reason that the hier-archy provides a structured substrate for explanation 
+
+by exposing semantically meaningful intermediate de-cisions, such as whether the robot should act initiatively or responsively and whom it should address. For HRI, this suggests that interpretability can be considered when designing the internal structure of a behaviour-selection model, rather than being solely addressed as a post-hoc process [53]. The in-person study further demonstrates that this structured prediction framework can be deployed without preventing real-time inter-action : both the hierarchical and flat Bayesian vari-ants were positively perceived when combined with an LLM for utterance generation. This supports a modu-lar approach in which a learned model determines the robot’s conversational behaviour while an LLM is used for language generation, retaining explicit control over behavioural decisions while benefiting from the flexibil-ity of generative models. At the same time, the interpretability benefits of hi-erarchy are not uniform across all measures. Overall Explanation Satisfaction Scale scores and aggregate rat-ings of hierarchical and flat explanations do not di ff er significantly, and neither explanation type improves par-ticipants’ accuracy in predicting robot behaviour. Sim-ilarly, the in-person study reveals no significant di ff er-ences between the hierarchical and flat Bayesian mod-els across the evaluated interaction dimensions. One interpretation is that explanations can improve subjec-tive understanding and preference without immediately producing a more accurate predictive mental model of the robot. The short exposure to each model may also have limited participants’ opportunity to learn these be-havioural patterns. Future work should therefore exam-ine explanations over longer and repeated interactions, where participants have greater opportunity to form and refine a mental model of the robot’s behaviour. This should also be studied in settings where the robot’s intermediate social decisions are more consequential, such as group moderation or participation balancing [54], as the value of exposing the decision structure may become more apparent when those choices directly shape the interaction and thus explanations are more valuable to the users [55]. Moreover, because several behaviours can be plausible in the same conversational state, future work could investigate contrastive explana-tions [56] that clarify why the robot selected one be-haviour rather than another plausible alternative. Fi-nally, the absence of consistent e ff ects across all in-terpretability measures suggests that explanation needs may di ff er across users and over time, motivating adap-tive explanations for di ff erent users’ roles and prior ex-periences [57]. 
+
+9. Conclusions 
+
+In this work, we introduced HiBRIDGE, a hierar-chical Bayesian neural network framework for decid-18 ing what to say and whom to address in multi-party human–robot interaction. Across three o ffl ine datasets, Bayesian formulations improve predictive performance over their deterministic counterparts and outperform several baselines. While hierarchical modelling does not yield a significant predictive advantage, it exposes intermediate decision stages that provide a structured basis for explanation. Our online study shows that explanations derived from this structure are preferred over flat alternatives and perceived to be more help-ful for understanding robot behaviour. The in-person study further demonstrates that HiBRIDGE can be in-tegrated into an autonomous real-time group interaction system, with both hierarchical and flat Bayesian vari-ants positively perceived. Taken together, these find-ings show that probabilistic and hierarchical modelling contribute complementary benefits: the former strength-ens behaviour prediction under sparse interaction data, while the latter supports greater transparency in how those behaviours are selected. HiBRIDGE therefore provides a foundation for group-robot dialogue manage-ment that combines predictive performance, structured decision-making, and interpretable robot behaviour. 
+
+Acknowledgements Contributions: Conceptualisation: FID, HG, MS. Methodology: MN, FID, HG, MS. Software, Valida-tion, Data Curation, Formal analysis & Investigation: MN. Writing – original draft: MN, FID. Visualisa-tion: MN, FID. Writing – review & editing: MN, FID, HG, MS. Supervision & Project administration: MS, FID, HG. Funding acquisition: MS, HG. Fund-ing: MN and MS have been funded by the PNRR-PE-AI FAIR project, within NextGeneration EU program. FID and HG are supported by CHANSE and NORFACE through the MICRO project, funded by ESRC /UKRI grant ref. UKRI572. Open access: For the purpose of open access, the authors have applied a Creative Commons Attribution (CC BY) license to any Accepted Manuscript version arising. Data access: The datasets used for the o ffl ine evaluation are either publicly avail-able or available upon request, depending on the dataset. Data collected through the online and in-person empir-ical studies are available from the authors upon reason-able request. 
+
+Declaration of Generative AI and AI-assisted Tech-nologies in the Manuscript Preparation Process 
+
+During the preparation of this work, the authors used Claude and ChatGPT in order to assist with rephrasing and grammar correction during the writing phase. No new content was generated by the AI tools. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article. 
+
+References 
+
+[1] M. Nigro, E. Akinrintoyo, N. Salomons, M. Spi-tale, Social group human-robot interaction: Ascoping review of computational challenges, in: 2025 20th ACM /IEEE International Conference on Human-Robot Interaction (HRI), IEEE, 2025, pp. 468–478. [2] G. A. Abbo, M. J. Pinto-Bernal, M. Catrycke, T. Belpaeme, Fast multi-party open-ended conver-sation with a social robot (2025). arXiv:2503. 15496 .URL https://arxiv.org/abs/2503.15496 
+
+[3] S. Gillet, S. Thompson, I. Leite, M. Vázquez, Templates and graph neural networks for social robots interacting in small groups of varying sizes, in: 2025 20th ACM /IEEE International Confer-ence on Human-Robot Interaction (HRI), IEEE, 2025, pp. 458–467. [4] A. Addlesee, N. Cherakara, N. Nelson, D. Hernán-dez García, N. Gunson, W. Siei´ nska, M. Romeo, C. Dondrup, O. Lemon, A multi-party conversa-tional social robot using llms, in: Companion of the 2024 ACM /IEEE International Conference on Human-Robot Interaction, 2024, pp. 1273–1275. [5] C. Birmingham, Z. Hu, K. Mahajan, E. Reber, M. J. Matari´ c, Can i trust you? a user study of robot mediation of a support group, in: 2020 IEEE International Conference on Robotics and Automation (ICRA), IEEE, 2020, pp. 8019–8026. [6] A. Asadi, K. Fischer, Not just another quiet stu-dent: reducing participation imbalance through robot moderation, in: Frontiers in Education, Vol. 10, Frontiers Media SA, 2025, p. 1581175. [7] O. Engwall, J. Lopes, A. Åhlund, Robot inter-action styles for conversation practice in second language learning, International Journal of Social Robotics 13 (2) (2021) 251–276. [8] L. Grassi, C. T. Recchiuto, A. Sgorbissa, Strate-gies for controlling the conversation dynamics in multi-party human-robot interaction, International 19 Journal of Social Robotics 17 (8) (2025) 1517– 1539. [9] M. M. Reimann, F. A. Kunneman, C. Oertel, K. V. Hindriks, A survey on dialogue management in human-robot interaction, ACM Transactions on Human-Robot Interaction 13 (2) (2024) 1–22. [10] A. Kristiadi, M. Hein, P. Hennig, Being bayesian, even just a bit, fixes overconfidence in relu net-works, in: International conference on machine learning, PMLR, 2020, pp. 5436–5446. [11] H. Zhu, R. Miyoshi, Y. Okafuji, Whom to re-spond to? a transformer-based model for multi-party social robot interaction, arXiv preprint arXiv:2507.10960 (2025). [12] C. Zhang, J. Chen, J. Li, Y. Peng, Z. Mao, Large language models for human–robot inter-action: A review, Biomimetic Intelligence and Robotics 3 (4) (2023) 100131. [13] G. Hadjiantonis, S. Gillet, M. Vázquez, I. Leite, F. I. Dogan, Let’s move on: Topic change in robot-facilitated group discussions, in: 2024 33rd IEEE International Conference on Robot and Hu-man Interactive Communication (ROMAN), 2024, pp. 2087–2094. doi:10.1109/RO-MAN60168. 2024.10731390 .[14] A. R. Majlesi, R. Cumbal, O. Engwall, S. Gillet, S. Kunitz, G. Lymer, C. Norrby, S. Tuncer, Manag-ing turn-taking in human-robot interactions: The case of projections and overlaps, and the antici-pation of turn design by human participants, So-cial Interaction. Video-Based Studies of Human Sociality 6 (1) (2023). [15] H. Bunt, A framework for dialogue act specifica-tion, Proceedings of SIGSEM WG on Representa-tion of Multimodal Semantic Information (2005). [16] H. Bunt, Dialogue pragmatics and context specifi-cation., Abduction, belief and context in dialogue 2 (2000) 139–166. [17] H. Bunt, J. Alexandersson, J. Carletta, J.-W. Choe, A. C. Fang, K. Lee, V. Petukhova, A. Popescu-Belis, L. Romary, C. Soria, et al., Towards an iso standard for dialogue act annotation, in: Seventh conference on international language resources and evaluation (LREC’10), 2010. [18] J. Allen, M. Core, Draft of damsl: Dialog act markup in several layers (1997). [19] D. Yu, Z. Yu, Midas: A dialog act annotation scheme for open domain humanmachine spoken conversations, in: Proceedings of the 16th Con-ference of the European Chapter of the Associa-tion for Computational Linguistics: Main Volume, 2021, pp. 1103–1120. [20] E. A. Chi, A. Paranjape, A. See, C. Chiam, T. Chang, K. Kenealy, S. K. Lim, A. Hardy, C. Rastogi, H. Li, et al., Neural generation meets real people: Building a social, informative open-domain dialogue agent, in: Proceedings of the 23rd Annual Meeting of the Special Interest Group on Discourse and Dialogue, 2022, pp. 376–395. [21] Y. Fan, K. K. Bowden, W. Cui, W. Chen, V. Harri-son, A. Ramirez, S. Agashe, X. G. Liu, N. Pul-labhotla, N. Q. J. Bheemanpally, et al., Athena 3.0: Personalized multimodal chatbot with neuro-symbolic dialogue generators, Alexa Prize Soc Bot Grand Challenge 5 (2023). [22] D. Yu, M. Cohn, Y. M. Yang, C.-Y. Chen, W. Wen, J. Zhang, M. Zhou, K. Jesse, A. Chau, A. Bhowmick, et al., Gunrock: A social bot for complex and engaging long conversations, in: Proceedings of the 2019 Conference on Empiri-cal Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP): System Demonstrations, 2019, pp. 79–84. [23] V. Mullachery, A. Khera, A. Husain, Bayesian neural networks, arXiv preprint arXiv:1801.07710 (2018). [24] A. G. Wilson, P. Izmailov, Bayesian deep learn-ing and a probabilistic perspective of generaliza-tion, Advances in neural information processing systems 33 (2020) 4697–4708. [25] L. V. Jospin, H. Laga, F. Boussaid, W. Bun-tine, M. Bennamoun, Hands-on bayesian neu-ral networks—a tutorial for deep learning users, IEEE Computational Intelligence Magazine 17 (2) (2022) 29–48. [26] M. McCarthy, M. Dao, F. Yan, A bayesian neural network approach for spatial relations learning in human-robot collaboration, in: International Con-ference on Social Robotics, Springer, 2025, pp. 343–355. 20 [27] L. Shi, C. Copot, S. Vanlanduit, A bayesian deep neural network for safe visual servoing in human– robot interaction, Frontiers in Robotics and AI 8 (2021) 687031. [28] C. N. Silla Jr, A. A. Freitas, A survey of hier-archical classification across di ff erent application domains, Data mining and knowledge discovery 22 (1) (2011) 31–72. [29] A. D. GORDON 1, Hierarchical classification, Clustering and classification (1996) 65. [30] M. D. Ho ff man, D. M. Blei, C. Wang, J. Paisley, Stochastic variational inference, Journal of ma-chine learning research (2013). [31] C. Molnar, Interpretable machine learning, Lulu. com (2020). [32] O. Canévet, W. He, P. Motlicek, J.-M. Odobez, The mummer data set for robot perception in multi-party hri scenarios, in: 2020 29th IEEE International Conference on Robot and Human Interactive Communication (RO-MAN), IEEE, 2020, pp. 1294–1300. [33] A. Addlesee, W. Sieinska, N. Gunson, D. H. Gar-cía, C. Dondrup, O. Lemon, Data collection for multi-party task-based dialogue in social robotics, in: International Workshop on Spoken Dialogue Systems Technology 2023, 2023. [34] M. Spitale, M. Nigro, E. Cross, Understand-ing llm intervention explanations in multi-party human-robot interaction, arXiv preprint arXiv:2606.29460 (2026). [35] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, I. Sutskever, Robust speech recog-nition via large-scale weak supervision, in: Inter-national conference on machine learning, PMLR, 2023, pp. 28492–28518. [36] P. Machado, B. Fernandes, P. Novais, Benchmark-ing data augmentation techniques for tabular data, in: International Conference on Intelligent Data Engineering and Automated Learning, Springer, 2022, pp. 104–112. [37] E. Bingham, J. P. Chen, M. Jankowiak, F. Ober-meyer, N. Pradhan, T. Karaletsos, R. Singh, P. Sz-erlip, P. Horsfall, N. D. Goodman, Pyro: Deep uni-versal probabilistic programming, Journal of ma-chine learning research 20 (28) (2019) 1–6. [38] T. Akiba, S. Sano, T. Yanase, T. Ohta, M. Koyama, Optuna: A next-generation hyperparameter op-timization framework, in: Proceedings of the 25th ACM SIGKDD international conference on knowledge discovery & data mining, 2019, pp. 2623–2631. [39] Y. Park, Y. Ko, J. Seo, Bert-based response se-lection in dialogue systems using utterance atten-tion mechanisms, Expert systems with applica-tions 209 (2022) 118277. [40] B. L. Welch, The generalization of ‘stu-dent’s’problem when several di ff erent population varlances are involved, Biometrika 34 (1-2) (1947) 28–35. [41] H. B. Mann, D. R. Whitney, On a test of whether one of two random variables is stochastically larger than the other, The annals of mathematical statistics (1947) 50–60. [42] J. Ferreira, A. Zwinderman, On the benjamini– hochberg method, The Annals of Statistics 34 (4) (2006) 1827. [43] C. J. Scheirer, W. S. Ray, N. Hare, The analysis of ranked data derived from completely randomized factorial designs, Biometrics (1976) 429–434. [44] V. Swamy, M. Satayeva, J. Frej, T. Bossy, T. Vogels, M. Jaggi, T. Käser, M.-A. Hart-ley, Multimodn—multimodal, multi-task, inter-pretable modular networks, Advances in neural in-formation processing systems 36 (2023) 28115– 28138. [45] R. Hu, J. Andreas, T. Darrell, K. Saenko, Explain-able neural computation via stack neural module networks, in: Proceedings of the European confer-ence on computer vision (ECCV), 2018, pp. 53– 69. [46] H. Chen, G. Zheng, Y. Ji, Generating hierarchi-cal explanations on text classification via feature interaction detection, in: Proceedings of the 58th Annual Meeting of the Association for Computa-tional Linguistics, 2020, pp. 5578–5593. [47] T. Love, A. Andriella, G. Alenyà, What would i do if. . . ? promoting understanding in hri through real-time explanations in the wild, in: 2024 33rd IEEE international conference on robot and hu-man interactive communication (ROMAN), IEEE, 2024, pp. 504–509. 21 [48] R. R. Ho ff man, S. T. Mueller, G. Klein, J. Lit-man, Measures for explainable ai: Explanation goodness, user satisfaction, mental models, cu-riosity, trust, and human-ai performance, Frontiers in Computer Science 5 (2023) 1096257. [49] M. Spitale, C. Birmingham, R. M. Swan, M. J. Matari´ c, Composing harmoni: An open-source tool for human and robot modular open interac-tion, in: 2021 IEEE International Conference on Robotics and Automation (ICRA), IEEE, 2021, pp. 3322–3329. [50] D. E. King, Dlib-ml: A machine learning toolkit, The Journal of Machine Learning Research 10 (2009) 1755–1758. [51] R. F. Woolson, Wilcoxon signed-rank test, Wiley encyclopedia of clinical trials (2007) 1–3. [52] H. Woo, G. K. LeTendre, T. Pham-Shouse, Y. Xiong, The use of social robots in classrooms: A review of field-based studies, Educational Re-search Review 33 (2021) 100388. [53] S. Afroogh, S. I. Ahmed, P. Ahrweiler, D. Alvarez-Melis, M. M. Arief, E. Barakova, F. J. Bargagli-Sto ffi , E. Biyik, H. Chen, X. Chen, et al., Beyond explainable ai (xai): An overdue paradigm shift and post-xai research directions, arXiv preprint arXiv:2602.24176 (2026). [54] T. H. Weisswange, H. Javed, M. Dietrich, M. F. Jung, N. Jamali, Design implications for robots that facilitate groups—a scoping review on im-proving group interactions through directed robot action, ACM Transactions on Human-Robot Inter-action 15 (2) (2026) 1–108. [55] G. Papagni, S. Koeszegi, Understandable and trustworthy explainable robots: A sensemak-ing perspective, Paladyn, Journal of Behavioral Robotics 12 (1) (2020) 13–30. [56] A. Jacovi, S. Swayamdipta, S. Ravfogel, Y. Elazar, Y. Choi, Y. Goldberg, Contrastive explanations for model interpretability, in: Proceedings of the 2021 Conference on Empirical Methods in Natural Lan-guage Processing, 2021, pp. 1597–1611. [57] F. I. Do˘ gan, A. Markelius, H. Gunes, Designing social robots with ethical, user-adaptive ex-plainability in the era of foundation models, in: Companion Proceedings of the 21st ACM /IEEE International Conference on Human-Robot Inter-action, HRI Companion ’26, Association for Com-puting Machinery, New York, NY, USA, 2026, p. 536–541. doi:10.1145/3776734.3794453 .URL https://doi.org/10.1145/3776734. 3794453 
+
+22 Appendix A. Feature Representation 
+
+This appendix details the full feature set used to construct the conversational representation xt described in Section 4.1. Table A.2 reports all per-turn and interaction-level features and how they combine to reach the final dimensionality of 158. Table A.3 lists, for each categorical feature, the category values used during one-hot encoding. 
+
+Appendix B. Prompts for generating explanations 
+
+This appendix documents the structure of the sys-tem prompt and user prompt used to generate natural-language explanations of a conversational robot’s ad-dressee and utterance-type decisions during a 3-party interaction (robot + left participant + right participant). 
+
+Appendix B.1. System Prompt 
+
+The system prompt is a fixed template with one variable, n_words (default 150 ), controlling the target length of the generated explanation. 
+
+You explain a conversational robot’s decisions during a 3-party interaction (robot + two participants: left and right). CONTEXT The robot must decide: 1) Who to address (left, right, or both) 2) What kind of utterance to produce You will receive: - The robot’s final decision - One or more decision paths from decision trees - The sequence of recent speakers Refer to participants only as "left" or "right". TASK Write a clear, concise explanation of the robot’s decision. FORMAT (MANDATORY -- must follow exactly) How the robot decided who to address? The robot decided ... because ... How the robot decided what to say? The robot decided ... because ... RULES - Use exactly the two subtitles above (no changes) - Keep this exact order - Do not add extra sections or text before, between, or after them REQUIREMENTS - Base the explanation on the decision paths (features and thresholds), but keep it understandable for a general audience - Include only the most relevant features (maximum of 2) to improve clarity - Use simple, non-technical language - Exactly {n_words} words, divided equally between "How the robot decided who to address?" and "How the robot decided what to say?" STYLE CONSTRAINTS - Do NOT use model labels (e.g., SPEAK, INITIATIVE, RESPONSIVE, etc.) - Use natural phrasing: - "address the left/right participant" or "address both participants" - "start a new topic" or "continue the current topic" - "ask a question", "make a statement", "respond", etc. REFERENCES: MODEL HIERARCHY The model can be structured either as 4 sequential decision trees: 1. SPEAK -- should the robot address one person (INDIVIDUAL) or everyone (ALL)? 2. ALL-INDIVIDUAL -- Should the robot initiate a new topic (INITIATIVE) or respond to an ongoing one (RESPONSIVE)? 3. INITIATIVE -- if initiating: ask a Question or make a Statement? 4. RESPONSIVE -- if responding: give an Acknowledgment, Answer, or Follow Up? or as one decision tree deciding for who to address and what to say at the same time. DIALOGUE ACTS - Statement: start a topic or social talk - Follow Up: continue the current topic with a question - Question: ask for information, opinions, small talk, or make an offer - Answer: respond to a question - Acknowledgment: react to prior context without changing topic ADDRESSEE TYPES - IND: one specific person - ALL: everyone in the group FEATURE GUIDE The model uses 47 features from the last 5 turns and global conversation state. Participants: 0=ROBOT, 1=part_1, 2=part_2, 3=part_3 SEQUENTIAL FEATURES (one-hot, index 0=5 turns ago, index 4=last turn) - Speaker: seq_chunk_speaker_{turn}_{participant} - Addressee: seq_chunk_addressee_{turn}_{participant/ALL} - Dialogue act: seq_chunk_utterance_type_{turn}_{act} LAST TURN FEATURES (one-hot, repeat of most recent turn) - token_last_speaker_{participant} - token_last_addressee_{participant/ALL} - token_last_utterance_type_{act} GLOBAL FEATURES (numerical, mean-std normalized, 0=ROBOT) - global_out_degree_{i} -> total speech by participant i - global_in_degree_{i} -> total speech directed at participant i - global_time_edge_{i}_{j} -> how much 
+
+23 Table A.2: Feature set composition (158 features total). 
+
+Feature Type Width Total 
+
+Per-turn features (repeated for each of the 6 most recent turns) 
+
+Speaker Categorical (4 categories) 4 24 Addressee Categorical (5 categories) 5 30 Dialogue act Categorical (11 categories) 11 66 Turn present Binary 1 6Utterance duration Numerical 1 6Silence duration Numerical 1 6
+
+Subtotal 138 Interaction-level features (computed once, over the conversation so far) 
+
+Time spoken between each pair of members Numerical 12 12 Time each member was addressed (in-degree) Numerical 4 4Time each member spoke (out-degree) Numerical 4 4
+
+Subtotal 20 
+
+Total 158 
+
+> Table A.3: Category values for each categorical feature.
+
+Speaker (4) Addressee (5) Dialogue act (11) 
+
+Robot Robot Statement Participant 1 Participant 1 Factual Question Participant 2 Participant 2 Opinion Question Participant 3 Participant 3 Off er All Small Talk Opinion Comment Follow Up Positive Answer Negative Answer Other Answer 
+
+> participant i has spoken to participant j
+
+Appendix B.2. User Prompt 
+
+The user prompt has a fixed structure: 
+
+> This is the model explanation: {decision_tree_path} and this is the speaker list: {speaker_list}
+
+Where {decision_tree_path} is the path taken during the prediction by the surrogate decision tree model(s), either hierarchical (multiple sequential de-cision paths) or flat (a single decision path), and 
+
+{speaker_list} is the sequence of recent speakers. 
+
+Appendix C. Explanation Generation Examples 
+
+This appendix shows two worked examples of the explanation-generation pipeline: the decision-tree path(s) that form the {decision_tree_path} input to the system, and the resulting natural-language explana-tion produced in the two-part format. 
+
+Appendix C.1. Example 1: Hierarchical Decision Path Decision-Tree Path (Input Example) 
+
+> This is the model explanation: Decision path for head ’SPEAK’: Predicted class: ALL ----------------------------------------Node 0: seq_chunk_speaker_3_ROBOT = 0.000 <= 0.500 -> go left Node 1: seq_chunk_addressee_2_ALL = 1.000 >
+
+24 0.500 -> go right Node 35: seq_chunk_utterance_type_4_Follow Up = 0.000 <= 0.500 -> go left Node 36: seq_chunk_utterance_type_3_Comment = 0.000 <= 0.500 -> go left Node 37: global_in_degree_2 = 1.163 > 1.065 -> go right => Leaf node 45: predict class ALL Decision path for head ’ALL-INDIVIDUAL’: Predicted class: RESPONSIVE ----------------------------------------Node 0: seq_chunk_addressee_4_ROBOT = 0.000 <= 0.500 -> go left Node 1: global_in_degree_0 = 2.014 > -0.904 -> go right Node 5: seq_chunk_addressee_1_part_3 = 0.000 <= 0.500 -> go left Node 6: seq_chunk_utterance_type_2_Follow Up = 0.000 <= 0.500 -> go left Node 7: seq_chunk_utterance_type_4_Comment = 0.000 <= 0.500 -> go left Node 8: seq_chunk_addressee_1_ALL = 0.000 <= 0.500 -> go left Node 9: seq_chunk_speaker_3_part_2 = 1.000 > 0.500 -> go right Node 15: global_out_degree_2 = 0.595 > -0.009 -> go right => Leaf node 17: predict class RESPONSIVE Decision path for head ’RESPONSIVE’: Predicted class: FOLLOW UP ----------------------------------------Node 0: seq_chunk_utterance_type_4_Follow Up = 0.000 <= 0.500 -> go left Node 1: seq_chunk_utterance_type_4_Factual Question = 0.000 <= 0.500 -> go left Node 2: seq_chunk_addressee_4_ROBOT = 0.000 <= 0.500 -> go left Node 3: seq_chunk_duration_4 = 0.276 <= 0.302 -> go left Node 4: global_time_edge_0_2 = -0.549 <= 0.093 -> go left Node 5: global_out_degree_1 = 0.002 > -0.451 -> go right => Leaf node 7: predict class FOLLOW UP and this is the speaker list: [’left’, ’right’, ’robot’] 
+
+Generated Explanation (Output Example) 
+
+How did the robot decide who to address? 
+
+The robot decided to address both participants together. It had already spoken to both of them at once a little earlier in the conversa-tion, and the right participant had been receiv-ing noticeably more attention from the group than usual. Addressing both together kept the discussion consistent and made sure that at-tention stayed shared rather than going to just one person. 
+
+How did the robot decide what to say? 
+
+The robot decided to continue the current topic by asking a follow-up question rather than starting something new. It had recently been the focus of a lot of the group’s atten-tion, and the right participant had just spoken and had generally been quite active. Since the discussion was clearly still ongoing, follow-ing up with a question kept both participants engaged. 
+
+Appendix C.2. Example 2: Flat Decision Path Decision-Tree Path (Input Example) 
+
+This is the model explanation: Predicted class: FOLLOW UP/ALL ----------------------------------------Node 0: seq_chunk_duration_1 = 0.133 > -2.528 -> go right Node 2: seq_chunk_utterance_type_4_Follow Up = 0.000 <= 0.500 -> go left Node 3: seq_chunk_addressee_4_ROBOT = 0.000 <= 0.500 -> go left Node 4: global_in_degree_1 = 0.475 > -1.000 -> go right Node 10: seq_chunk_addressee_4_ALL = 1.000 > 0.500 -> go right Node 30: seq_chunk_utterance_type_4_Comment = 0.000 <= 0.500 -> go left Node 31: seq_chunk_duration_1 = 0.133 <= 0.178 -> go left => Leaf node 32: predict class FOLLOW UP/ALL and this is the speaker list: [’left’, ’right’, ’robot’] 
+
+Generated Explanation (Output Example) 
+
+How did the robot decide who to address? 
+
+The robot decided to address both participants together again. Its most recent turn had also been directed at the whole group rather than a single person, keeping that same pattern. The left participant had also been receiving a rea-sonable amount of attention from others ear-lier on, so continuing to speak to everyone kept the conversation balanced. 
+
+How did the robot decide what to say? 
+
+The robot decided to continue the current topic by asking a follow-up question rather than starting something new or making a com-ment. The conversation had been unfold-ing for a while without becoming repetitive, and the most recent turn hadn’t itself been a follow-up or a passing comment, so asking a further question kept the discussion moving forward. 
+
+Appendix D. Hyperparameters optimised during experiments 
+
+This appendix reports the best hyperparameter con-figuration found for each model, as selected by Op-tuna [38] over 75 trials, using average validation ac-curacy from 10-fold cross-validation on the MuMMER 25 Table D.4: Best hyperparameters for the deterministic models. 
+
+Hyperparameter Speak /No-Speak Flat Addressee-First Dialogue-Act-First 
+
+Number of hidden layers 1 1 1 1Number of neurons per layer 75 25 50 50 Dropout rate 0.2 0.6 0.4 0.4 L2 regularisation strength 0.1 0.1 0.0001 0.0001 Class-weighted cross-entropy — False False False Cross-entropy weight parameter — 0.5 0.5 0.5 Max class weight — 2.0 2.0 2.0 Number of augmented data copies 3 3 3 3Magnitude of injected noise 0.05 0.05 0.02 0.02 Hierarchical loss penalty coe ff . — 0 0 0
+
+> Table D.5: Best hyperparameters for the Bayesian models.
+
+Hyperparameter Flat Addressee-First Dialogue-Act-First 
+
+Number of hidden layers 1 2 2Number of neurons per layer 50 75 25 Dropout rate 0.6 0.2 0.4 Learning rate 0.001 0.0001 0.0002 Prior std. dev. — weights 4.0 3.0 3.0 Prior std. dev. — bias 2.0 5.0 2.0 Number of augmented data copies 2 3 2Magnitude of injected noise 0.04 0.04 0.04 Cross-entropy component weighting 1.0 0.5 1.0 Hierarchical loss penalty coe ff . 4 8 8
+
+> Table D.6: Best hyperparameters for the Gillet et al. baseline.
+
+Hyperparameter Shared Addressee Utterance-type 
+
+Loss function Cross-entropy — —Batch size 64 — —Use decision threshold False — —Data augmentation True — —Number of dataset replications 2 — —Amount of noise injected 0.4 — —First-layer message architecture — 8-16 8-16 First-layer node architecture — 8-16-4 8-16-4 Second layer used — True False Second-layer message architecture — 8-16 8-16 Second-layer node architecture — 4-2 4-2 Dropout rate — 0.5 0.2 Learning rate — 0.0004 0.0008 
+
+dataset (see Section 5.3, Hyperparameter Optimisa-tion ). We report the hyperparameters listed in that sub-section for each model family. Entries marked “—” indicate a hyperparameter that does not apply to that model. 
+
+Deterministic Models: Table D.4 reports the best configuration for the Speak /No-Speak gate, determin-istic Flat model and the two deterministic hierarchical architectures (Addressee-First, Dialogue-Act-First). 
+
+Bayesian Hierarchical Models: Table D.5 reports the best configuration for the three Bayesian architec-tures: Flat, Addressee-First, and Dialogue-Act-First, re-spectively. 
+
+Gillet et al. Baseline: This subsection reports the best hyperparameter configuration found for the Gillet et al. baseline [3], as selected by Optuna [38] using av-erage validation accuracy from 10-fold cross-validation on the MuMMER dataset (see Section 5.3, Hyperpa-rameter Optimisation ). Table D.6 reports the hyperpa-rameters shared across both sub-models together with 26 (a) Task 1 (b) Task 2 (c) Task 3 (part 1) (d) Task 3 (part 2) Figure E.8: Example screenshots of the Qualtrics questionnaire interface: (a) explanation-rating questions in Task 1; (b) the behaviour-prediction question in Task 2; (c) the behaviour-prediction question in Task 3; (d) the side-by-side explanation preference question in Task 3. 
+
+those tuned separately for the addressee and utterance-type sub-models. 
+
+Appendix E. Custom-Designed Online Study Ques-tionnaire 
+
+Participants rated the following statements on a 5-point Likert scale, ranging from 1 (Strongly Disagree) to 5 (Strongly Agree) for the online interpretability study. 
+
+Please rate the following statements about the explanation: 1) Explanations were clear and understandable. 2) Explanations helped me to understand how the robot chose who to address. 3) Explanations helped me to understand how the robot chose what to say. 4) I can now understand the robot’s behaviour better. 5) The explanation was coherent with the robot’s decision on who to address. 6) The explanation was coherent with the robot’s decision on what to say. 
+
+Appendix F. Online Study Task Interface 
+
+The online interpretability study was implemented and hosted on Qualtrics. Figure E.8 shows example screenshots of the interface presented to participants for each of the three tasks. 
+
+Appendix G. Custom-Designed In-Person Study Questionnaire 
+
+Participants rated the following items on a 5-point Likert scale after each part of the in-person study. 
+
+1) How useful did you find the robot for this specific application? (1 = Not Useful at all, 5 = Highly Useful) 2) How appropriate was the agent’s behavior within the group conversation? (1 = Not Appropriate, 5 = Highly Appropriate) 3) How effectively did the agent manage the flow and dynamics of the group conversation? 
+
+27 (1 = Poorly Managed, 5 = Effectively Managed) 4) How did you perceive the level of the agent’s engagement and contribution to the conversation? (1 = Not Active, 5 = Highly Active) 5) How effectively did the robot engage and include all participants in the conversation? (1 = Not Effectively, 5 = Very Effectively) 6) How equally did the robot balance participation among all participants during the interaction? (1 = Not Equally, 5 = Very Equally) 
+
+28

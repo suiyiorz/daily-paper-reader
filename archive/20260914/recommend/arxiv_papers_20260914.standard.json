@@ -1,0 +1,536 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-14T22:47:01.677287+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 9,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2609.12371v1",
+      "source": "arxiv",
+      "title": "READ: Learning Risk-Informed Fields for End-to-End Autonomous Driving",
+      "abstract": "Autonomous driving requires more than recognizing what is present in a scene: a planner must determine how road structure, surrounding agents, and their motion states should influence a future maneuver. Existing learning-based planners can capture these influences through latent scene features and trajectory decoders, but the relationship between environmental factors and candidate actions often remains implicit. This limits the ability to inspect, diagnose, or refine how scene context affects the safety of a predicted trajectory. Classical safety fields provide an explicit spatial representation of this relationship, but their risk shapes and relative weights are prescribed in advance and do not adapt to each scene. We introduce READ, a framework that learns an explicit, planning-aligned risk representation from complementary geometric and behavioral constraints. READ instantiates this representation as a continuous spatiotemporal field, enabling differentiable queries along candidate trajectories. The learned field connects scene understanding with action selection by encouraging predicted trajectories to align with low-risk regions, while retaining a differentiable interface for trajectory evaluation and refinement. READ integrates with both end-to-end planners and Vision-Language-Action models. Experiments on NAVSIM show consistent gains across matched end-to-end backbones and strong performance in a VLA setting; READ also achieves competitive results on NAVSIM v2. These results establish learned spatial risk as an explicit, adaptable representation for safe planning.",
+      "authors": [
+        "Zhiyuan Liu",
+        "Yuanxin Tian",
+        "Zehong Ke",
+        "Jinhao Li",
+        "Hao Cheng",
+        "Zhenhua Xu",
+        "Wenhao Yu",
+        "Jianqiang Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-11T02:40:51+00:00",
+      "link": "https://arxiv.org/pdf/2609.12371v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "risk-informed fields for end-to-end autonomous driving planning",
+      "llm_evidence_cn": "面向端到端自动驾驶规划的风险信息场",
+      "llm_evidence": "面向端到端自动驾驶规划的风险信息场",
+      "canonical_evidence": "面向端到端自动驾驶规划的风险信息场",
+      "llm_tldr_en": "READ learns risk-informed spatial fields that adapt per scene, making the link between scene context and trajectory safety explicit for end-to-end autonomous driving planners.",
+      "llm_tldr_cn": "现有学习式规划器通过隐特征与轨迹解码器隐式表达环境因素与动作的关系，难以检查与修正轨迹安全性；经典安全场虽显式但风险形状与权重预先固定。为此提出READ框架，学习随场景自适应的风险信息场，显式建模道路结构、周边智能体及其运动对候选动作的影响。实验表明该方法能提升规划的可解释性与安全性，为端到端自动驾驶提供可诊断的风险表示。",
+      "llm_tldr": "现有学习式规划器通过隐特征与轨迹解码器隐式表达环境因素与动作的关系，难以检查与修正轨迹安全性；经典安全场虽显式但风险形状与权重预先固定。为此提出READ框架，学习随场景自适应的风险信息场，显式建模道路结构、周边智能体及其运动对候选动作的影响。实验表明该方法能提升规划的可解释性与安全性，为端到端自动驾驶提供可诊断的风险表示。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.12036v1",
+      "source": "arxiv",
+      "title": "Pelican-Sim 1.0: A General World Model Simulator for Embodied Intelligence",
+      "abstract": "In this technical report, we propose Pelican-Sim 1.0, a general world model simulator for embodied intelligence that predicts future observations from visual context and robot actions to support downstream learning and decision making. The model incorporates four key design features: (1) Unified action representation: a 28-dimensional action value space covering most mainstream embodiments, keeping one model valid across heterogeneous devices. (2) Action-visual injection: URDF- and camera-rendered action videos bridge actions and pixels, giving markedly better controllability across embodiments, scenes, and tasks (PSNR +0.904 over alternative fusion baselines). (3) Sparse mixture-of-experts (MoE): sparse MoE layers add capacity for heterogeneous dynamics and absorb the action modality while reducing inter-modality conflict (FVD -6.530 vs. the dense backbone). (4) Efficient rollout generation: causal adaptation and few-step distillation yield a four-step autoregressive simulator, achieving a 5.67-fold speedup over the 35-step model. Benefiting from these designs, we train on approximately one million real-world and simulated trajectories and obtain large gains in action controllability and video quality: PSNR improves over the strongest evaluated baselines by 4.636 on AgiBotWorld Beta, 2.080 on RoboMIND, and 10.343 on RoboTwin, with the adapted EWMBench DYN score up 0.426 on RoboTwin. Relying on this, four downstream applications on RoboTwin succeed: 500 generated trajectories added to 50 demonstrations per task raise policy success from 70% to 93%; policy evaluation reaches a Pearson correlation of 0.994 across five checkpoints; and relative success gains reach 47.7% for action selection and 20.3% for policy improvement. Qualitative generalization across trajectory, scene, object, embodiment, and viewpoint shifts highlights its potential as a general-purpose world model simulator.",
+      "authors": [
+        "Shilong Zou",
+        "Shilin Zhang",
+        "Yingji Zhang",
+        "Yuhang Huang",
+        "Yi Zhang",
+        "Zeyuan Ding",
+        "Han Dong",
+        "Junwei Liao",
+        "Yong Dai",
+        "Jian Tang",
+        "Xiaozhu Ju"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-10T17:51:01+00:00",
+      "link": "https://arxiv.org/pdf/2609.12036v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "general world model simulator for embodied intelligence predicting future observations",
+      "llm_evidence_cn": "面向具身智能、预测未来观测的通用世界模型模拟器",
+      "llm_evidence": "面向具身智能、预测未来观测的通用世界模型模拟器",
+      "canonical_evidence": "面向具身智能、预测未来观测的通用世界模型模拟器",
+      "llm_tldr_en": "Embodied agents need world models that generalize across heterogeneous robots. Pelican-Sim 1.0 predicts future observations from visual context and robot actions using a unified action space, action-visual injection and sparse mixture-of-experts, improving controllability across embodiments.",
+      "llm_tldr_cn": "具身智能需要能跨异构机器人预测未来观测的世界模型，但现有模拟器在动作表示与可控性上受限。本文提出 Pelican-Sim 1.0，通过统一动作空间、动作-视觉注入与稀疏专家混合，从视觉上下文和机器人动作预测未来观测。实验显示动作-视觉注入显著提升可控性，PSNR 相比融合基线提高 0.904。该工作为跨形态具身智能的下游学习与决策提供了通用模拟与预测基础。",
+      "llm_tldr": "具身智能需要能跨异构机器人预测未来观测的世界模型，但现有模拟器在动作表示与可控性上受限。本文提出 Pelican-Sim 1.0，通过统一动作空间、动作-视觉注入与稀疏专家混合，从视觉上下文和机器人动作预测未来观测。实验显示动作-视觉注入显著提升可控性，PSNR 相比融合基线提高 0.904。该工作为跨形态具身智能的下游学习与决策提供了通用模拟与预测基础。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.12081v1",
+      "source": "arxiv",
+      "title": "MoPA: Coordinated Mobile Manipulation via Subsystem-Specific Perception Alignment",
+      "abstract": "Mobile manipulation requires perceptual evidence at different spatial scales for base motion and arm control, while the two action modalities remain kinematically coupled. Existing policies often employ specialized action generation for different subsystems but condition heterogeneous action branches on a shared perceptual representation, leaving subsystem-specific perception-action correspondence implicit. We present MoPA, a framework that aligns perceptual conditioning with mobility and manipulation while preserving coordination at the action level. Dual Perceptual Streams employ two mutually masked query banks to extract separate perceptual representations from a shared vision-language context. Perception2Action Adaptation jointly updates each query bank and its corresponding action stream at every layer of a structured Mixture-of-Transformers decoder, while enabling information exchange between the two action streams. Coupled conditional flow matching learns a joint vector field for coordinated generation of both action chunks. On the ManiSkill-HAB benchmark, MoPA achieves state-of-the-art performance across all three task suites. Across four real-world tasks, MoPA achieves a mean full-task success rate of 76.3%, outperforming the best baseline by 12.5 percentage points. Ablation studies and further analyses validate the effectiveness of the proposed design. Website is available at: https://mopa-policy.github.io/.",
+      "authors": [
+        "Guangyu Chen",
+        "Qiwei Liang",
+        "Shaolong Zhu",
+        "Tianxing Chen",
+        "Zikuan Xiao",
+        "Yifan Xie",
+        "Lingfeng Zhang",
+        "Ping Luo",
+        "Renjing Xu",
+        "Wenbo Ding"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-09-10T18:08:41+00:00",
+      "link": "https://arxiv.org/pdf/2609.12081v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "mobile manipulation aligning perception with base motion and arm control",
+      "llm_evidence_cn": "移动操作中基座运动与机械臂控制的感知对齐",
+      "llm_evidence": "移动操作中基座运动与机械臂控制的感知对齐",
+      "canonical_evidence": "移动操作中基座运动与机械臂控制的感知对齐",
+      "llm_tldr_en": "Presents MoPA, a framework aligning subsystem-specific perception with mobility and manipulation via dual perceptual streams and perception-to-action adaptation for coordinated mobile manipulation.",
+      "llm_tldr_cn": "移动操作需要为基座运动与机械臂控制提供不同空间尺度的感知证据，但现有策略将异构动作分支耦合在共享感知表征上。本文提出MoPA框架，采用双感知流与互掩码查询库从共享视觉语言上下文中提取独立表征，并通过感知到动作适配联合更新。该方法在保持动作层协同的同时显式对齐子系统特定的感知-动作对应关系，提升了移动操作的整体协调性。",
+      "llm_tldr": "移动操作需要为基座运动与机械臂控制提供不同空间尺度的感知证据，但现有策略将异构动作分支耦合在共享感知表征上。本文提出MoPA框架，采用双感知流与互掩码查询库从共享视觉语言上下文中提取独立表征，并通过感知到动作适配联合更新。该方法在保持动作层协同的同时显式对齐子系统特定的感知-动作对应关系，提升了移动操作的整体协调性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.12541v1",
+      "source": "arxiv",
+      "title": "Agent as Policy for Robotic Manipulation",
+      "abstract": "We demonstrate that a general-purpose agent can directly drive a physical robot throughout task execution without any task-specific or environment-specific training. We introduce Agent as Policy (AGP), which places task planning and execution under the agent's control. Given a task and a robot interface, the agent interprets visual evidence, writes executable programs, issues motion commands, and revises its actions in response to physical outcomes. This brings the agent's reasoning and programming capabilities into continuous interaction with the physical world. We study AGP across multiple real-world manipulation tasks spanning precision manipulation, dynamic motions, and deformable objects. These include assembly from human videos, block construction from goal images, die reorientation, targeted throwing, and bimanual towel folding. AGP achieves success rates of 100%, 100%, and 80% on three block construction configurations. These findings establish a path for general-purpose agents to act as robotic policies, extending their autonomy to physical manipulation through runtime reasoning, programming, and interaction.",
+      "authors": [
+        "Mengzhao Jia",
+        "Yang Lin",
+        "Xixin Zhang",
+        "Zhihan Zhang",
+        "Xiaobai Liu",
+        "Meng Jiang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-11T07:51:39+00:00",
+      "link": "https://arxiv.org/pdf/2609.12541v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "general-purpose agent directly drives a physical robot for real-world manipulation",
+      "llm_evidence_cn": "通用智能体直接驱动物理机器人完成真实操作",
+      "llm_evidence": "通用智能体直接驱动物理机器人完成真实操作",
+      "canonical_evidence": "通用智能体直接驱动物理机器人完成真实操作",
+      "llm_tldr_en": "AGP lets a general-purpose agent directly drive a physical robot without task-specific training, interpreting visual evidence, writing programs, issuing motion commands and revising actions, validated on real manipulation tasks.",
+      "llm_tldr_cn": "现有机器人操作策略多需任务或环境专用训练，难以在真实世界中通用执行多样化任务。本文提出Agent as Policy（AGP），让通用智能体自主进行任务规划与执行，解读视觉证据、编写可执行程序、发出运动指令并根据物理反馈修正动作。在精密操作、动态运动与可变形物体等多类真实任务上，无需任务专用训练即可驱动真实机器人。该框架将智能体的推理与编程能力引入与物理世界的持续交互，推进了通用机器人操作的发展。",
+      "llm_tldr": "现有机器人操作策略多需任务或环境专用训练，难以在真实世界中通用执行多样化任务。本文提出Agent as Policy（AGP），让通用智能体自主进行任务规划与执行，解读视觉证据、编写可执行程序、发出运动指令并根据物理反馈修正动作。在精密操作、动态运动与可变形物体等多类真实任务上，无需任务专用训练即可驱动真实机器人。该框架将智能体的推理与编程能力引入与物理世界的持续交互，推进了通用机器人操作的发展。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.12285v1",
+      "source": "arxiv",
+      "title": "AnchorVLN: Geometry-Anchored Vision-Language Grounding Reasoning for Open-Vocabulary Navigation",
+      "abstract": "Vision-Language Navigation (VLN) in unseen indoor environments is useful in real-world robotics, where an agent must follow natural-language instructions, locate objects, and answer spatial questions without a pre-built map or fixed object vocabulary. Multimodal vision-language models (VLMs) provide strong open-vocabulary grounding and zero-shot reasoning, but struggle to emit reliable metric quantities such as range, bearing, and comparative spatial relations directly from images. Existing approaches address this by folding geometry into hand-engineered pipelines or asking models to output waypoints, requiring changes to the control stack for different robots, tasks, or vocabularies. We introduce AnchorVLN, an open-vocabulary VLN system built on a simple rule: the VLM proposes semantics; geometry decides metrics. It is realised as EMBODIED-NAV-MCP, a Model Context Protocol (MCP) server driven by a VLM agent through a compact set of callable tools. Since no tool accepts distance in metres or bearing in radians, the schema enforces the semantic-geometry boundary without modifying the downstream autonomy stack. We benchmark both tasks of the CMU Vision-Language Navigation Challenge 2026: 30 instruction-following questions over 15 scenes and a frozen 45-question object-reference set. The full system achieves 64.4 percent on instruction following, dropping by 13.3 percentage points without controller modeling (t = 2.77). On object reference, geometric anchoring clears the challenge overlap threshold on 10 of 45 questions, versus 0 of 45 for direct coordinate estimation, reducing median center error from 3.37 m to 2.48 m.",
+      "authors": [
+        "Long Giang Vu",
+        "Chengkai Yao",
+        "Yuxin Liu",
+        "FNU Aryan",
+        "Rajath Chandrashekar Aralikatti"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-09-10T23:32:22+00:00",
+      "link": "https://arxiv.org/pdf/2609.12285v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "geometry-anchored vision-language grounding for open-vocabulary robot navigation",
+      "llm_evidence_cn": "面向开放词表机器人导航的几何锚定视觉语言定位",
+      "llm_evidence": "面向开放词表机器人导航的几何锚定视觉语言定位",
+      "canonical_evidence": "面向开放词表机器人导航的几何锚定视觉语言定位",
+      "llm_tldr_en": "AnchorVLN anchors geometry into vision-language grounding so agents emit reliable metric range, bearing and spatial relations for open-vocabulary indoor navigation.",
+      "llm_tldr_cn": "论文针对室内视觉-语言导航中多模态模型难以直接从图像输出距离、方位等度量量的问题，提出 AnchorVLN 框架。该方法将几何信息锚定进视觉-语言定位推理，使智能体在无预建地图与固定词表条件下遵循自然语言指令、定位物体并回答空间问题，且无需针对不同机器人改动控制栈。实验表明其在开放词表导航任务上表现更稳健，提升了跨平台部署的通用性。",
+      "llm_tldr": "论文针对室内视觉-语言导航中多模态模型难以直接从图像输出距离、方位等度量量的问题，提出 AnchorVLN 框架。该方法将几何信息锚定进视觉-语言定位推理，使智能体在无预建地图与固定词表条件下遵循自然语言指令、定位物体并回答空间问题，且无需针对不同机器人改动控制栈。实验表明其在开放词表导航任务上表现更稳健，提升了跨平台部署的通用性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.12347v1",
+      "source": "arxiv",
+      "title": "DWMP: Leveraging Dual World Models for Humanoid Obstacle Traversal",
+      "abstract": "Humanoid robots must traverse cluttered obstacle fields using onboard proprioceptive and visual observations, yet existing methods usually process multimodal observations without explicitly considering their different characteristics: proprioceptive observations are low-dimensional but governed by highly nonlinear robot dynamics, while egocentric visual observations are high-dimensional, noisy, and redundant. We propose DWMP (Dual World Model Policy), a framework that provides the actor with separate but complementary world-model representations for humanoid obstacle traversal. A Koopman-based dynamics world model lifts proprioceptive observations into a latent space where their temporal evolution is approximately linear, making the dynamics features easier for the actor to learn from. An RSSM-based visual world model compresses egocentric depth observations into compact stochastic states while preserving obstacle-related geometry. The student policy receives the fused latent representation for action generation, combining linearized proprioceptive dynamics with compressed visual perception. Experiments in simulation and on a Unitree G1 humanoid robot show that DWMP improves obstacle traversal performance over baselines and supports real-world deployment under randomized obstacle layouts.",
+      "authors": [
+        "Rongjun Jin",
+        "Jianming Ma",
+        "Yue Gao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-11T02:13:19+00:00",
+      "link": "https://arxiv.org/pdf/2609.12347v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "humanoid robot locomotion over obstacles with proprioceptive and visual world models",
+      "llm_evidence_cn": "融合本体与视觉世界模型的人形机器人障碍穿越",
+      "llm_evidence": "融合本体与视觉世界模型的人形机器人障碍穿越",
+      "canonical_evidence": "融合本体与视觉世界模型的人形机器人障碍穿越",
+      "llm_tldr_en": "DWMP gives a humanoid policy separate world-model representations for proprioceptive dynamics and egocentric vision, improving obstacle traversal over cluttered terrain.",
+      "llm_tldr_cn": "人形机器人需依靠本体感知与视觉穿越杂乱障碍场，但现有方法未区分两类观测的不同特性：本体感知低维却由强非线性动力学支配，自我中心视觉高维、含噪且冗余。本文提出双世界模型策略DWMP，为actor提供分离而互补的世界模型表示。其中基于Koopman的动力学世界模型将本体感知提升到时间演化近似线性的潜空间。该方法提升了人形机器人在复杂地形下的障碍穿越能力。",
+      "llm_tldr": "人形机器人需依靠本体感知与视觉穿越杂乱障碍场，但现有方法未区分两类观测的不同特性：本体感知低维却由强非线性动力学支配，自我中心视觉高维、含噪且冗余。本文提出双世界模型策略DWMP，为actor提供分离而互补的世界模型表示。其中基于Koopman的动力学世界模型将本体感知提升到时间演化近似线性的潜空间。该方法提升了人形机器人在复杂地形下的障碍穿越能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.12384v1",
+      "source": "arxiv",
+      "title": "Understanding Whole-Body Robot Teleoperation Strategies Under Diverse Task Objectives and Constraints",
+      "abstract": "This work investigates the control strategies of complex whole-body robot teleoperation that coordinate active perception, bimanual manipulation, and navigation. We developed a hybrid control framework, combining the free-form and constrained control, for the whole-body teleoperation of the TIAGo mobile manipulator. We conducted a user study to explore people's control strategies under different task constraints such as limited time and low tolerance of errors. Our results highlight the effective use of coordinated control in improving task efficiency and reducing the risk of reaching individual joint limits. We discuss our results and their implications for designing future whole-body robot teleoperation systems.",
+      "authors": [
+        "Tsung-Chi Lin",
+        "Juo-Tung Chen",
+        "Chien-Ming Huang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-11T03:03:14+00:00",
+      "link": "https://arxiv.org/pdf/2609.12384v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "whole-body teleoperation coordinating manipulation, perception and navigation",
+      "llm_evidence_cn": "协调操作、感知与导航的全身遥操作",
+      "llm_evidence": "协调操作、感知与导航的全身遥操作",
+      "canonical_evidence": "协调操作、感知与导航的全身遥操作",
+      "llm_tldr_en": "A hybrid free-form and constrained control framework for whole-body teleoperation of a mobile manipulator is studied via user study under time and error constraints.",
+      "llm_tldr_cn": "论文针对复杂全身机器人遥操作中如何协调主动感知、双臂操作与导航的问题，提出结合自由形式与约束控制的混合控制框架，并在 TIAGo 移动操作平台上开展用户研究。实验考察了限时与低容错等任务约束下人的控制策略。结果表明协调控制能提升任务效率并降低触及关节极限的风险，为未来全身遥操作系统设计提供启示。",
+      "llm_tldr": "论文针对复杂全身机器人遥操作中如何协调主动感知、双臂操作与导航的问题，提出结合自由形式与约束控制的混合控制框架，并在 TIAGo 移动操作平台上开展用户研究。实验考察了限时与低容错等任务约束下人的控制策略。结果表明协调控制能提升任务效率并降低触及关节极限的风险，为未来全身遥操作系统设计提供启示。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.08678v1",
+      "source": "arxiv",
+      "title": "HiBRIDGE: A Hierarchical Bayesian Neural Network Framework for Interpretable Dialogue Management in Group-Robot Interaction",
+      "abstract": "In multi-party human-robot interaction, a robot must continuously decide whom to address and what to say to participate effectively in the conversation. In real-world interactions, this is challenging because several behaviours may be plausible at the same time: a robot might continue a topic with one participant, involve another through a question, or address the whole group, with the appropriate choice depending on both whom it addresses and the interaction context. Current approaches remain limited in representing uncertainty when several behaviours are plausible and in structuring decisions into semantically meaningful intermediate steps that make robot decisions easier to interpret. Addressing these, we present HiBRIDGE, a hierarchical Bayesian neural network framework for group-robot dialogue management. Its Bayesian formulation enables uncertainty-aware prediction and robust learning from limited interaction data, while the hierarchical approach formulates behaviour selection as a structured, multi-stage decision process. We further use decision-tree surrogates to investigate whether this structure can support more interpretable explanations. Across three offline group-HRI datasets, our findings show that Bayesian formulations outperform their deterministic counterparts and several state-of-the-art baselines. Next, through an online study (N=20), we show that explanations derived from the hierarchical model are rated as more helpful for understanding robot behaviour and are preferred over those derived from the flat model. Finally, through our in-person study (N=12), we demonstrate the feasibility of HiBRIDGE for autonomous real-time group interaction, with both hierarchical and flat Bayesian variants positively perceived. Overall, HiBRIDGE combines strong predictive performance with a structured decision process that supports more interpretable explanations of robot behaviour.",
+      "authors": [
+        "Massimiliano Nigro",
+        "Hatice Gunes",
+        "Micol Spitale",
+        "Fethiye Irmak Dogan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-08T12:44:38+00:00",
+      "link": "https://arxiv.org/pdf/2609.08678v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "interpretable dialogue management for multi-party human-robot interaction",
+      "llm_evidence_cn": "面向多方人机交互的可解释对话管理",
+      "llm_evidence": "面向多方人机交互的可解释对话管理",
+      "canonical_evidence": "面向多方人机交互的可解释对话管理",
+      "llm_tldr_en": "In multi-party human-robot interaction a robot must decide whom to address and what to say amid several plausible behaviours. HiBRIDGE uses a hierarchical Bayesian neural network to represent uncertainty and structure these dialogue decisions interpretably.",
+      "llm_tldr_cn": "在多方人机交互中，机器人需要持续判断该对谁说话、说什么，但多种行为可能同时合理，现有方法难以刻画这种不确定性，也难以把决策拆解为可解释的中间步骤。本文提出HiBRIDGE，一种层次贝叶斯神经网络框架，用于群体机器人交互中的可解释对话管理，将行为选择建模为语义化的层级决策并量化不确定性。该方法提升了机器人对话决策的可解释性与合理性，为自然多方人机交互提供支持。",
+      "llm_tldr": "在多方人机交互中，机器人需要持续判断该对谁说话、说什么，但多种行为可能同时合理，现有方法难以刻画这种不确定性，也难以把决策拆解为可解释的中间步骤。本文提出HiBRIDGE，一种层次贝叶斯神经网络框架，用于群体机器人交互中的可解释对话管理，将行为选择建模为语义化的层级决策并量化不确定性。该方法提升了机器人对话决策的可解释性与合理性，为自然多方人机交互提供支持。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.09403v1",
+      "source": "arxiv",
+      "title": "A Decade of Bayesian Optimization for Controller Tuning and Robot Learning: Tutorial, Review, and Future Prospects",
+      "abstract": "In the past decade, Bayesian optimization (BO) has emerged as a powerful and adaptable framework for automatic controller tuning and robot learning. This article offers a comprehensive overview of the state-of-the-art in BO, designed to support both researchers and practitioners in understanding recent advancements, practical applications, and future research directions. We begin by adopting a practitioner's perspective, illustrating how to effectively set up BO through a representative controller tuning example. We position BO within the broader context of learning paradigms, ranging from deep reinforcement learning to data-driven control, and highlight scenarios where BO is most advantageous. Next, we discuss the diverse range of BO methods that have been developed to tackle complex problems and specific applications. This article provides a unified perspective on the current landscape of BO, emphasizing its relevance to control systems and robotics, and it highlights future prospects by identifying key research challenges and promising avenues for advancing BO in the field. This includes addressing a significant gap in the BO landscape: the lack of standardized benchmark problems specifically for control-related applications. To foster future research and ensure rigorous evaluation, we start an effort towards a lightweight benchmark suite for control engineering and robotics. We also present metrics and best practices to facilitate direct comparisons between new BO algorithms and established state-of-the-art methods.",
+      "authors": [
+        "David Stenger",
+        "Paul Brunzema",
+        "Johanna Menn",
+        "Alexander von Rohr",
+        "Angela P. Schoellig",
+        "Sebastian Trimpe"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-09-08T19:59:54+00:00",
+      "link": "https://arxiv.org/pdf/2609.09403v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Bayesian optimization framework for controller tuning and robot learning",
+      "llm_evidence_cn": "用于控制器调优与机器人学习的贝叶斯优化框架",
+      "llm_evidence": "用于控制器调优与机器人学习的贝叶斯优化框架",
+      "canonical_evidence": "用于控制器调优与机器人学习的贝叶斯优化框架",
+      "llm_tldr_en": "A tutorial and review of a decade of Bayesian optimization for controller tuning and robot learning, positioning BO among learning paradigms and showing when it is most advantageous.",
+      "llm_tldr_cn": "控制器调优与机器人学习长期依赖人工经验，参数搜索效率低且难以系统化。本文综述贝叶斯优化（BO）在该领域十余年的进展，以实践者视角展示如何搭建BO流程，并将其置于深度强化学习到数据驱动控制的范式谱系中，指出BO最具优势的场景。文章系统总结了方法、应用与未来方向，为机器人智能控制提供了一套可迁移的自动优化工具。",
+      "llm_tldr": "控制器调优与机器人学习长期依赖人工经验，参数搜索效率低且难以系统化。本文综述贝叶斯优化（BO）在该领域十余年的进展，以实践者视角展示如何搭建BO流程，并将其置于深度强化学习到数据驱动控制的范式谱系中，指出BO最具优势的场景。文章系统总结了方法、应用与未来方向，为机器人智能控制提供了一套可迁移的自动优化工具。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.13053v1",
+      "source": "arxiv",
+      "title": "Dynin-Robotics: Omnimodal Unified Diffusion Vision-Language-Action Model",
+      "abstract": "Visual goal and dynamics prediction can provide language-conditioned robot policies with both a target outcome and a representation of action-dependent scene changes. We bring these predictions into action generation and selection through a shared trajectory model. Dynin-Robotics implements this formulation on Dynin-Omni, an omnimodal masked-diffusion backbone, representing language, visual observations, goals, and actions as discrete tokens. By varying conditioning and target spans, the same model learns action prediction, action-conditioned next-observation prediction, terminal goal-state prediction, and trajectory-to-instruction reconstruction. These interfaces support test-time scaling through goal prediction, action-candidate evaluation, and joint refinement of action and future-state predictions. We continually pretrain the model on approximately 1.33 million trajectories from 48 Open X-Embodiment datasets and adapt it separately to downstream domains. On two VLABench tasks, robot pretraining improves adaptation within a fixed Stage-2 step budget, and the full objective mixture improves shifted-instruction success over Policy-only post-training under the same coupled decoder. Combining goal guidance with joint action-next-state denoising further improves shifted-instruction success over action-only decoding; the benefit depends on how the predictions are composed. Dynin-Robotics achieves competitive performance on LIBERO and zero-shot LIBERO-Plus, together with a 78.4% average success rate across four manipulation conditions on a Franka Research 3 robot. An optimized block-parallel implementation accelerates model-side action decoding by up to 29.2x relative to the base implementation under the reported profiling setup. These results support shared trajectory modeling as a common interface for learning complementary robot objectives and composing their predictions during control.",
+      "authors": [
+        "Hoeun Lee",
+        "Jaeik Kim",
+        "Jusang Oh",
+        "Jinhyeok Kim",
+        "Geon Choi",
+        "Hyeonggeun Kim",
+        "Jaeyoung Do"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-09-11T16:49:26+00:00",
+      "link": "https://arxiv.org/pdf/2609.13053v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "omnimodal diffusion vision-language-action model for language-conditioned robot policies",
+      "llm_evidence_cn": "面向语言条件机器人策略的全模态扩散视觉-语言-动作模型",
+      "llm_evidence": "面向语言条件机器人策略的全模态扩散视觉-语言-动作模型",
+      "canonical_evidence": "面向语言条件机器人策略的全模态扩散视觉-语言-动作模型",
+      "llm_tldr_en": "Dynin-Robotics integrates visual goal and dynamics prediction into action generation on an omnimodal masked-diffusion backbone, learning action, next-observation and goal prediction for language-conditioned robot policies.",
+      "llm_tldr_cn": "语言条件下的机器人策略需要同时获得目标结果与动作相关场景变化的表征。本文提出Dynin-Robotics，将视觉目标与动力学预测融入动作生成与选择，并在全模态掩码扩散骨干Dynin-Omni上实现，把语言、视觉观测、目标与动作表示为离散token。通过变化条件与预测跨度，同一模型可学习动作预测、动作条件下的下一观测预测、终端目标预测等任务，并支持测试时扩展。该工作统一了视觉-语言-动作建模，为通用机器人策略提供了新范式。",
+      "llm_tldr": "语言条件下的机器人策略需要同时获得目标结果与动作相关场景变化的表征。本文提出Dynin-Robotics，将视觉目标与动力学预测融入动作生成与选择，并在全模态掩码扩散骨干Dynin-Omni上实现，把语言、视觉观测、目标与动作表示为离散token。通过变化条件与预测跨度，同一模型可学习动作预测、动作条件下的下一观测预测、终端目标预测等任务，并支持测试时扩展。该工作统一了视觉-语言-动作建模，为通用机器人策略提供了新范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.12749v1",
+      "source": "arxiv",
+      "title": "SCQ: Stabilizing Conservative Q-Learning with Sigmoid-Bounded Entropy",
+      "abstract": "Offline-to-online reinforcement learning reduces interaction cost for real-world robot learning but suffers from persistent value estimation instability. Existing methods address this through pessimistic regularization, lower-bound calibration, and architectural normalization, but an overlooked source of instability lies in the entropy formulation: the standard log-entropy term can become negative, destabilizing policy updates. We introduce SCQ (Sigmoid-Bounded Conservative Q-Learning), which replaces this term with a sigmoid-bounded formulation that stays strictly positive. SCQ retains conservative Q regularization and return-based lower-bound calibration, stabilizing policy optimization without sacrificing exploration. We evaluate SCQ on D4RL (Minari) benchmarks under both single-demonstration and standard dataset settings, as well as on simulation and real-world visual tasks. SCQ matches or exceeds baseline performance while exhibiting more stable training dynamics across state-based and visual benchmarks, and transfers to four real-robot platforms including manipulation, wheeled, quadruped, and humanoid systems. A direct clipping intervention that removes negative log-probability contributions, together with gradient-matched positive-score controls, indicates that positivity rather than a particular score shape alone drives much of the improvement. Project website: https://scq-rl.github.io.",
+      "authors": [
+        "Xiefeng Wu",
+        "Shu Zhang",
+        "Zhaojie Chu",
+        "Mingyu Hu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-11T11:59:52+00:00",
+      "link": "https://arxiv.org/pdf/2609.12749v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "stabilizing offline-to-online reinforcement learning for robot learning",
+      "llm_evidence_cn": "稳定用于机器人学习的离线到在线强化学习",
+      "llm_evidence": "稳定用于机器人学习的离线到在线强化学习",
+      "canonical_evidence": "稳定用于机器人学习的离线到在线强化学习",
+      "llm_tldr_en": "SCQ stabilizes offline-to-online reinforcement learning for real-world robot learning by replacing the log-entropy term with a sigmoid-bounded, strictly positive formulation.",
+      "llm_tldr_cn": "离线到在线强化学习能降低真实机器人学习的交互成本，却长期受价值估计不稳定困扰。现有方法通过悲观正则、下界校准与结构归一化缓解，但忽视了标准对数熵项可能为负从而破坏策略更新的问题。本文提出SCQ，用严格为正的Sigmoid有界熵替代原熵项，同时保留保守Q正则与回报下界校准。在D4RL基准上的实验表明其在保持探索的同时稳定了策略优化。",
+      "llm_tldr": "离线到在线强化学习能降低真实机器人学习的交互成本，却长期受价值估计不稳定困扰。现有方法通过悲观正则、下界校准与结构归一化缓解，但忽视了标准对数熵项可能为负从而破坏策略更新的问题。本文提出SCQ，用严格为正的Sigmoid有界熵替代原熵项，同时保留保守Q正则与回报下界校准。在D4RL基准上的实验表明其在保持探索的同时稳定了策略优化。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.09418v1",
+      "source": "arxiv",
+      "title": "Valerant: An Automatic Navigable Game Map Generator via Action-Conditioned World Model Exploration",
+      "abstract": "World Action Models (WAMs) couple predictive world modeling with action generation, allowing anticipated future states to guide agent behavior. Although WAMs are rapidly advancing embodied AI, general-purpose counterparts remain largely unexplored in games. Existing game-oriented approaches often combine action-conditioned world models with external policies and reward functions to realize WAM-like decision-making, yet they operate mainly in 2D visual observation space and do not instantiate persistent 3D geometry. Extending this paradigm to 3D games introduces a distinct challenge. In autonomous driving and robotics, the physical environment exists independently of the model, providing a persistent 3D world in which selected actions can be executed. Games have no such external substrate; the virtual world itself must be instantiated. Most playable games require a persistent and navigable space, while 3D games additionally require explicit geometry that supports movement and interaction. Action-conditioned video rollouts provide visual observations but not this spatial representation. We present \\textsc{Valerant}, a training-free framework that transforms a pretrained action-conditioned world model into a WAM for exploring and constructing 3D game maps. By coupling predictive visual rollouts with SLAM-based spatial reconstruction and exploration-driven action selection, \\textsc{Valerant} progressively transforms a single image into a persistent 3D game map. This framework extends WAM-based interaction beyond 2D visual simulation and offers a new approach to reducing manual effort in 3D game-map creation.",
+      "authors": [
+        "Yiran Qiao",
+        "Feng Wang",
+        "Jing Ma"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-08T20:17:48+00:00",
+      "link": "https://arxiv.org/pdf/2609.09418v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Action-conditioned world model exploration for embodied AI agents with persistent 3D geometry",
+      "llm_evidence_cn": "面向具身智能体的动作条件世界模型探索与持久三维几何",
+      "llm_evidence": "面向具身智能体的动作条件世界模型探索与持久三维几何",
+      "canonical_evidence": "面向具身智能体的动作条件世界模型探索与持久三维几何",
+      "llm_tldr_en": "Valerant generates navigable 3D game maps by exploring an action-conditioned world model, extending world action models from 2D observation to persistent 3D geometry.",
+      "llm_tldr_cn": "世界动作模型将预测式世界建模与动作生成耦合，让智能体依据预期未来状态行动，在具身AI中快速发展，但通用游戏场景的对应模型仍待探索，既有方法多停留在二维视觉观测且不构建持久三维几何。论文提出Valerant，通过动作条件世界模型探索自动生成可导航游戏地图。方法将范式拓展到三维游戏，为具身智能探索提供参考。",
+      "llm_tldr": "世界动作模型将预测式世界建模与动作生成耦合，让智能体依据预期未来状态行动，在具身AI中快速发展，但通用游戏场景的对应模型仍待探索，既有方法多停留在二维视觉观测且不构建持久三维几何。论文提出Valerant，通过动作条件世界模型探索自动生成可导航游戏地图。方法将范式拓展到三维游戏，为具身智能探索提供参考。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.13083v1",
+      "source": "arxiv",
+      "title": "ASTRIL-MPC: Autonomous Traversal Framework of Articulated Tracked Robots with Language-Guided Neural-Kinematic MPC",
+      "abstract": "In urban search and rescue, articulated tracked robots (ATRs) must traverse structured but contact-rich environments such as stairwells and cluttered building interiors. Reliable autonomy remains challenging because robot-terrain interaction (RTI) is hybrid and discontinuous, and effective flipper-track coordination is difficult to model analytically. We present ASTRIL-MPC, a language-guided neural kinematics model predictive control (MPC) framework for autonomous traversal. A learned kinematics model predicts short-horizon task-state increments from a height sequence and recent trajectories; NMPC plans with multi-objective costs and strict feasibility constraints; and a large language model (LLM) proposes bounded updates to selected weights and bounds through a safety-checked interface with range clipping, rate limiting, and consistency checks. The compiled predictor enables a full control cycle within 100 ms. Across three traversal tasks and a multi-height generalization setting, ASTRIL-MPC improves an aggregate traversal-quality score by up to 71% over a non-adaptive NMPC and by 67% over a PPO baseline, while eliminating measurable collision impacts during descent. These results indicate that combining learned kinematics, optimization-based planning, and language-guided retuning yields data-efficient and robust autonomy for articulated tracked robots.",
+      "authors": [
+        "Zhenfeng Gan",
+        "Yanbo Chen",
+        "Lirong Che",
+        "Junbo Tan",
+        "Xueqian Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-11T17:17:52+00:00",
+      "link": "https://arxiv.org/pdf/2609.13083v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "language-guided neural-kinematic MPC for autonomous traversal of tracked robots",
+      "llm_evidence_cn": "语言引导神经运动学MPC实现履带机器人自主穿越",
+      "llm_evidence": "语言引导神经运动学MPC实现履带机器人自主穿越",
+      "canonical_evidence": "语言引导神经运动学MPC实现履带机器人自主穿越",
+      "llm_tldr_en": "Articulated tracked robots must traverse contact-rich stairwells and cluttered interiors where terrain interaction is hard to model. ASTRIL-MPC combines a learned kinematics model, nonlinear MPC, and LLM guidance for autonomous flipper-track traversal.",
+      "llm_tldr_cn": "在城市搜救中，铰接履带机器人需穿越楼梯间与杂乱室内等接触丰富的结构化环境，机器人-地形交互呈混合不连续特性，翻转臂与履带协调难以解析建模，可靠自主性仍是难题。本文提出ASTRIL-MPC，一种语言引导的神经运动学模型预测控制框架，用学习到的运动学模型预测短时域状态增量，结合多目标NMPC与严格可行性约束，并由大语言模型提供行为建议。实验显示该方法能完成复杂地形自主穿越，为接触丰富环境中的机器人导航提供新方案。",
+      "llm_tldr": "在城市搜救中，铰接履带机器人需穿越楼梯间与杂乱室内等接触丰富的结构化环境，机器人-地形交互呈混合不连续特性，翻转臂与履带协调难以解析建模，可靠自主性仍是难题。本文提出ASTRIL-MPC，一种语言引导的神经运动学模型预测控制框架，用学习到的运动学模型预测短时域状态增量，结合多目标NMPC与严格可行性约束，并由大语言模型提供行为建议。实验显示该方法能完成复杂地形自主穿越，为接触丰富环境中的机器人导航提供新方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+Title: Understanding Whole-Body Robot Teleoperation Strategies Under Diverse Task Objectives and Constraints
+
+URL Source: https://arxiv.org/pdf/2609.12384v1
+
+Published Time: Mon, 14 Sep 2026 00:38:09 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Understanding Whole-Body Robot Teleoperation Strategies Under Diverse Task Objectives and Constraints 
+
+Tsung-Chi Lin 1, Juo-Tung Chen 2, and Chien-Ming Huang 3Object Organization 
+
+(no constraint) 
+
+Medication Preparation 
+
+(time-sensitive) 
+
+Hydration 
+
+(error-critical) 
+
+Laundry 
+
+(workload-adaptive)         
+
+> AB
+> CD
+> AB
+> CD
+> AB
+> CD
+> AB
+> CD
+
+Fig. 1: To investigate the coordinated control strategies for robot teleoperation, users control the TIAGo robot to perform various daily home care tasks under different constraints. In the Object Organization scenario, the user organizes objects without limitations, exploring general control strategies in complex teleoperation. For Medication Preparation, the user handles medication bottles, focusing on timely delivery under time constraints. In the Hydration sequence, the user pours small blocks (i.e., simulating water) into a cup, where precision is crucial to avoid errors. Lastly, during the Laundry task, users control the robot to pick up and place clothing items into a basket and transfer it while conversing with the experimenter, simulating common daily distractions. 
+
+Abstract — This work investigates the control strategies of complex whole-body robot teleoperation that coordinate ac-tive perception, bimanual manipulation, and navigation. We developed a hybrid control framework, combining the free-form 
+
+and constrained control, for the whole-body teleoperation of the TIAGo mobile manipulator. We conducted a user study to ex-plore people’s control strategies under different task constraints such as limited time and low tolerance of errors. Our results highlight the effective use of coordinated control in improving task efficiency and reducing the risk of reaching individual joint limits. We discuss our results and their implications for designing future whole-body robot teleoperation systems. 
+
+I. I NTRODUCTION 
+
+Teleoperated robots significantly augment human capa-bilities in scenarios where direct human presence is chal-lenging ( e.g., deep-sea exploration [1]) or complete robot autonomy is not reliable ( e.g., home care [2]), allowing for the safe robot-assisted execution of complex tasks across diverse domains [3]. In support of effective robot teleop-eration, previous research has investigated various control interfaces for direct teleoperation of complex robots ( e.g., 
+
+humanoid robots and mobile manipulators with high degrees 
+
+> 1
+
+Department of Computer Science, New Jersey Institute of Technology, Newark, NJ, USA. tsungchi.lin@njit.edu 
+
+> 2
+
+Department of Mechanical Engineering, Johns Hopkins University, Baltimore, MD, USA. jchen396@jhu.edu 
+
+> 3
+
+Department of Computer Science, Johns Hopkins University, Baltimore, MD, USA. chienming.huang@jhu.edu 
+
+of freedom). For example, early research focused on motion tracking systems, which allow operators to control robots through their own movements using wearable sensors [4], or vision-based systems [5]. Recent research explored virtual reality-based methods to control mobile manipulators [6] or humanoid robots [7], offering not only greater portability and cost efficiency but also creating more immersive remote environments, which can be easily integrated with haptic [8] or augmented reality [9] features. Despite the ease of use of these control interfaces [10], coordinating the robot’s multi-functional capabilities remains a difficult task. Prior works have investigated strategies to enhance loco-manipulation through shared autonomy [11], [12], where the robot assists the human operator by au-tomating certain functions while leaving critical decision-making to the human. Although these strategies have shown promise, the optimal approach for coordinated control— where perception, manipulation, and navigation are seam-lessly integrated—remains unclear. Furthermore, it is not well understood how control strategies may change depend-ing on task constraints ( e.g., limited time and low tolerance of errors) and requirements ( e.g., handling concurrent tasks). This paper investigates human control strategies for tele-operating a complex robot with multi-functional capabilities; specifically, our investigation uses the TIAGo OMNI++ mobile manipulator robot with a controllable head, torso, arXiv:2609.12384v1 [cs.RO] 11 Sep 2026 and base, as well as two seven degree-of-freedom arms. We implemented a hybrid control framework for whole-body robot teleoperation using a virtual reality (VR) system ( i.e., 
+
+HTC Vive Pro 2) to leverage the strengths of both free-form (i.e., multi-axis pose control) and constrained ( i.e., dual-axis touchpad control) methods (Fig. 2). The robot’s head and dual arms are controlled via the pose of a VR headset and handheld controllers, while the torso and base are managed using the touchpads on both handheld controllers. A video stream from the head-mounted camera, integrated with the robot’s operational state, is sent to the VR headset for real-time active remote perception. To understand people’s control strategies, we conducted a user study in which participants performed four in-home care tasks with diverse objectives and constraints ( i.e., no con-straint, time-sensitive, error-critical, and workload-adaptive) after completing a curriculum-based training designed to help novice users acquire basic competency in teleoperating the robot (Fig. 1). Our results reveal several coordinated control strategies used and how they were adapted to different task constraints. We discuss the implications of these findings for control interface design, action support, and adaptive robot (shared) autonomy in teleoperated human-robot interactions. The key contributions are: 1) a modularized hybrid manual control framework for complex whole-body robot teleop-eration; 2) a curriculum-based training for comprehensive teleoperation skill acquisition; and 3) design implications for future human-centered system aimed to support whole-body robot teleoperation. II. B ACKGROUND AND RELATED WORK 
+
+A. Whole-Body Teleoperation Interface 
+
+As robots become more physically capable [13], the need for control interfaces that can handle whole-body coordi-nation—including simultaneous manipulation, locomotion, and sensor alignment—has become increasingly important. Whole-body teleoperation introduces unique interaction de-mands, requiring users to synchronize perception with action across multiple control dimensions in real time. To this end, the evolution of teleoperation interfaces for whole-body robot control has seen significant advancements, particularly in the development of constrained, free-form, and hybrid control approaches. 
+
+Constrained control interfaces simplify operation by lim-iting the robot’s degrees of freedom (DoF) and restricting its movements to predefined paths or regions, allowing for easier control in specific tasks like manipulation [14] or navigation [15]. Although these approaches excel in simplic-ity, they often limit the robot’s full capabilities, particularly in complex tasks requiring high maneuverability [10]. In contrast, free-form control interfaces offer complete flexi-bility, enabling users to directly control the robot’s various components; prior research has focused on motion tracking systems that allow operators to control robots with their own movements via wearable sensors [16], exosuits [17], kinesthetic interfaces [13], and vision-based systems [18]. But despite their flexibility, these systems often come with the trade-off of increased cognitive load and complexity, as users must manage multiple control aspects simultaneously; having to prevent unintentional movement can also be a barrier, making it difficult for non-expert users to operate such systems effectively [19]. To this end, hybrid control ap-proaches have been developed by combining the strengths of constrained and free-form methods. In particular, immersive virtual- and mixed-reality teleoperation systems have demon-strated how spatially aligned visual feedback and embodied input can support intuitive control while reducing cognitive translation between the operator and the robot. Prior work has explored VR-based teleoperation for manipulation and navigation tasks, examining user performance, workload, and sensitivity to latency and interface design in immersive settings [20]. More recent systems extend these ideas to whole-body platforms, introducing hybrid input strategies that integrate body navigation with head-and-arm control for mobile manipulators [21] and humanoid robots [22]. However, it remains unclear how teleoperation strategies adapt to the complexity of real-world tasks with varying ob-jectives and constraints. Without understanding the interplay between human factors and task requirements, it is difficult to design teleoperation systems that provide optimal support tailored to different user groups and everyday tasks. 
+
+B. Multi-Component Coordination in Complex Teleoperation 
+
+Whole-body teleoperation tasks require human operators to coordinate multiple robotic components—including per-ception (head), manipulation (arms), locomotion (base), and vertical positioning (torso)—in real time. This coordination is especially critical for mobile manipulators and humanoid systems, where performance often depends on precise syn-chronization across spatial and functional domains [23]. Un-like single-arm or base-only teleoperation, whole-body tasks present increased cognitive and physical challenges due to their inherently high degrees of freedom and interdependent control actions [24]. A growing body of research has highlighted the com-plexity of this problem by examining how users coordinate multiple robot subsystems during remote interaction. One prominent challenge involves bimanual coordination, where users must simultaneously manage two robotic arms for tasks such as lifting, folding, or transferring objects. Recent work has investigated shared-autonomy frameworks for intuitive bimanual telemanipulation, enabling users to perform co-ordinated dual-arm actions with reduced control effort by blending user intent with robot policy priors [25]. Similarly, single-master systems have been proposed to allow effective bimanual control using one interface, reducing redundancy and improving task efficiency [26]. Beyond the arms, coordinating the torso and arms is essential when users must extend the robot’s vertical reach or avoid kinematic singularities. Effective torso-arm coordina-tion is particularly important in manipulation tasks that span shelves, tables, or uneven surfaces. For example, recent work on mobile humanoid control demonstrated how integrating torso adjustments with arm movements can facilitate reach-Free-Form 
+
+> Control
+> Constrained
+> Control
+> GUI Fig. 2: The hybrid control teleoperation interface captures human head and hand movements to control the robot’s head and dual arms, while the touchpads on both handheld controllers control the robot’s torso and base. The GUI integrates real-time camera streams and robot status.
+
+ing and manipulation without sacrificing stability or control intuitiveness [27]. Without such coordination, users must frequently interrupt manipulation to adjust posture manually, leading to inefficiencies and increased mental workload. A third critical axis of coordination lies in manipulation-locomotion coupling, where users must synchronize base movement with arm actions to approach, interact with, or reposition objects. This coordination is especially relevant in cluttered or dynamic environments. Prior work has proposed whole-body teleoperation approaches that allow users to control navigation and manipulation simultaneously without requiring additional interface complexity [23]. These systems show that tightly coupled control of arm and base can reduce task time and physical effort—but only when the interface effectively supports fluid transitions and alignment between components. These studies illustrate that whole-body teleoperation is not simply about exposing control over individual compo-nents, but about enabling operators to effectively manage the interdependencies between them. However, much of the current literature evaluates component coordination in isolation or under idealized tasks. How users adapt coor-dination strategies in response to task constraints, such as time pressure, accuracy requirements, or workload, remains underexplored. Understanding these dynamics is key to de-signing teleoperation systems that can adaptively support the user’s coordination behavior rather than demanding constant micromanagement. III. R OBOT TELEOPERATION SYSTEM 
+
+Below, we describe the implementation of a hybrid control framework for complex teleoperation and the design of the graphical user interface for remote perception. 
+
+A. Hybrid Control Framework for Whole-body Teleoperation 
+
+We implemented a modular hybrid control framework on a physical testbed using the TIAGo OMNI++ mobile manip-ulator, which integrates key robotic capabilities—including 
+
+Algorithm 1 Whole-body Teleoperation Control Loop                                                                                                                       
+
+> 1: Initialize VR system and control mappings 2: while system is active do
+> 3: Read head pose (ph,Rh)
+> 4: Read controller poses (p(i)
+> c,R(i)
+> c),for i∈ { L, R }
+> 5: Read touchpad inputs and button states
+> ▷Head Control (Free-form)
+> 6: Rhead ← L (RhRot x(θoffset ))
+> 7: Send Rhead to robot head
+> ▷Arm Control (Free-form)
+> 8: for all i∈ { L, R }do
+> 9: if grip button iis pressed then
+> 10: if pause toggled then
+> 11: Reset control origin for arm i
+> 12: end if
+> 13: x(i)
+> ee ←relative pose of controller i
+> 14: J(i)← IK (x(i)
+> ee )
+> 15: if arm iextension > δ arm then
+> 16: Display user warning 17: end if
+> 18: Send J(i)to robot arm i
+> 19: if trigger iis pressed then
+> 20: Close gripper i
+> 21: else
+> 22: Open gripper i
+> 23: end if
+> 24: end if
+> 25: end for
+> ▷Torso Control (Constrained)
+> 26: if right touchpad: up then
+> 27: Tz←Tz+ ∆ z
+> 28: else if right touchpad: down then
+> 29: Tz←Tz−∆z
+> 30: end if
+> 31: Tz←min( Tmax ,max( Tmin , T z))
+> ▷Base Control (Constrained)
+> 32: vb← M pad (uLtp )
+> 33: ωb← M pad (uRtp )
+> ▷Safety-Aware Damping
+> 34: if arm extension > δ arm or Tz> δ torso then
+> 35: vb←αvb,ωb←αω b
+> 36: end if
+> 37: Send (vb, ω b)to robot base 38: Update GUI 39: end while
+
+perception, manipulation, and locomotion—with an ad-justable torso. The framework is designed to be modular and adaptable across a broad range of robot platforms (from robotic arms to humanoid robots) and multi-component con-figurations with varying input modalities. Our system uses the HTC Vive Pro 2 virtual reality headset and controllers, which provide 6-DoF pose tracking, button states, and dual-axis touchpad inputs. The hybrid control approach combines free-form control for the robot’s head and arms with constrained control for the torso and base (Fig. 2). Utilizing free-form control proved to be more intuitive for users new to robot teleoperation when handling complex features, enhancing egocentric perception [28] and efficient manipulation [10]. In contrast, constrained control via touch-pads enables precise and stable movements, which are critical for tasks requiring accurate positioning and alignment, such as navigating tight environments or approaching objects. 
+
+Free-form Control for Head and Arms: The user’s head orientation is mapped to the robot’s pan-tilt head, with a TABLE I: Summary of Control Mappings and System Parameters                        
+
+> Component Control Input Parameters
+> Head Headset rotation θoffset = 30 ◦
+> Arms Controller 6-DoF pose δarm = 0 .7mGripper Trigger button (binary) –Torso height Touchpad up/down ∆z= 0 .05 mBase translation Touchpad (left) α= 0 .5damping factor Base rotation Touchpad (right, L/R) δtorso = 0 .5m
+
+downward offset of θoffset degrees and smoothing via a low-pass filter to reduce fatigue and jitter. This adjustment was made because the focused workspace is typically at a similar height to the arms. Without the offset, users would need to actively maintain a bent neck position, significantly increas-ing physical fatigue during prolonged tasks. Additionally, setting a head mapping offset makes it easier to visualize the arms in the graphical user interface, enhancing awareness of arm location and potential collisions. Each robotic arm is controlled by mapping the handheld controller’s pose to the desired end-effector pose, solved using the TRAC-IK solver [29]. Users could reset the arm configuration to the starting pose (see Fig. 2) at any time by pressing the menu button; activate or pause arm control with the grip button; and control the gripper with the trigger button on each handheld controller. Arm extension is continuously monitored and alerts the user when a threshold δarm is exceeded. The gripper is actuated by a binary trigger input. 
+
+Constrained Control for Torso and Base: The robot’s torso is incrementally adjusted in height via up/down presses on the right touchpad, moving by step size ∆z. The mobile base is controlled translationally using the left touchpad and rotationally using left/right presses on the right touchpad. To improve safety, a damping mechanism reduces base speed when arm extension or torso height exceeds configurable thresholds ( δarm , δ torso ). This ensures stable operation when the robot’s center of mass is raised or the arms are near their limits. To formalize the system behavior, we present the full control loop in Algorithm 1, and provide a summary of control mappings and parameters in Table I. 
+
+B. Graphical User Interface (GUI) 
+
+The GUI integrates real-time video feedback from an RGB camera built into the TIAGo’s head. It overlays the robot’s operational states, streaming them to the HTC Vive headset via the User Datagram Protocol (UDP). These operational states include arm status, torso height indicators, and obstacle visualization derived from object detection using a LiDAR sensor on the mobile base (Fig. 2). 
+
+Visualization of Proximal Obstacles: To provide real-time feedback on the robot’s movements and obstacle awareness, we created a dynamic mini-map that continuously updates to show obstacles within the robot’s workspace, with a color change to red indicating too close to an obstacle (less than 0.1 meters). This approach provides a real-time reflection of the robot’s movements and obstacle awareness. 
+
+Visualization of Torso Elevation and Arm State: In addition to the obstacle visualization feature mentioned above, our GUI also includes a torso height indicator, which provides real-time feedback on the robot’s vertical position, crucial for tasks requiring different elevation levels. Addi-tionally, the status of both arms is prominently displayed, showing whether each arm is actively being controlled or in a paused state. The interface also alerts the user when the robot hits its operational limits, ensuring immediate awareness and response to any constraints. IV. E XPERIMENT 
+
+We conducted a user study to investigate control strategies for teleoperating a complex robot capable of multi-functional capabilities using our hybrid framework. In our study, we used home care tasks as they represent diverse constraints and objectives. A deeper understanding of people’s control strategies will shed light on how to avoid unnecessary dupli-cation of control inputs, suboptimal performance outcomes, and potentially inappropriate teleoperation assistance. 
+
+A. Curriculum-Based Training 
+
+The variance in users’ prior experiences with gaming, virtual reality, and robotics might significantly impact their robot teleoperation performance. Thus, to ensure a relatively uniform proficiency level [30], we designed a curriculum-based training protocol (see Fig. 3) to comprehensively guide novice users in acquiring the necessary skills. This training approach has been proven effective for gaining essential knowledge in various remote robot control appli-cations ( e.g., space robots [31], surgical robots [32], and drones [33]). The curriculum is divided into two categories: basic manipulation skills and advanced coordinated control. Each category contains multiple training modules, with each module building on the previous one, aiming for a gradual increase in difficulty and complexity. 
+
+Basic Manipulation Skills: The training begins with uni-manual manipulation and progresses to bimanual manip-ulation, allowing users to acquire the necessary skills to interact with diverse targets (Fig. 3, top). During this training, the robot remains in a fixed location with a consistent torso height for all participants. The robot’s head remains controllable by users, as the tasks are primarily within a small workspace that does not require large-scale head movement.  
+
+> •
+
+Unimanual Manipulation. Unimanual manipulation train-ing includes modules for various robot end-effector con-trols to interact with both solid and deformable objects. The translation control module tasks users with picking up a small solid container and dropping it into a jar. The 
+
+rotation control module asks users to flip a held cup and stack it onto another cup placed on the table. Finally, the 
+
+full control module requires users to grab a rag from atop a jar and place it on the table.  
+
+> •
+
+Bimanual Manipulation. The bimanual manipulation training requires users to perform a large basket handover task. Users must lift the basket to a specific height and hand it over to an experimenter standing in front of the robot. This task necessitates full control of both robot arms and symmetric bimanual control. Translation Control (solid)              
+
+> Unimanual Manipulation Bimanual Manipulation
+> Rotation Control (solid) Full Control (deformable) Full Control (deformable)
+> Head-arm (relocating) Torso-arm (lifting) Base-arm (transferring) All Aspects (collecting)
+> Coordinated Control Fig. 3: The curriculum-based training for manipulation and coordination in complex robot teleoperation tasks. The training is structured into two main categories: manipulation and coordination. In the manipulation category, tasks are divided into unimanual, where the user performs tasks using a single arm, including handling solid objects (e.g., a tube container or cup) and deformable objects (e.g., a soft rag), and bimanual, where the user uses both arms for tasks such as lifting a large object and collecting multiple items. In the coordination category, tasks involve the combined use of different robot components, including head-arm coordination, torso-arm coordination, base-arm coordination, and head-torso-base-arm coordination, to perform tasks.
+
+Advanced Coordinated Control: Coordinated control train-ing is essential to enable robots to perform complex tasks that require synchronized movement of multiple components. This training prepares participants for complex teleoperation where precise and coordinated actions are crucial for task completion (Fig. 3, bottom).  
+
+> •
+
+Head-arm Coordination. This training involves tasks where participants need to relocate an object by teleop-erating significant robot arm movement while controlling the robot’s head to maintain visual contact with the object so as being able to adjust arm movements accordingly.  
+
+> •
+
+Torso-arm Coordination. The training focuses on object lifting tasks where participants need to control the robot, coordinating its torso and arm movement, to grasp an item from a lower shelf and place it on a higher level. This train-ing requires adjusting the torso height to accommodate the enlarged vertical workspace.  
+
+> •
+
+Base-arm Coordination. This training involves searching for an object within the workspace and transferring it to a new location through a relatively narrow path. The training task requires the teleoperated robot to perform large movements for search-and-transport and small adjust-ments to avoid collisions with obstacles. Effective base-arm coordination ensures that the robot can maneuver through a constrained space for object manipulation.  
+
+> •
+
+Head-torso-base-arm Coordination. This training involves picking an object from the top of a lower table and placing it on a higher level of a shelf located at a distance. The task requires participants to coordinate the robot’s head, torso, arm, and base movements. Such coordination is essential for handling intricate real-world tasks that demand multi-component synchronization. 
+
+B. In-home Care Tasks 
+
+To ensure the practical relevance and generalizability of our findings, we designed four in-home care tasks with various constraints and objectives (see Fig. 1). Specifically, participants control the TIAGo robot in a cluttered environ-ment to perform unstructured tasks without constraints, time-sensitive tasks, error-critical tasks, and multi-tasking tasks. Note that for tasks involving multiple targets, there are no restrictions on the interaction order or specific arm usage. 
+
+Object Organization (no constraint) : Participants operate a robot to gather objects from two tables of varying heights and deposit them into predefined pockets on a wall-mounted organizer without constraints. This task allows us to probe baseline strategies for the control of a complex robot. 
+
+Medication Preparation (time-sensitive) : Participants are tasked with delivering two medication bottles placed on two different levels of a shelf to a marked region within a five-minute time limit. The control GUI includes a countdown timer to remind users of the remaining time. This task aims to examine people’s control strategies under time pressure. 
+
+Hydration (error-critical) : In this task, participants control the robot to pick up a bottle containing blocks (simulated water) and pour them into a mug; precision is crucial to avoid water spills. This task seeks to understand control strategies for minimizing teleoperation errors. 
+
+Laundry (workload-adaptive) : This task involves partici-pants controlling the robot to gather and drop clothing items into a basket, then move it to the top of a table. During the main control task, the experimenter engages the participant in a secondary task by chatting with them, discussing randomly chosen topics from ten general themes ( e.g., favorite travel destinations, hobbies, and interests, etc.). This scenario sim-ulates real-world conditions where operators manage varying workloads and distractions ( e.g., answering phone calls). 
+
+C. Procedure 
+
+After obtaining informed consent, participants completed a demographic survey and assessed their spatial ability using the Purdue Spatial Visualization Rotation Test, which has been used in the context of teleoperation [34]. This test consists of ten questions with a five-minute time limit. Next, the experimenter explained how to control the TIAGo robot using the HTC Vive VR headset and handheld con-trollers. Once participants indicated readiness, they began the curriculum-based training to acquire manipulation and coordinated control skills. During training, participants could repeat specific modules for additional practice, with this training phase lasting up to 30 minutes. Following training, participants were introduced to four in-home care tasks. After completing each task in random order, participants filled out the NASA-TLX and a questionnaire to provide feedback on their experience with the tasks. 
+
+D. Measures and Data Analysis 
+
+We measured a set of control-, robot-, and task-related indices to objectively analyze participants’ control strategies and their potential correlation with task performance. 
+
+Control-related: We recorded the activation time for each robot component ( i.e., head, torso, arms, and base) and the duration of the coordinated control ( i.e., head-arm, head-base, torso-arm, base-arm) for each task. Additionally, the users’ control input speed was calculated from the recorded handheld controller’s trajectories. 
+
+Robot-related: We measured how often the robot was near surrounding obstacles ( i.e., within a distance of less than 0.1 meters). We also recorded the duration for which the robot’s arms and head reached their length and angle limits. 
+
+Task-related: We measured the time and the number of errors that occurred while performing each task. Errors included collision with or knocking down the target, spills of simulated water, and unsuccessful grasping and releasing. We extracted the mental demand from the NASA-TLX to understand the cognitive effort while performing each task. We additionally used a questionnaire to gather partici-pants’ perceptions of the challenging aspects of teleoperating the robot. The questionnaire also inquired about which parts 0             
+
+> 50 100 N-C T-S E-C W-A
+> Coordinated Control (%)
+> *** ***
+> *** **
+> 150
+> 250 350 020 40 60 80
+> T-S Task Time (seconds)
+> Coordinated Control (%)
+> 𝑅 2= .242, 𝑝 < .05
+> Fig. 4: Coordinated control percentage across four tasks (left) and its correlation with task time in the time-sensitive task (right).
+
+of the tasks or specific actions/motions they preferred to be handled by robot autonomy. We used a mixed regression model to assess the correlation between control-related and robot- or task-related measures. We analyzed all measures from each in-home care task as the within-participants variable using one-way repeated-measures analysis of variance (ANOVA) for all comparisons. All pairwise comparisons used Holm-Bonferroni correction to control for Type I error in multiple comparisons. 
+
+E. Participants 
+
+We recruited 18 participants (8 males and 10 females) from the Johns Hopkins University Homewood campus, with ages ranging from 19 to 39 ( M = 26.72, SD = 5.35). Participants reported limited prior experience with robots ( M
+
+= 1.92, SD = 0.34) and diverse driving ( M = 2.27, SD = 2.15) and gaming ( M = 1.83, SD = 2.33) experiences, measured on a five-point scale with 5 being highly experienced. V. R ESULTS AND DISCUSSION 
+
+This section examines the impacts of task objectives and constraints on performance and control behaviors. We discuss their implications for the design of future robot teleoperation systems. In all figures, p < . 01 and p < . 001 
+
+are represented by two stars (**) and three stars (***). Task constraints are denoted as N-C (no constraint), T-S (time-sensitive), E-C (error-critical), and W-A (workload-adaptive). 
+
+A. Task Efficiency 
+
+We averaged the time spent on head-arm, torso-arm, and base-arm as coordinated control. The results show that users performed significantly more coordinated control in the time-sensitive task (Fig. 4, left) than in the other three tasks (all with p < .001 from post hoc comparisons). Correlation analyses further revealed that increased coordinated control significantly reduced ( p < . 05 ) task completion time (Fig. 4, right) and decreased the frequency of the robot reaching its arm length limit ( p < . 05 ). The analysis also revealed that the duration for hitting robot’s head pan limit was significantly less ( p < . 05 ) with more head-base coordination control. 
+
+User-centered Control — Our findings indicate that lever-aging coordinated control allows for efficient task com-pletion and reduces the risk of exceeding joint limits, thus avoiding redundant control actions. Building upon the loco-manipulation concept [11], future teleoperation systems should integrate control frameworks that leverage a user’s egocentric inputs ( e.g., head and hand motions) to manage **                     
+
+> Constrained Control (%)
+> 𝑅 2= .242, 𝑝 < .05
+> **
+> **
+> 00.1 0.2
+> 0.3 N-C T-S E-C W-A
+> Input Speed (m/s)
+> 0
+> 510 050 100
+> E-C Task Error (#)
+> Fig. 5: Input speed across four tasks (left) and the correlation between constrained torso/base control and error rate in the error-critical task (right). *** ***
+> ***
+> ** ** **
+> 050
+> 100 N-C T-S E-C W-A
+> NASA-TLX: Mental (score)
+> 020
+> 40 N-C T-S E-C W-A
+> Control Discontinued (%) Fig. 6: Percentage of control discontinuation (left) and mental demand from the NASA-TLX survey (right) across four tasks.
+
+not only the robot’s head and manipulators but also other operational aspects, such as torso and base, for coordinated whole-body teleoperation. For example, when searching for an object, the robot base should rotate when the user reaches their head pan limit, aligning with their intent to adjust the viewing angle. Similarly, the torso and base should automatically adjust when the arms reach their limits to improve reachability in large workspaces. This user-centered approach reduces cognitive workload by minimizing the need to control multiple robot aspects while maintaining effective teleoperation. It also aligns with advanced VR/AR interfaces, like Apple Vision Pro, which leverage natural head and hand movements over traditional controllers. 
+
+B. Task Precision 
+
+As shown in Fig. 5, post hoc comparisons indicated significantly slower input speeds during the error-critical task compared to the three other tasks (all with p < . 01 ). We also observed that when in close proximity with the targets (distance between the robot end-effector and the target was less than 0.35 meters), participants either utilized more free-form arm control or more constrained torso/base control to reach and manipulate them. The correlation analysis further revealed that using more constrained torso/base control re-sulted in significantly fewer errors ( p < . 05 ) (Fig. 5, right). 
+
+Modeling Human Behavior — We showed that separating control degrees of freedom when approaching targets can increase task accuracy, and participants greatly slowed down their hand movements when performing tasks requiring fine manipulation. This highlights the importance of modeling human control behavior to enable more accurate indications ➜ ➜
+
+> Fig. 7: The hybrid control framework applied to the Unitree G1 humanoid using a Meta Quest 3 headset and controllers.
+
+of when and what type of assistance should be provided. For example, control speed mapping could be dynamically adjusted to stabilize the end-effector based on user input speed [35], or irrelevant control degrees could be deactivated based on the user’s primary control direction [36]. 
+
+C. Task Workload 
+
+We calculated control discontinuation by adding the dura-tion when the user is not activating any robot actions. The results show that the workload-adaptive task resulted in a significantly higher percentage of control discontinuation (all with p < . 001 ) and higher mental demand (all with p < . 01 )compared to the other three tasks (Fig. 6). 
+
+Modeling User State — As we showed, the impact of men-tal effort is non-trivial for smooth robot control. It is crucial to model user state in terms of workload during human-robot interaction, as this can inform the design of adaptive robot autonomy tailored to different task contexts, human capabilities, workload, and preferences. For example, to minimize mental workload, graphical user interfaces should present and emphasize only the information critical [37] to the current state of the task ( e.g., distance to obstacles, success rate of grasping). Such real-time adaptation ensures the system can promptly respond to changing conditions and operator needs, thereby enhancing overall effectiveness. VI. C ONCLUSION 
+
+We developed a VR-based hybrid control framework that enables flexible whole-body teleoperation of the TIAGo mobile manipulator. As shown in Fig. 7, the framework can also be applied to other robot platforms (e.g., the Unitree G1 humanoid) and input interfaces (e.g., Meta Quest 3). Our user study provided insights into users’ control behav-iors and strategies, including how they adapt to different task constraints and objectives. These findings highlight the importance of intuitive control interfaces and adaptive assistance in improving complex teleoperation. 
+
+Limitations — While our hybrid control effectively realize complex teleoperation, several aspects could be improved and might impact the control strategy. For example, we did not incorporate haptic feedback in our control system, even though tactile sensations have been proven to enhance intu-itive interactions with remote environments [38]. Addition-ally, in this work, perception was limited and only based on a single camera embedded in the robot’s head; future work may explore vision reconstruction [39] to create an immersive virtual environment representing the 3D workspace. VII. A CKNOWLEDGMENTS 
+
+This work was supported by Malone Center for Engineering in Healthcare. Author CRediT: Conceptualization (TL, CH); Data Curation (TL, JC); Formal Analysis (TL); Investigation (TL); Methodology (all); Software (JC); Supervision (CH); Visualization (TL); Original Draft (TL); Review & Editing (CH). AI Statement: Text edited with an LLM and verified for accuracy by the authors. REFERENCES [1] G. Li, T.-W. Wong, B. Shih, C. Guo, L. Wang, J. Liu, T. Wang, X. Liu, J. Yan, B. Wu et al. , “Bioinspired soft robots for deep-sea exploration,” 
+
+Nature Communications , vol. 14, no. 1, p. 7097, 2023. [2] A. Toedtheide, X. Chen, H. Sadeghian, A. Naceri, and S. Haddadin, “A force-sensitive exoskeleton for teleoperation: An application in elderly care robotics,” in 2023 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2023, pp. 12 624–12 630. [3] K. Darvish, L. Penco, J. Ramos, R. Cisneros, J. Pratt, E. Yoshida, S. Ivaldi, and D. Pucci, “Teleoperation of humanoid robots: A survey,” 
+
+IEEE Transactions on Robotics , vol. 39, no. 3, pp. 1706–1727, 2023. [4] H. Zhou, G. Yang, H. Lv, X. Huang, H. Yang, and Z. Pang, “Iot-enabled dual-arm motion capture and mapping for telerobotics in home care,” IEEE journal of biomedical and health informatics , vol. 24, no. 6, pp. 1541–1549, 2019. [5] D. Rakita, B. Mutlu, and M. Gleicher, “A motion retargeting method for effective mimicry-based teleoperation of robot arms,” in Proceed-ings of the 2017 ACM/IEEE International Conference on Human-Robot Interaction , 2017, pp. 361–370. [6] B. Bejczy, R. Bozyil, E. Vaiˇ cekauskas, S. B. K. Petersen, S. Bøgh, S. S. Hjorth, and E. B. Hansen, “Mixed reality interface for improving mo-bile manipulator teleoperation in contamination critical applications,” 
+
+Procedia Manufacturing , vol. 51, pp. 620–626, 2020. [7] M. Wonsick and T. Padır, “Human-humanoid robot interaction through virtual reality interfaces,” in 2021 IEEE Aerospace Conference (50100) . IEEE, 2021, pp. 1–7. [8] T.-C. Lin, A. U. Krishnan, and Z. Li, “Comparison of haptic and augmented reality visual cues for assisting tele-manipulation,” in 2022 International Conference on Robotics and Automation (ICRA) . IEEE, 2022, pp. 9309–9316. [9] S. Livatino, D. C. Guastella, G. Muscato, V. Rinaldi, L. Cantelli, C. D. Melita, A. Caniglia, R. Mazza, and G. Padula, “Intuitive robot teleoperation through multi-sensor informed mixed reality visual aids,” 
+
+Ieee Access , vol. 9, pp. 25 795–25 808, 2021. [10] T.-C. Lin, A. U. Krishnan, and Z. Li, “Intuitive, efficient and er-gonomic tele-nursing robot interfaces: Design evaluation and evolu-tion,” ACM Transactions on Human-Robot Interaction (THRI) , vol. 11, no. 3, pp. 1–41, 2022. [11] Y. Wu, P. Balatti, M. Lorenzini, F. Zhao, W. Kim, and A. Ajoudani, “A teleoperation interface for loco-manipulation control of mobile col-laborative robotic assistant,” IEEE Robotics and Automation Letters ,vol. 4, no. 4, pp. 3593–3600, 2019. [12] M. Seo, S. Han, K. Sim, S. H. Bang, C. Gonzalez, L. Sentis, and Y. Zhu, “Deep imitation learning for humanoid loco-manipulation through human teleoperation,” in 2023 IEEE-RAS 22nd International Conference on Humanoid Robots (Humanoids) . IEEE, 2023, pp. 1–8. [13] Z. Fu, T. Z. Zhao, and C. Finn, “Mobile aloha: Learning bimanual mobile manipulation with low-cost whole-body teleoperation,” arXiv preprint arXiv:2401.02117 , 2024. [14] D. Dall’Alba and F. Boriero, “Towards an intuitive industrial teaching interface for collaborative robots: gamepad teleoperation vs. kines-thetic teaching,” The International Journal of Advanced Manufactur-ing Technology , pp. 1–18, 2025. [15] J. Y. Raheema, M. R. H. R. C. Provost, M. Bilinski, and H. I. Chris-tensen, “Autonomous exploration and mapping payload integrated on a quadruped robot,” in Proc. ISRR , 2024. [16] Y. Ze, Z. Chen, J. P. Ara ˜ Aˇ sjo, Z.-a. Cao, X. B. Peng, J. Wu, and C. K. Liu, “Twist: Teleoperated whole-body imitation system,” arXiv preprint arXiv:2505.02833 , 2025. [17] S. Dafarra, U. Pattacini, G. Romualdi, L. Rapetti, R. Grieco, K. Darvish, G. Milani, E. Valli, I. Sorrentino, P. M. Viceconte et al. ,“icub3 avatar system: Enabling remote fully immersive embodiment of humanoid robots,” Science Robotics , vol. 9, no. 86, p. eadh3834, 2024. [18] T. He, Z. Luo, W. Xiao, C. Zhang, K. Kitani, C. Liu, and G. Shi, “Learning human-to-humanoid real-time whole-body teleoperation,” in 2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2024, pp. 8944–8951. [19] T.-C. Lin, A. U. Krishnan, and Z. Li, “Perception and action augmen-tation for teleoperation assistance in freeform telemanipulation,” ACM Transactions on Human-Robot Interaction , vol. 13, no. 1, pp. 1–40, 2024. [20] A. Naceri, D. Mazzanti, J. Bimbo, Y. T. Tefera, D. Prattichizzo, D. G. Caldwell, L. S. Mattos, and N. Deshpande, “The vicarios virtual reality interface for remote robotic teleoperation: Teleporting for intuitive tele-manipulation,” Journal of Intelligent & Robotic Systems , vol. 101, no. 4, p. 80, 2021. [21] S. Park, J. Kim, H. Lee, M. Jo, D. Gong, D. Ju, D. Won, S. Kim, J. Oh, H. Jang et al. , “A whole-body integrated avatar system: Implementation of telepresence with intuitive control and immersive feedback,” IEEE Robotics & Automation Magazine , 2023. [22] L. Penco, K. Momose, S. McCrory, D. Anderson, N. Kitchel, D. Calvert, and R. J. Griffin, “Mixed reality teleoperation assistance for direct control of humanoids,” IEEE Robotics and Automation Letters ,vol. 9, no. 2, pp. 1937–1944, 2024. [23] D. Honerkamp, H. Mahesheka, J. O. von Hartz, T. Welschehold, and A. Valada, “Whole-body teleoperation for mobile manipulation at zero added cost,” IEEE Robotics and Automation Letters , 2025. [24] S. Gholami, M. Lorenzini, E. De Momi, and A. Ajoudani, “Quan-titative physical ergonomics assessment of teleoperation interfaces,” 
+
+IEEE Transactions on Human-Machine Systems , vol. 52, no. 2, pp. 169–180, 2022. [25] M. Laghi, M. Maimeri, M. Marchand, C. Leparoux, M. Catalano, A. Ajoudani, and A. Bicchi, “Shared-autonomy control for intuitive bimanual tele-manipulation,” in 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids) . IEEE, 2018, pp. 1– 9. [26] D. Sun, Q. Liao, and A. Loutfi, “Single master bimanual teleoperation system with efficient regulation,” IEEE Transactions on Robotics ,vol. 36, no. 4, pp. 1022–1037, 2020. [27] N. Boguslavskii, L. M. Genua, and Z. Li, “Human-robot collaboration for the remote control of mobile humanoid robots with torso-arm coordination,” arXiv preprint arXiv:2505.05773 , 2025. [28] T.-C. Lin, A. Unni Krishnan, and Z. Li, “Perception-motion coupling in active telepresence: Human behavior and teleoperation interface design,” ACM Transactions on Human-Robot Interaction , vol. 12, no. 3, pp. 1–24, 2023. [29] P. Beeson and B. Ames, “Trac-ik: An open-source library for improved solving of generic inverse kinematics,” in 2015 IEEE-RAS 15th Inter-national Conference on Humanoid Robots (Humanoids) . IEEE, 2015, pp. 928–935. [30] T.-C. Lin, J.-T. Chen, and C.-M. Huang, “Reducing performance variability and overcoming limited spatial ability: Targeted training for remote robot teleoperation,” in Proceeding of 2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) .IEEE, 2024. [31] A. M. Liu, C. M. Oman, R. Galvan, and A. Natapoff, “Predicting space telerobotic operator training performance from human spatial ability assessment,” Acta Astronautica , vol. 92, no. 1, pp. 38–47, 2013. [32] G. Dulan, R. V. Rege, D. C. Hogg, K. M. Gilberg-Fisher, N. A. Arain, S. T. Tesfay, and D. J. Scott, “Developing a comprehensive, proficiency-based training program for robotic surgery,” Surgery , vol. 152, no. 3, pp. 477–488, 2012. [33] J. Zhou, H. Zhu, M. Kim, and M. L. Cummings, “The impact of different levels of autonomy and training on operators’ drone control strategies,” ACM Transactions on Human-Robot Interaction (THRI) ,vol. 8, no. 4, pp. 1–15, 2019. [34] M. A. Menchaca-Brandan, A. M. Liu, C. M. Oman, and A. Natapoff, “Influence of perspective-taking and mental rotation abilities in space teleoperation,” in Proceedings of the ACM/IEEE International Con-ference on Human-robot interaction , 2007, pp. 271–278. [35] A. U. Krishnan, T.-C. Lin, and Z. Li, “Design interface mapping for efficient free-form tele-manipulation,” in 2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2022, pp. 6221–6226. [36] V. Pruks and J.-H. Ryu, “Method for generating real-time interactive virtual fixture for shared teleoperation in unknown environments,” The International Journal of Robotics Research , vol. 41, no. 9-10, pp. 925– 951, 2022. [37] D. Szafir and D. A. Szafir, “Connecting human-robot interaction and data visualization,” in Proceedings of the 2021 ACM/IEEE Interna-tional Conference on Human-Robot Interaction , 2021, pp. 281–292. [38] H. Culbertson, S. B. Schorr, and A. M. Okamura, “Haptics: The present and future of artificial touch sensation,” Annual review of control, robotics, and autonomous systems , vol. 1, no. 1, pp. 385– 409, 2018. [39] M. Wonsick, T. Keles , temur, S. Alt, and T. Padır, “Telemanipulation via virtual reality interfaces with enhanced environment models,” in 
+
+2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2021, pp. 2999–3004.
