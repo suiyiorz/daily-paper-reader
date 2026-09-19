@@ -6,71 +6,74 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-18
-- 运行时间：2026-09-18 21:45:55 UTC
+- 最新运行日期：2026-09-19
+- 运行时间：2026-09-19 21:23:27 UTC
 - 运行状态：成功
 - 本次总论文数：17
 - 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-今天日报扫完17篇论文，精读6篇、速读11篇，机器人操作与物理AI方向最集中。 最值得先看两篇9.0精读：XPACE的异构经验世界与动作联合建模，以及Acting in Meters的米制精确操作交互。 普通读者可先读这两篇，再按兴趣速览TEMPO动态操作、仿人手自支撑运动与生成式物理AI综述等8.0速读。
-- 详情：[/202609/18/README](/202609/18/README)
+- 今日共生成 17 篇推荐（精读 6 篇，速读 11 篇）
+- 精读：《A Comprehensive Review of Generative Physical Artificial Intelligence》（9.0/10）, 《WeaveRL: Weaving Reconstruction into Scene-Aware Fabrics for Perceptive Reinforcement Learning》（9.0/10）
+- 速读：《ActiveScale: Scaling Active Perception for Robots across Model, Data, and Hardware》（8.0/10）, 《TRACER: Adaptive Multi-Robot Social Navigation via Joint Human-Response Prediction and Interaction-Aware Replanning》（8.0/10）, 《In-Context Robot Learning with VLM Agents》（8.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202609/19/README](/202609/19/README)
 
 ### 精读区论文标签
-1. [XPACE: Joint World and Action Modeling from Heterogeneous Experience](/202609/18/2609.17372v1-xpace-joint-world-and-action-modeling-from-heterogeneous-experience)  
+1. [A Comprehensive Review of Generative Physical Artificial Intelligence](/202609/19/2609.18111v1-a-comprehensive-review-of-generative-physical-artificial-intelligence)  
    标签：评分：9.0/10、query:ad
-   evidence：统一具身世界模型联合预测机器人动作与未来视频
-2. [Acting in Meters: Learning Metric Interactions for Precise Robotic Manipulation](/202609/18/2609.18243v1-acting-in-meters-learning-metric-interactions-for-precise-robotic-manipulation)  
+   evidence：综述生成式物理人工智能，涵盖机器人基础模型、VLA与具身智能体系统
+2. [WeaveRL: Weaving Reconstruction into Scene-Aware Fabrics for Perceptive Reinforcement Learning](/202609/19/2609.18685v1-weaverl-weaving-reconstruction-into-scene-aware-fabrics-for-perceptive-reinforcement-learning)  
    标签：评分：9.0/10、query:ad
-   evidence：面向精确语言条件机器人操作的度量交互框架
-3. [ViLoMan: Learning Visual-Proprioceptive Whole-Body Loco-Manipulation Skills for Humanoid Robots](/202609/18/2609.19340v1-viloman-learning-visual-proprioceptive-whole-body-loco-manipulation-skills-for-humanoid-robots)  
+   evidence：融合在线三维感知的感知式强化学习用于机器人操作
+3. [Learning Holistic Whole-Body Loco-Manipulation with a Bipedal Mobile Manipulator](/202609/19/2609.18930v1-learning-holistic-whole-body-loco-manipulation-with-a-bipedal-mobile-manipulator)  
    标签：评分：9.0/10、query:ad
-   evidence：人形机器人全身移动操作策略学习
-4. [MM-Future: Multi-Mode Joint World-Action Modeling for Autonomous Driving](/202609/18/2609.20377v1-mm-future-multi-mode-joint-world-action-modeling-for-autonomous-driving)  
+   evidence：强化学习训练的双足全身控制器协调移动与操作
+4. [SkipVLA: Skipping VLA Steps with Classical Planning for Fast Robot Manipulation](/202609/19/2609.20648v1-skipvla-skipping-vla-steps-with-classical-planning-for-fast-robot-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶不确定性规划的世界-动作联合建模
-5. [MILER: Semantic Mid-Level Representation for Sim-to-Real Reinforcement Learning in Unstructured Autonomous Driving](/202609/18/2609.20747v1-miler-semantic-mid-level-representation-for-sim-to-real-reinforcement-learning-in-unstructured-autonomous-driving)  
+   evidence：结合预训练VLA与经典运动规划器的快速机器人操作
+5. [DexTouch-WM: Learning Action-Conditioned Tactile World Models from Human Touch for Dexterous Robot Manipulation](/202609/19/2609.20649v1-dextouch-wm-learning-action-conditioned-tactile-world-models-from-human-touch-for-dexterous-robot-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶感知与控制强化学习仿真到现实策略
-6. [Learning Multi-Humanoid Pickup and Transport via Decentralized Object-Centric Control](/202609/18/2609.17824v1-learning-multi-humanoid-pickup-and-transport-via-decentralized-object-centric-control)  
+   evidence：从人类触觉学习动作条件触觉世界模型用于灵巧操作
+6. [PASSAGE: Scaling Scene-Aligned Motion Learning for Perceptive Humanoid Traversal in Cluttered Environments](/202609/19/2609.18732v1-passage-scaling-scene-aligned-motion-learning-for-perceptive-humanoid-traversal-in-cluttered-environments)  
    标签：评分：8.0/10、query:ad
-   evidence：分散式以物体为中心的多机器人协同搬运控制
+   evidence：感知条件化的类人机器人运动与复杂环境穿越
 
 ### 速读区论文标签
-1. [TEMPO: Learning Temporal Context for Dynamic Robot Manipulation](/202609/18/2609.16864v1-tempo-learning-temporal-context-for-dynamic-robot-manipulation)  
+1. [ActiveScale: Scaling Active Perception for Robots across Model, Data, and Hardware](/202609/19/2609.18514v1-activescale-scaling-active-perception-for-robots-across-model-data-and-hardware)  
    标签：评分：8.0/10、query:ad
-   evidence：面向动态机器人操作的时间上下文学习
-2. [Fingers as Legs: Learning Self-Supported Locomotion and Manipulation with an Anthropomorphic Hand](/202609/18/2609.17172v1-fingers-as-legs-learning-self-supported-locomotion-and-manipulation-with-an-anthropomorphic-hand)  
+   evidence：面向机器人操作的主动感知与视觉-语言-动作模型
+2. [TRACER: Adaptive Multi-Robot Social Navigation via Joint Human-Response Prediction and Interaction-Aware Replanning](/202609/19/2609.18776v1-tracer-adaptive-multi-robot-social-navigation-via-joint-human-response-prediction-and-interaction-aware-replanning)  
    标签：评分：8.0/10、query:ad
-   evidence：用强化学习实现拟人手的运动与操作
-3. [A Comprehensive Review of Generative Physical Artificial Intelligence](/202609/18/2609.18111v1-a-comprehensive-review-of-generative-physical-artificial-intelligence)  
+   evidence：联合人类响应预测与交互感知重规划的多机器人社会导航
+3. [In-Context Robot Learning with VLM Agents](/202609/19/2609.19138v1-in-context-robot-learning-with-vlm-agents)  
    标签：评分：8.0/10、query:ad
-   evidence：生成式物理AI综述融合基础模型与具身机器人
-4. [Fetch My Beer: Synthetic-to-real Hierarchical Policy for Smooth Pick-and-place](/202609/18/2609.18119v1-fetch-my-beer-synthetic-to-real-hierarchical-policy-for-smooth-pick-and-place)  
+   evidence：具身智能中用视觉语言模型智能体进行上下文机器人学习
+4. [WorldContact: A Contact-Centric World Model for Scalable Robot Learning](/202609/19/2609.19600v1-worldcontact-a-contact-centric-world-model-for-scalable-robot-learning)  
    标签：评分：8.0/10、query:ad
-   evidence：面向平滑机器人抓取放置的仿真到现实分层策略
-5. [UAVs Meet Embodied Intelligence: Bridging Human Intents and Flying Dynamics Via Harnessing Physical-Digital AI Agents](/202609/18/2609.18326v1-uavs-meet-embodied-intelligence-bridging-human-intents-and-flying-dynamics-via-harnessing-physical-digital-ai-agents)  
+   evidence：面向可变形物体机器人操作的接触中心世界模型与数据生成
+5. [EmbodiedMind: Adaptive Data Curation and Prefix-Tree Reinforcement Learning for Efficient Embodied Intelligence](/202609/19/2609.19659v1-embodiedmind-adaptive-data-curation-and-prefix-tree-reinforcement-learning-for-efficient-embodied-intelligence)  
    标签：评分：8.0/10、query:ad
-   evidence：无人机具身智能耦合感知推理与行动
-6. [GraphPoint: Semantic Entity Graphs and Point Trajectories for Compositional Robot Manipulation](/202609/18/2609.18358v1-graphpoint-semantic-entity-graphs-and-point-trajectories-for-compositional-robot-manipulation)  
+   evidence：面向具身基础模型与具身智能的高效训练范式
+6. [Vehicle Trajectory Prediction via Neural Fusion of Multiple EKF-Based Trajectory Candidates](/202609/19/2609.19813v1-vehicle-trajectory-prediction-via-neural-fusion-of-multiple-ekf-based-trajectory-candidates)  
    标签：评分：8.0/10、query:ad
-   evidence：语义实体图与点轨迹用于组合式机器人操作
-7. [Decoupling Vision, Language, and Action for Efficient Multi-Task Robot Policies](/202609/18/2609.18374v2-decoupling-vision-language-and-action-for-efficient-multi-task-robot-policies)  
+   evidence：自动驾驶车辆轨迹预测融合神经与EKF候选
+7. [MAGMA-GEN: Validated Recovery Supervision from Ambiguous Failures via Counterfactual Re-Execution](/202609/19/2609.20056v1-magma-gen-validated-recovery-supervision-from-ambiguous-failures-via-counterfactual-re-execution)  
    标签：评分：8.0/10、query:ad
-   evidence：面向多任务机器人操作的去耦视觉-语言-动作策略
-8. [NeuroSymbEAD: A Large Scale Neuro-Symbolic Caption Dataset for Omni-Directional Embodied Autonomous Driving](/202609/18/2609.16919v1-neurosymbead-a-large-scale-neuro-symbolic-caption-dataset-for-omni-directional-embodied-autonomous-driving)  
+   evidence：长时程机器人操作的恢复学习
+8. [Bridging Learned Visual Perception and Symbolic Belief-Space Planning](/202609/19/2609.16884v1-bridging-learned-visual-perception-and-symbolic-belief-space-planning)  
    标签：评分：7.0/10、query:ad
-   evidence：面向全向具身自动驾驶的神经符号描述数据集
-9. [FluxVLA Engine: A One-Stop VLA Engineering Platform for Embodied Intelligence](/202609/18/2609.17210v1-fluxvla-engine-a-one-stop-vla-engineering-platform-for-embodied-intelligence)  
+   evidence：面向部分可观测具身环境的概率化符号接地与信念空间规划
+9. [StrucPhysVideo: Learning Physical Dynamics from Structured Captions and Robot Actions](/202609/19/2609.18430v1-strucphysvideo-learning-physical-dynamics-from-structured-captions-and-robot-actions)  
    标签：评分：7.0/10、query:ad
-   evidence：面向具身智能策略的一站式VLA工程平台
-10. [Vision-Language Grounded Task-Context-Aware Imitation Learning for Robotic Disassembly](/202609/18/2609.17714v1-vision-language-grounded-task-context-aware-imitation-learning-for-robotic-disassembly)  
+   evidence：从结构化描述与机器人动作学习物理动力学的具身视频世界模型
+10. [From Gameplay to Policy: Towards Scalable Robot Data Collection via Gamified Robot-Free Interaction](/202609/19/2609.18650v1-from-gameplay-to-policy-towards-scalable-robot-data-collection-via-gamified-robot-free-interaction)  
    标签：评分：7.0/10、query:ad
-   evidence：面向长程操作的视觉-语言模仿学习
-11. [Missing Bridges: Composition-Aware Active Imitation Learning](/202609/18/2609.18004v1-missing-bridges-composition-aware-active-imitation-learning)  
+   evidence：VR游戏化无机器人数据采集以学习可泛化操作策略
+11. [rMuscle: Robotic Muscle Memory for Efficient Vision-Language-Action Model Inference](/202609/19/2609.19104v1-rmuscle-robotic-muscle-memory-for-efficient-vision-language-action-model-inference)  
    标签：评分：7.0/10、query:ad
-   evidence：面向多任务机器人策略的组合感知主动模仿学习
+   evidence：面向具身AI工厂机器人的高效VLA推理
 
 
 <div class="dpr-home-promo-card">

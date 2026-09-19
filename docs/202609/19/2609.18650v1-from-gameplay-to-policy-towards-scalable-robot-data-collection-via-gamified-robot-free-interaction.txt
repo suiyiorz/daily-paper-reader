@@ -1,0 +1,292 @@
+Title: From Gameplay to Policy: Towards Scalable Robot Data Collection via Gamified Robot-Free Interaction
+
+URL Source: https://arxiv.org/pdf/2609.18650v1
+
+Published Time: Thu, 17 Sep 2026 01:34:06 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# From Gameplay to Policy: Towards Scalable Robot Data Collection via Gamified Robot-Free Interaction 
+
+Zheng Li 1∗, Liang Zhu 1∗, Junzhe Wang 1∗, Huayuan Chen 1, Ziyun Liu 1, Jiahang Cao 2,Xinyu Sheng 1, Pei Qu 1, Yufei Jia 3, Ximeng Zhang 1, Jiarui Xie 1, Zizhao Yuan 1,Haoang Li 1, Yi Cai 1, Jinni Zhou 1†, Jun Ma 1
+
+Abstract — Learning generalizable robot manipulation poli-cies requires large-scale and diverse interaction data, yet col-lecting real-world demonstrations remains costly and difficult to scale. Existing approaches to data collection are either depen-dent on specific robot hardware that limits crowdsourcing and transferability, or suffer from incomplete annotation and lim-ited behavioral diversity. Inspired by how games sustain long-term human engagement, we explore an alternative paradigm that turns data collection into an engaging gameplay experience and transfers the resulting human manipulation experience to real robots. We present Project Kitchen, a VR-based gamified egocentric data collection platform that elicits diverse, goal-directed manipulation while remaining independent of specific robot embodiments and hardware, making it applicable to broader and potentially large-scale deployment. To bridge the game-to-real gap, we further introduce Game2Policy, which extracts embodiment-invariant affordance cues, including con-tact points and sub-goal states, from gameplay trajectories. An affordance model is pre-trained on game-collected data and then jointly fine-tuned with downstream policies using only a handful of real-robot demonstrations. Experiments show that Game2Policy improves average success rates by 10.0 points in simulation and 18.3 points on real robots in the few-shot setting. User studies and quantitative analyses further show that Project Kitchen promotes diverse manipulation behaviors and provides an engaging data collection experience. These results demonstrate the potential of gamified virtual environments as a scalable source of manipulation knowledge. The platform and code will be released upon acceptance. 
+
+I. I NTRODUCTION 
+
+Over the past decade, data-driven approaches, especially imitation learning [1], [2] and reinforcement learning [3], [4], have reshaped robotics by enabling robots to acquire complex sensorimotor skills from experience, such as dex-terous [5], bimanual [6], and contact-rich [7] manipulation. These advances, similar to those in computer vision and NLP, promise strong generalization through large datasets and could greatly advance automation. However, collecting robot manipulation data is far less convenient than scraping web text, as it demands constant human supervision for resets, safety, and demonstrations, making the process slow,          
+
+> *Equal contribution, †Corresponding Author.
+> 1The Hong Kong University of Sci-ence and Technology (Guangzhou).
+
+{zli514, lzhu686, jwang787, hchen758, zliu176, xsheng420, pqu458, xzhang305, jxie778, zyuan521 }@connect.hkust-gz.edu.cn, {haoangli, yicai, eejinni, eejma }@hkust-gz.edu.cn  
+
+> 2The University of Hong Kong.
+
+jiahang@connect.hku.hk  
+
+> 3Tsinghua University.
+
+jyf23@mails.tsinghua.edu.cn Project Kitchen: Gamified Egocentric Data Collection Game2Policy: Affordance for Few-Shot Policy Learning  
+
+> Improved Policy
+> Diverse Play Robot - Free
+> Anyone, Off-Site
+> ...
+> Auto-Labeled Game Incentives
+> Game Data Few-Shot Robot-Invariant Affordance
+> Sub-Goal State Contact Point
+> Pretrain & Fine-Tune
+
+Fig. 1: From gameplay to policy. Our system collects diverse human manipulation data through VR gameplay (top) and transfers embodiment-invariant affordance cues to real robots with only a handful of demonstrations (bottom). expensive, and hard to scale [8], [9]. This severely limits the deployment of generalist robotic policies. Existing approaches to robot data collection suffer from several inherent limitations. Teleoperation with real hardware is slow and embodiment-specific, which severely constrains both scalability and transferability [2], [10]. Simulated data can be produced in bulk, but the trajectories it generates are often too homogeneous, failing to capture the richness of real-world human manipulation [11], [12]. Specialized systems such as UMI depend on custom gripper designs, rendering crowdsourcing impractical [13]. Human videos contain rich motion information but lack action labels and require extensive manual filtering to extract useful clips [14]. An interesting analogy reveals an alternative possibility: when placed in immersive, goal-oriented settings such as games, humans tend to engage persistently with a slower onset of fatigue, and spontaneously generate diverse inter-actions rather than repetitive demonstrations. This raises the question: can we leverage video game incentives to make data collection both engaging and scalable? Video games are inherently engaging and designed to maintain motivation through clear objectives, immediate feedback, and progressive challenges. Despite gamification’s proven value in crowdsourcing applications [15], [22], [23], its deliberate application to robot policy learning remains sur-arXiv:2609.18650v1 [cs.RO] 16 Sep 2026 TABLE I: Comparison of data-collection paradigms. = supported, G# = partially supported, # = not supported. Our gamified paradigm decouples collection from robot hardware, laboratory settings, and expert operators, lowering the barrier to crowdsourcing, while still providing ground-truth actions, automatic labels, and diverse human manipulation behaviors.                                           
+
+> Platform Deployment Human Scaling Supervision Data Collection Paradigm Capture Device Robot-Free Off-Site Risk-Free Crowdsourcing-Ready Non-Expert GT Actions Label-Free Behavior Diversity RoboCade [15] 3D-printed leader arm ##G#G#–G#
+> RoboCrowd [16] On-site ALOHA arms ###G#G##G#
+> Human Video [17], [18] Consumer cameras ##
+> Real-Robot Teleop. [19] Franka + 3 cameras #####G#G#
+> UMI [13] Handheld gripper G#G#G#G#G#
+> Simulation [20], [21] Simulator G##
+> Ours Consumer VR headset
+
+prisingly rare. The few existing gamification attempts, while effective at boosting user engagement, remain grounded in conventional teleoperation interfaces with superficial re-ward overlays and are inherently tethered to physical robot hardware. Such reliance limits the number of users who can participate concurrently, complicates deployment beyond laboratory settings, and ultimately hinders large-scale crowd-sourced data collection [15], [16]. To address these challenges, we introduce Project Kitchen , a VR-based gamified platform for collecting di-verse egocentric manipulation data, and Game2Policy , a learning framework that transfers affordance cues from the collected gameplay to few-shot robot policy learning. Un-like prior gamification attempts, our system is embodiment-agnostic and decoupled from specific robot hardware, making it applicable to crowdsourcing and potentially scalable data collection at low cost. It encourages diverse manipulation through game incentives and enables automatic annotation via subtask success predicates. A high-level comparison with existing manipulation data collection methods is provided in TABLE I. From the collected trajectories, we extract trans-ferable, embodiment-invariant affordance cues (e.g., contact points and sub-goal states), pre-train a lightweight affordance prediction model on game data, and jointly fine-tune it with downstream policies using a handful of real-robot demonstrations. Comprehensive experiments show average success-rate improvements of 10.0 points in simulation and 18.3 points on real robots in the few-shot setting, effectively reducing reliance on costly demonstrations while preserving the diversity of natural human manipulation. A user study and quantitative metrics further demonstrate the advantages of our data collection paradigm over alternative approaches. In summary, our core contributions are as follows:  
+
+> •
+
+We present Project Kitchen, a VR-based gamified ego-centric data collection platform that decouples manip-ulation data collection from robot hardware, lowering barriers to crowdsourced data collection, while using game incentives to elicit diverse manipulation and sub-task success predicates to enable automatic annotation.  
+
+> •
+
+We propose Game2Policy, a framework that extracts embodiment-invariant affordance cues from gameplay trajectories and transfers them to downstream policies via pre-training on game-collected data and joint fine-tuning with a handful of real-robot demonstrations.  
+
+> •
+
+We conduct comprehensive experiments in simulation and on real robots, showing that our approach con-sistently improves few-shot policy success rates, and we further demonstrate the advantages of our data collection paradigm over alternatives via a user study and a series of quantitative metrics. II. R ELATED WORK 
+
+A. Data Collection Methods for Robot Learning 
+
+Teleoperation remains the predominant approach for col-lecting real-world robot demonstrations. Systems such as ALOHA [2], DROID [19] and SONIC [24] enable human operators to directly control robot arms through leader-follower interfaces, generating high-fidelity trajectories with rich physical interactions. The Universal Manipulation In-terface (UMI) [13] offers a complementary paradigm by decoupling data collection from specific robot hardware: users collect visual and pose data with handheld grippers, which can be deployed across multiple robot platforms. However, teleoperation is slow, hardware-dependent, and labor-intensive, demanding sustained attention from skilled operators, while UMI relies on custom handheld devices that limit crowdsourcing at scale. Simulation and human videos provide hardware-free al-ternatives. Physics engines such as MuJoCo [20] and Isaac Sim [21] generate demonstrations at scale without physical robot access, while internet-scale human videos offer a vast and naturally diverse corpus of behaviors, with methods like ViViDex [25] and ConLA [26] learning robotic policies and skills directly from video data. However, simulation-generated trajectories tend to be overly homogeneous and lack the behavioral diversity inherent in human manipulation, which constrains the generalization of imitation learning policies [27]. Human videos, by contrast, lack ground-truth action labels and require extensive manual filtering to extract usable segments for policy learning. 
+
+B. Gamification in Machine Learning 
+
+Gamification has proven effective at sustaining human motivation across diverse domains, from citizen science (a) Project Kitchen (b) Game2Policy 
+
+Subtask Decomposition & Supervision     
+
+> Sort Move Scoop Pour Stir
+
+Affordance Transfer for Few-Shot Policy Learning Gamified VR Data Collection 
+
+Skill Abstraction   
+
+> Pouring Pick & Place Tool Use
+
+Incentive Mechanism  
+
+> Real-Time Feedback Branching Narrative Cuisine Unlocking Bilingual Prompts
+> Success Predicate: Count / Volume / Spatial
+> Drive Game Progression Auto-Label Trajectories
+
+Affordance Extraction Pre-training on Game Data Few-Shot Policy Learning                     
+
+> Ladle
+> Finger Curl Grasp
+> 55th 35th
+> Grasp Segmentation Embodiment-Invariant Affordance Cue
+> Sub-Goal State δ
+> Contact Point u
+> Reject: < 5 frames, > 3s, < 6cm
+> World
+> ptc
+> Ego Cam Contact Point Heat Map π
+> GT/Predicted Contact Point GT/Predicted Sub-Goal State
+> DINOv2 Backbone
+> u
+> δSub-Goal State Contact Point
+> Domain Randomization
+> Ego RGB Frame
+> Sub-Goal Head
+> ...
+> Global Average Pooling & MLP
+> Contact Head
+> Heat Map
+> 123
+> (u1,v1,s1)
+> (u2,v2,s2)
+> (uK,vK,sK)
+> Top-KMulti-Modal Readout Affordance Injection Multi-Embodiment Deployment
+> ...
+> Simulation
+> Few-Shot Joint Training
+> Transformer-based Policy: Extra Tokens Diffusion-based Policy: FiLM Conditioning
+> Zobs a1a2aKasg ...
+> c= [ cobs ,ui,vi,si,δ]
+> Real World
+
+Fig. 2: System overview. Our system consists of two stages: (a) Project Kitchen, a VR-based gamified platform where users complete cooking tasks via bare-hand interactions, with gameplay-driven automatic segmentation and annotation; (b) Game2Policy, which extracts embodiment-invariant affordance cues (contact points and sub-goals) from gameplay trajectories, pre-trains a lightweight affordance model on game data, and jointly fine-tunes it with downstream policies using only a few demonstrations for deployment. platforms like Galaxy Zoo [22] to gamified educational tools that improve knowledge retention and skill acquisition [28]. These successes suggest that well-designed incentives can transform tedious work into engaging play. Recent work has extended gamification to data collection in machine learning, including comprehensive reviews of gamification techniques [29], gamified approaches for annotated facial expression data [23], and crowdsourcing of affective commu-nication data through speech emotion recognition [30]. How-ever, gamification in robot policy learning remains scarce. Existing attempts, though capable of increasing user engage-ment, repurpose conventional teleoperation with superficial reward scoring, an approach inherently tied to physical hard-ware [15], [16]. This reliance on real-robot interfaces limits large-scale crowdsourcing, narrows behavioral diversity, and creates scalability challenges. III. M ETHOD 
+
+A. System Overview 
+
+Our system turns manipulation data collection into game-play and transfers the resulting experience to real robots via embodiment-invariant affordance cues. As illustrated in Fig. 2, it consists of two stages. (a) Project Kitchen (Sec. III-B) is a VR cooking game where users complete long-horizon recipes via bare-hand interactions. Game incentives are designed to sustain engagement and encourage diverse manipulation trajectories as a by-product of play; recipe subtasks with success predicates automatically annotate the stream, and the resulting clips are organized into three reusable primitives: pick-and-place, pouring, and tool use. (b) Game2Policy (Sec. III-C) bridges the game-to-real gap without action-level supervision. From gameplay, we extract contact points and sub-goals as embodiment-invariant affor-dance cues, pre-train a lightweight model on game data with domain randomization, and jointly fine-tune it with only a few real-robot demonstrations for downstream deployment. 
+
+B. Project Kitchen: A Gamified Platform for Egocentric Demonstration Collection 
+
+Gamified VR platform and data collection. We de-velop Project Kitchen , a VR cooking game for collecting embodiment-agnostic human manipulation demonstrations. Users follow recipe instructions to complete long-horizon cooking tasks, where each recipe consists of an ordered sequence of subtasks involving interactions with ingredients, containers, and utensils. By embedding these subtasks into goal-oriented gameplay with task progression and feedback, manipulation trajectories are collected naturally as a by-product of completing the game rather than through repetitive isolated demonstrations. To provide gameplay incentives that sustain user engagement, the game incorporates region-locked cuisine unlocking, a branching narrative, bilingual prompts, and real-time feedback. The recipe structure further provides semantic organization for the continuous gameplay trajectory, which is later exploited for automatic segmenta-tion and supervision. The platform is implemented in Unity 2022.3 with hand interaction supported by the Meta XR SDK. During game-play, we synchronously record 26-joint hand poses, object poses and task-relevant states, grasp/release events, and task progress at 30 Hz, forming the raw demonstration stream for subsequent robot-oriented processing. 
+
+Gameplay-driven segmentation and supervision. Given the continuous gameplay stream, we exploit the game logic itself to automatically identify and annotate individual manipulation segments. Each recipe subtask is associated with a success predicate evaluated from the current scene state, including spatial-, count-, and volume-based condi-tions. Once a predicate is satisfied, the corresponding frame provides both the subtask boundary and its success label, while grasp/release events offer additional temporal anchors for interaction-centric segmentation. For continuous state-changing interactions such as pouring, task states are rep-resented in physically interpretable quantities. Specifically, a normalized fill level ℓ ∈ [0 , 1] is converted to absolute volume as V = ℓC , where C is the vessel capacity, enabling predicates such as required transferred volume to be evaluated consistently across containers. A lightweight volume-conserving abstraction is sufficient for this purpose, avoiding unnecessary fluid simulation while retaining task-relevant supervision. 
+
+Robot-oriented skill abstraction. After segmentation, the resulting gameplay clips are further organized according to their underlying manipulation semantics rather than their specific cooking context. In this work, we focus on three representative and reusable manipulation primitives: 
+
+(i) Pick-and-place. This primitive captures spatial object relocation and consists of reaching, grasp acquisition, object transport, spatial placement, and release. It represents a fun-damental manipulation pattern in which the primary objective is to move an object from its initial configuration to a target region while maintaining stable grasp control. 
+
+(ii) Pour. This primitive extends object transport with continuous orientation control and regulation of the resulting object-state change. In addition to grasping and repositioning the container, the operator must coordinate its pose and tilt angle to control material transfer, making pouring represen-tative of continuous state-changing manipulation. 
+
+(iii) Tool use. This primitive captures tool-mediated in-teraction, involving grasping, tool–object alignment, con-strained contact motion, and material transfer. Unlike direct manipulation, tool use such as ladling requires coordinated control of both tool and target, providing demonstrations of contact-rich manipulation. These primitives are not constructed to match particular downstream benchmark tasks. Instead, they are abstracted from manipulation behaviors that naturally arise during gameplay and serve as broadly useful units for subsequent robot learning. 
+
+C. Game2Policy: Affordance Transfer for Few-Shot Policy Learning 
+
+To mitigate the gap between gameplay and robot execu-tion, inspired by prior works [31], [32], we leave action-level supervision from game data to future work and instead extract transferable information from trajectories, specifically contact points and sub-goal states that mark task progress. These affordance cues are embodiment-invariant and serve as conditioning signals for downstream policy learning. We pre-train an affordance prediction model on game data, and then jointly fine-tune it with the downstream policy model on a small set of demonstrations via few-shot learning. This strategy substantially reduces the need for costly physical robot data collection. 
+
+Affordance extraction. We source supervision from gameplay of Project Kitchen with 26 joints per hand tracked. For each grasp (tc, t r ), the contact point is defined as the palm world position at tc, projected into preceding frames: 
+
+ut = π K, Twc t pτ (t)
+
+, τ (t) = 
+
+(
+
+tc, t ∈ [tc − Hr , t c]
+
+t, t > t c
+
+(1) where π is the projection function, K the camera intrinsics, 
+
+Twc t the world-to-camera extrinsic at frame t, ptc the palm position at contact, and Hr = 1 .5 s the lookback horizon, and τ (t) selects the contact position before tc and the current position afterwards. Because Eq. (1) uses each frame’s own camera parameters, the label remains correctly localized as the player moves: it is anchored in the world rather than the image, requiring no manual annotation. Projections with 
+
+zt ≤ 0 or falling outside the image are masked. We supervise a Gaussian heatmap rather than regressing coordinates, as contact locations are inherently multimodal (e.g., either rim of a bowl). The sub-goal encodes a relative pose in the contact frame: 
+
+δ = R⊤ 
+
+> tc
+
+(ptkp  
+
+> r
+
+− ptc ), ρ (R⊤ 
+
+> tc
+
+Rtkp  
+
+> r
+
+) ∈ R9, (2) where Rtc is the palm rotation at contact, tkp  
+
+> r
+
+a retracted endpoint within the grasp interval, and ρ the six-dimensional rotation representation. Expressing δ relative to the contact frame cancels world frame and camera motion, making it comparable across scenes and embodiments. It is expressed in a human hand frame, not a robot end-effector frame, and is therefore treated as an embodiment-invariant conditioning signal rather than an executable target. 
+
+Trajectory segmentation. Grasp intervals are derived entirely from hand kinematics without manual annotation. Rather than detecting hand-object proximity, which yields many false positives in scenes cluttered with interactable objects, we use finger curl as a direct grasp indicator. Thresholds are set per recording (35th/55th percentiles) to absorb variation across players and object sizes, while hysteresis suppresses chattering near the threshold. Coarse closure onset is refined to the local minimum of palm speed. Intervals under 5 frames are discarded as jitter; those exceeding 3 s are truncated; those with pre-contact motion under 6 cm are rejected. The sub-goal endpoint is retracted from the interval end until displacement is plausible and camera motion is minimal, which excludes locomotion where the hand’s world displacement is dominated by body motion rather than manipulation. 
+
+Pre-training the affordance model. A lightweight net-work predicts contact points and sub-goals from a single RGB frame. Features are extracted by a frozen DINOv2 backbone; all trainable parameters are in the prediction heads. The feature map splits into two branches: convolutions produce a 64 × 64 contact heatmap, while global pooling feeds an MLP for sub-goal regression. This asymmetry is deliberate: where to grasp is a local question, so that TABLE II: Simulation experiment results. Our method consistently improves success rates across all three base policies and tasks, with the largest gains in the few-shot regime, where game pre-training recovers most of the data-rich performance using one tenth of the target demonstrations.                                                                                                                                                                                               
+
+> 5 Demos 50 Demos Base Policy Method Bottle-on-Cabinet Cheese-in-Bowl Bowl-on-Plate Avg. Bottle-on-Cabinet Cheese-in-Bowl Bowl-on-Plate Avg. ACT [2] Target-Only 69 .6±6.254 .4±1.772 .4±7.165 .585 .2±1.860 .4±5.781 .2±3.075 .6
+> Scratch 66 .8±4.156 .0±5.576 .0±4.566 .377 .6±3.364 .4±5.579 .2±8.373 .3
+> Ours 80 .0±6.367 .6±3.881 .6±2.676 .483 .2±6.469 .2±5.884 .8±2.779 .1
+> DP [1] Target-Only 64 .8±3.044 .4±1.578 .8±1.662 .776 .4±1.564 .8±6.090 .8±3.777 .3
+> Scratch 60 .8±6.841 .2±4.178 .4±5.160 .175 .6±2.958 .4±4.188 .0±2.274 .0
+> Ours 73 .6±5.653 .6±4.185 .6±2.970 .982 .0±2.867 .6±3.489 .2±3.579 .6
+> SmolVLA [33] Target-Only 67 .6±8.652 .0±4.578 .8±4.666 .186 .4±3.858 .8±5.284 .4±4.676 .5
+> Scratch 72 .8±3.351 .2±4.680 .4±4.668 .190 .0±2.068 .0±8.286 .0±4.781 .3
+> Ours 80 .4±4.666 .0±2.884 .4±4.376 .987 .2±3.071 .6±5.491 .6±3.883 .5Game Domain Target Domain (Simulation)
+
+Fig. 3: Snapshot and affordance visualization in the game and simulation domains. Green stars and diamonds denote ground-truth contact points and sub-goal points, respectively; red markers denote the corresponding predictions. branch keeps the spatial grid, whereas where to move next 
+
+depends on the global scene layout, which pooling retains while discarding position. The contact point is supervised by heatmap classification Lhm and coordinate regression 
+
+Lcoord = ∥ˆu − u∥22 via soft-argmax; the sub-goal by Euclidean position error and geodesic rotation distance: 
+
+L = Lhm + Lcoord + ∥ˆd − d∥22 + dgeo ( ˆR, R). (3) To bridge the visual domain gap, we additionally augment in-puts with domain randomization on lighting and background during pre-training. All losses use only valid frames, with episode-level splits. 
+
+Downstream injection and few-shot policy training. The pre-trained affordance model is queried online alongside the downstream policy at each step. Its differentiable readout lets the behavior-cloning loss back-propagate through it, enabling task adaptation while a learning rate lower than in pre-training preserves pre-trained knowledge. To preserve multi-modality in grasping, we extract the top K heatmap peaks via windowed soft-argmax with non-maximum sup-pression, each with a response strength si that acts as an implicit confidence, allowing the policy to reason over multiple plausible contacts. For transformer policies (ACT, SmolVLA), each candidate contributes (ui, v i, s i), and the sub-goal contributes δ; all are zero-padded to width da and appended as tokens: 
+
+Z = [ Zobs , a1, . . . , aK , asg ],
+
+ai = [ ui, v i, s i, 09],
+
+asg = [ 03, δ],
+
+(4) where Zobs is the observation token sequence and 0n denotes 
+
+n-dimensional zero padding. For Diffusion Policy, which uses a single conditioning vector c via FiLM, affordance is concatenated directly: 
+
+c = [ cobs , u 1, v 1, s 1, . . . , u K , v K , s K , δ], (5) where cobs is the observation conditioning vector. In the downstream setting, each task is provided with very few demonstrations, and this few-shot training approach substan-tially reduces the need for costly real-robot data collection. IV. E XPERIMENTS 
+
+A. Experiment Setup 
+
+We initially collect 10 hours of gameplay data from Project Kitchen and pre-train our affordance model on this dataset before fine-tuning it on downstream tasks. 
+
+Simulation setup. We evaluate on three LIBERO-Goal tasks: put the wine bottle on top of the cabinet ( Bottle-on-Cabinet ), put the cream cheese in the bowl ( Cheese-in-Bowl ), and put the bowl on the plate ( Bowl-on-Plate ). Each task is trained with 5 and 50 demonstrations to separate few-shot from data-rich regimes. To evaluate whether the transferred affordance generalizes across policy architectures, we instantiate three architecturally distinct base policies: ACT [2], Diffusion Policy [1], and SmolVLA [33]. All poli-cies share identical observation spaces, training schedules, and evaluation protocols, differing only in conditioning and initialization. Results are reported as mean ± std over 3 seeds with 50 rollouts per seed. 
+
+Real-robot setup. Experiments run on a Unitree G1 humanoid equipped with an egocentric head camera and a Dex1-1 parallel gripper, which tests whether affordance cues extracted from bare-hand gameplay transfer to a robot end-effector with a fundamentally different morphology. We evaluate the three manipulation primitives abstracted from TABLE III: Real-world experiment results. Game pre-training consistently improves success rates across all three primitives in the few-shot setting.                   
+
+> Method Pick & Place Pour Tool Use Total Target-Only 10/20 8/20 12/20 30/60 Scratch 11/20 8/20 9/20 28/60
+> Ours 14/20 12/20 15/20 41/60 (a) Pick & Place (b) Pour (c) Tool Use
+
+Fig. 4: Real-world experiment snapshots. We conduct real-world experiments using Unitree G1 with Dex1-1 Gripper. gameplay: pick-and-place, pour, and tool use. Following the few-shot protocol, each task receives only 10 teleoperated demonstrations and uses ACT as the base policy, evaluated over 20 trials per task with random initial placements. 
+
+Compared methods. To isolate the contribution of game-collected affordance rather than architectural capacity, we compare against two controls. Target-Only trains on target demonstrations alone, without any affordance conditioning or game data. Scratch keeps our full affordance-conditioned architecture but randomly initializes the affordance model, learning jointly from target demonstrations only (i.e., no game pre-training). The first control measures the end-to-end benefit of our pipeline, while the second removes the confounding effect of extra conditioning capacity, attributing gains specifically to transferred knowledge. 
+
+Evaluation metrics. We report task success rate as the primary metric. Beyond policy performance, we fur-ther characterize the collected data along two axes (TA-BLE V): Label Quality —compared against egocentric hu-man video [17] via signal dropouts per second, hand-label flips, coverage, PCK@2 contact localization, and required manual annotations; and Behavioral Diversity —compared against simulation-generated demonstrations via approach spread, number of unimodal groups, occupancy entropy, and contact-chain length. Together, these metrics test whether our platform yields annotation-free labels of teleoperation-grade quality while retaining the behavioral richness that simulated data lacks. We additionally conduct a user study with 10 
+
+participants (Fig. 5) to assess the engagement and usability of the collection process itself. 
+
+B. Simulation Experiments 
+
+We evaluate Game2Policy on three tasks from LIBERO-Goal benchmark. The game-pretrained affordance model is jointly fine-tuned in the target simulation domain, as TABLE IV: Ablation study on key components. Each design contributes to the final performance.                                                         
+
+> Method Bottle-on-Cabinet Cheese-in-Bowl Bowl-on-Plate Avg.
+> K= 1 (Unimodal) 79 .6±4.365 .6±4.377 .6±7.174 .3
+> w/o Contact Point 75 .2±5.254 .0±4.776 .8±5.468 .7
+> w/o Sub-Goal State 78 .0±3.265 .2±3.076 .8±4.673 .3
+> w/o Pre-training 66 .8±4.156 .0±5.576 .0±4.566 .3
+> Ours 80 .0±6.367 .6±3.881 .6±2.676 .4
+
+illustrated in Fig. 3, and results are summarized in Table II. The improvement of Game2Policy stems from knowledge transferred by game pre-training, not from increased ar-chitectural capacity. With 5 demonstrations, our method outperforms Target-Only by 10 .0 points on average; with 50 demonstrations the advantage shrinks to 4.3 points. The most direct evidence comes from the Scratch control: it retains the identical affordance-conditioned architecture but randomly initializes the affordance model, and achieves a similar score as Target-Only. This indicates that merely adding the conditioning branch yields no measurable benefit; what matters is the affordance prior learned during pre-training. Moreover, the improvement appears consistently across three substantially different policy architectures including ACT, DP and SmolVLA, demonstrating that the transferred signal generalizes across diverse policy architectures. The benefit concentrates where demonstrations are scarcest. With 5 demonstrations our average score of 74 .7
+
+already recovers most of the 50-demonstration Target-Only result ( 76 .5) while using one tenth of the target-domain data; when demonstrations grow to 50, the margin narrows from 
+
++10 .0 to +4 .3, consistent with the affordance acting as a prior that demonstrations eventually supply on their own. 
+
+C. Real-World Experiments 
+
+We deploy Game2Policy to the Unitree G1 with the Dex1-1 gripper on the three primitives abstracted from gameplay, as shown in Fig. 4, with results summarized in TABLE III. Although the affordance model is pre-trained solely on bare-hand gameplay, conditioning ACT on its predictions raises the overall success rate from 30/60 to 41/60 in the few-shot setting, with consistent gains on all three primitives. The Scratch achieves comparable performance to Target-Only (28/60), which again attributes the gain to game pre-training rather than added conditioning capacity. Despite the large morphological gap between a human hand and a parallel gripper and the visual gap between rendered and real images, the transferred cues remain informative, supporting their transferability across substantially different embodiments. 
+
+D. Ablation Study 
+
+We ablate the key design choices of Game2Policy, includ-ing game pre-training, the contact point cue, the sub-goal state cue, and the number of readout peaks, as summarized in TABLE IV. Ablation results show that game pre-training is critical, while the contact point and sub-goal play com-plementary roles. Removing game pre-training drops ACT’s score under 5 demonstrations by 10 .1 points, back to 66 .3,TABLE V: Data-level analysis. Our method provides annotation-free labels with structural advantages over labels extracted from human video and exhibits greater behavioral diversity than simulation-generated demonstrations.                                     
+
+> (a) Label Quality vs. Human Video Metric Ours Human Video [17] Signal Dropouts /s ↓0.05 0.48 L/R Label Flips ↓0.0% 3.4% Hand Coverage ↑98.8% 91.7% Contact PCK@2 ↑100% 97.5% Manual Labels ↓089,977 (b) Behavioral Diversity vs. Simulation Metric Ours LIBERO Spatial LIBERO Goal Approach Spread ↑0.801 0.304 0.353 Unimodal Groups ↓0/11 5/10 5/10 Occupancy Entropy ↑0.81 0.47 0.28 Contact Chain Length ↑17.7 1.04 0.98
+
+Fig. 5: User study. Gamification lowers physical and cog-nitive burden while sustaining engagement, offering a more sustainable foundation for crowdsourced data collection. which is essentially the Target-Only level of 65 .5, indi-cating that a few demonstrations alone provide insufficient supervision for learning the affordance cues. Between the two cues, the contact point contributes more: removing it costs 7.7 points on average, versus 3.1 for the sub-goal. More importantly, their failure modes are complementary: losing the contact point hurts Cheese-in-Bowl most ( −13 .6), because that task’s difficulty lies in grasping, while losing the sub-goal hurts Bowl-on-Plate most ( −4.8), because its difficulty lies in placement. Each single-cue variant still outperforms the no-pretraining baseline, indicating that both cues carry independent transferable signal. Finally, collaps-ing the readout to a single peak ( K = 1) has a minor effect on average success ( −2.1 points) but a clear effect on stability: on Bowl-on-Plate the standard deviation inflates from 2.6 to 7.1. Because contact locations are genuinely multimodal, retaining the top-K peaks primarily buys run-to-run robustness rather than higher mean performance. 
+
+E. Data-Level Analysis of Collection Paradigms 
+
+We provide a quantitative analysis targeting the main weaknesses of existing collection paradigms, along with a 
+
+Fig. 6: Future work. Bridging the visual game-to-real gap with 3D Gaussian Splatting and retargeting gameplay hand motion to dexterous robot hands for direct policy learning. user study. First, regarding label quality, our data shows structural advantages over egocentric human video data, as shown in TABLE Va. Compared with EPIC-KITCHENS-100 [17], the signal dropout rate drops from 0.48 to 0.05 
+
+events per second, and manual annotation requirements fall from 89 ,977 to 0. This gap is structural: the video paradigm must pass through a perception pipeline, which inevitably degrades under occlusion and motion blur, whereas we read hand poses and contact events directly from the game engine state. Subtask boundaries are likewise obtained from success predicates that the game already evaluates to drive progression. The supervision thus emerges as a by-product of the game being playable and requires no additional labeling. Second, regarding behavioral diversity, our data exhibits advantages over simulation-generated demonstrations, as shown in TABLE Vb. Compared with those generated in LIBERO Spatial and Goal, our data shows 2.3–2.6× greater approach spread and contact chains more than an order of magnitude longer ( 17 .7 vs. 1.04 and 0.98 ); in each LIBERO suite, 5 of 10 task groups collapse onto a single approach mode, whereas none of our 11 groups do. Scripted generation converges on one canonical solution per task and resets between short episodes, whereas players pursuing a recipe choose their own approach directions and chain dependent interactions across a long horizon. In addition, we conduct a user study with 10 partici-pants comparing our gamified VR platform (Project Kitchen) against teleoperation. The questionnaire comprised the SSQ, NASA-TLX, and custom items on naturalness, attention, and behavioral diversity. We select four representative in-dicators for cross-condition comparison: upper-limb fatigue, cognitive load, behavioral diversity, and performance satis-faction. Results (Fig. 5) show that Project Kitchen reduces upper-limb fatigue and cognitive load, increases behavioral diversity (consistent with our data-level diversity metrics in Table Vb), and improves performance satisfaction relative to teleoperation. Overall, our paradigm lowers physical and cognitive burden while promoting diversity and subjective achievement, offering a more sustainable foundation for large-scale crowdsourced data collection. V. C ONCLUSION 
+
+We present Project Kitchen, a gamified VR platform for hardware-decoupled data collection, and Game2Policy, which transfers embodiment-invariant affordance cues from gameplay to downstream policies via pre-training on game data and fine-tuning with few real demonstrations. In the few-shot setting, our method improves simulation success rates by 10.0 points across multiple policies and enables effective few-shot transfer on real robots, substantially re-ducing the need for costly teleoperated data. Our dataset offers annotation-free labels and greater behavioral diversity than simulation, while a user study indicates lower fatigue and cognitive load, together with higher performance satis-faction, than teleoperation. Overall, our framework provides a sustainable and scalable foundation for crowdsourcing manipulation data. 
+
+Future work. Despite the promising results, our cur-rent framework is limited by the scale of data collection, affordance-level supervision, and the visual game-to-real gap. Future work will scale data collection through dis-tributed deployment to broader user populations, leverage 3D Gaussian Splatting (3DGS) to reduce the visual domain gap, and retarget gameplay hand motions to dexterous robot hands for direct policy learning. We have made initial progress in the latter two directions, as shown in Fig. 6, toward fully leveraging large-scale gameplay data for generalist robot policy learning. REFERENCES [1] C. Chi, Z. Xu, S. Feng, E. Cousineau, Y. Du, B. Burchfiel, R. Tedrake, and S. Song, “Diffusion Policy: Visuomotor policy learning via action diffusion,” The International Journal of Robotics Research , vol. 44, no. 10-11, pp. 1684–1704, 2025. [2] T. Z. Zhao, V. Kumar, S. Levine, and C. Finn, “Learning fine-grained bimanual manipulation with low-cost hardware,” arXiv preprint arXiv:2304.13705 , 2023. [3] R. Newbury, M. Gu, L. Chumbley, A. Mousavian, C. Eppner, J. Leit-ner, J. Bohg, A. Morales, T. Asfour, D. Kragic, et al. , “Deep learning approaches to grasp synthesis: A review,” IEEE Transactions on Robotics , vol. 39, no. 5, pp. 3994–4015, 2023. [4] Z. Li, P. Qu, Y. Jia, S. Zhou, H. Ge, J. Cao, J. Zhou, G. Zhou, and J. Ma, “ManiVID-3D: Generalizable view-invariant reinforcement learning for robotic manipulation via disentangled 3D representations,” 
+
+IEEE Robotics and Automation Letters , 2026. [5] J. Luo, C. Xu, J. Wu, and S. Levine, “Precise and dexterous robotic manipulation via human-in-the-loop reinforcement learning,” Science Robotics , vol. 10, no. 105, p. eads5033, 2025. [6] P. Qu, Z. Li, Y. Jia, Z. Liu, L. Zhu, H. Li, J. Zhou, and J. Ma, “OmniDP: Beyond-fov large-workspace humanoid manipulation with omnidirectional 3d perception,” arXiv preprint arXiv:2603.05355 ,2026. [7] J. Yu, H. Liu, Q. Yu, J. Ren, C. Hao, H. Ding, G. Huang, G. Huang, Y. Song, P. Cai, et al. , “ForceVLA: Enhancing VLA models with a force-aware moe for contact-rich manipulation,” Advances in Neural Information Processing Systems , vol. 38, pp. 93409–93439, 2026. [8] T. Ohkawa, J. Arima, Y. Noguchi, M. Tateno, M. Sugiura, T. Okubo, K. Ikeuchi, Y. Shin, H. Nishizawa, N. Kanazawa, et al. , “YUBI: Yield-ing universal bidigital interface for bimanual dexterous manipulation at scale,” arXiv preprint arXiv:2606.10244 , 2026. [9] Y. Ye, Y. Fu, Y. Lv, B. Hou, J. Cen, L. Kong, D. Zheng, T. Chen, J. Liu, Z. Cao, et al. , “Data pyramid for embodied manipulation,” 
+
+arXiv preprint arXiv:2607.24744 , 2026. [10] P. Wu, Y. Shentu, Z. Yi, X. Lin, and P. Abbeel, “GELLO: A general, low-cost, and intuitive teleoperation framework for robot manipu-lators,” in 2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , pp. 12156–12163, IEEE, 2024. [11] J. Dong, H. Luo, Z. Xu, S. Bian, H. Zhang, S. Mao, J. Guo, Y. Xu, W. Chen, Q. Feng, et al. , “HyperSim: A holistic sim-to-real framework for robust robotic manipulation,” arXiv preprint arXiv:2605.26638 ,2026. [12] J. Zhang, K. Hu, Y. Huang, Y. Ju, Z. Xue, and H. Xu, “AffordGen: Generating diverse demonstrations for generalizable object manipula-tion with affordance correspondence,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pp. 15966– 15975, 2026. [13] C. Chi, Z. Xu, C. Pan, E. Cousineau, B. Burchfiel, S. Feng, R. Tedrake, and S. Song, “Universal manipulation interface: In-the-wild robot teaching without in-the-wild robots,” arXiv preprint arXiv:2402.10329 ,2024. [14] Z. Feng, Q. Li, H. Liang, R. Yang, Y. Shen, Z. Du, Z. Zhang, Y. Deng, L. Zhao, H. Zhao, et al. , “From human videos to robot manipulation: A survey on scalable vision-language-action learning with human-centric data,” arXiv preprint arXiv:2606.00054 , 2026. [15] S. Mirchandani, M. Tang, J. Duan, J. I. Hamid, M. Cho, and D. Sadigh, “RoboCade: Gamifying robot data collection,” arXiv preprint arXiv:2512.21235 , 2025. [16] S. Mirchandani, D. D. Yuan, K. Burns, M. S. Islam, T. Z. Zhao, C. Finn, and D. Sadigh, “Robocrowd: Scaling robot data collection through crowdsourcing,” in 2025 IEEE International Conference on Robotics and Automation (ICRA) , pp. 1392–1399, IEEE, 2025. [17] D. Damen, H. Doughty, G. M. Farinella, A. Furnari, E. Kazakos, J. Ma, D. Moltisanti, J. Munro, T. Perrett, W. Price, et al. , “Rescal-ing egocentric vision: Collection, pipeline and challenges for EPIC-KITCHENS-100,” International Journal of Computer Vision , vol. 130, no. 1, pp. 33–55, 2022. [18] K. Grauman, A. Westbury, E. Byrne, Z. Chavis, A. Furnari, R. Girdhar, J. Hamburger, H. Jiang, M. Liu, X. Liu, et al. , “Ego4D: Around the world in 3,000 hours of egocentric video,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,pp. 18995–19012, 2022. [19] A. Khazatsky, K. Pertsch, S. Nair, A. Balakrishna, S. Dasari, S. Karam-cheti, S. Nasiriany, M. K. Srirama, L. Y. Chen, K. Ellis, et al. ,“DROID: A large-scale in-the-wild robot manipulation dataset,” arXiv preprint arXiv:2403.12945 , 2024. [20] E. Todorov, T. Erez, and Y. Tassa, “MuJoCo: A physics engine for model-based control,” in 2012 IEEE/RSJ International Conference on Intelligent Robots and Systems , pp. 5026–5033, 2012. [21] S. Gao, M. Pagnucco, T. Bednarz, and Y. Song, “NVIDIA Isaac Sim: Enabling scalable, gpu-accelerated simulation for robotics,” arXiv preprint arXiv:2606.03551 , 2026. [22] S. P. Bamford, R. C. Nichol, I. K. Baldry, K. Land, C. J. Lintott, K. Schawinski, A. Slosar, A. S. Szalay, D. Thomas, M. Torki, 
+
+et al. , “Galaxy Zoo: the dependence of morphology and colour on environment,” Monthly Notices of the Royal Astronomical Society ,vol. 393, no. 4, pp. 1324–1352, 2009. [23] K. Shingjergji, D. Iren, F. B¨ ottger, C. Urlings, and R. Klemke, “Inter-pretable explainability in facial emotion recognition and gamification for data collection,” in 2022 10th International Conference on Affective Computing and Intelligent Interaction (ACII) , pp. 1–8, IEEE, 2022. [24] Z. Luo, Y. Yuan, T. Wang, C. Li, S. Chen, F. Casta˜ neda, Z.-A. Cao, J. Li, D. Minor, Q. Ben, et al. , “SONIC: Supersizing motion tracking for natural humanoid whole-body control,” Science Robotics , vol. 11, no. 117, 2026. [25] Z. Chen, S. Chen, E. Arlaud, I. Laptev, and C. Schmid, “ViViDex: Learning vision-based dexterous manipulation from human videos,” in 2025 IEEE International Conference on Robotics and Automation (ICRA) , pp. 3336–3343, IEEE, 2025. [26] W. Dai, K. Lan, J. Zhou, B. Zhao, X. Su, J. Tong, W. Guan, and S. Yang, “ConLA: Contrastive latent action learning from human videos for robotic manipulation,” arXiv preprint arXiv:2602.00557 ,2026. [27] X. Jia, D. Blessing, X. Jiang, M. Reuss, A. Donat, R. Lioutikov, and G. Neumann, “Towards diverse behaviors: A benchmark for imitation learning with human demonstrations,” in International Conference on Learning Representations , vol. 2024, pp. 41666–41686, 2024. [28] M. Manninen, E. Magrum, S. Campbell, and S. Belton, “The effect of game-based approaches on decision-making, knowledge, and motor skill: A systematic review and a multilevel meta-analysis,” European Physical Education Review , vol. 31, no. 1, pp. 18–32, 2025. [29] A. Khakpour and R. Colomo-Palacios, “Convergence of gamification and machine learning: A systematic literature review: A. khakpour, rc palacios,” Technology, Knowledge and Learning , vol. 26, no. 3, pp. 597–636, 2021. [30] E. Siamtanidou, L. Vrysis, N. Vryzas, and C. A. Dimoulas, “Gamified engagement for data crowdsourcing and ai literacy: an investigation in affective communication through speech emotion recognition,” 
+
+Societies , vol. 15, no. 3, p. 54, 2025. [31] R. Xu, J. Zhang, M. Guo, Y. Wen, H. Yang, M. Lin, J. Huang, Z. Li, K. Zhang, L. Wang, et al. , “A0: An affordance-aware hierarchical model for general robotic manipulation,” in 2025 IEEE/CVF Inter-national Conference on Computer Vision (ICCV) , pp. 13491–13501, IEEE, 2025. [32] C. Wang, L. Fan, J. Sun, R. Zhang, L. Fei-Fei, D. Xu, Y. Zhu, and A. Anandkumar, “MimicPlay: Long-horizon imitation learning by watching human play,” arXiv preprint arXiv:2302.12422 , 2023. [33] M. Shukor, D. Aubakirova, F. Capuano, P. Kooijmans, S. Palma, A. Zouitine, M. Aractingi, C. Pascal, M. Russi, A. Marafioti, et al. ,“SmolVLA: A vision-language-action model for affordable and effi-cient robotics,” arXiv preprint arXiv:2506.01844 , 2025.
