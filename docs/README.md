@@ -6,74 +6,63 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-19
-- 运行时间：2026-09-19 21:23:27 UTC
+- 最新运行日期：2026-09-20
+- 运行时间：2026-09-20 21:46:58 UTC
 - 运行状态：成功
-- 本次总论文数：17
+- 本次总论文数：13
 - 精读区：6
-- 速读区：11
+- 速读区：7
 
 ### 今日简报（AI）
-- 今日共生成 17 篇推荐（精读 6 篇，速读 11 篇）
-- 精读：《A Comprehensive Review of Generative Physical Artificial Intelligence》（9.0/10）, 《WeaveRL: Weaving Reconstruction into Scene-Aware Fabrics for Perceptive Reinforcement Learning》（9.0/10）
-- 速读：《ActiveScale: Scaling Active Perception for Robots across Model, Data, and Hardware》（8.0/10）, 《TRACER: Adaptive Multi-Robot Social Navigation via Joint Human-Response Prediction and Interaction-Aware Replanning》（8.0/10）, 《In-Context Robot Learning with VLM Agents》（8.0/10）
-- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202609/19/README](/202609/19/README)
+今天共筛出 13 篇（精读 6、速读 7），主线集中在具身智能与机器人学习，其中两篇 8.0 分领跑。
+
+最值得看的是《A Comprehensive Review of Generative Physical Artificial Intelligence》这篇综述，可一次摸清生成式物理 AI 的全景；若关心智能体落地，则《DeliveryGym》用自适应课程做长时程具身规划训练环境，同分值得并列精读。
+
+普通读者建议先从综述建立概念地图，再顺着 DeliveryGym 与 VABench 这类"环境+评测"配套成果，判断哪些能力已可复现验证。
+- 详情：[/202609/20/README](/202609/20/README)
 
 ### 精读区论文标签
-1. [A Comprehensive Review of Generative Physical Artificial Intelligence](/202609/19/2609.18111v1-a-comprehensive-review-of-generative-physical-artificial-intelligence)  
-   标签：评分：9.0/10、query:ad
-   evidence：综述生成式物理人工智能，涵盖机器人基础模型、VLA与具身智能体系统
-2. [WeaveRL: Weaving Reconstruction into Scene-Aware Fabrics for Perceptive Reinforcement Learning](/202609/19/2609.18685v1-weaverl-weaving-reconstruction-into-scene-aware-fabrics-for-perceptive-reinforcement-learning)  
-   标签：评分：9.0/10、query:ad
-   evidence：融合在线三维感知的感知式强化学习用于机器人操作
-3. [Learning Holistic Whole-Body Loco-Manipulation with a Bipedal Mobile Manipulator](/202609/19/2609.18930v1-learning-holistic-whole-body-loco-manipulation-with-a-bipedal-mobile-manipulator)  
-   标签：评分：9.0/10、query:ad
-   evidence：强化学习训练的双足全身控制器协调移动与操作
-4. [SkipVLA: Skipping VLA Steps with Classical Planning for Fast Robot Manipulation](/202609/19/2609.20648v1-skipvla-skipping-vla-steps-with-classical-planning-for-fast-robot-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：结合预训练VLA与经典运动规划器的快速机器人操作
-5. [DexTouch-WM: Learning Action-Conditioned Tactile World Models from Human Touch for Dexterous Robot Manipulation](/202609/19/2609.20649v1-dextouch-wm-learning-action-conditioned-tactile-world-models-from-human-touch-for-dexterous-robot-manipulation)  
-   标签：评分：9.0/10、query:ad
-   evidence：从人类触觉学习动作条件触觉世界模型用于灵巧操作
-6. [PASSAGE: Scaling Scene-Aligned Motion Learning for Perceptive Humanoid Traversal in Cluttered Environments](/202609/19/2609.18732v1-passage-scaling-scene-aligned-motion-learning-for-perceptive-humanoid-traversal-in-cluttered-environments)  
+1. [A Comprehensive Review of Generative Physical Artificial Intelligence](/202609/20/2609.18111v1-a-comprehensive-review-of-generative-physical-artificial-intelligence)  
    标签：评分：8.0/10、query:ad
-   evidence：感知条件化的类人机器人运动与复杂环境穿越
+   evidence：综述在真实世界感知推理行动的生成式物理智能体
+2. [DeliveryGym: An RL Environment for Long-Horizon Embodied Agent Planning with Adaptive Curriculum](/202609/20/2609.19801v1-deliverygym-an-rl-environment-for-long-horizon-embodied-agent-planning-with-adaptive-curriculum)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向长时程具身智能体规划的三维强化学习环境
+3. [Navi-Agent: Unlocalized Monocular Navigation Agent](/202609/20/2609.20388v1-navi-agent-unlocalized-monocular-navigation-agent)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向具身导航的零样本单目视觉语言导航智能体
+4. [Accelerating Visual Policy Learning with Sampling-Based Model Predictive Control](/202609/20/2609.20575v1-accelerating-visual-policy-learning-with-sampling-based-model-predictive-control)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向运动与操作的视觉策略学习，结合采样模型预测控制
+5. [HIL-UMI: Bringing Human-in-the-Loop Post-Training of Vision-Language-Action Models to Universal Manipulation Interface](/202609/20/2609.20659v1-hil-umi-bringing-human-in-the-loop-post-training-of-vision-language-action-models-to-universal-manipulation-interface)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向操作任务的人在环视觉-语言-动作模型后训练
+6. [StageGuard: Learning Stage Transitions for Long-Horizon Robot Tasks via Agentic Distillation](/202609/20/2609.20791v1-stageguard-learning-stage-transitions-for-long-horizon-robot-tasks-via-agentic-distillation)  
+   标签：评分：8.0/10、query:ad
+   evidence：长时程机器人任务阶段切换的智能体蒸馏
 
 ### 速读区论文标签
-1. [ActiveScale: Scaling Active Perception for Robots across Model, Data, and Hardware](/202609/19/2609.18514v1-activescale-scaling-active-perception-for-robots-across-model-data-and-hardware)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向机器人操作的主动感知与视觉-语言-动作模型
-2. [TRACER: Adaptive Multi-Robot Social Navigation via Joint Human-Response Prediction and Interaction-Aware Replanning](/202609/19/2609.18776v1-tracer-adaptive-multi-robot-social-navigation-via-joint-human-response-prediction-and-interaction-aware-replanning)  
-   标签：评分：8.0/10、query:ad
-   evidence：联合人类响应预测与交互感知重规划的多机器人社会导航
-3. [In-Context Robot Learning with VLM Agents](/202609/19/2609.19138v1-in-context-robot-learning-with-vlm-agents)  
-   标签：评分：8.0/10、query:ad
-   evidence：具身智能中用视觉语言模型智能体进行上下文机器人学习
-4. [WorldContact: A Contact-Centric World Model for Scalable Robot Learning](/202609/19/2609.19600v1-worldcontact-a-contact-centric-world-model-for-scalable-robot-learning)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向可变形物体机器人操作的接触中心世界模型与数据生成
-5. [EmbodiedMind: Adaptive Data Curation and Prefix-Tree Reinforcement Learning for Efficient Embodied Intelligence](/202609/19/2609.19659v1-embodiedmind-adaptive-data-curation-and-prefix-tree-reinforcement-learning-for-efficient-embodied-intelligence)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向具身基础模型与具身智能的高效训练范式
-6. [Vehicle Trajectory Prediction via Neural Fusion of Multiple EKF-Based Trajectory Candidates](/202609/19/2609.19813v1-vehicle-trajectory-prediction-via-neural-fusion-of-multiple-ekf-based-trajectory-candidates)  
-   标签：评分：8.0/10、query:ad
-   evidence：自动驾驶车辆轨迹预测融合神经与EKF候选
-7. [MAGMA-GEN: Validated Recovery Supervision from Ambiguous Failures via Counterfactual Re-Execution](/202609/19/2609.20056v1-magma-gen-validated-recovery-supervision-from-ambiguous-failures-via-counterfactual-re-execution)  
-   标签：评分：8.0/10、query:ad
-   evidence：长时程机器人操作的恢复学习
-8. [Bridging Learned Visual Perception and Symbolic Belief-Space Planning](/202609/19/2609.16884v1-bridging-learned-visual-perception-and-symbolic-belief-space-planning)  
+1. [UMI-Bridge: Action-Anchored Latent Alignment across Human and Robot Manipulation Data](/202609/20/2609.18232v1-umi-bridge-action-anchored-latent-alignment-across-human-and-robot-manipulation-data)  
    标签：评分：7.0/10、query:ad
-   evidence：面向部分可观测具身环境的概率化符号接地与信念空间规划
-9. [StrucPhysVideo: Learning Physical Dynamics from Structured Captions and Robot Actions](/202609/19/2609.18430v1-strucphysvideo-learning-physical-dynamics-from-structured-captions-and-robot-actions)  
+   evidence：对齐人类与机器人操作数据以迁移表征
+2. [SemSafe-3DGS: Semantic Risk-Aware Active Navigation in Uncertain 3D Gaussian Splatting Maps](/202609/20/2609.19330v1-semsafe-3dgs-semantic-risk-aware-active-navigation-in-uncertain-3d-gaussian-splatting-maps)  
    标签：评分：7.0/10、query:ad
-   evidence：从结构化描述与机器人动作学习物理动力学的具身视频世界模型
-10. [From Gameplay to Policy: Towards Scalable Robot Data Collection via Gamified Robot-Free Interaction](/202609/19/2609.18650v1-from-gameplay-to-policy-towards-scalable-robot-data-collection-via-gamified-robot-free-interaction)  
+   evidence：三维高斯地图中的语义风险感知安全主动导航
+3. [VABench: Measuring Embodied Spatial Intelligence through Visual Demonstrations, Active Perception, and Metric Control](/202609/20/2609.19554v1-vabench-measuring-embodied-spatial-intelligence-through-visual-demonstrations-active-perception-and-metric-control)  
    标签：评分：7.0/10、query:ad
-   evidence：VR游戏化无机器人数据采集以学习可泛化操作策略
-11. [rMuscle: Robotic Muscle Memory for Efficient Vision-Language-Action Model Inference](/202609/19/2609.19104v1-rmuscle-robotic-muscle-memory-for-efficient-vision-language-action-model-inference)  
+   evidence：含主动感知与度量控制的具身空间智能基准
+4. [VAST: V2X/Dynamic Map-Aware Autonomous Driving Systems Validation Toolchain](/202609/20/2609.19681v1-vast-v2xdynamic-map-aware-autonomous-driving-systems-validation-toolchain)  
    标签：评分：7.0/10、query:ad
-   evidence：面向具身AI工厂机器人的高效VLA推理
+   evidence：面向自动驾驶系统的V2X动态地图验证工具链
+5. [Time-Efficient Iterative Learning Planning for Safety-Critical Dynamic Obstacle Avoidance](/202609/20/2609.20435v1-time-efficient-iterative-learning-planning-for-safety-critical-dynamic-obstacle-avoidance)  
+   标签：评分：7.0/10、query:ad
+   evidence：移动机器人的高效规划与安全避障
+6. [Coding Agents with an Obstacle-Aware Harness for Safe Robot Manipulation](/202609/20/2609.20822v1-coding-agents-with-an-obstacle-aware-harness-for-safe-robot-manipulation)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向安全机器人操作避障的编程智能体
+7. [Safe Meta-Reinforcement Learning via Information Space Reachability](/202609/20/2609.15915v1-safe-meta-reinforcement-learning-via-information-space-reachability)  
+   标签：评分：6.0/10、query:ad
+   evidence：面向真实机器人任务的安全元强化学习
 
 
 <div class="dpr-home-promo-card">
