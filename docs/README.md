@@ -6,63 +6,65 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-20
-- 运行时间：2026-09-20 21:46:58 UTC
+- 最新运行日期：2026-09-21
+- 运行时间：2026-09-21 23:01:32 UTC
 - 运行状态：成功
-- 本次总论文数：13
+- 本次总论文数：14
 - 精读区：6
-- 速读区：7
+- 速读区：8
 
 ### 今日简报（AI）
-今天共筛出 13 篇（精读 6、速读 7），主线集中在具身智能与机器人学习，其中两篇 8.0 分领跑。
-
-最值得看的是《A Comprehensive Review of Generative Physical Artificial Intelligence》这篇综述，可一次摸清生成式物理 AI 的全景；若关心智能体落地，则《DeliveryGym》用自适应课程做长时程具身规划训练环境，同分值得并列精读。
-
-普通读者建议先从综述建立概念地图，再顺着 DeliveryGym 与 VABench 这类"环境+评测"配套成果，判断哪些能力已可复现验证。
-- 详情：[/202609/20/README](/202609/20/README)
+- 今日共生成 14 篇推荐（精读 6 篇，速读 8 篇）
+- 精读：《Stabilizing Trajectory Outputs in End-to-End Autonomous Driving via SC-IMM Based Teacher Signals》（9.0/10）, 《From Pretraining to Proficiency: Real-World Subtask RL for Long-Horizon Manipulation with Minimal Human Intervention》（9.0/10）
+- 速读：《AtomEgo: Exploring Ego-Robot Integration for Embodied Foundation Model Pretraining》（8.0/10）, 《Skel-WAM: A Hand-Skeleton-Conditioned World Action Model for Human-to-Robot Manipulation Transfer》（8.0/10）, 《SABER: Learning Attention-based Semantic Affordance for Legged Locomotion》（8.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202609/21/README](/202609/21/README)
 
 ### 精读区论文标签
-1. [A Comprehensive Review of Generative Physical Artificial Intelligence](/202609/20/2609.18111v1-a-comprehensive-review-of-generative-physical-artificial-intelligence)  
+1. [Stabilizing Trajectory Outputs in End-to-End Autonomous Driving via SC-IMM Based Teacher Signals](/202609/21/2609.21404v1-stabilizing-trajectory-outputs-in-end-to-end-autonomous-driving-via-sc-imm-based-teacher-signals)  
+   标签：评分：9.0/10、query:ad
+   evidence：端到端自动驾驶轨迹输出稳定
+2. [From Pretraining to Proficiency: Real-World Subtask RL for Long-Horizon Manipulation with Minimal Human Intervention](/202609/21/2609.21788v1-from-pretraining-to-proficiency-real-world-subtask-rl-for-long-horizon-manipulation-with-minimal-human-intervention)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向长程机器人操作的真实世界子任务强化学习
+3. [PRIME: Perception Feedback with Situational Memory Embeddings in VLA Models](/202609/21/2609.22040v1-prime-perception-feedback-with-situational-memory-embeddings-in-vla-models)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向自动驾驶感知-推理-规划的VLA感知反馈
+4. [Track, Articulate, Act: Generating Articulation from Casual Human Videos](/202609/21/2609.19119v1-track-articulate-act-generating-articulation-from-casual-human-videos)  
    标签：评分：8.0/10、query:ad
-   evidence：综述在真实世界感知推理行动的生成式物理智能体
-2. [DeliveryGym: An RL Environment for Long-Horizon Embodied Agent Planning with Adaptive Curriculum](/202609/20/2609.19801v1-deliverygym-an-rl-environment-for-long-horizon-embodied-agent-planning-with-adaptive-curriculum)  
+   evidence：从人类视频生成铰接物体用于机器人操作
+5. [Shake to Learn: Dynamic Interrogation of Hidden Object Physics for Robotic Manipulation with Physical Reservoir Computing](/202609/21/2609.20970v1-shake-to-learn-dynamic-interrogation-of-hidden-object-physics-for-robotic-manipulation-with-physical-reservoir-computing)  
    标签：评分：8.0/10、query:ad
-   evidence：面向长时程具身智能体规划的三维强化学习环境
-3. [Navi-Agent: Unlocalized Monocular Navigation Agent](/202609/20/2609.20388v1-navi-agent-unlocalized-monocular-navigation-agent)  
+   evidence：以交互动态响应作为机器人操作感知新模态
+6. [ME-Dex 1.0: Bringing Heterogeneous Tactile Sensing into World Action Modeling](/202609/21/2609.21449v1-me-dex-10-bringing-heterogeneous-tactile-sensing-into-world-action-modeling)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身导航的零样本单目视觉语言导航智能体
-4. [Accelerating Visual Policy Learning with Sampling-Based Model Predictive Control](/202609/20/2609.20575v1-accelerating-visual-policy-learning-with-sampling-based-model-predictive-control)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向运动与操作的视觉策略学习，结合采样模型预测控制
-5. [HIL-UMI: Bringing Human-in-the-Loop Post-Training of Vision-Language-Action Models to Universal Manipulation Interface](/202609/20/2609.20659v1-hil-umi-bringing-human-in-the-loop-post-training-of-vision-language-action-models-to-universal-manipulation-interface)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向操作任务的人在环视觉-语言-动作模型后训练
-6. [StageGuard: Learning Stage Transitions for Long-Horizon Robot Tasks via Agentic Distillation](/202609/20/2609.20791v1-stageguard-learning-stage-transitions-for-long-horizon-robot-tasks-via-agentic-distillation)  
-   标签：评分：8.0/10、query:ad
-   evidence：长时程机器人任务阶段切换的智能体蒸馏
+   evidence：面向灵巧机器人的视觉触觉与动作联合世界建模
 
 ### 速读区论文标签
-1. [UMI-Bridge: Action-Anchored Latent Alignment across Human and Robot Manipulation Data](/202609/20/2609.18232v1-umi-bridge-action-anchored-latent-alignment-across-human-and-robot-manipulation-data)  
+1. [AtomEgo: Exploring Ego-Robot Integration for Embodied Foundation Model Pretraining](/202609/21/2609.21461v1-atomego-exploring-ego-robot-integration-for-embodied-foundation-model-pretraining)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向具身基础模型预训练的第一人称与机器人数据融合
+2. [Skel-WAM: A Hand-Skeleton-Conditioned World Action Model for Human-to-Robot Manipulation Transfer](/202609/21/2609.21514v1-skel-wam-a-hand-skeleton-conditioned-world-action-model-for-human-to-robot-manipulation-transfer)  
+   标签：评分：8.0/10、query:ad
+   evidence：通过骨架条件世界动作模型实现人到机器人的操作迁移
+3. [SABER: Learning Attention-based Semantic Affordance for Legged Locomotion](/202609/21/2609.21572v1-saber-learning-attention-based-semantic-affordance-for-legged-locomotion)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向感知式足式运动的强化学习策略
+4. [Visual Proactivity: Enhancing Human-Robot Collaboration Through Intent Communication](/202609/21/2609.21729v1-visual-proactivity-enhancing-human-robot-collaboration-through-intent-communication)  
+   标签：评分：8.0/10、query:ad
+   evidence：机器人通过视觉反馈传达意图以增强人机协作
+5. [SkelWAM: A Skeleton-Guided World-Action Model for Zero-Shot Cross-Embodiment Manipulation](/202609/21/2609.21983v1-skelwam-a-skeleton-guided-world-action-model-for-zero-shot-cross-embodiment-manipulation)  
+   标签：评分：8.0/10、query:ad
+   evidence：基于共享几何骨架表征的跨本体操作
+6. [SeeQ: Training Generalist Value Functions for Long-Horizon Robotic Manipulation](/202609/21/2609.22085v1-seeq-training-generalist-value-functions-for-long-horizon-robotic-manipulation)  
+   标签：评分：8.0/10、query:ad
+   evidence：通过子任务Q学习为长程机器人操作训练通用价值函数
+7. [Safe Real-Time Policy Steering via Noise-Space Trajectory Optimization for One-Step Generative Policies](/202609/21/2609.21220v1-safe-real-time-policy-steering-via-noise-space-trajectory-optimization-for-one-step-generative-policies)  
    标签：评分：7.0/10、query:ad
-   evidence：对齐人类与机器人操作数据以迁移表征
-2. [SemSafe-3DGS: Semantic Risk-Aware Active Navigation in Uncertain 3D Gaussian Splatting Maps](/202609/20/2609.19330v1-semsafe-3dgs-semantic-risk-aware-active-navigation-in-uncertain-3d-gaussian-splatting-maps)  
-   标签：评分：7.0/10、query:ad
-   evidence：三维高斯地图中的语义风险感知安全主动导航
-3. [VABench: Measuring Embodied Spatial Intelligence through Visual Demonstrations, Active Perception, and Metric Control](/202609/20/2609.19554v1-vabench-measuring-embodied-spatial-intelligence-through-visual-demonstrations-active-perception-and-metric-control)  
-   标签：评分：7.0/10、query:ad
-   evidence：含主动感知与度量控制的具身空间智能基准
-4. [VAST: V2X/Dynamic Map-Aware Autonomous Driving Systems Validation Toolchain](/202609/20/2609.19681v1-vast-v2xdynamic-map-aware-autonomous-driving-systems-validation-toolchain)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向自动驾驶系统的V2X动态地图验证工具链
-5. [Time-Efficient Iterative Learning Planning for Safety-Critical Dynamic Obstacle Avoidance](/202609/20/2609.20435v1-time-efficient-iterative-learning-planning-for-safety-critical-dynamic-obstacle-avoidance)  
-   标签：评分：7.0/10、query:ad
-   evidence：移动机器人的高效规划与安全避障
-6. [Coding Agents with an Obstacle-Aware Harness for Safe Robot Manipulation](/202609/20/2609.20822v1-coding-agents-with-an-obstacle-aware-harness-for-safe-robot-manipulation)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向安全机器人操作避障的编程智能体
-7. [Safe Meta-Reinforcement Learning via Information Space Reachability](/202609/20/2609.15915v1-safe-meta-reinforcement-learning-via-information-space-reachability)  
+   evidence：生成式机器人策略的实时安全引导
+8. [Benchmarking World Models for Continual Learning on Compositional Tasks](/202609/21/2609.22055v1-benchmarking-world-models-for-continual-learning-on-compositional-tasks)  
    标签：评分：6.0/10、query:ad
-   evidence：面向真实机器人任务的安全元强化学习
+   evidence：智能体世界模型持续学习的基准
 
 
 <div class="dpr-home-promo-card">
