@@ -6,74 +6,75 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-22
-- 运行时间：2026-09-22 21:49:49 UTC
+- 最新运行日期：2026-09-23
+- 运行时间：2026-09-23 22:08:01 UTC
 - 运行状态：成功
 - 本次总论文数：17
 - 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-- 今日共生成 17 篇推荐（精读 6 篇，速读 11 篇）
-- 精读：《Towards robust multimodal 3D object detection via visual foundation models》（9.0/10）, 《ME-Brain-1.0: Memory, Cognition and Action for Evolving Embodied Intelligence》（9.0/10）
-- 速读：《AffordanceWAM: Affordance-Aware Joint World-Action Modeling for Robot Manipulation》（8.0/10）, 《VLPSA: Vision-Language-Poisson-Safe Actions for Full-Body Safety of Learned Policies》（8.0/10）, 《Latent Policy Steering: An Efficient and Flexible Framework for Cross-Embodiment Transfer》（8.0/10）
-- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202609/22/README](/202609/22/README)
+今日扫完17篇论文，精读6篇、速读11篇，最亮眼的是两篇9分工作：DriveMCP智能驾驶辅助框架与AquaCap免训练水下具身智能体。
+
+精读方向集中在智能驾驶与水下具身智能，速读则覆盖可移动障碍导航、双臂操作和自动驾驶横向控制等具体落地问题。
+
+普通读者可先读两篇9分精读建立主线，再按兴趣从速读里挑导航或控制类论文跟进。
+- 详情：[/202609/23/README](/202609/23/README)
 
 ### 精读区论文标签
-1. [Towards robust multimodal 3D object detection via visual foundation models](/202609/22/2609.23541v1-towards-robust-multimodal-3d-object-detection-via-visual-foundation-models)  
+1. [DriveMCP: An Agentic AI framework for Advanced Driver Assistance System](/202609/23/2609.17247v1-drivemcp-an-agentic-ai-framework-for-advanced-driver-assistance-system)  
    标签：评分：9.0/10、query:ad
-   evidence：自动驾驶LiDAR-相机多模态3D检测
-2. [ME-Brain-1.0: Memory, Cognition and Action for Evolving Embodied Intelligence](/202609/22/2609.24271v1-me-brain-10-memory-cognition-and-action-for-evolving-embodied-intelligence)  
+   evidence：整合感知、推理与安全仲裁的智能体化驾驶辅助框架
+2. [AquaCap: A Training-Free Underwater Embodied Agent with Code-as-Policy](/202609/23/2609.23133v1-aquacap-a-training-free-underwater-embodied-agent-with-code-as-policy)  
    标签：评分：9.0/10、query:ad
-   evidence：物理交互中自演进的具身系统
-3. [ME-VLM:A Unified VLM for Embodied Cognition and Agent Coordination](/202609/22/2609.24526v1-me-vlma-unified-vlm-for-embodied-cognition-and-agent-coordination)  
+   evidence：面向自主水下导航与操作的具身智能体
+3. [MachEmbodied-U0: Unified Understanding and Generation Model for Embodied Intelligence](/202609/23/2609.25627v1-machembodied-u0-unified-understanding-and-generation-model-for-embodied-intelligence)  
    标签：评分：9.0/10、query:ad
-   evidence：面向物理环境具身认知与智能体协同的统一视觉语言模型
-4. [Learning tactile perception from high-bandwidth single-point sensing](/202609/22/2609.24621v1-learning-tactile-perception-from-high-bandwidth-single-point-sensing)  
+   evidence：面向具身智能与机器人控制的统一理解生成基础模型
+4. [MatchFusion: Explicit-Implicit Instance Matching for Spatio-Temporal Multimodal Autonomous Driving](/202609/23/2609.25860v1-matchfusion-explicit-implicit-instance-matching-for-spatio-temporal-multimodal-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：用于机器人操作的触觉感知学习
-5. [Relationally Grounded Latent World Models for Autonomous Driving](/202609/22/2609.24626v1-relationally-grounded-latent-world-models-for-autonomous-driving)  
+   evidence：面向自动驾驶的LiDAR-相机时空实例匹配与融合
+5. [ForeDrive: Foresight-Guided End-to-End Autonomous Driving with a Planning-Relevant Latent World Model](/202609/23/2609.26299v1-foredrive-foresight-guided-end-to-end-autonomous-driving-with-a-planning-relevant-latent-world-model)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶、以场景图语义监督的潜在世界模型
-6. [DEXTERA: From a Single Image to Deployable Dexterous Manipulation via Real-to-Sim-to-Real](/202609/22/2609.21045v1-dextera-from-a-single-image-to-deployable-dexterous-manipulation-via-real-to-sim-to-real)  
+   evidence：结合规划相关潜在世界模型的端到端自动驾驶
+6. [BEACON: Belief-Enabled Adaptive CONtrol for Imitation Learning under Uncertainty](/202609/23/2609.22730v1-beacon-belief-enabled-adaptive-control-for-imitation-learning-under-uncertainty)  
    标签：评分：8.0/10、query:ad
-   evidence：面向可部署灵巧操作策略的真实-仿真-真实框架
+   evidence：机器人操作模仿学习中的自适应控制
 
 ### 速读区论文标签
-1. [AffordanceWAM: Affordance-Aware Joint World-Action Modeling for Robot Manipulation](/202609/22/2609.22332v1-affordancewam-affordance-aware-joint-world-action-modeling-for-robot-manipulation)  
+1. [Manipulation Feasible Navigation Among Movable Obstacles with Discrete Contact Pushing](/202609/23/2609.23312v1-manipulation-feasible-navigation-among-movable-obstacles-with-discrete-contact-pushing)  
    标签：评分：8.0/10、query:ad
-   evidence：面向可泛化机器人操作的可供性感知世界-动作模型
-2. [VLPSA: Vision-Language-Poisson-Safe Actions for Full-Body Safety of Learned Policies](/202609/22/2609.22462v1-vlpsa-vision-language-poisson-safe-actions-for-full-body-safety-of-learned-policies)  
+   evidence：面向移动机械臂的可移动障碍物操作可行导航
+2. [BiRoAD: Learning Shared and Role-Adaptive Representations for Bimanual Manipulation](/202609/23/2609.23445v1-biroad-learning-shared-and-role-adaptive-representations-for-bimanual-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向学习策略的全身安全控制屏障滤波
-3. [Latent Policy Steering: An Efficient and Flexible Framework for Cross-Embodiment Transfer](/202609/22/2609.22521v1-latent-policy-steering-an-efficient-and-flexible-framework-for-cross-embodiment-transfer)  
+   evidence：双臂机器人操作的角色自适应策略
+3. [Stability-Aware Imitation Learning from Model Predictive Control for Autonomous Vehicle Lateral Control: Exact Q-Loss and a Novel Training Procedure](/202609/23/2609.23506v1-stability-aware-imitation-learning-from-model-predictive-control-for-autonomous-vehicle-lateral-control-exact-q-loss-and-a-novel-training-procedure)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人视觉运动策略的跨本体迁移
-4. [Physical-Touch Observability from Wrist Wrench in Granular Scooping](/202609/22/2609.22852v1-physical-touch-observability-from-wrist-wrench-in-granular-scooping)  
+   evidence：模仿学习逼近MPC用于自动驾驶车辆横向控制
+4. [AR-WAM: A Visual-Conditioned Agent-Ready World Action Model for Robotic Manipulation](/202609/23/2609.23578v1-ar-wam-a-visual-conditioned-agent-ready-world-action-model-for-robotic-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：机器人铲装中的腕部力/力矩触觉可观测性
-5. [Prioritized Rollouts for Efficient World Model-based Vision-Language-Action Policy Optimization](/202609/22/2609.22879v1-prioritized-rollouts-for-efficient-world-model-based-vision-language-action-policy-optimization)  
+   evidence：面向智能体驱动机器人操作的视觉条件化世界动作模型
+5. [MIRA: Real-Time Full-Duplex Human-Robot Interaction for Embodied Companions](/202609/23/2609.24547v2-mira-real-time-full-duplex-human-robot-interaction-for-embodied-companions)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身VLA策略的强化学习优化
-6. ["Dear LLaVA, Please Drive": A Depth-Aware Vision-Language Agent for Closed-Loop Robotic Control](/202609/22/2609.22925v1-dear-llava-please-drive-a-depth-aware-vision-language-agent-for-closed-loop-robotic-control)  
+   evidence：面向具身伙伴的实时全双工人机交互
+6. [Smoothness as a Constraint for Stable Humanoid Locomotion](/202609/23/2609.24552v1-smoothness-as-a-constraint-for-stable-humanoid-locomotion)  
    标签：评分：8.0/10、query:ad
-   evidence：基于深度观测的闭环自主导航视觉语言智能体
-7. [Latent Telepathy: Multi-Robot Communication with Self-Supervised Perceptual Latents](/202609/22/2609.23269v1-latent-telepathy-multi-robot-communication-with-self-supervised-perceptual-latents)  
+   evidence：用约束强化学习解耦全身平滑性以实现稳定人形运动
+7. [ARSTAG: An Agentic Real2Sim2Real System for Task-Specific Robot Data Generation](/202609/23/2609.24563v1-arstag-an-agentic-real2sim2real-system-for-task-specific-robot-data-generation)  
+   标签：评分：8.0/10、query:ad
+   evidence：为机器人操作任务生成专用数据的智能体化Real2Sim2Real系统
+8. [Transferring the Intelligence of VLMs to Robotic Control](/202609/23/2609.22966v1-transferring-the-intelligence-of-vlms-to-robotic-control)  
    标签：评分：7.0/10、query:ad
-   evidence：多机器人在部分可观测下共享感知隐变量通信
-8. [Anticipatory Robot Goalkeeping via Monotone Optimal Stopping](/202609/22/2609.23976v1-anticipatory-robot-goalkeeping-via-monotone-optimal-stopping)  
+   evidence：将视觉语言模型智能迁移至机器人闭环控制
+9. [Metric-Bench: Exploring In-context Spatial Metric Reasoning in VLMs for Indoor Scenes](/202609/23/2609.25841v1-metric-bench-exploring-in-context-spatial-metric-reasoning-in-vlms-for-indoor-scenes)  
    标签：评分：7.0/10、query:ad
-   evidence：强化学习训练四足策略并做最优停止启动时机决策
-9. [Uranus: Building the Next-Generation Simulation Infrastructure for Embodied AI](/202609/22/2609.24815v1-uranus-building-the-next-generation-simulation-infrastructure-for-embodied-ai)  
+   evidence：面向具身AI机器人操作与导航的VLM空间度量推理
+10. [Hierarchical Floorplan-Guided Vision-Language Exploration for Embodied Question Answering](/202609/23/2609.26360v1-hierarchical-floorplan-guided-vision-language-exploration-for-embodied-question-answering)  
    标签：评分：7.0/10、query:ad
-   evidence：面向具身智能机器人策略训练的仿真基础设施
-10. [PIVOT: Perception-aware Independent Viewpoint Online Optimization](/202609/22/2609.19510v1-pivot-perception-aware-independent-viewpoint-online-optimization)  
+   evidence：具身问答智能体利用视觉语言模型规划探索未知环境
+11. [Cognitive Action Reasoning for Proactive Robots from Human-Centered Multimodal Observations](/202609/23/2609.23486v1-cognitive-action-reasoning-for-proactive-robots-from-human-centered-multimodal-observations)  
    标签：评分：6.0/10、query:ad
-   evidence：面向机器人感知可见性的传感器视点在线优化
-11. [General Collaborative Intelligence: Architecting Cognition for Resilient Multi-Agent Ecosystems](/202609/22/2609.22967v1-general-collaborative-intelligence-architecting-cognition-for-resilient-multi-agent-ecosystems)  
-   标签：评分：6.0/10、query:ad
-   evidence：面向具身多智能体无人系统的协同智能
+   evidence：以人为中心多模态观测下的主动机器人决策
 
 
 <div class="dpr-home-promo-card">

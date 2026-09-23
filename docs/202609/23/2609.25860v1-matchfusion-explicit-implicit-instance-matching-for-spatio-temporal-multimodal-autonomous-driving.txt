@@ -1,0 +1,346 @@
+Title: MatchFusion: Explicit-Implicit Instance Matching for Spatio-Temporal Multimodal Autonomous Driving
+
+URL Source: https://arxiv.org/pdf/2609.25860v1
+
+Published Time: Wed, 23 Sep 2026 00:51:58 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# MatchFusion: Explicit–Implicit Instance Matching for Spatio-Temporal Multimodal Autonomous Driving 
+
+Xiaoyu Li 1,†, Jiajia Fu 1,†, Long Shi 1, Tianyu Du 1, Ruihang Li 2,Xian Wu 1, Lijun Zhao 1,∗, Yingtao Zhang 1, Lining Sun 1, and Ruifeng Li 1
+
+Abstract — Sparse instance representations provide a compact interface for spatial LiDAR–camera and temporal past–current interaction in multimodal perception and end-to-end au-tonomous driving (E2EAD). Effective interaction requires re-liable instance correspondences despite geometric discrepan-cies and heterogeneous semantic representations. Attention-based methods exploit contextual semantics but often require specialized representation alignment, increasing computational overhead. In contrast, association based on structured ob-ject states is efficient and interpretable but lacks contextual evidence to resolve ambiguous matches. To combine these complementary strengths, we propose MatchFusion, a learnable instance matching and fusion module for spatio-temporal mul-timodal autonomous driving. MatchFusion initializes pairwise affinities using geometric similarity and category consistency, then selectively refines structurally plausible associations using instance embeddings. The resulting soft matchmap guides a common residual aggregation operator for adaptive infor-mation exchange. This unified matching–fusion formulation supports spatial LiDAR–camera and temporal past–current interaction, using multi-view image-plane geometry and motion-compensated Bird’s-Eye-View (BEV) geometry as the respec-tive structural priors. Experiments on nuScenes demonstrate consistent perception gains across diverse front-end configura-tions. Compared with a prior instance-centric fusion method, the MatchFusion-equipped system achieves higher perception accuracy while reducing FLOPs by 55.3% and GPU memory usage by 39.3%, with the matching–fusion module accounting for only 3.7% of total perception latency. Integrating temporal MatchFusion into SparseDrive further improves perception within an end-to-end driving framework without additional supervision. These results establish explicit–implicit matching as an effective and efficient mechanism for spatio-temporal instance interaction. Code will be released. 
+
+I. INTRODUCTION Reliable multimodal autonomous driving benefits from integrating complementary observations across sensors [1], [2] and time [3], [4]. LiDAR provides accurate spatial geometry, cameras capture rich appearance and semantics, and historical observations supply temporal context beyond individual frames. Recent advances in sparse 3D percep-tion [5], [6] and E2EAD [3] increasingly represent scene entities as instance queries paired with structured object  
+
+> 1The authors are with Harbin Institute of Technology, Harbin 150001, China. E-mails:
+
+{22S108236, 24s008051, 23s003065 }@stu.hit.edu.cn, 969491141@qq.com, 18929160507@163.com, {zhaolj, yingtao, Lnsnn, lrf100 }@hit.edu.cn . 
+
+> 2Ruihang Li is with Zhejiang University, Hangzhou 310027, China. E-mail:
+
+12221089@zju.edu.cn . 
+
+> †Equal contribution. ∗Corresponding author.
+
+Fig. 1: Various object-level multimodal fusion paradigms. states. These representations provide a compact interface for instance-level reasoning, reducing the need for dense inter-action with background features. Spatial LiDAR–camera and temporal past–current interaction can thus be formulated as information exchange between sparse instance sets. Effective exchange requires reliable correspondences and efficient ag-gregation despite geometric discrepancies and heterogeneous semantic representations across modalities and time. As illustrated in Fig. 1, existing instance-level interaction methods primarily adopt implicit attention-based interaction or explicit structural association. Query-centric methods [5], [7] extract modality-specific instances and perform cross-modal interaction to integrate their features through learned transformations and attention. These methods exploit rich contextual semantics and support adaptive information ex-change, but aligning heterogeneous representations often requires specialized components that increase architectural complexity and computational overhead. Temporal instance aggregation similarly relies on query propagation, feature compensation, and attention [3], [8], [9] to accommodate object motion and viewpoint changes [10]. In contrast, box-centric association methods [11], [12] construct costs from structural cues, such as geometry and category, and solve discrete assignments for state updates or candidate fusion. Matching in a shared geometric space enables efficient and interpretable association without elaborate feature alignment. However, hard assignments restrict fusion to selected cor-arXiv:2609.25860v1 [cs.CV] 22 Sep 2026 respondences, while structural costs alone cannot exploit contextual semantics to resolve ambiguous matches. These complementary strengths motivate a matching and fusion mechanism that combines the efficiency of structural associ-ation with the adaptability of learned semantic interaction. To this end, we propose MatchFusion, a learnable in-stance matching and fusion module for spatio-temporal mul-timodal autonomous driving. Given sparse instances compris-ing structured object states and query embeddings, Match-Fusion initializes coarse correspondences by quantifying geometric similarity and category consistency. A lightweight semantic compatibility module then selectively refines struc-turally plausible associations using instance embeddings. This coarse-to-fine process produces a soft matchmap that preserves many-to-many affinities and guides a common residual aggregation operator. Spatial and temporal interac-tion instantiate this unified matching–fusion formulation with setting-specific geometric priors. For LiDAR–camera interac-tion, 3D boxes from both modalities are projected onto image planes, and geometric similarities based on relative positions and sizes are aggregated across jointly visible views. For past–current matching, past instances are aligned through object-motion compensation and ego-motion transformation, and geometric affinities are computed in BEV space. Both settings use the same semantic refinement and residual aggre-gation mechanisms. The aggregation operator is applied bidi-rectionally for cross-modal exchange and unidirectionally to incorporate past evidence into current candidates. Temporal interaction can operate independently on upstream instances or incorporate spatially fused representations. Operating solely on instance representations, MatchFu-sion is decoupled from front-end feature extraction and provides enhanced queries for downstream perception and planning. Experiments on nuScenes [13] demonstrate consis-tent perception gains across diverse front-end configurations. Compared with SparseFusion [7], the MatchFusion-equipped system achieves higher perception accuracy while reducing FLOPs by 55.3% and GPU memory usage by 39.3%, with the matching–fusion module accounting for only 3.7% of total perception latency. Integrating temporal MatchFusion into SparseDrive [3] further improves perception within an end-to-end driving framework without additional supervi-sion. Our contributions are:  
+
+> •
+
+We propose an explicit–implicit instance matching mechanism that combines structural affinity initializa-tion with selective semantic refinement to establish efficient and adaptive soft correspondences.  
+
+> •
+
+We develop a unified matching–fusion formulation for spatial LiDAR–camera and temporal past–current in-teraction, combining setting-specific geometric priors with common semantic refinement and a single residual aggregation operator.  
+
+> •
+
+We demonstrate consistent perception gains across di-verse front-ends, improved computational and memory efficiency, and compatibility with E2EAD frameworks. II. RELATED WORK 
+
+Spatio-Temporal Multimodal 3D Perception. Integrat-ing complementary observations across sensors and time supports reliable scene understanding in autonomous driv-ing. For spatial fusion, LiDAR provides accurate geometry, while cameras capture rich appearance and semantics. Point-level methods [14], [15] augment point clouds with image-derived information. BEVFusion [16] integrates modality-specific features in a shared BEV space. SparseFusion [7] and MV2DFusion [5] adopt sparse instance representations for object-level cross-modal interaction. For temporal fusion, past information provides persistent context beyond indi-vidual frames. StreamPETR [9] propagates object queries with motion-aware feature compensation, Sparse4D [8] com-bines anchor-guided feature aggregation with recurrent in-stance propagation, and StreamCMT [6] incorporates tem-poral query interaction into multimodal perception. Spatio-temporal information further contributes to E2EAD by en-riching the representations used for perception and planning. LEAD [17] highlights the value of multimodal information for driving. BridgeAD [18] uses sparse instance representa-tions to connect temporal perception with motion prediction and planning. These developments motivate a common inter-action mechanism for integrating cross-modal and historical evidence. MatchFusion provides a unified matching–fusion formulation with geometric priors adapted to spatial Li-DAR–camera and temporal past–current interaction. 
+
+Instance Matching and Fusion. Instance-level interaction requires establishing correspondences and aggregating com-plementary information. Implicit attention-based approaches infer association weights from instance features and posi-tional representations to guide feature aggregation. Sparse-Fusion [7] combines modality-specific transformations with attention-based fusion. MV2DFusion [5] employs modality-specific query generators and uncertainty-aware positional representations for sparse interaction. Temporal methods similarly integrate past information through query propa-gation, feature compensation, and attention [3], [9]. These methods exploit contextual semantics and support adap-tive information exchange, but specialized representation processing can increase architectural complexity, compu-tation, and memory consumption. Explicit box-centric ap-proaches [11], [12] instead construct association costs from geometric, categorical, or motion cues and solve discrete assignments for candidate fusion or state updates. Matching compact structured states in a shared geometric space en-ables efficient and interpretable association without elaborate feature alignment. However, hard assignments restrict infor-mation exchange to selected correspondences, and structural costs alone cannot exploit contextual evidence in instance embeddings to resolve ambiguous matches. MatchFusion combines the efficiency of structural association with the adaptability of semantic interaction through structural affin-ity initialization, selective semantic refinement, and soft matchmap-guided residual aggregation. Fig. 2: Architecture of MatchFusion for spatio-temporal interaction through unified instance matching and fusion. III. MATCHFUSION 
+
+A. Overview and Instance Formulation 
+
+As illustrated in Fig. 2, MatchFusion is an instance-level matching and fusion module for spatio-temporal multimodal interaction. It operates on sparse instance representations from upstream query-based perception models, decoupling matching and fusion from front-end feature extraction. Each input source provides structured object states B = {Bi}Ni=1 
+
+and corresponding query embeddings Q = {Qi}Ni=1 , forming an instance set I = {Ii = ( Bi, Q i)}Ni=1 , where N denotes the number of instances. Each state Bi comprises the 3D center (xi, y i, z i), dimensions (wi, l i, h i), yaw angle θi, and predicted category ci. The query embedding Qi ∈ RD
+
+captures contextual semantics associated with the instance. Given two instance sets, MatchFusion initializes coarse correspondences from structural cues and selectively refines them using query semantics. The resulting soft matchmap guides residual feature aggregation to produce enhanced instance representations for downstream perception and plan-ning. Sec. III-B introduces this explicit–implicit matching and fusion mechanism. Sec. III-C instantiates it for spatial Li-DAR–camera and temporal past–current interaction. Match-Fusion separates instance interaction from task-specific pre-diction. Adapting it to spatial or temporal interaction requires specifying the geometric prior and aggregation direction, while the enhanced queries are optimized through the pre-diction objectives of the corresponding system. 
+
+B. Explicit–Implicit Matching-Fusion 
+
+Structured object states provide compact and interpretable evidence for instance association, while query embeddings contain contextual information that helps resolve ambigu-ous candidates. MatchFusion combines these complementary cues through a coarse-to-fine design: structural initialization establishes matching priors, and semantic refinement adjusts promising associations. Given two instance sets, IA={IAi =(BAi , Q Ai )}N A 
+
+> i=1
+
+and IB ={IBj =( BBj , Q Bj )}N B
+
+> j=1
+
+, the module performs explicit structural initialization, implicit semantic refinement, and matchmap-guided residual fusion. 
+
+Explicit Structural Initialization. Geometric similarity provides an efficient starting point for association by com-paring compact object states in a shared geometric space. Category consistency is enforced as a hard constraint that excludes pairs with different predicted categories. For each instance pair IAi and IBj , the initial affinity is: 
+
+Mij = Gij + Hij , (1) where Gij represents geometric similarity and Hij is an additive category-consistency mask. Geometric similarity is derived from relative object positions and sizes, with setting-specific formulations for spatial and temporal interaction detailed in Sec. III-C. Motivated by category-consistent as-sociation in prior 3D perception methods [19], we define the mask as: 
+
+Hij =
+
+(
+
+0, cAi = cBj ,
+
+−∞ , cAi̸ = cBj , (2) where cAi and cBj denote the predicted categories. Category-consistent pairs retain their geometric affinities, whereas category-inconsistent pairs are excluded from subsequent se-mantic refinement and matchmap-guided aggregation. These cues yield the initial affinity matrix M ∈ RN A×N B
+
+without elaborate transformations of query embeddings. 
+
+Implicit Semantic Refinement. Structural similarity can leave ambiguities among geometrically similar candidates. Query embeddings provide contextual evidence to refine these associations. We condition semantic refinement on the initial masked affinity, concentrating learned pairwise corrections on category-consistent pairs. 
+
+˜Mij =
+
+(
+
+Mij , Mij ≤ ϵ, Mij + Rij , Mij > ϵ, (3) Here, ϵ is a finite threshold controlling semantic refinement. Category-inconsistent pairs receive no semantic correction. For selected pairs, the semantic correction is computed as: 
+
+Rij = MLP  ψA(QAi ) + ψB (QBj ) , (4) where ψA and ψB are branch-specific linear mappings. The multi-layer perceptron (MLP) maps their summed em-beddings to a scalar correction. An element-wise sigmoid function converts the resulting affinities into matching scores: 
+
+ˆMij = Sigmoid( ˜Mij ). (5) The resulting soft matchmap ˆM preserves graded many-to-many associations, allowing contextual semantics to re-fine promising correspondences without imposing discrete assignments [20]. 
+
+Matchmap-Guided Residual Fusion. Ambiguous obser-vations can support multiple plausible correspondences, mak-ing early discrete assignment restrictive. The soft matchmap 
+
+ˆM instead guides many-to-many feature aggregation among category-consistent instances, incorporating complementary evidence through residual feature updates. For information flow from IB to IA, we define a common residual aggrega-tion operator: 
+
+F(QA, Q B , ˆM ) = QA + ˆM ⊗ MLP B→A(QB ), (6) where ⊗ denotes matrix multiplication and MLP B→A maps source embeddings into the receiving feature space. The same operator supports both spatial and temporal fusion. Spatial interaction applies F in both directions using 
+
+ˆM and ˆM T, with both updates operating on the original input queries. Temporal interaction applies F once to aggregate aligned historical features into augmented current candidates. The enhanced queries are subsequently processed by the corresponding prediction heads, separating the common ag-gregation mechanism from task-specific prediction. 
+
+C. Spatio-Temporal Instantiation 
+
+MatchFusion supports spatio-temporal interaction through a common explicit–implicit matching and residual aggrega-tion principle. Setting-specific geometric priors and candidate selection establish plausible correspondences, while the ag-gregation direction determines how complementary evidence updates instance representations. 
+
+Spatial LiDAR–Camera Interaction. Camera depth er-rors can separate corresponding instances in 3D while pre-serving their projected overlap in relevant views [21]. We therefore initialize cross-modal affinities using multi-view image-plane geometry to reduce sensitivity to depth discrep-ancies. Since distinct objects can also exhibit similar pro-jections, these affinities provide coarse priors for subsequent semantic refinement. For each camera k = 1 , . . . , N view , we project 3D boxes from both modalities onto the image plane: 
+
+bC,k i ← Proj  BCi , P k , b L,k j ← Proj  BLj , P k , (7) where Proj( ·) denotes 3D-to-2D projection and P k is the corresponding projection matrix. Each projected box is repre-sented by its center and extent, b = ( bx, by, bw, bh ). Relative geometry is encoded using normalized positional offsets and logarithmic size ratios: 
+
+gkij =
+
+h
+
+log 
+
+ |bx C,k i −bx L,k j |
+
+> bw C,k i
+
++1 
+
+
+
+, log 
+
+ |by C,k i −by L,k j |
+
+> bh C,k i
+
++1 
+
+
+
+,
+
+log 
+
+ bw C,k i
+
+> bw L,k j
+
+
+
+, log 
+
+ bh C,k i
+
+> bh L,k j
+
+ i
+
+. (8) Sinusoidal positional encoding followed by an MLP maps this descriptor to a view-specific geometric affinity: 
+
+Gkij = MLP  Flatten(PosEmb( gkij )) , (9) where PosEmb( ·) denotes sinusoidal positional encoding. For pairs with at least one jointly visible view, we aggregate affinities through visibility-aware averaging: 
+
+Gij =
+
+PNview  
+
+> k=1
+
+Okij · Gkij 
+
+PNview  
+
+> k=1
+
+Okij 
+
+, (10) where Okij = 1 if both projected boxes are visible in view 
+
+k, and zero otherwise. The aggregated affinity is combined with category consistency through Eq. 1 and refined using query semantics as described in Sec. III-B. The resulting matchmap ˆM guides bidirectional application of the residual aggregation operator in Eq. 6: 
+
+ˆQC = F(QC , Q L, ˆM ),
+
+ˆQL = F(QL, Q C , ˆM T). (11) Both updates use the original input queries. The enhanced queries are concatenated along the instance dimension and passed to an added refinement decoder. Its regression branch predicts box offsets: 
+
+∆B = Decoder 
+
+
+
+Concat 
+
+ ˆQC , ˆQL 
+
+, (12) which update the corresponding input boxes: 
+
+ˆB = Concat  BC , BL + ∆ B. (13) Retaining candidates from both modalities preserves com-plementary object hypotheses and semantic evidence. The resulting queries and updated states form the spatially fused instance set ˆI. Classification and box-regression objectives supervise the added decoder. 
+
+Temporal Past–Current Interaction. Historical instances provide persistent object information under weak or in-complete current observations. Object-motion compensation and ego-motion transformation align historical states It−1
+
+to the current frame, yielding It−1,t . These aligned in-stances are combined with the current set It to form an augmented candidate set ¯I, preserving historical hypotheses within the available query budget. Notably, current instances can originate from an upstream perception branch or from spatially fused set ˆI, allowing temporal interaction to operate independently or alongside spatial fusion. Temporal matching associates augmented current candi-dates ¯I with aligned historical instances It−1,t . After motion compensation, relative BEV positions and sizes provide geometric priors for association. We therefore construct ge-ometric affinities directly in the BEV space, while semantic refinement helps resolve ambiguities caused by residual localization and motion estimation errors. For augmented candidate ¯Ii and aligned historical instance It−1,t j , we define: 
+
+gij =
+
+h
+
+log 
+
+ |¯xi−xt−1,t j | 
+
+> ¯wi
+
++1 
+
+
+
+, log 
+
+ |¯yi−yt−1,t j | 
+
+> ¯li
+
++1 
+
+
+
+,
+
+log 
+
+
+
+> ¯wi
+> wt−1,t j
+
+
+
+, log 
+
+ ¯li
+
+> lt−1,t j
+
+ i
+
+. (14) As in spatial interaction, sinusoidal positional encoding followed by an MLP maps the descriptor to a scalar affinity: 
+
+Gij = MLP  Flatten(PosEmb( gij ))) . (15) Category consistency and semantic refinement then pro-duce the temporal matchmap ¯M . The residual aggregation operator incorporates historical evidence into current queries: 
+
+¯Q′ = F( ¯Q, Q t−1,t , ¯M ). (16) This unidirectional update enriches current candidates with past context. Enhanced queries ¯Q′ continue through the host decoder to refine the associated object states, yielding ¯I′.IV. EXPERIMENTS 
+
+A. Datasets and Implementation Details 
+
+Datasets and Metrics. We evaluate MatchFusion on nuScenes for perception and planning. For nuScenes de-tection , we report the nuScenes detection score (NDS) and mean average precision (mAP). Tracking is evaluated using average multi-object tracking accuracy (AMOTA) and multi-object tracking accuracy (MOTA). Planning is assessed using trajectory L2 error and collision rate (CR). Compu-tational efficiency is measured by FLOPs, GPU memory consumption, and inference latency. 
+
+Implementation Details. We denote the spatial, tem-poral, and combined spatio-temporal configurations as MatchFusion-S, MatchFusion-T, and MatchFusion-ST, re-spectively. MatchFusion-S enables LiDAR–camera interac-tion, while MatchFusion-T aggregates historical evidence into current instance representations. Category consistency is enforced across all settings. Each component of the 4-D relative geometric descriptor is encoded using a 256-D sinusoidal embedding, yielding a flattened 1024-D feature that a single-layer MLP maps to geometric affinity. Se-mantic refinement uses a single-layer MLP. The residual-fusion and modality-projection MLPs each comprise two layers. All hidden representations are 256-D. For perception experiments, we freeze the pretrained front-ends to isolate the contribution of MatchFusion and evaluate its ability to enhance existing instance representations without updating the front-ends. We evaluate multiple front-end configurations and train MatchFusion for 16 epochs with a batch size of 32 on four NVIDIA RTX 3090 GPUs, requiring approximately 12 hours. We use AdamW [22] with an initial learning rate of 
+
+1.0×10 −3 and cosine annealing schedule. All perception re-sults are reported on the nuScenes validation set without test-time augmentation or model ensembling. In MatchFusion-S, enhanced camera and LiDAR queries are concatenated and processed by an added refinement decoder, supervised using the classification and box-regression objectives adopted by Sparse4Dv3 [8]. MatchFusion-T uses existing downstream objectives without additional losses. Tracking follows the query propagation and update mechanism of Sparse4Dv3 without explicit association module. For E2EAD, we inte-grate MatchFusion-T into SparseDrive and jointly train the entire system from scratch, following the baseline training protocol. This setting evaluates its compatibility with end-to-end optimization under the original perception, motion, and planning objectives. MatchFusion-T operates directly on the instance representations of framework without spatial Li-DAR–camera fusion or additional supervision. The baseline and MatchFusion-equipped systems follow matched training and evaluation protocols. 
+
+B. Comparative Evaluation 
+
+Perception Gains Across Front-Ends. The instance-level formulation of MatchFusion separates matching and fusion from front-end feature extraction. To validate the compati-bility of MatchFusion with diverse instance representations, we retain TransFusion-L as LiDAR front-end and pair it with DETR3D, StreamPETR, Sparse4Dv3, and SimPB. As shown in Table. II, MatchFusion-ST consistently improves over the stronger unimodal front-end, yielding gains of 1.9–3.1% NDS and 4.3–5.5% mAP. With the weak DETR3D camera detector, fusion improves NDS from 70.1 to 72.0 and mAP from 65.1 to 69.4. This demonstrates that a less accurate front-end can still provide complementary evidence through effective instance matching and aggregation. These consistent improvements support the reuse of MatchFusion across different camera architectures through a common instance interface. For the Sparse4Dv3-based configuration, MatchFusion-ST also improves AMOTA and MOTA through the existing query propagation mechanism, extending its benefits from detection to tracking. 
+
+Accuracy–Efficiency Trade-off. To demonstrate the effi-ciency of MatchFusion for integrated perception, we evaluate system-level computational cost and module-level inference latency. With Sparse4Dv3 and TransFusion-L as front-ends, MatchFusion-ST-equipped system achieves 73.0 NDS and 62.3 AMOTA with 254.2 GFLOPs and 3.7 GB memory. As shown in Table III, it achieves higher NDS than SparseFusion while reducing FLOPs by 55.3% and memory consumption by 39.3%. These results demonstrate that combining com-pact structural priors with lightweight semantic refinement enables effective instance interaction without introducing substantial computational overhead. Furthermore, under the same inference setting, the camera front-end, LiDAR front-end, and MatchFusion-ST require 47.3, 283.3, and 12.9 ms, respectively. Including tracking operations, MatchFusion-ST accounts for only 3.7% of the total latency, supporting integrated detection and tracking with limited additional runtime. This further demonstrates that the proposed instance interaction mechanism enables accurate integrated perception with only marginal runtime overhead. 
+
+Integration into End-to-End Driving. To evaluate the independent applicability of temporal interaction within an end-to-end driving framework, we integrate MatchFusion-T into SparseDrive using its original training objectives without additional supervision. As shown in Table I, MatchFusion-T improves NDS and mAP by 0.8 and 0.5 points, respectively, and AMOTA and MOTA by 2.7 and 1.7 points. Planning performance remains comparable, with CR decreasing from 0.123% to 0.119% and L2 error increasing slightly from 0.63 TABLE I: Comparison on nuScenes for the E2EAD task. †: Our reproduced results by official code. 
+
+Dataset Method Detection Tracking Planning NDS ↑ mAP ↑ AMOTA ↑ MOTA ↑ L2 (m) ↓ CR (%) ↓
+
+nuScenes SparseDrive † 52.2 41.2 36.9 34.2 0.63 0.123 SparseDrive + MatchFusion-T 53.0 (+0.8) 41.7 (+0.5) 39.6 (+2.7) 35.9 (+1.7) 0.64 0.119 
+
+TABLE II: Perception enhancement with MatchFusion-ST across front-end configurations on the nuScenes validation set. LiDAR denotes the TransFusion-L front-end.                                          
+
+> Camera LiDAR MatchFusion-ST NDS ↑mAP ↑
+> –✓–70.1 65.1 DETR3D [23] ––42.2 34.7
+> ✓✓72.0 (+1.9) 69.4 (+4.3)
+> StreamPETR [9] ––53.7 43.2
+> ✓✓72.7 (+2.6) 69.9 (+4.8)
+> Sparse4Dv3 [8] ––56.1 46.9
+> ✓✓73.0 (+2.9) 70.4 (+5.3)
+> SimPB [24] ––59.0 48.7
+> ✓✓73.2 (+3.1) 70.6 (+5.5)
+
+TABLE III: Detection accuracy and computational cost on the nuScenes validation set. All methods use VoxelNet [25] and ResNet-50 [26] as the LiDAR and camera backbones, respectively. FLOPs and GPU memory are measured for the complete system with a batch size of one. †: Our reproduced results by official code.                                
+
+> Method Accuracy Efficiency NDS ↑mAP ↑FLOPs (G) ↓Mem. (GB) ↓
+> TransFusion †[27] 71.3 67.5 449.8 10.5 DeepInteraction †[28] 72.6 69.9 513.1 22.1 SparseFusion [7] 72.8 70.4 569.1 6.1 DeepInteraction++ [29] 72.9 70.1 –11.4 StreamCMT [6] 71.8 69.0 ––MatchFusion-ST (Ours) 73.0 70.4 254.2 3.7
+
+to 0.64 m. These results support the applicability of temporal MatchFusion to end-to-end driving, with the clearest gains observed in perception. 
+
+C. Ablation Studies 
+
+Unless otherwise specified, ablation studies use Sparse4Dv3 with ResNet-50 and TransFusion-L with VoxelNet as the camera and LiDAR front-ends, respectively. We examine the contributions of spatial and temporal interaction, the design of the matching–fusion mechanism, and robustness to spatial and temporal misalignment. 
+
+Spatio-Temporal Fusion. To validate the complementary contributions of cross-modal and historical evidence, we compare MatchFusion-S and MatchFusion-ST in Table. IV. MatchFusion-S improves NDS from 70.1 for the LiDAR-only baseline to 72.5. Adding temporal interaction further increases NDS to 73.0, while improving AMOTA from 49.0 to 62.3 and MOTA from 43.6 to 60.8. These results demonstrate that temporal aggregation complements spatial TABLE IV: Contributions of spatial and temporal interaction.                                 
+
+> Spatial Temporal Detection Tracking Camera LiDAR NDS ↑mAP ↑AMOTA ↑MOTA ↑
+> –✓–70.1 65.1 ––
+> ✓––56.1 46.9 49.0 43.6
+> ✓✓–72.5 69.6 49.0 43.6
+> ✓✓✓73.0 70.4 62.3 60.8
+
+TABLE V: Ablation of matchmap construction and fusion strategies on MatchFusion-S.                     
+
+> Setting Variant Detection NDS ↑mAP ↑
+> Matching
+> 3D Structural 72.2 69.1 Structural + Semantic 72.4 69.2 2D Structural + Semantic 72.5 69.6
+> Fusion
+> Implicit Concat 69.4 64.8 Self-Attention 71.3 67.3 Cross-Attention 71.8 67.9 Explicit–Implicit MatchFusion-S 72.5 69.6
+
+fusion, benefiting broad 3D perception tasks. The independent applicability of MatchFusion-T is evalu-ated through its integration into SparseDrive without spatial LiDAR–camera fusion. As shown in Table. I, MatchFusion-T improves detection and tracking and reduces planning CR. These results support the utility of MatchFusion for shared instance representations beyond standalone perception. 
+
+Matching–Fusion Construction. Table. V evaluates matchmap construction and feature aggregation within MatchFusion-S. With direct 3D geometry, structural match-ing achieves 72.2 NDS and 69.1 mAP. Adding semantic refinement further improves detection performance, support-ing the contribution of contextual query information to correspondence estimation. Replacing direct 3D geometry with multi-view image-plane geometry further improves per-formance to 72.5 NDS and 69.6 mAP. These results favor combining projection-based structural priors with semantic refinement for cross-modal matching. The fusion compar-ison in Table V evaluates alternative instance aggregation strategies. Direct concatenation achieves 69.4 NDS and 64.8 mAP, below the LiDAR-only baseline. Self-attention and cross-attention improve NDS to 71.3 and 71.8, respec-tively, demonstrating the benefit of information exchange between instances. MatchFusion-S further improves over cross-attention by 0.7 NDS and 1.7 mAP points, supporting residual aggregation guided by structurally initialized and TABLE VI: Ablation of the category consistency mechanism in MatchFusion-ST.       
+
+> Category Consistency NDS ↑mAP ↑×72.1 69.0
+> ✓73.0 70.4
+
+TABLE VII: Training efficiency of MatchFusion-S matchmap variants in the 2D setting. Time and GPU memory are normalized to the structural baseline.         
+
+> Matchmap Construction Mem. ↓Time ↓
+> Structural 1.0 ×1.0 ×
+> Structural + Semantic 1.3 ×1.7 ×
+> Semantic 2.2 ×1.9 ×
+
+TABLE VIII: Effect of front-end optimization on the training efficiency and detection performance of MatchFusion-ST on the nuScenes val set. Training time and GPU memory usage are normalized to the configuration with frozen front-ends.             
+
+> Front-ends Mem. ↓Time ↓NDS ↑mAP ↑
+> Unfrozen 2.1 ×5.5 ×71.7 68.5 Frozen 1.0 ×1.0 ×73.0 70.4
+
+semantically refined correspondences. Table VI evaluates the effect of category consistency. Enforcing category consis-tency improves NDS from 72.1 to 73.0 and mAP from 69.0 to 70.4. These gains indicate that excluding cross-category associations provides more reliable correspondences for subsequent semantic refinement and feature aggregation. 
+
+Efficiency of Instance-Level Interaction. Tables. VII and VIII complement the system-level accuracy–efficiency comparison by evaluating matchmap construction and front-end optimization. For MatchFusion-S, structural initialization with selective semantic refinement requires 1.7× training time and 1.3× memory relative to structural-only match-ing, versus 1.9× and 2.2× for semantic-only matching. For perception, MatchFusion-ST with frozen front-ends achieves 73.0 NDS and 70.4 mAP, outperforming the unfrozen con-figuration while avoiding its 2.1× memory and 5.5× training time requirements. These results demonstrate the training efficiency of structural guidance and front-end decoupling, while the jointly trained SparseDrive results in Table I further establish compatibility with end-to-end optimization. 
+
+Spatio-Temporal Fusion Robustness. We evaluate the robustness of MatchFusion-ST by perturbing spatial and temporal priors at inference, as summarized in Table. IX. For spatial interaction, translation perturbations of 5–20 cm to the projection extrinsics leave NDS unchanged at the reported precision. Rotation perturbations of 1°, 2°, and 4° reduce NDS from 73.0 to 71.9, 71.8, and 71.7, respectively. Even at 4°, the system retains 71.7 NDS and 68.0 mAP, exceeding the LiDAR-only baseline by 1.6 and 2.9 points. These re-sults demonstrate that cross-modal fusion remains beneficial under the tested calibration errors, with greater sensitivity to rotational perturbations. For temporal interaction, we independently perturb the object motion, ego motion, and inter-frame interval used for historical state alignment. As TABLE IX: Robustness to spatio-temporal perturbations on MatchFusion-ST.                                                                                   
+
+> Perturbation Magnitude Detection Tracking NDS ↑mAP ↑AMOTA ↑MOTA ↑
+> Baseline
+> MatchFusion-ST —73.0 70.4 62.3 60.8
+> LiDAR-only detector —70.1 65.1 ——Camera-only detector —56.1 46.9 49.0 43.6
+> Spatial
+> Rotation ( ◦)171.9 68.4 59.2 56.9 271.8 68.3 59.0 56.7 471.7 68.0 58.8 56.5 Translation (cm) 573.0 70.4 62.5 60.6 10 73.0 70.4 62.5 60.4 20 73.0 70.4 62.6 60.8
+> Temporal
+> ∆t(s) 0.1 72.9 70.3 62.4 60.2 0.2 73.0 70.4 62.5 60.6 0.3 72.9 70.3 62.3 60.6 Ego Motion (m) 0.2 72.9 70.3 62.3 60.4 0.5 72.7 69.9 62.0 60.2 1.0 72.3 69.2 61.3 60.3 Object Motion (m/s) 0.5 72.8 70.2 62.1 60.6 1.0 72.6 69.9 61.6 60.1 2.0 72.3 69.4 61.2 60.2
+
+Fig. 3: Qualitative BEV detection results of MatchFusion-S on the nuScenes validation set. Results are shown for the camera front-end Sparse4Dv3, the LiDAR front-end TransFusion-L, and the MatchFusion-equipped system. shown in Table. IX, MatchFusion-ST maintains at least 72.3 NDS, 69.2 mAP, 61.2 AMOTA, and 60.1 MOTA across the tested perturbations. Detection performance remains above both unimodal baselines, while tracking performance con-sistently exceeds the camera-only baseline. These results demonstrate that the benefits of temporal aggregation persist under imperfect motion compensation. 
+
+D. Qualitative Results 
+
+Fig. 3 illustrates the complementary advantages of mul-timodal fusion. MatchFusion corrects individual front-end errors and recovers objects missed by a single modality, Fig. 4: Qualitative visualization of explicit–implicit cross-modal matching on the nuScenes validation set. Box thick-ness represents detection confidence, and line thickness rep-resents matching score. illustrating the benefit of aggregating complementary evi-dence through the instance interface. Fig. 4 highlights the complementary roles of structural initialization and semantic refinement. Structural priors identify plausible associations, while query semantics distinguish corresponding instances from geometrically ambiguous candidates. The refinement gate concentrates semantic corrections on structurally plau-sible pairs for efficient correspondence refinement. V. CONCLUSIONS We present MatchFusion, a learnable instance match-ing and fusion module for spatio-temporal multimodal au-tonomous driving. By combining explicit geometric and categorical priors with selective semantic refinement, Match-Fusion establishes soft correspondences for residual feature aggregation. A common formulation supports spatial Li-DAR–camera and temporal past–current interaction while remaining decoupled from front-end feature extraction. Ex-periments on nuScenes demonstrate consistent perception gains across diverse front-ends, computational and memory efficiency, and robustness to spatial and temporal perturba-tions. Integrating MatchFusion-T into SparseDrive further improves perception under the original training objectives, supporting its compatibility with end-to-end optimization. These findings support explicit–implicit matching as an effi-cient and reusable mechanism for instance-level interaction. 
+
+Future work will explicitly model uncertainty in geomet-ric priors to adapt their influence and extend MatchFusion to multi-source ensembling for offline perception. REFERENCES [1] B. Liao, S. Chen, H. Yin, B. Jiang, C. Wang, S. Yan, X. Zhang, X. Li, Y. Zhang, Q. Zhang et al. , “Diffusiondrive: Truncated diffusion model for end-to-end autonomous driving,” in CVPR . IEEE, 2025, pp. 12 037–12 047. [2] K. Chitta, A. Prakash, B. Jaeger, Z. Yu, K. Renz, and A. Geiger, “Transfuser: Imitation with transformer-based sensor fusion for au-tonomous driving,” TPAMI , vol. 45, no. 11, pp. 12 878–12 895, 2022. [3] W. Sun, X. Lin, Y. Shi, C. Zhang, H. Wu, and S. Zheng, “Sparsedrive: End-to-end autonomous driving via sparse scene representation,” in 
+
+ICRA . IEEE, 2025, pp. 8795–8801. [4] Z. Song, C. Jia, L. Liu, H. Pan, Y. Zhang, J. Wang, X. Zhang, S. Xu, L. Yang, and Y. Luo, “Don’t shake the wheel: Momentum-aware planning in end-to-end autonomous driving,” in CVPR . IEEE, 2025, pp. 22 432–22 441. [5] Z. Wang, Z. Huang, Y. Gao, N. Wang, and S. Liu, “Mv2dfusion: Leveraging modality-specific object semantics for multi-modal 3d detection,” TPAMI , 2025. [6] Y. Huang and Y. Liu, “Streamcmt: Prior-guided multimodal temporal fusion for sparse 3d object detection,” RA-L , vol. 11, no. 5, pp. 5358– 5365, 2026. [7] Y. Xie, C. Xu, M.-J. Rakotosaona, P. Rim, F. Tombari, K. Keutzer, M. Tomizuka, and W. Zhan, “Sparsefusion: Fusing multi-modal sparse representations for multi-sensor 3d object detection,” in ICCV , 2023, pp. 17 591–17 602. [8] X. Lin, Z. Pei, T. Lin, L. Huang, and Z. Su, “Sparse4d v3: Advancing end-to-end 3d detection and tracking,” arXiv preprint arXiv:2311.11722 , 2023. [9] S. Wang, Y. Liu, T. Wang, Y. Li, and X. Zhang, “Exploring object-centric temporal modeling for efficient multi-view 3d object detection,” in ICCV , 2023, pp. 3621–3631. [10] X. Li, P. Li, X. Wu, L. Shi, D. Liu, Y. Wu, J. Fu, D. Cui, L. Zhao, and L. Sun, “Rethinking the spatio-temporal alignment of end-to-end 3d perception,” in AAAI , vol. 40, no. 8, 2026, pp. 6513–6520. [11] X. Wu, Y. Wu, X. Li, Z. Li, L. Zhao, and L. Sun, “Fusion-poly: A polyhedral framework based on spatial-temporal fusion for 3d multi-object tracking,” arXiv preprint arXiv:2603.08199 , 2026. [12] Y. Zhang, X. Wang, X. Ye, W. Zhang, J. Lu, X. Tan, E. Ding, P. Sun, and J. Wang, “Bytetrackv2: 2d and 3d multi-object tracking by associating every detection box,” 2023. [13] H. Caesar, V. Bankiti, A. H. Lang, S. Vora, V. E. Liong, Q. Xu, A. Krishnan, Y. Pan, G. Baldan, and O. Beijbom, “nuscenes: A multimodal dataset for autonomous driving,” in CVPR , 2020, pp. 11 621–11 631. [14] S. Vora, A. H. Lang, B. Helou, and O. Beijbom, “Pointpainting: Sequential fusion for 3d object detection,” in CVPR , 2020, pp. 4604– 4612. [15] C. Wang, C. Ma, M. Zhu, and X. Yang, “Pointaugmenting: Cross-modal augmentation for 3d object detection,” in CVPR , 2021, pp. 11 794–11 803. [16] Z. Liu, H. Tang, A. Amini, X. Yang, H. Mao, D. L. Rus, and S. Han, “Bevfusion: Multi-task multi-sensor fusion with unified bird’s-eye view representation,” in ICRA . IEEE, 2023, pp. 2774–2781. [17] L. Nguyen, M. Fauth, B. Jaeger, D. Dauner, M. Igl, A. Geiger, and K. Chitta, “Lead: Minimizing learner-expert asymmetry in end-to-end driving,” in CVPR , 2026, pp. 39 775–39 785. [18] B. Zhang, N. Song, X. Jin, and L. Zhang, “Bridging past and future: End-to-end autonomous driving with historical prediction and planning,” in CVPR . IEEE, 2025, pp. 6854–6863. [19] X. Li, T. Xie, D. Liu, J. Gao, K. Dai, Z. Jiang, L. Zhao, and K. Wang, “Poly-mot: A polyhedral framework for 3d multi-object tracking,” in 
+
+IROS . IEEE, 2023, pp. 9391–9398. [20] A. Kim, A. Oˇ sep, and L. Leal-Taix´ e, “Eagermot: 3d multi-object tracking via sensor fusion,” in ICRA . IEEE, 2021, pp. 11 315–11 321. [21] J. Philion and S. Fidler, “Lift, splat, shoot: Encoding images from arbitrary camera rigs by implicitly unprojecting to 3d,” in ECCV .Springer, 2020, pp. 194–210. [22] I. Loshchilov and F. Hutter, “Decoupled weight decay regularization,” 
+
+arXiv preprint arXiv:1711.05101 , 2017. [23] Y. Wang, V. C. Guizilini, T. Zhang, Y. Wang, H. Zhao, and J. Solomon, “Detr3d: 3d object detection from multi-view images via 3d-to-2d queries,” in CoRL . PMLR, 2022, pp. 180–191. [24] Y. Tang, Z. Meng, G. Chen, and E. Cheng, “Simpb: A single model for 2d and 3d object detection from multiple cameras,” in ECCV .Springer, 2024, pp. 1–17. [25] Y. Zhou and O. Tuzel, “Voxelnet: End-to-end learning for point cloud based 3d object detection,” in CVPR , 2018, pp. 4490–4499. [26] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in CVPR , 2016, pp. 770–778. [27] X. Bai, Z. Hu, X. Zhu, Q. Huang, Y. Chen, H. Fu, and C.-L. Tai, “Transfusion: Robust lidar-camera fusion for 3d object detection with transformers,” in CVPR , 2022, pp. 1090–1099. [28] Z. Yang, J. Chen, Z. Miao, W. Li, X. Zhu, and L. Zhang, “Deepinter-action: 3d object detection via modality interaction,” NeurIPS , vol. 35, pp. 1992–2005, 2022. [29] Z. Yang, N. Song, W. Li, X. Zhu, L. Zhang, and P. H. Torr, “Deepinter-action++: Multi-modality interaction for autonomous driving,” TPAMI ,2025.

@@ -1,45 +1,83 @@
 {
-  "generated_at": "2026-09-22T21:41:24.229573+00:00",
-  "updated_date": "20260922",
+  "generated_at": "2026-09-23T21:59:41.508748+00:00",
+  "updated_date": "20260923",
   "carryover_days": 9,
   "tag_states": {
     "ad": {
-      "updated_date": "20260922",
+      "updated_date": "20260923",
       "carryover_days": 9,
       "items": [
         {
-          "id": "2609.23133v1",
+          "id": "2609.24660v2",
           "source": "arxiv",
-          "title": "AquaCap: A Training-Free Underwater Embodied Agent with Code-as-Policy",
-          "abstract": "Recent advances in vision-language-action models have stimulated growing interest in underwater embodied intelligence. However, their reliance on large-scale interaction data limits their applicability underwater, where data collection is costly and scarce. To address this challenge, we present AquaCap, a training-free Code-as-Policy framework for autonomous underwater navigation and manipulation. AquaCap employs a dual-layer agent that translates task instructions and environmental observations into condition-aware plans and executable control programs. Structured perception then provides the agent with semantic, geometric, and reliability-aware observations under degraded underwater conditions. A failure-aware memory diagnoses unsuccessful actions and supports closed-loop replanning and code revision. This design enables online adaptation without task-specific training or parameter updates. AquaCap achieves a 66.43% success rate in simulation. Real-world experiments further demonstrate autonomous grasping and object transport with an ROV, including the manipulation of targets displaced by hydrodynamic disturbances.",
+          "title": "Touch2Robot: Robot Touch in the Human Demonstration Loop",
+          "abstract": "Human demonstrations offer a scalable way to collect manipulation data, but their contacts may be unstable or infeasible when transferred to a robot hand. Collecting demonstrations directly on the target robot avoids this mismatch but substantially increases the cost of data collection. To address this trade-off, we present Touch2Robot, a framework that lets humans collect demonstrations while seeing how the target robot hand would contact the object. We capture human hand motion, tactile-glove measurements, and object motion during human manipulation. These recordings guide object-specific RL policies to reproduce the demonstrated object motion while favoring contacts consistent with the recorded human touch. We distill the learned behaviors into a unified real-time retargeter that maps incoming human observations and object geometry to robot hand configurations. During collection, the predicted robot configuration is synchronized with the tracked object pose in simulation to reconstruct robot-object contacts, which are visualized to help the demonstrator adapt subsequent interactions to the target hand. Across four real-world tasks, Touch2Robot improves average real-robot replay completion from 37.9% to 72.1% over visual-only feedback, while reducing the collection time per replay-successful demonstration from 58.6s to 18.2s. Reconstructed target-hand contacts achieve 44.2% F1 against real-robot tactile measurements, and policies trained on Touch2Robot demonstrations improve downstream Diffusion Policy performance by 29.1 percentage points over visual-only feedback. These results show that bringing robot touch into the human demonstration loop improves both the quality and efficiency of scalable dexterous data collection. Project webpage: https://Touch2Robot.github.io/.",
           "authors": [
-            "Xiaoshi Li",
-            "Yule Xu",
-            "Chunghiu Kong",
-            "Yizhou Zhou",
-            "Yang Liu",
-            "Hao Yang",
-            "Zihao Huang",
-            "Yunxiao Shan"
+            "Shengcheng Luo",
+            "Xiaoyang Cheng",
+            "Hong Ying",
+            "Xiaoying Zhou",
+            "Jiaming Jiang",
+            "Haoran Guo",
+            "Wanlin Li",
+            "Ziyuan Jiao",
+            "Chenxi Xiao"
+          ],
+          "primary_category": "cs.RO",
+          "categories": [
+            "cs.RO",
+            "cs.AI"
+          ],
+          "published": "2026-09-21T14:26:51+00:00",
+          "link": "https://arxiv.org/pdf/2609.24660v2",
+          "tags": [
+            "keyword:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "tactile-glove human demonstrations guide RL policies for robot contact",
+          "llm_evidence_cn": "触觉手套示教引导强化学习策略生成机器人接触",
+          "llm_evidence": "触觉手套示教引导强化学习策略生成机器人接触",
+          "canonical_evidence": "触觉手套示教引导强化学习策略生成机器人接触",
+          "llm_tldr_en": "Touch2Robot lets humans demonstrate manipulation while previewing the target robot hand contact, capturing hand motion, tactile-glove data and object motion to train object-specific RL policies with human-consistent contact.",
+          "llm_tldr_cn": "人类示教数据虽易采集，但其接触方式迁移到机器人手时可能不稳定甚至不可行，而直接在机器人上示教成本高昂。本文提出Touch2Robot框架，在人类操作时同步采集手部运动、触觉手套测量与物体运动，并据此训练物体专属强化学习策略，使其在复现演示物体运动的同时偏好与人类触觉一致的接触。该方法将学得行为蒸馏为统一实时策略，在示教成本与迁移可靠性之间取得平衡。",
+          "llm_tldr": "人类示教数据虽易采集，但其接触方式迁移到机器人手时可能不稳定甚至不可行，而直接在机器人上示教成本高昂。本文提出Touch2Robot框架，在人类操作时同步采集手部运动、触觉手套测量与物体运动，并据此训练物体专属强化学习策略，使其在复现演示物体运动的同时偏好与人类触觉一致的接触。该方法将学得行为蒸馏为统一实时策略，在示教成本与迁移可靠性之间取得平衡。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "robot perception visual and tactile sensing",
+          "matched_requirement_id": "req-5",
+          "selection_source": "carryover_cache",
+          "paper_id": "2609.24660v2",
+          "carry_days": 1
+        },
+        {
+          "id": "2609.25666v1",
+          "source": "arxiv",
+          "title": "Deploying Foundation Models for Embodied Navigation",
+          "abstract": "We present and tackle two problems associated with deploying Foundation Models (FMs) on Embodied Agents performing navigation: 1) Training bias in FMs leading to poor personalization in unseen environments, and 2) Limited FM context length hindering success, especially on long horizon tasks. Our solution for the former involves priming the FM with human-habit data mined from the scene and our solution for the latter involves active memory management via a novel `memory head' augmentation. We first present a taxonomy of existing literature on FM-based Embodied Navigation, and highlight these limitations. We then present our approaches, Transit-Aware Planning (TAP) and MemCtrl to address the limitations. With TAP, we present real-world results in a lab environment with a Turtlebot for personalized target finding that shows an average improvement of 18% over a non-TAP baseline. On MemCtrl, we report a 6% average improvement across various embodied tasks, with 20% on long instruction subsets, all while using nearly half the context used in the baseline model. Motivated by these result, we present our stance the deployability of FM-based embodied agents in real-world environments, and highlight open research directions.",
+          "authors": [
+            "Vishnu Sashank Dorbala",
+            "Dinesh Manocha"
           ],
           "primary_category": "cs.RO",
           "categories": [
             "cs.RO"
           ],
-          "published": "2026-09-19T16:59:41+00:00",
-          "link": "https://arxiv.org/pdf/2609.23133v1",
+          "published": "2026-09-22T04:16:59+00:00",
+          "link": "https://arxiv.org/pdf/2609.25666v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "Training-free underwater embodied agent for autonomous navigation and manipulation",
-          "llm_evidence_cn": "面向自主导航与操作的水下免训练具身智能体",
-          "llm_evidence": "面向自主导航与操作的水下免训练具身智能体",
-          "canonical_evidence": "面向自主导航与操作的水下免训练具身智能体",
-          "llm_tldr_en": "Proposes AquaCap, a training-free code-as-policy framework for underwater embodied intelligence, using a dual-layer agent to turn instructions and observations into condition-aware plans and executable control programs under degraded underwater perception.",
-          "llm_tldr_cn": "视觉语言动作模型推动水下具身智能研究，但其对大规模交互数据的依赖在水下数据稀缺场景中难以满足。本文提出免训练的代码即策略框架AquaCap，采用双层智能体将任务指令与环境观测转化为条件感知计划和可执行控制程序，结构化感知在退化水下条件下提供语义、几何与可靠性观测，失败感知记忆可诊断失败动作。该工作实现了水下自主导航与操作，拓展了具身智能在极端环境中的应用。",
-          "llm_tldr": "视觉语言动作模型推动水下具身智能研究，但其对大规模交互数据的依赖在水下数据稀缺场景中难以满足。本文提出免训练的代码即策略框架AquaCap，采用双层智能体将任务指令与环境观测转化为条件感知计划和可执行控制程序，结构化感知在退化水下条件下提供语义、几何与可靠性观测，失败感知记忆可诊断失败动作。该工作实现了水下自主导航与操作，拓展了具身智能在极端环境中的应用。",
+          "llm_evidence_en": "foundation models deployed on embodied agents for navigation",
+          "llm_evidence_cn": "基础模型部署于具身智能体执行导航",
+          "llm_evidence": "基础模型部署于具身智能体执行导航",
+          "canonical_evidence": "基础模型部署于具身智能体执行导航",
+          "llm_tldr_en": "Deploying foundation models on embodied navigation agents suffers from training bias and limited context length. The authors propose habit-data priming and memory-head active memory management with TAP and MemCtrl, showing real-world lab gains on personalization and long-horizon navigation.",
+          "llm_tldr_cn": "将基础模型部署到执行导航的具身智能体面临两难：训练偏置使其在陌生环境中个性化不足，上下文长度受限又难以胜任长程任务。本文先梳理基础模型具身导航文献并指出这些局限，随后提出基于场景挖掘的人类习惯数据预热方法，以及带记忆头增强的主动记忆管理方法。在实验室真实环境中，TAP与MemCtrl提升了导航表现。该工作为具身智能体的真实部署提供了可行路径。",
+          "llm_tldr": "将基础模型部署到执行导航的具身智能体面临两难：训练偏置使其在陌生环境中个性化不足，上下文长度受限又难以胜任长程任务。本文先梳理基础模型具身导航文献并指出这些局限，随后提出基于场景挖掘的人类习惯数据预热方法，以及带记忆头增强的主动记忆管理方法。在实验室真实环境中，TAP与MemCtrl提升了导航表现。该工作为具身智能体的真实部署提供了可行路径。",
           "llm_tags": [
             "query:ad"
           ],
@@ -47,42 +85,110 @@
           "matched_query_text": "embodied AI agents in real world scenarios",
           "matched_requirement_id": "req-9",
           "selection_source": "carryover_cache",
-          "paper_id": "2609.23133v1",
+          "paper_id": "2609.25666v1",
           "carry_days": 1
         },
         {
-          "id": "2609.24547v1",
+          "id": "2609.25187v1",
           "source": "arxiv",
-          "title": "MIRA: Real-Time Full-Duplex Human-Robot Interaction for Embodied Companions",
-          "abstract": "Real-time embodied companion interaction requires a robot to infer user intent from streaming speech, generate timely responses, and execute expressive, interruptible motions. Existing systems typically decouple dialogue orchestration from gesture synthesis, relying on offline motion generation from complete audio. This separation leaves open how a deployed robot can dynamically synchronize response content, prosodic timing, and physical safety under incremental inputs and uncertain turn boundaries. We present MIRA, a unified framework for full-duplex embodied companion interaction. Given streaming user speech, dialogue history, and vocal affect, MIRA predicts both the response text and an explicit embodiment cue. Discrete social behaviors (\\eg listening, greeting) are mapped to validated robot trajectories, while open-ended speaking is paired with streaming, co-speech motion. This generative motion is governed by a predict-more-than-commit sliding window that provides temporal look-ahead for motion continuity while limiting physical commitment to a short, cancellable prefix. Crucially, we design CORTEX, a dual-timescale interaction policy that manages low-latency streaming and deliberative turn decisions, backed by a robot-side execution layer that enforces physical safety constraints at the control rate. We deploy MIRA on an Astribot S1 humanoid robot. Quantitative evaluations demonstrate competitive audio-motion alignment relative to state-of-the-art motion-generation baselines, while real-robot deployment measurements characterize streaming responsiveness and interruption handling.",
+          "title": "X-Planner: Event-Structured Task Planning for Embodied Intelligence",
+          "abstract": "Task planning bridges high-level instructions and executable behavior in long-horizon manipulation, yet modern Vision-Language-Action (VLA) systems often leave this intermediate structure implicit. Existing chain-of-thought (CoT) planners also tend to rely on coarse task-level annotations or serialize long reasoning traces token by token. We present X-Planner, a planning front-end that addresses both the supervision and representation of embodied reasoning. Our planning data combine Ego, UMI, and teleoperation under a hierarchy granularity with source-dependent annotation depth. Takeover-time annotations and human-designed failures supervise ongoing error recognition. On the model side, a shared VLM backbone exposes two event-structured plan forms: a discrete interface that emits interpretable event states and a latent interface that relays continuous CoT states across staggered Transformer depths through Staircase Decoding. A frozen latent-to-text reconstruction objective provides a semantic anchor for the latent representation. Offline two-step planning evaluation places X-Planner second among four evaluated models on both BERTScore-F1 and a judge-based Overall score. In real-robot experiments, respectively, outperforming the evaluated baselines. These results characterize planning-text quality and downstream execution.",
           "authors": [
-            "Lijian Lin",
-            "Ye Zhu",
-            "Fan Zhang",
-            "Yunfei Liu",
-            "Baofeng Li",
-            "Xianwen Zeng",
-            "Jianan Wang",
-            "Yu Li"
+            "Howard Lu",
+            "Shalfun Li",
+            "Porter Pan",
+            "Cris",
+            "Lumen",
+            "Cyril",
+            "Eric Hu",
+            "Lily Li",
+            "Maeve Zhang",
+            "Robert Wang",
+            "KZ Zheng",
+            "Viggo Chen",
+            "Tim Ding",
+            "Regsis Cheng",
+            "YJ Xiao",
+            "Kian",
+            "Hai Lin",
+            "Alan Song",
+            "Elise Ma",
+            "Gody Li",
+            "Victor Yao",
+            "Yohann Tang",
+            "Ingrid Yu",
+            "Jason He",
+            "James Wang",
+            "Ryan Yu",
+            "Ping Yang",
+            "Chris Pan",
+            "Vincent Chen",
+            "Roy Gan",
+            "Hao Wang",
+            "Qian Wang"
           ],
-          "primary_category": "cs.RO",
+          "primary_category": "cs.AI",
           "categories": [
-            "cs.RO"
+            "cs.AI"
           ],
-          "published": "2026-09-21T13:14:53+00:00",
-          "link": "https://arxiv.org/pdf/2609.24547v1",
+          "published": "2026-09-21T17:01:16+00:00",
+          "link": "https://arxiv.org/pdf/2609.25187v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "Real-time full-duplex human-robot interaction for embodied companions",
-          "llm_evidence_cn": "面向具身陪伴的实时全双工人机交互",
-          "llm_evidence": "面向具身陪伴的实时全双工人机交互",
-          "canonical_evidence": "面向具身陪伴的实时全双工人机交互",
-          "llm_tldr_en": "MIRA is a unified framework for full-duplex embodied companion interaction that, from streaming speech, dialogue history and vocal affect, predicts both response text and an explicit embodiment cue, synchronizing content, prosody and physical safety.",
-          "llm_tldr_cn": "实时具身陪伴交互要求机器人从流式语音推断用户意图、及时生成回复并执行可中断的表达性动作。现有系统通常将对话编排与手势合成解耦，依赖完整音频离线生成动作，难以在增量输入下同步内容、韵律与安全。本文提出统一的全双工框架MIRA，基于流式语音、对话历史与声音情感同时预测回复文本和显式具身线索。该方法实现了响应内容、韵律时序与物理安全的动态同步。",
-          "llm_tldr": "实时具身陪伴交互要求机器人从流式语音推断用户意图、及时生成回复并执行可中断的表达性动作。现有系统通常将对话编排与手势合成解耦，依赖完整音频离线生成动作，难以在增量输入下同步内容、韵律与安全。本文提出统一的全双工框架MIRA，基于流式语音、对话历史与声音情感同时预测回复文本和显式具身线索。该方法实现了响应内容、韵律时序与物理安全的动态同步。",
+          "llm_evidence_en": "event-structured task planning for embodied intelligence",
+          "llm_evidence_cn": "面向具身智能的事件结构化任务规划",
+          "llm_evidence": "面向具身智能的事件结构化任务规划",
+          "canonical_evidence": "面向具身智能的事件结构化任务规划",
+          "llm_tldr_en": "X-Planner is a planning front-end for embodied intelligence that uses event-structured plan forms and layered annotations to bridge high-level instructions and executable long-horizon manipulation.",
+          "llm_tldr_cn": "长程操作中任务规划需衔接高层指令与可执行行为，但现代视觉-语言-动作系统常将中间结构隐式化，且链式思维规划器依赖粗粒度标注或逐词序列化推理。本文提出X-Planner，一种事件结构化的规划前端，同时解决具身推理的监督与表示问题。其规划数据融合Ego、UMI与遥操作数据并采用分层粒度标注，模型以共享VLM骨干输出两种事件结构化规划形式。该工作为具身智能提供了更结构化的任务规划方案。",
+          "llm_tldr": "长程操作中任务规划需衔接高层指令与可执行行为，但现代视觉-语言-动作系统常将中间结构隐式化，且链式思维规划器依赖粗粒度标注或逐词序列化推理。本文提出X-Planner，一种事件结构化的规划前端，同时解决具身推理的监督与表示问题。其规划数据融合Ego、UMI与遥操作数据并采用分层粒度标注，模型以共享VLM骨干输出两种事件结构化规划形式。该工作为具身智能提供了更结构化的任务规划方案。",
+          "llm_tags": [
+            "query:ad"
+          ],
+          "matched_query_tag": "query:ad",
+          "matched_query_text": "embodied AI agents in real world scenarios",
+          "matched_requirement_id": "req-9",
+          "selection_source": "carryover_cache",
+          "paper_id": "2609.25187v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2609.26520v1",
+          "source": "arxiv",
+          "title": "MATE: Multi-Agent Virtual Teleoperation Platform for Humanoid Collaboration Data Collection",
+          "abstract": "Humanoid robots require diverse embodied experiences to acquire complex loco-manipulation and collaborative skills. However, existing humanoid data pipelines primarily focus on individual agents, while physical multi-robot collaboration remains difficult to scale due to costly hardware, dedicated spaces, and repeated resets. In this work, we introduce MATE, a Multi-Agent virtual TEleoperation platform for humanoid collaboration data collection that enables multiple geographically distributed operators to simultaneously control whole-body humanoids in a shared physics-based environment. MATE removes the need for multiple physical robots and co-located operation while preserving physically coupled interactions among humanoids, objects, and environments. Using MATE, we construct a multi-humanoid collaboration dataset comprising 24.1 hours of coordinated behavior across 2,500 joint episodes and five long-horizon tasks, including object handover, relay delivery, environment interaction, and cooperative transport. To improve learning from these interaction-rich demonstrations, we introduce EAIS, an Execution-Aligned Interaction Sampling strategy that computes sampling signals within an execution-aligned prefix and prioritizes task-progressing and interaction-critical behaviors. We evaluate MATE with representative imitation learning and vision-language-action policies across diverse collaboration tasks. Experiments demonstrate efficient data collection, effective policy learning, and zero-shot transfer from virtual demonstrations to a physical humanoid without real-world fine-tuning. Project page: https://yerik-yu.github.io/MATE/",
+          "authors": [
+            "Yichuan Yu",
+            "Youzhuo Wang",
+            "Yiming Ren",
+            "Di Feng",
+            "Yexuan Yang",
+            "Bingxi Yang",
+            "Shengxiao Gong",
+            "Yujing Sun",
+            "Yuexin Ma"
+          ],
+          "primary_category": "cs.RO",
+          "categories": [
+            "cs.RO"
+          ],
+          "published": "2026-09-22T14:45:17+00:00",
+          "link": "https://arxiv.org/pdf/2609.26520v1",
+          "tags": [
+            "keyword:ad",
+            "query:ad"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "humanoid loco-manipulation and human-robot collaboration",
+          "llm_evidence_cn": "人形运动操作与人机协作",
+          "llm_evidence": "人形运动操作与人机协作",
+          "canonical_evidence": "人形运动操作与人机协作",
+          "llm_tldr_en": "MATE is a multi-agent virtual teleoperation platform letting distributed operators control whole-body humanoids in a shared physics environment, enabling scalable humanoid loco-manipulation and collaboration data collection without physical robots.",
+          "llm_tldr_cn": "人形机器人需要多样具身经验来学习运动操作与协作技能，但现有人形数据采集流程多聚焦单智能体，物理多机器人协作因硬件昂贵、场地专用与反复重置而难以规模化。本文提出MATE，一个多智能体虚拟遥操作平台，允许多名异地操作者同时控制共享物理环境中的全身人形机器人，保留人形与物体之间的物理耦合交互。该平台无需多台实体机器人和同地操作即可高效采集协作数据，为人形机器人技能学习提供可扩展方案。",
+          "llm_tldr": "人形机器人需要多样具身经验来学习运动操作与协作技能，但现有人形数据采集流程多聚焦单智能体，物理多机器人协作因硬件昂贵、场地专用与反复重置而难以规模化。本文提出MATE，一个多智能体虚拟遥操作平台，允许多名异地操作者同时控制共享物理环境中的全身人形机器人，保留人形与物体之间的物理耦合交互。该平台无需多台实体机器人和同地操作即可高效采集协作数据，为人形机器人技能学习提供可扩展方案。",
           "llm_tags": [
             "query:ad"
           ],
@@ -90,45 +196,39 @@
           "matched_query_text": "robotics manipulation locomotion human-robot interaction",
           "matched_requirement_id": "req-2",
           "selection_source": "carryover_cache",
-          "paper_id": "2609.24547v1",
+          "paper_id": "2609.26520v1",
           "carry_days": 1
         },
         {
-          "id": "2609.23578v1",
+          "id": "2609.25363v1",
           "source": "arxiv",
-          "title": "AR-WAM: A Visual-Conditioned Agent-Ready World Action Model for Robotic Manipulation",
-          "abstract": "As AI agents become increasingly capable, agent-driven robotic control is emerging as a compelling paradigm. However, prevailing vision-language-action (VLA) models and world action models (WAMs) still rely on natural-language instructions to specify manipulation tasks, an ill-suited interface for agent-driven control: referentially ambiguous, spatially imprecise, redundant with the agent's inherent language understanding, and entangling intent with execution. We present AR-WAM, a visual-conditioned, agent-ready world action model that replaces language with two complementary conditions: a visual grounding prompt (a bounding box of the target) denoting the interaction object and location, and a learnable operation token dictating the atomic skill to execute. Our compact 0.5B-parameter model, with a frozen pretrained visual encoder and no language encoder, predicts scene evolution within compact latent states while decoding actions, exposing the policy's intent through explicit, supervisable reasoning signals. A model-agnostic compatibility layer provides three primitives (detect, execute, and query) so that local VLMs or online agent APIs can drive the policy directly, with long-horizon memory and closed-loop error recovery delegated to the agent side. On RoboTwin 2.0, RMBench, and a real Astribot S1 dual-arm platform, AR-WAM matches the strongest baselines on standard manipulation (87.2% average success) and outperforms them on memory-dependent and real-robot long-horizon tasks, improving success rates by 5.9% and 36.7%, respectively, while maintaining the lowest inference latency (14.1 ms).",
+          "title": "HOTICE: Whole-Body Humanoid Object Transportation in Cluttered Environments",
+          "abstract": "Object transportation is a fundamental capability for humanoid robots operating in real-world, human-centric environments, yet existing methods struggle when clutter constrains free space around both the robot and its carried payload. We present HOTICE, a whole-body humanoid learning framework for transporting objects through such cluttered environments. First, we introduce Humanoid-Object Decoupled Potential Fields, which jointly encode collision-avoidance guidance for the robot and the carried object, enabling coordinated, obstacle-aware motion for both. Second, to address the large action space inherent to whole-body loco-manipulation, we design a dual-agent reinforcement learning architecture that decouples upper- and lower-body control while preserving whole-body coordination via shared state observations and rewards. To train a policy that generalizes across diverse cluttered scenes, we further employ a specialist-to-generalist distillation strategy, in which privileged teacher policies are distilled into a single deployable student policy. We evaluate HOTICE in MuJoCo simulation and on a real Unitree G1 humanoid, demonstrating effective and robust object transportation across cluttered scenarios for objects of varying shapes. Our results show that HOTICE reliably coordinates whole-body motion and object-aware collision avoidance, generalizing effectively to previously unseen cluttered environments while achieving strong performance in sim2real deployment.",
           "authors": [
-            "Yicheng Jiang",
-            "Zesen Gan",
-            "Xiaobo Wang",
-            "Tianlun He",
-            "Chenxu Zhao",
-            "Minghui Wu",
-            "Xinyue Wang",
-            "Jiaxu Wang",
-            "Junhao He",
-            "Jianan Wang",
-            "Qiming Shao"
+            "Toan Nguyen",
+            "Weiduo Yuan",
+            "Siheng Zhao",
+            "Yue Wang",
+            "Daniel Seita"
           ],
           "primary_category": "cs.RO",
           "categories": [
             "cs.RO"
           ],
-          "published": "2026-09-20T11:55:26+00:00",
-          "link": "https://arxiv.org/pdf/2609.23578v1",
+          "published": "2026-09-21T20:01:04+00:00",
+          "link": "https://arxiv.org/pdf/2609.25363v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "Visual-conditioned world action model for agent-driven robotic manipulation",
-          "llm_evidence_cn": "面向智能体驱动机器人操作的视觉条件化世界动作模型",
-          "llm_evidence": "面向智能体驱动机器人操作的视觉条件化世界动作模型",
-          "canonical_evidence": "面向智能体驱动机器人操作的视觉条件化世界动作模型",
-          "llm_tldr_en": "AR-WAM replaces ambiguous natural-language instructions with a visual grounding prompt and a learnable operation token, giving agent-driven robotic manipulation a spatially precise world action model interface.",
-          "llm_tldr_cn": "现有视觉语言动作模型与世界动作模型依赖自然语言指令指定操作任务，存在指代模糊、空间不精确、与智能体语言理解冗余以及意图与执行纠缠等问题。本文提出AR-WAM，一种视觉条件化、面向智能体的世界动作模型，用目标框视觉提示与可学习操作令牌两种条件替代语言。该方法使智能体驱动的机器人操作具备更精确的空间定位与更清晰的动作意图表达，为智能体就绪的机器人操作提供了更适配的控制接口。",
-          "llm_tldr": "现有视觉语言动作模型与世界动作模型依赖自然语言指令指定操作任务，存在指代模糊、空间不精确、与智能体语言理解冗余以及意图与执行纠缠等问题。本文提出AR-WAM，一种视觉条件化、面向智能体的世界动作模型，用目标框视觉提示与可学习操作令牌两种条件替代语言。该方法使智能体驱动的机器人操作具备更精确的空间定位与更清晰的动作意图表达，为智能体就绪的机器人操作提供了更适配的控制接口。",
+          "llm_evidence_en": "whole-body humanoid loco-manipulation with dual-agent reinforcement learning",
+          "llm_evidence_cn": "基于双智能体强化学习的全身人形机器人移动操作",
+          "llm_evidence": "基于双智能体强化学习的全身人形机器人移动操作",
+          "canonical_evidence": "基于双智能体强化学习的全身人形机器人移动操作",
+          "llm_tldr_en": "HOTICE addresses humanoid object transportation in cluttered spaces by combining humanoid-object decoupled potential fields with a dual-agent reinforcement learning architecture that separates upper and lower body control.",
+          "llm_tldr_cn": "人形机器人在真实人类环境中搬运物体时，杂物会同时限制机器人本体与负载的运动空间，现有方法难以应对。本文提出 HOTICE 全身人形学习框架，首先设计人形-物体解耦势场，联合编码机器人与被搬运物体的避障引导，实现协同避障运动；其次针对全身移动操作的大动作空间，设计上下半身解耦的双智能体强化学习架构。该框架使机器人在杂乱环境中完成整体式物体运输，提升了移动操作能力。",
+          "llm_tldr": "人形机器人在真实人类环境中搬运物体时，杂物会同时限制机器人本体与负载的运动空间，现有方法难以应对。本文提出 HOTICE 全身人形学习框架，首先设计人形-物体解耦势场，联合编码机器人与被搬运物体的避障引导，实现协同避障运动；其次针对全身移动操作的大动作空间，设计上下半身解耦的双智能体强化学习架构。该框架使机器人在杂乱环境中完成整体式物体运输，提升了移动操作能力。",
           "llm_tags": [
             "query:ad"
           ],
@@ -136,217 +236,7 @@
           "matched_query_text": "robotics manipulation locomotion human-robot interaction",
           "matched_requirement_id": "req-2",
           "selection_source": "carryover_cache",
-          "paper_id": "2609.23578v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2609.24552v1",
-          "source": "arxiv",
-          "title": "Smoothness as a Constraint for Stable Humanoid Locomotion",
-          "abstract": "Embodied AI systems, particularly humanoid robots deployed in real world scenarios require whole-body control policies that are both task-responsive and physically smooth. However, smoothness is not uniform across the body: lower body must remain sufficiently reactive, while the upper body must be tightly regulated to preserve stability. Existing reinforcement learning approaches typically impose smoothness through auxiliary terms in the reward function, which compete with task objectives, treating the body as uniform and provide no direct control over the physical quantities responsible for smooth behavior. We introduce DeCap (Decoupled Constraint-aware policy), a constrained reinforcement learning algorithm that decouples whole-body smoothness into separate upper- and lower-body constraint groups, each formulates smoothness as explicit constraints on physical motion limits. To improve constraint satisfaction near feasibility boundaries, DeCap incorporates a bounded barrier penalty that activates proactively as limits are approached and remains bounded at the constraint limit. On real-world humanoid whole-body control task, DeCap reduces upper-body action rate by 2.50x and acceleration by 2.18x relative to reward-based smoothness policies, while also improving lower-body smoothness and reducing transient motion. We demonstrate that a fixed set of smoothness constraints transfers across diverse terrains, alleviating the need of extensive reward tuning.",
-          "authors": [
-            "Utsav Panchal",
-            "Denis Kleyko",
-            "Unal Artan",
-            "Amy Loutfi"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-09-21T13:19:00+00:00",
-          "link": "https://arxiv.org/pdf/2609.24552v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "Constrained RL decoupling whole-body smoothness for stable humanoid locomotion",
-          "llm_evidence_cn": "用约束强化学习解耦全身平滑性以实现稳定人形运动",
-          "llm_evidence": "用约束强化学习解耦全身平滑性以实现稳定人形运动",
-          "canonical_evidence": "用约束强化学习解耦全身平滑性以实现稳定人形运动",
-          "llm_tldr_en": "DeCap is a constrained RL algorithm that decouples whole-body smoothness into separate upper and lower body constraints for humanoid locomotion, avoiding reward-term competition and giving direct control over physical smoothness quantities.",
-          "llm_tldr_cn": "真实场景中的具身人形机器人需要既响应任务又物理平滑的全身控制策略，但现有强化学习通常用奖励辅助项施加平滑约束，会与任务目标冲突且无法直接控制平滑相关的物理量。本文提出DeCap约束强化学习算法，将全身平滑性解耦为上身与下身分别约束。实验表明该方法在保持任务响应的同时提升下身反应性与上身稳定性，为真实场景人形机器人的稳定平滑全身控制提供了新的约束式学习思路。",
-          "llm_tldr": "真实场景中的具身人形机器人需要既响应任务又物理平滑的全身控制策略，但现有强化学习通常用奖励辅助项施加平滑约束，会与任务目标冲突且无法直接控制平滑相关的物理量。本文提出DeCap约束强化学习算法，将全身平滑性解耦为上身与下身分别约束。实验表明该方法在保持任务响应的同时提升下身反应性与上身稳定性，为真实场景人形机器人的稳定平滑全身控制提供了新的约束式学习思路。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "intelligent control reinforcement learning for robots",
-          "matched_requirement_id": "req-6",
-          "selection_source": "carryover_cache",
-          "paper_id": "2609.24552v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2609.24563v1",
-          "source": "arxiv",
-          "title": "ARSTAG: An Agentic Real2Sim2Real System for Task-Specific Robot Data Generation",
-          "abstract": "Adapting visuomotor policies to new manipulation tasks often requires substantial manual engineering or teleoperated data collection. Simulation can provide task-specific data at scale, but constructing the scene, designing expert behavior, and configuring data generation still require significant per-task effort. We present ARSTAG, an agentic Real2Sim2Real system that turns a single RGB image and a natural-language instruction directly into robot policy-learning data. A hierarchy of language agents constructs a task-scoped simulation scene, generates robot-feasible demonstrations, and expands the training distribution through task-consistent randomization, while a coordinator agent manages cross-stage feedback and recovery. Across seven manipulation tasks spanning grasping, placement, and stacking, the ARSTAG-generated demonstrations enable sim-to-real transfer of three visuomotor policy architectures to a dual-arm robot, with pi0.5 achieving an average real-world success rate of 74.6%. Ablations show that task-consistent randomization substantially improves robustness, and policy performance increases with generated dataset size. Project webpage: https://boweili666.github.io/ARSTAG/.",
-          "authors": [
-            "Bowei Li",
-            "Yuner Zhang",
-            "Changliu Liu"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-09-21T13:25:05+00:00",
-          "link": "https://arxiv.org/pdf/2609.24563v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "agentic Real2Sim2Real system generating robot manipulation data",
-          "llm_evidence_cn": "生成机器人操作数据的智能体式Real2Sim2Real系统",
-          "llm_evidence": "生成机器人操作数据的智能体式Real2Sim2Real系统",
-          "canonical_evidence": "生成机器人操作数据的智能体式Real2Sim2Real系统",
-          "llm_tldr_en": "ARSTAG is an agentic Real2Sim2Real system that turns a single RGB image and a language instruction into robot policy-learning data via hierarchical language agents that build scenes, generate demonstrations and randomize.",
-          "llm_tldr_cn": "将视觉运动策略适配到新操作任务往往需要大量人工工程或遥操作数据采集，仿真虽可扩展但场景构建与专家行为设计仍需逐任务投入。本文提出ARSTAG，用分层语言智能体从单张RGB图像和自然语言指令出发，自动构建任务级仿真场景、生成机器人可行演示并通过任务一致随机化扩展分布，协调智能体管理跨阶段反馈与恢复。在七类操作任务上验证了自动数据生成的有效性，降低了策略学习的数据门槛。",
-          "llm_tldr": "将视觉运动策略适配到新操作任务往往需要大量人工工程或遥操作数据采集，仿真虽可扩展但场景构建与专家行为设计仍需逐任务投入。本文提出ARSTAG，用分层语言智能体从单张RGB图像和自然语言指令出发，自动构建任务级仿真场景、生成机器人可行演示并通过任务一致随机化扩展分布，协调智能体管理跨阶段反馈与恢复。在七类操作任务上验证了自动数据生成的有效性，降低了策略学习的数据门槛。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2609.24563v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2609.22966v1",
-          "source": "arxiv",
-          "title": "Transferring the Intelligence of VLMs to Robotic Control",
-          "abstract": "Humans can seamlessly adapt to both physical and digital worlds, suggesting that while a digital-to-real gap exists in embodiment, environment and task, human intelligence itself may transfer across this gap. This naturally raises a fundamental question: can the intelligence of vision-language models (VLMs) similarly generalize from the digital world to the physical world for robotic control? We investigate this question through RoboDawn, a human-intuitive interface that exposes robotic control to an agentic VLM through a compact set of discrete translation, rotation, and gripper commands. Using this interface, the VLM controls a robot in a closed loop: it observes the current visual state, reasons about the next action, executes it, and adapts subsequent decisions to the resulting state. Furthermore, we introduce an in-context learning (ICL) scheme that uses a few demonstrations to ground the VLM in both interface usage and task-solving strategies. Experiments on RoboTwin 2.0 C2R and RoboDojo demonstrate that RoboDawn achieves strong performance without task-specific robot training. In the zero-shot setting, RoboDawn outperforms several strong policies trained on benchmarkspecific robot data, while a single in-context demonstration further yields substantial performance gains and establishes state-of-the-art (SOTA) results. On RoboTwin 2.0 C2R, the success rate increases from 53.2% zero-shot to 73.6% one-shot, exceeding the solid baseline π0.5 (46.0%). Similar gains are observed on RoboDojo, where success rate improves from 35.67% zero-shot to 47.17% one-shot. The same framework also transfers to real-world robots, performing block-in-basket and block stacking on Franka.",
-          "authors": [
-            "Meng-Hao Guo",
-            "Zhe-Han Mo",
-            "Jia-Jun Wang",
-            "Yi Zhang",
-            "Kejin Wang",
-            "Yi-Xuan Deng",
-            "Jia-Peng Zhang",
-            "Yongming Rao",
-            "Shi-Min Hu"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-09-19T11:34:13+00:00",
-          "link": "https://arxiv.org/pdf/2609.22966v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "transferring VLM intelligence to closed-loop robotic control",
-          "llm_evidence_cn": "将视觉语言模型智能迁移到闭环机器人控制",
-          "llm_evidence": "将视觉语言模型智能迁移到闭环机器人控制",
-          "canonical_evidence": "将视觉语言模型智能迁移到闭环机器人控制",
-          "llm_tldr_en": "Can VLM intelligence transfer from digital to physical worlds for robot control? RoboDawn exposes robot control to an agentic VLM via discrete translation, rotation and gripper commands in a closed loop, enabling vision-language reasoning to drive manipulation.",
-          "llm_tldr_cn": "人类能够无缝适应物理与数字世界，这启发一个问题：视觉语言模型的智能能否同样从数字世界泛化到物理世界用于机器人控制。本文提出RoboDawn，一种人类直观接口，把机器人控制暴露给智能体式VLM，仅用平移、旋转与夹爪等少量离散命令，让模型闭环地观察视觉状态、推理下一步动作、执行并调整后续决策。实验表明该接口能让VLM闭环控制机器人，验证了数字世界智能向物理控制迁移的潜力，为通用机器人控制提供了新路径。",
-          "llm_tldr": "人类能够无缝适应物理与数字世界，这启发一个问题：视觉语言模型的智能能否同样从数字世界泛化到物理世界用于机器人控制。本文提出RoboDawn，一种人类直观接口，把机器人控制暴露给智能体式VLM，仅用平移、旋转与夹爪等少量离散命令，让模型闭环地观察视觉状态、推理下一步动作、执行并调整后续决策。实验表明该接口能让VLM闭环控制机器人，验证了数字世界智能向物理控制迁移的潜力，为通用机器人控制提供了新路径。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "intelligent control reinforcement learning for robots",
-          "matched_requirement_id": "req-6",
-          "selection_source": "carryover_cache",
-          "paper_id": "2609.22966v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2609.23445v1",
-          "source": "arxiv",
-          "title": "BiRoAD: Learning Shared and Role-Adaptive Representations for Bimanual Manipulation",
-          "abstract": "Bimanual manipulation requires policies that coordinate two arms while adapting their functional roles to scene geometry, object configuration, and task context. Learning such scene-conditioned role adaptation remains challenging, as demonstrations may contain uneven role distributions that limit generalization to underrepresented arm--role configurations. In addition, many bimanual policies predict actions in fixed left- and right-arm action spaces. While this provides a natural parameterization for robot control, it does not explicitly specify how behaviors should transform when functional roles are exchanged across arms. Across different scene initializations, the two arms may follow a similar coordination pattern, but the role-specific behavior assigned to each arm should change with the scene. Therefore, we propose BiRoAD, a Bimanual Role-Adaptive Decomposition framework for learning shared and role-adaptive representations in bimanual policies. Given bimanual trajectory or action-token features, BiRoAD decomposes these features into swap--symmetric and swap--antisymmetric components: the former captures coordination structure invariant to arm exchange, and the latter captures role-specific distinctions that vary consistently with functional role assignment. The two components are then recomposed as residual updates to the original paired arm representations, allowing BiRoAD to serve as a modular feature transformation without changing the policy inputs, imitation-learning objective, or requiring manually defined role labels. Across multiple bimanual manipulation tasks with balanced and imbalanced role distributions, BiRoAD improves robustness across role configurations over corresponding base policies, with notable gains on underrepresented role configurations.",
-          "authors": [
-            "Yan Shen",
-            "Yuchen Liu",
-            "Feng Jiang",
-            "Hangtian Hu",
-            "Xiaoqi Li",
-            "Shu Chen",
-            "Ruihai Wu",
-            "Hao Dong"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-09-20T08:20:55+00:00",
-          "link": "https://arxiv.org/pdf/2609.23445v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "bimanual robotic manipulation with role-adaptive policies",
-          "llm_evidence_cn": "双臂机器人操作的角色自适应策略",
-          "llm_evidence": "双臂机器人操作的角色自适应策略",
-          "canonical_evidence": "双臂机器人操作的角色自适应策略",
-          "llm_tldr_en": "BiRoAD learns shared and role-adaptive representations for bimanual manipulation, explicitly modeling behavior transformation when functional arm roles are exchanged and improving generalization to underrepresented role configurations.",
-          "llm_tldr_cn": "双臂操作要求两臂协调并随场景几何、物体配置与任务自适应功能角色，但演示数据中角色分布不均，且固定左右臂动作空间难以表达角色交换。作者提出BiRoAD，学习共享与角色自适应表征，显式建模功能角色互换时的行为变换。实验表明其在角色交换与欠代表配置下提升协调泛化能力。该工作为双臂角色自适应操作提供了有效框架。",
-          "llm_tldr": "双臂操作要求两臂协调并随场景几何、物体配置与任务自适应功能角色，但演示数据中角色分布不均，且固定左右臂动作空间难以表达角色交换。作者提出BiRoAD，学习共享与角色自适应表征，显式建模功能角色互换时的行为变换。实验表明其在角色交换与欠代表配置下提升协调泛化能力。该工作为双臂角色自适应操作提供了有效框架。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2609.23445v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2609.23486v1",
-          "source": "arxiv",
-          "title": "Cognitive Action Reasoning for Proactive Robots from Human-Centered Multimodal Observations",
-          "abstract": "Robots operating in human-centered environments are typically designed to execute explicit instructions, and most robot-learning datasets likewise pair observations with task instructions or low-level actions. Although recent work has begun to explore proactive embodied assistance, existing resources target different settings and action levels, leaving real-world human-centered multimodal decision-making underexplored. We formulate this problem as \\textit{Proactive Robot Action Reasoning} (\\textit{ProRobo}), an upstream cognitive decision problem in which a robot must determine which action to take based on multimodal human and environmental cues without explicit action instructions. To support ProRobo, we introduce \\textit{ProAction}, a real-world multimodal dataset containing 10K samples of visual observations, audio signals, and text inputs across 12 daily-life scenarios in five common scenes. To construct cognitively grounded high-level action supervision, we develop a two-stage human-in-the-loop pipeline that combines appraisal-guided candidate generation with Affective Theory-of-Mind-guided human refinement, explicitly incorporating contextual judgment about human states, urgency, feasibility, and potential risk into action annotation. Based on this supervision, we benchmark representative Multimodal Large Language Models (MLLMs) and introduce \\textit{MMC2Act}, a reference model that implicitly learns the mapping from multimodal observations to cognitively grounded high-level actions. Experiments across modality settings, subject-disjoint generalization, cross-dataset transfer, and human evaluation show that general-purpose MLLMs struggle with proactively reasoning high-level actions from multimodal cues, whereas training on \\textit{ProAction} substantially improves performance.",
-          "authors": [
-            "Zhihao Gu",
-            "Kechao Zhu",
-            "Yuanfeng Wu",
-            "Mohan Liu",
-            "Ankit Kumar Shaw",
-            "ChenDong Hong",
-            "Xuanyu Chen",
-            "Dengchen Mei",
-            "Xu Tianyi",
-            "Lin Wang"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO",
-            "cs.CV"
-          ],
-          "published": "2026-09-20T09:20:28+00:00",
-          "link": "https://arxiv.org/pdf/2609.23486v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "proactive robot action reasoning in human-centered environments",
-          "llm_evidence_cn": "以人为中心环境中的机器人主动动作推理",
-          "llm_evidence": "以人为中心环境中的机器人主动动作推理",
-          "canonical_evidence": "以人为中心环境中的机器人主动动作推理",
-          "llm_tldr_en": "ProRobo formulates proactive robot action reasoning, where a robot infers which action to take from multimodal human and environmental cues without explicit instructions, supported by the ProActi dataset.",
-          "llm_tldr_cn": "在以人为中心的环境中，机器人通常只能执行显式指令，缺乏依据人类与环境多模态线索主动决策的能力。本文将该问题形式化为主动机器人动作推理ProRobo，要求机器人无需显式动作指令即可判断应执行何种动作。为此作者构建了配套数据集ProActi，用于真实场景下的多模态决策评测。该工作为具身机器人的主动辅助与人在环决策提供了新任务与资源。",
-          "llm_tldr": "在以人为中心的环境中，机器人通常只能执行显式指令，缺乏依据人类与环境多模态线索主动决策的能力。本文将该问题形式化为主动机器人动作推理ProRobo，要求机器人无需显式动作指令即可判断应执行何种动作。为此作者构建了配套数据集ProActi，用于真实场景下的多模态决策评测。该工作为具身机器人的主动辅助与人在环决策提供了新任务与资源。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2609.23486v1",
+          "paper_id": "2609.25363v1",
           "carry_days": 1
         }
       ]

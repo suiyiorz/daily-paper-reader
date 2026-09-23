@@ -1,0 +1,496 @@
+Title: Manipulation Feasible Navigation Among Movable Obstacles with Discrete Contact Pushing
+
+URL Source: https://arxiv.org/pdf/2609.23312v1
+
+Published Time: Tue, 22 Sep 2026 01:37:26 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Manipulation-Feasible Navigation Among Movable Obstacles with Discrete-Contact Pushing 
+
+Shaohu Wang, Aiguo Song †, Yulong Yuan, Zhongyu Sun, Tianyuan Miao and Qinjie Ji 
+
+Abstract — In environments with large movable obstacles, detour-only navigation can be inefficient or even infeasible, while obstacle interaction requires reasoning about navigation benefit, feasible placement, and executable manipulation. We present a hierarchical navigation among movable obstacles (NAMO) framework for mobile manipulators. At the high level, the planner identifies key blocking obstacles from reference paths and searches for relocation plans that jointly satisfy geo-metric, manipulation, and downstream navigation constraints. When direct relocation is hindered by other movable ob-jects, a large language model (LLM) is selectively invoked to infer auxiliary manipulation dependencies, which are then verified by deterministic geometric planning. To execute the resulting relocation goals, we define discrete contact modes on the surfaces of box-shaped obstacles and select contact faces and regions online based on position and orientation errors, enabling straight, side, and corner pushing through contact switching. A recurrent reinforcement-learning policy coordinates the mobile base and manipulator to track tool center point (TCP) targets while preserving end-effector reach-ability during sustained pushing. Simulation and real-robot experiments demonstrate feasible navigation-manipulation in detour, single- and multi-obstacle relocation, and dependency-constrained scenarios, validating the framework for interactive navigation with large non-graspable obstacles. The open-source project is available at https://cloudytosunny.github. io/NAMO_DCPushing/ .
+
+I. INTRODUCTION Mobile robots have been widely deployed in applications such as warehouse logistics, inspection in hazardous or hard-to-access environments, and public safety. Conventional nav-igation systems, however, typically treat surrounding objects as non-traversable obstacles, and detouring around movable objects can substantially increase navigation cost or even render the goal unreachable [1]. Navigation among movable obstacles addresses this limitation by allowing robots to ac-tively interact with movable obstacles to recover or improve navigable space, thereby enabling more efficient navigation in constrained environments [2], [3]. Small movable objects can often be removed through grasping, whereas large box-shaped obstacles may instead require nonprehensile pushing to clear the way [4], [5]. Such NAMO tasks therefore couple navigation with obstacle relocation: when multiple routes are available, the robot must decide whether to detour or interact, identify the obstacles that truly constrain the candidate routes, and determine 
+
+Shaohu Wang, Aiguo Song, Yulong Yuan, Zhongyu Sun, Tianyuan Miao and Qinjie Ji are with the State Key Laboratory of Bioelectronics, Jiangsu Key Laboratory of Robot Perception and Control Technology, School of Instrument Science and Engineering, Southeast University, Nanjing 210096, China (e-mail: wangsh@seu.edu.cn, a.g.song@seu.edu.cn). (Corresponding author: Aiguo Song) Navigation-only  
+
+> Path
+> NAMO Path
+> Obstacle Path
+> Movable Obstacle
+> Static Obstacle
+> Goal
+> Obstacle
+> Final Goal
+> Obstacle
+> Temporary Goal
+> Start
+> Straight Pushing Side Pushing
+
+Fig. 1. Illustration of manipulation-feasible NAMO with discrete contact modes. Straight and side pushing skills are composed from the discrete contact set. The green curve denotes the navigation-only route, while the blue curve denotes the NAMO route, where the obstacle is pushed to a planned placement to restore traversability. The proposed framework selects the lower-cost route for efficient goal reaching. 
+
+relocation poses that improve accessibility while remaining physically executable, as illustrated in Fig. 1 [6]. Moreover, route-blocking obstacles may not be the only objects that must be moved, since other movable objects can occupy the required placement, approach, or pushing space, creating inter-object manipulation dependencies [7]. Although recent work has explored push-based multi-object relocation [8] and LLM-assisted NAMO reasoning [9], jointly reasoning about navigation benefit, feasible obstacle relocation, and mobile-manipulation constraints remains challenging. Even when a high-level planner finds a collision-free relocation path and target pose, the motion may still be physically infeasible for a mobile manipulator because the obstacle itself is unactuated and must be moved through robot contact. For large box-shaped objects, pushing be-havior is strongly contact-dependent: near-central contacts mainly induce translation, whereas offset contacts introduce moments that couple translation and rotation, making contact switching, base repositioning, and re-contact necessary when the desired motion changes direction [10]. Reinforcement arXiv:2609.23312v1 [cs.RO] 20 Sep 2026 learning has shown promise for coordinating the mobile base and manipulator to push large objects toward target poses [5], and has also been incorporated into mobile-manipulator NAMO for whole-body pushing execution [6]. However, complex relocation cannot be effectively handled by separately trained pushing skills. This motivates a unified interface that maps target object poses to discrete contact modes and continuous whole-body control, allowing a finite set of contact modes to be composed into flexible multi-stage pushing behaviors. To address these challenges, we consider NAMO for mobile manipulators in known environments with large, non-graspable but pushable box-shaped obstacles, and propose a hierarchical navigation–manipulation framework shown in Fig. 2. At the high level, the planner evaluates navigation-only and interaction-enabled hypotheses, identifies key blockers from reference paths, and searches for relocation poses that satisfy geometric, manipulation, and downstream reachability constraints. When direct relocation fails because of insufficient manipulation space, an LLM is selectively invoked to infer auxiliary obstacles and their manipulation dependencies, while all inferred hypotheses are subsequently verified by deterministic planning. At the execution level, target object poses are mapped online to discrete contact modes and corresponding TCP references, which are tracked by a reinforcement-learning-based whole-body controller co-ordinating the mobile base and manipulator. Contact-mode switching further enables straight, side, and corner pushing to be composed within a unified control framework. This hierarchical design provides a direct interface between task-level obstacle relocation and physically executable mobile manipulation. The main contributions of this work are summarized as follows:  
+
+> •
+
+A manipulation-feasible high-level NAMO planning method for large, non-graspable box-shaped obstacles. 
+
+It jointly evaluates navigation and interaction options, identifies key blockers, and searches for executable relo-cation poses, with LLM-assisted dependency reasoning when direct relocation fails.  
+
+> •
+
+A discrete-contact mobile-manipulation method with learned whole-body control. Target object poses are mapped to discrete contact modes and TCP references, enabling a shared policy to realize straight, side, and corner pushing through contact switching.  
+
+> •
+
+An integrated mobile-manipulator NAMO system vali-dated in simulation and real-world environments. Ex-periments demonstrate effective decision making, ob-stacle relocation, multi-contact pushing, and integrated planning and execution in constrained and dependency-aware scenarios. II. R ELATED WORK 
+
+A. Navigation Among Movable Obstacles 
+
+NAMO extends conventional navigation by allowing robots to actively modify the environment when interaction provides a feasible or more efficient route. Existing work has studied task-level trade-offs between detouring and manipu-lation [1], interaction under partial or unknown environments [11], [12], and perception-driven interactive navigation [13]. More recent methods couple robot and object motion more tightly through joint-state search or movability-aware inter-action planning [2], [3], while multi-robot NAMO further exposes conflicts and deadlocks induced by shared movable obstacles [14]. For multi-object tasks, ReloPush and ReloPush-BOSS address sequential and nonmonotone obstacle relocation [8], [7], whereas NAMO-LLM uses language-model guidance to bias obstacle selection, placement, and ordering [9]. In contrast, our method couples route-conditioned blocker iden-tification with manipulation-feasible placement and failure-driven dependency expansion. The LLM is invoked only after deterministic relocation planning fails, and all inferred dependencies are subsequently verified by geometric and manipulation constraints. 
+
+B. Nonprehensile Manipulation for Obstacle Relocation 
+
+Nonprehensile pushing enables robots to relocate large objects without grasping, but requires coupling desired object motion with executable contact and robot motion. Model-based approaches incorporate contact and motion constraints into pushing control [4], while recent work coordinates plan-ning and control for object pushing [15] or learns pushing behaviors under uncertain object properties [16], [5]. Object-centric planning and learned mobile manipulation further connect desired object motion with closed-loop pushing execution [17], [6]. Contact selection is particularly important when both translation and rotation are required. Switching Pushing Skill combines discrete pushing-point decisions with continuous feedback control [10], while learned arm-pushing has been applied to large-obstacle relocation during interactive nav-igation [18]. In contrast, our method uses discrete contact modes as an explicit interface between object-level relocation goals and whole-body execution, mapping target object poses to TCP references and composing straight, side, and corner pushing through contact switching with a shared learned controller. III. M ETHODOLOGY 
+
+A. Problem Formulation 
+
+We consider a mobile-manipulator NAMO problem in a known static environment containing fixed and movable obstacles, represented as 
+
+E = {O s, Om, F} , (1) where Os and Om denote the sets of fixed and movable box-shaped obstacles, respectively, and F is the collision-free workspace. The robot state is qr = (qb, q a), with 
+
+qb = ( xb, y b, θ b) denoting the planar base pose and qa ∈
+
+R6 denoting the manipulator configuration. Each movable obstacle oi ∈ O m has a planar pose qi = ( xi, y i, θ i).SLAM        
+
+> Path
+> Planner
+> High -Level NAMO
+> Planning Candidate
+> Plan
+> Evaluation
+> & Selection
+> Key
+> Blocking-
+> Obstacle
+> Inference
+> Manipulation-Feasible
+> Obstacle
+> Relocation Planning
+> NAMO Path
+> Success Failure
+> ➢Geometric Feasibility
+> ➢Manipulation Feasibility
+> ➢Navigation Feasibility
+> Dependency
+> Reasoning
+> Auxiliary
+> Obstacles
+> Interactive Controller
+> Tracking Controller Navigation-Only Path
+> LLM
+> ➢Left/Right Track Velocities
+> ➢Arm Joint Position Targets
+> TCP Target
+> Generation
+> Whole-Body Target Tracking
+> Straight Pushing Side Pushing
+
+Fig. 2. Overview of the proposed hierarchical NAMO framework. The planning layer evaluates navigation-only and NAMO hypotheses and selects the feasible plan with the lowest total cost. NAMO planning identifies key blockers and searches for manipulation-feasible relocation poses; when direct relocation fails, an LLM is selectively invoked to infer auxiliary obstacles and their manipulation dependencies for replanning. The execution layer maps relocation goals to discrete contact modes and TCP reference targets, which are tracked by a learned whole-body controller to compose straight, side, and corner pushing, while navigation-only segments follow the selected collision-free path. 
+
+We assume that the map, obstacle movability labels, initial poses, and geometric dimensions are known. Movable ob-stacles are non-graspable but pushable on the ground plane, and navigation collision checking uses the full planar robot footprint. Given an initial robot state qsr and a navigation goal qgr , the planner searches over task hypotheses 
+
+H = ( π, B, σ, G) , G = {gi | oi ∈ B} , (2) where π is the navigation route, B ⊆ O m is the set of ob-stacles selected for relocation, σ specifies their manipulation order, and G contains the corresponding target poses. When 
+
+B = ∅, the hypothesis becomes navigation-only. Among all feasible hypotheses, the planner selects 
+
+H∗ = arg min 
+
+> H∈ Hf
+
+[wnJnav (H) + wmJman (H)] , (3) where Hf denotes the feasible hypothesis set, Jnav the accumulated navigation cost measured by the planned path length, and Jman the manipulation cost, including obstacle displacement, robot repositioning, and contact switching. The weights wn and wm balance navigation efficiency and manipulation effort. 
+
+B. High-Level NAMO Decision and Hierarchical Obstacle Relocation Planning 1) Path-Conditioned Key Blocker Inference: We first use Hybrid A* [19] to plan from qsr to qgr in the complete environment. If a feasible path exists, it is retained as a navigation-only candidate πnav . We then temporarily remove all movable obstacles and compute a set of reference paths 
+
+πref  
+
+> k
+
+to identify corridors that may benefit from obstacle interaction. The robot footprint with a safety margin is swept along 
+
+πref  
+
+> k
+
+to form the traversability corridor C(πref  
+
+> k
+
+). Movable obstacles intersecting this corridor form the initial blocking set eBk = oi ∈ O m Ω( oi) ∩ C (πref  
+
+> k
+
+)̸ = ∅ , (4) where Ω( oi) denotes the planar region occupied by ob-stacle oi. Since corridor intersection alone does not imply a necessary relocation, each candidate obstacle is restored individually and the path is replanned. The key blocker set is 
+
+Bk =
+
+n
+
+oi ∈ eBk Plan 
+
+
+
+E(i) 
+
+> k
+
+, q sr , q gr
+
+
+
+= ∅
+
+o
+
+, (5) where E(i) 
+
+> k
+
+is the reference environment with oi restored. Each resulting pair (πref  
+
+> k
+
+, Bk) is then passed to manipulation-feasible obstacle relocation planning and task-level evalua-tion. 
+
+2) Manipulation-Feasible Obstacle Relocation Planning: 
+
+For each key blocker oi, candidate target poses gi =(xgi , y gi , θ gi ) are sampled hierarchically in progressively ex-panded neighborhoods around its current pose. Nearby collision-free placements are considered first to avoid unnec-essary obstacle displacement. For each sampled target gi, an obstacle relocation path 
+
+πoi (gi) = {q0 
+
+> i
+
+, q 1 
+
+> i
+
+, . . . , q Ki }, q 0 
+
+> i
+
+= qi, qKi = gi, (6) is searched in the planar object state space (xi, y i, θ i). Each transition qki → qk+1  
+
+> i
+
+is generated by an admissible pushing mode mk, while collision states are rejected during search. For each collision-free object path, downstream navigation is verified by replanning in the updated environment: 
+
+Φnav (gi) = I∃ πri : q+ 
+
+> r,i
+
+⇝ qnext  
+
+> r,i
+
+, π ri ⊂ F  E+ 
+
+> i
+
+(gi) . (7) where q+ 
+
+> r,i
+
+is the post-relocation robot state, and qnext  
+
+> r,i
+
+denotes the pre-manipulation state of the next blocker or the final navigation goal. E+ 
+
+> i
+
+(gi) denotes the updated environment after relocating oi to gi.The remaining candidates are further checked for manip-ulation executability: 
+
+Φman (πoi ) = I
+
+"S(qki , m k) ⊆ F r , k = 0: K − 1Γ( qki , m k, q k+1  
+
+> i
+
+) = 1 , k = 0: K − 1
+
+#
+
+, (8) where S(qki , m k) denotes the robot configurations required by mode mk, Fr is the collision-free reachable robot space, and Γ evaluates whether the corresponding object transition, including contact switching when required, is executable. Candidates satisfying both navigation Φnav = 1 and manipulation feasibility Φman = 1 are ranked by 
+
+Jman (πoi ) = αL o(πoi ) + βN sw (πoi ) + γL r (πoi ), (9) where Lo is the obstacle travel distance, Nsw is the number of contact-mode switches, and Lr is the robot approach and repositioning cost. If no feasible candidate is found locally, the sampling region is progressively expanded; for multiple blockers, the environment is updated after each accepted relocation and backtracked when necessary. 
+
+3) Failure-Driven Manipulation Dependency Expansion: 
+
+The blocking set Bk contains obstacles that directly affect the candidate route, yet some blockers may not be directly relo-catable. For a blocker oi, if no candidate relocation satisfies the geometric, downstream-navigation, and manipulation-feasibility constraints, direct relocation fails. This may occur because other movable objects occupy the required place-ment, approach, or pushing space. We therefore selectively invoke an LLM using structured failure context: 
+
+(Ai, Di) = LLM  X fail 
+
+> i
+
+ , Di = {oj ≺ oi | oj ∈ A i} , (10) where X fail  
+
+> i
+
+contains the identified key blockers, local map information, task description, and failure reason. The output 
+
+Ai denotes the inferred auxiliary obstacles, while Di speci-fies their manipulation dependencies; oj ≺ oi indicates that 
+
+oj should be relocated before oi.The LLM does not generate continuous object poses or relocation paths. Instead, each inferred auxiliary obstacle is returned to the deterministic relocation planner in Sec. III-B.2 for feasibility verification. Feasible relocations update the environment before retrying the original blocker; other-wise, the corresponding hypothesis is rejected. 
+
+C. Learned Mobile Manipulation via Discrete Contact Modes 
+
+Given the target pose gi produced by the high-level planner, we map the object-level relocation goal to a discrete contact mode and a corresponding TCP reference target. A learned whole-body policy then coordinates the mobile base and manipulator to track this target during pushing. 
+
+1) Discrete Contact Modes on Box Surfaces: As illus-trated in Fig. 3(a), each vertical face of obstacle oi is parti-tioned into left, center, and right contact regions, represented by fixed anchors in the object frame. A contact mode is defined as 
+
+m = ( f, c ), f ∈ T i, c ∈ { L, C, R }, (11) where Ti contains the four vertical faces. For each face, nof
+
+is the unit inward normal from the face center to the object center and represents its nominal pushing direction. Given qi = ( xi, y i, θ i) and gi = ( xgi , y gi , θ gi ), the target displacement in the object frame and the selected contact Right Track Velocities      
+
+> Obstacle Frame
+> Robot Frame
+> Manipulator Base Frame
+> LiDAR 1 Frame
+> LiDAR 2 Frame
+> Contact Face Left / Center / Right Contact Points Inactive-Face Contact Points
+> Stage 1 Stage 2oisde‖ ‖ sd
+> L
+> C
+> Rffof
+
+nomr
+
+> When c = R of
+
+ndidioie  
+
+> (a)
+> (b) (c)
+> Fig. 3. Robot–obstacle interaction with discrete contact modes. (a) Each vertical box face contains left, center, and right contact anchors, which define TCP reference targets and induce different translational and rotational effects. (b) In Stage 1, the pushing direction is aligned with the target before straight pushing. (c) In Stage 2, contact selection jointly considers position and orientation errors to reach the target pose.
+
+face are 
+
+eoi = R⊤(θi)
+
+xgi − xi
+
+ygi − yi
+
+
+
+, f ∗ 
+
+> i
+
+= arg max  
+
+> f∈T i
+
+(nof )⊤eoi
+
+∥eoi ∥ . (12) For each candidate contact mode m, its nominal short-push effect is geometrically approximated by 
+
+∆pom = smnof , ∆θm = κm(rom × nof )z , (13) where rom points from the object center to the contact anchor, sm is the nominal short-push displacement, and κm
+
+scales the corresponding rotational effect. These increments characterize the local motion tendency of each candidate mode and are used only for contact-mode selection. The pushing process toward the target pose is divided into two stages. When ∥eoi ∥ > d s, Stage 1 prioritizes motion toward the target, as illustrated in Fig. 3(b). Let ϵdi denote the signed angle between nof ∗
+
+> i
+
+and eoi . If |ϵdi | ≤ ϵs, only the position term is considered and the center contact is preferred for straight pushing. Otherwise, the position term is ignored and the orientation term is used to align the current pushing direction with the target direction. When ∥eoi ∥ ≤ ds, Stage 2 jointly considers the target position and final orientation, as illustrated in Fig. 3(c). The contact mode is selected by 
+
+m∗ 
+
+> i
+
+= arg min 
+
+> m∈M i
+
+h
+
+λsp∥eoi − ∆pom∥2
+
++ λsθ | wrap(∆ θref  
+
+> i
+
+− ∆θm)|2i
+
+,
+
+(14) where s ∈ {1, 2} denotes the current stage, Mi is the candidate contact-mode set on the selected face, and λsp
+
+and λsθ activate the corresponding terms. ∆θref  
+
+> i
+
+denotes the direction-alignment error in Stage 1 or the final orientation error in Stage 2. When the translational error is negligi-ble, the current face is retained for orientation regulation. During pushing, the current object pose and target distance are updated online; the nominal short-push effects of the Selected Path  Alternative Path    
+
+> Movable Obstacle Static Obstacle
+> Robot Goal
+> Movable Obstacle Goal
+> (a) Simulation Scene 1 (b) Simulation Scene 2
+> (c) Simulation Scene 3 (d) Simulation Scene 4
+> &
+> 1.8m
+> 1.3m 1
+
+o2o2o3o4o1o1o2o2o1oFig. 4. Planning results in four representative scenarios. Green denotes the selected route and obstacle relocation poses. (a) and (b) contain no feasible navigation-only path, whereas (c) and (d) show different route selections caused by small environmental changes. 
+
+candidate modes are recomputed accordingly, and Eq. (14) is reevaluated to select the current contact mode. The selected contact anchor is transformed into the world frame to define the TCP reference target for the whole-body controller. 
+
+2) Reinforcement-Learning-Based Whole-Body TCP Tar-get Tracking: During pushing, the TCP reference evolves with the obstacle motion, and manipulator-only tracking may lead to workspace limitations. We therefore train a recurrent whole-body policy using PPO [20] to coordinate the mobile base and manipulator: 
+
+ht = GRU( zt, h t−1),
+
+[aLt , a Rt , ∆pet ] = πθ (zt, h t), (15) where zt denotes the policy observation, comprising the base orientation and planar motion, track velocities, arm joint positions and velocities, current TCP tracking error and target velocity, short-horizon TCP target previews, and a local occupancy grid describing the surrounding obstacles. 
+
+aLt and aRt are the left- and right-track commands, and 
+
+∆pet ∈ R3 is a Cartesian TCP residual applied to the reference target generated in Sec. III-C.1. The corrected TCP target is converted to manipulator joint targets through damped least-squares inverse kinematics. Base motion and TCP tracking are optimized with sep-arate value functions and reward objectives, accounting for workspace reachability, target tracking, collision avoidance, motion smoothness, and control effort. Their advantages are weakly coupled during PPO optimization: 
+
+eAb = Ab + ρA e, eAe = Ae + ρA b, (16) where Ab and Ae denote the base and end-effector ad-vantages, respectively, and ρ controls their coupling. This encourages base repositioning to support TCP tracking while allowing the manipulator to adapt to base motion. Ref. Path  Movable Obstacle  Static Obstacle  Movable Obstacle Goal  
+
+> (b) Simulation Scene 6
+> (c) Execution in Simulation Scene 5 (d) Execution in Simulation Scene 6
+> (a) Simulation Scene 5 1
+
+o2o3o4o1o2o3o4o                
+
+> Robot Goal
+> Robot Goal
+> Exec. Path
+> Fig. 5. Planning and execution results in dependency-constrained scenarios. (a) and (b) show LLM-assisted planning, where o2and o3are key blockers and o1and o4are auxiliary obstacles, with o1≺o2and o4≺o3. (c) and (d) show the simulated execution, in which the planned relocations restore connectivity and enable the robot to reach the goal.
+
+3) Contact Switching and Pushing Skill Composition: 
+
+During obstacle relocation, the desired pushing direction may change across different motion segments, requiring transi-tions between contact faces beyond the within-face contact selection described in Sec. III-C.1. When a new segment requires a different face, the robot disengages from the cur-rent contact, repositions the mobile base, and re-establishes contact on the newly selected face before continuing the push. Straight pushing maintains the current face, lateral pushing switches to the corresponding side face, and corner pushing is realized through successive face transitions. All behaviors share the same discrete contact representation and whole-body controller, without requiring separately trained pushing policies. IV. E XPERIMENT 
+
+A. Experimental Setup 
+
+We evaluate the proposed NAMO framework in both sim-ulation and real-world environments. Simulation experiments and whole-body policy training are conducted in Isaac Gym, with scenes containing fixed obstacles and large movable boxes on known maps to evaluate high-level planning, ob-stacle relocation, manipulation performance, and integrated task execution. The real-world platform consists of a tracked mobile base and a Unitree manipulator. Movable-box poses are estimated online using AprilTag fiducials observed by a monocular camera [21], while the robot pose is provided by a FAST-LIO2-based LiDAR–inertial SLAM system [22]. All perception, planning, and control modules run onboard an NVIDIA Jetson Orin NX 16GB. We report task success, navigation and manipulation costs, completion time, and motion-related measures where applicable. TABLE I TASK -COST COMPARISON FOR HIGH -LEVEL PLANNING IN SCENES 1–4. Simulation scene Strategy Jnav Jman Jtotal                                                                       
+
+> 1NAMO 23.59 5.85 29.44 2NAMO-A 15.40 9.67 25.07
+> NAMO-B 23.59 8.84 32.43 3Navigation-only 23.59 023.59
+> NAMO 15.40 9.67 25.07 4Navigation-only 23.59 023.59
+> NAMO 15.06 3.31 18.37
+> TABLE II MANIPULATION ROBUSTNESS UNDER VARYING INITIAL HEADING OFFSETS AND FRICTION CONDITIONS .Test Setting Success (%) Tcomp (s) Initial heading −40 ◦96 12 .3±1.7
+> −20 ◦100 9.7±1.10◦100 5.8±0.620 ◦96 10 .2±0.745 ◦96 13 .1±1.5
+> Friction μ= 0 .3100 6.6±0.7
+> μ= 0 .5100 8.4±1.1
+> μ= 0 .796 9.9±1.4
+> Nonuniform 88 13 .3±3.8
+
+B. High-Level NAMO Planning Evaluation 
+
+We first evaluate the proposed high-level NAMO plan-ner in simulation using six representative scenarios. Unless otherwise stated, we set α = 1 .0, β = 0 .5, and γ = 1 .0
+
+in Eq. (9), where β represents the equivalent cost of a contact transition, and wn = wm = 1 .0 in Eq. (3). Sim-ulation scenes 1–4 contain no obstacle-relocation dependen-cies and evaluate key-blocker identification, manipulation-feasible placement search, and the trade-off between de-touring and interaction (Fig. 4). Simulation scenes 5–6 involve non-local manipulation dependencies and evaluate the failure-driven dependency expansion with LLM-assisted reasoning (Fig. 5). The results in Simulation scenes 1–4 show that the planner selects task-level solutions according to reachability and total execution cost. In simulation scene 1, where no navigation-only path exists, o1 and o2 are identified as critical blockers and feasible relocation plans restore connectivity to the goal. In simulation scene 2, two feasible NAMO alternatives are compared by their combined navigation and manipulation costs, and the lower-cost solution is selected. Simulation scenes 3 and 4 demonstrate the trade-off between detouring and interaction: Simulation scene 3 favors detouring because the reduction in navigation cost is smaller than the additional manipulation cost, whereas the wider corridor in Simulation scene 4 requires only a short relocation of o2, making NAMO more economical. These results confirm that the planner can recover connectivity when interaction is necessary while avoiding unnecessary manipulation when detouring is prefer-able. Quantitative results are summarized in Table I. Simulation scenes 5–6 further evaluate dependency-Robot Goal 
+
+Fail   
+
+> 0–45s
+> Robot Goal
+
+Fail   
+
+> 0–29s
+
+Success   
+
+> 0–66s
+
+Success     
+
+> 0–111s
+> (b) Only Side Pushing Interaction (a) Body Interaction use Path NAMO-A
+> (c) Body Interaction use Path NAMO-B (d) Ours: Discrete Contact Pushing Interaction
+> Fig. 6. Interactive navigation comparison in Simulation Scene 2. (a) and (c) Robot-body pushing, (b) arm-based side pushing [18], and (d) our discrete-contact pushing. Panels (a), (b), and (d) execute NAMO-A, while (c) executes NAMO-B.
+
+constrained relocation. As shown in Fig. 5, in Simulation scene 5, although o2 and o3 are the direct blockers, their feasible placement and manipulation spaces are occupied by o1 and o4, causing geometry-only planning to fail. With LLM-assisted dependency reasoning, the planner identifies 
+
+o1 and o4 as prerequisite relocations and successfully recov-ers a feasible solution. The same outcome is observed in Simulation scene 6. These results show that LLM-assisted reasoning enables the planner to uncover non-local manipula-tion dependencies that cannot be resolved by local geometric search alone, while all resulting relocation plans remain verified by deterministic planning. 
+
+C. Interactive Manipulation Evaluation 
+
+We first evaluate the interaction capabilities enabled by the proposed discrete contact modes. As shown in Fig. 7(a)– (c), straight pushing drives the box along the primary mo-tion direction while correcting orientation deviations when necessary. Side pushing relocates the box transversely by switching to the corresponding side face, whereas corner pushing changes the motion direction through contact disen-gagement, base repositioning, and re-contact. The importance of contact-location flexibility is further examined in Fig. 7(d) and (e). Center-only pushing cannot recover from accu-mulated heading deviations, whereas LCR-contact adjusts among the left, center, and right anchors to regulate the object pose and successfully reach the target. This confirms that the improved maneuverability arises from the additional contact-location freedom rather than a different controller. Robustness is further evaluated in simulation under vary-ing initial heading offsets and friction conditions, with 25 trials per setting and a 15 s timeout for failure. As shown in Table II, success remains at 96 –100% across all tested heading offsets and above 96% under uniform friction varia-tions. Under nonuniform friction, success decreases to 88% (b) Side Pushing 
+
+(a) Straight Pushing 
+
+Straight Pushing  Side Pushing  Straight Pushing (c) Corner Pushing : 
+
+① ②
+
+③ ④
+
+① ②
+
+③ ④
+
+④③②①
+
+④③②①
+
+(d) Center-only straight Pushing 
+
+(e) Multi-contact straight Pushing Fig. 7. Real-robot obstacle-pushing skills. (a) and (b) demonstrate straight and side pushing, respectively. (c) shows corner pushing, where an intermediate relocation pose enables successive straight, side, and straight pushing to guide the obstacle through the corner. (d) and (e) compare straight pushing with center-only and LCR contact, respectively. Door closed  Door open 
+
+Obstacle Temporary Goal 
+
+Start 
+
+Goal 
+
+Selected Path 
+
+Alternative Path 
+
+Actual Path 
+
+Straight Pushing  Corner Pushing (Side + Straight Pushing )  Path Tracking 
+
+Straight Pushing  Corner Pushing (Side + Straight Pushing )  Side Pushing & Path Tracking 
+
+Real-world Scene 1 
+
+Real-world Scene 2 
+
+Real-world Scene 1  Real-world Scene 2  Real-world Scene 2 
+
+Movable obstacle 
+
+0 – 45s  55s – 90s  110s – 120s 
+
+22s – 42s  56s – 79s  81s – 87s 
+
+0 – 57s  
+
+> Fig. 8. Real-world integrated NAMO execution. Scene 1 and the closed-door configuration of Scene 2 contain no feasible navigation-only route; the robot sequentially relocates obstacles through two and one intermediate relocation poses, respectively, to restore connectivity and reach the goal. In the open-door configuration of Scene 2, opening the door creates a lower-cost navigation-only route, which is selected by the planner.
+
+and completion time increases to 13 .3 ± 3.8 s , mainly due to repeated corrections induced by asymmetric object motion. Finally, we examine whether these manipulation capa-bilities translate into more effective NAMO execution in Simulation Scene 2. As shown in Fig. 6, under the same relocation poses and NAMO plans from Sec. III-B.2, robot-body pushing and arm-based side pushing [18] both fail on NAMO-A because they cannot complete the compound relocation of o2 in the narrow corridor. Robot-body pushing succeeds only with the longer NAMO-B solution, requiring 111 s , whereas our discrete-contact method directly executes NAMO-A in 66 s . This demonstrates that manipulation ver-satility is essential for converting efficient high-level NAMO plans into executable navigation. 
+
+D. Real-World Integrated NAMO Evaluation 
+
+Finally, we evaluate the complete NAMO system in two real-world L-shaped environments, as shown in Fig. 8. In Real-world Scene 1, the corridor is fully blocked and no navigation-only path exists. The planner therefore selects obstacle relocation, and the robot clears the passage by combining forward pushing, contact disengagement, base repositioning, and lateral re-contact before replanning to the goal, demonstrating consistent execution of the planned NAMO behavior. Real-world scene 2 further evaluates the navigation– interaction trade-off under two door configurations. With the door open, the navigation-only and NAMO paths have similar lengths, so direct navigation is selected because manipulation would introduce additional cost. With the door closed, navigation-only becomes infeasible; the robot instead clears the passage through a short forward push and lateral adjustment, then replans to the goal. Together, these experiments show that the proposed framework can adapt its task-level decision to environmental reachability and execution cost while maintaining consistency between high-level planning and physical execution. V. CONCLUSIONS We presented a hierarchical NAMO framework for mobile manipulators operating among large, non-graspable box-shaped obstacles. The framework couples manipulation-feasible high-level planning with discrete-contact whole-body pushing, while selectively using an LLM to expand non-local manipulation dependencies when direct relocation fails. Simulation results demonstrate effective trade-offs be-tween navigation and interaction, successful resolution of dependency-constrained cases, and improved pose regulation through multi-contact pushing. Real-world experiments fur-ther validate the consistency between task-level planning, obstacle relocation, and physical execution. Future work will investigate more adaptive manipulation under uncertain contact dynamics and extend the framework to objects with more diverse geometries and less structured environments. REFERENCES [1] K. Zhang, E. Lucet, J. A. dit Sandretto, and D. Filliat, “Navigation among movable obstacles using machine learning based total time cost optimization,” in IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2023, pp. 11321–11327. [2] Z. Ren, B. Suvonov, G. Chen, B. He, Y. Liao, C. Fermuller, and J. Zhang, “Search-based path planning in interactive environments among movable obstacles,” in IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 533–539. [3] J. J. Weeda, S. Bakker, G. Chen, and J. Alonso-Mora, “Pushing through clutter with movability awareness of blocking obstacles,” in 
+
+IEEE International Conference on Robotics and Automation (ICRA) .IEEE, 2025, pp. 512–518. [4] Y. Tang, H. Zhu, S. Potters, M. Wisse, and W. Pan, “Unwieldy object delivery with nonholonomic mobile base: A stable pushing approach,” 
+
+IEEE Robotics and Automation Letters (RA-L) , vol. 8, no. 11, pp. 7727–7734, 2023. [5] I. Dadiotis, M. Mittal, N. Tsagarakis, and M. Hutter, “Dynamic object goal pushing with mobile manipulators through model-free constrained reinforcement learning,” in IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 13363–13369. [6] T. Yang, J. Hwang, J. Jeong, M. Yoon, and S.-E. Yoon, “Efficient navigation among movable obstacles using a mobile manipulator via hierarchical policy learning,” in IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2025, pp. 17130–17137. [7] J. Ahn and C. Mavrogiannis, “ReloPush-BOSS: Optimization-guided nonmonotone rearrangement planning for a car-like robot pusher,” 
+
+IEEE Robotics and Automation Letters (RA-L) , vol. 11, no. 4, pp. 4227–4234, 2026. [8] J. Ahn and C. I. Mavrogiannis, “ReloPush: Multi-object rearrangement in confined spaces with a nonholonomic mobile robot pusher,” in IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 13196–13203. [9] Y. Zhang and Y. Kantaros, “NAMO-LLM: Efficient navigation among movable obstacles with large language model guidance,” IEEE Robotics and Automation Letters (RA-L) , vol. 10, no. 12, pp. 13026– 13033, 2025. [10] B. Zhang, C. Huang, H. Zhang, and X. Bai, “Switching pushing skill combined MPC and deep reinforcement learning for planar non-prehensile manipulation,” arXiv preprint arXiv:2303.17379 , 2023. [11] J. Muguira-Iturralde, A. Curtis, Y. Du, L. P. Kaelbling, and T. Lozano-P´ erez, “Visibility-aware navigation among movable obstacles,” in 
+
+IEEE International Conference on Robotics and Automation (ICRA) .IEEE, 2023, pp. 10083–10089. [12] B. He, G. Chen, W. Wang, J. Zhang, C. Fermuller, and Y. Aloimonos, “Interactive-FAR: Interactive, fast and adaptable routing for navigation among movable obstacles in complex unknown environments,” in 
+
+IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2024, pp. 5402–5409. [13] P. Schoch, F. Yang, Y. Ma, S. Leutenegger, M. Hutter, and Q. Leboutet, “IN-Sight: Interactive navigation through sight,” in IEEE/RSJ Interna-tional Conference on Intelligent Robots and Systems (IROS) . IEEE, 2024, pp. 7794–7800. [14] B. Renault, J. Saraydaryan, D. Brown, and O. Simonin, “Multi-robot navigation among movable obstacles: Implicit coordination to deal with conflicts and deadlocks,” in IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2024, pp. 3505–3511. [15] F. Bertoncelli and L. Sabattini, “Streamlining object pushing: Behavior tree-based coordination of control and planning,” in IEEE/RSJ Inter-national Conference on Intelligent Robots and Systems (IROS) . IEEE, 2024, pp. 5203–5210. [16] Y. Lee and K. Kim, “Goal-driven robotic pushing manipulation under uncertain object properties,” in IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 11904–11910. [17] K. Ren, G. Wang, A. S. Morgan, L. E. Kavraki, and K. Hang, “Object-centric kinodynamic planning for nonprehensile robot rearrangement manipulation,” IEEE Transactions on Robotics , vol. 41, pp. 5761– 5780, 2025. [18] Z. Bi, K. Chen, C. Zheng, Y. Li, H. Li, and J. Ma, “Interactive naviga-tion for legged manipulators with learned arm-pushing controller,” in 
+
+IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2025, pp. 9–16. [19] D. Dolgov, S. Thrun, M. Montemerlo, and J. Diebel, “Practical search techniques in path planning for autonomous driving,” in Proceedings of the AAAI Workshop on Search in Artificial Intelligence and Robotics ,2008. [20] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal policy optimization algorithms,” arXiv preprint arXiv:1707.06347 , 2017. [21] E. Olson, “AprilTag: A robust and flexible visual fiducial system,” in 
+
+IEEE International Conference on Robotics and Automation (ICRA) .IEEE, 2011, pp. 3400–3407. [22] W. Xu, Y. Cai, D. He, J. Lin, and F. Zhang, “FAST-LIO2: Fast direct LiDAR-inertial odometry,” IEEE Transactions on Robotics , vol. 38, no. 4, pp. 2053–2073, 2022.
