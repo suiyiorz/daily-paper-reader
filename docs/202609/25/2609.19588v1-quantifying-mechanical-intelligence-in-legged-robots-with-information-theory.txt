@@ -1,0 +1,250 @@
+Title: Quantifying Mechanical Intelligence in Legged Robots with Information Theory
+
+URL Source: https://arxiv.org/pdf/2609.19588v1
+
+Published Time: Fri, 18 Sep 2026 00:38:17 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Quantifying Mechanical Intelligence in Legged Robots with Information Theory 
+
+Zach J. Patterson 1
+
+Abstract — Mechanical intelligence, loosely defined as the reduction in control burden afforded by a robot’s physical form, has become a prominent concept in robotics, with instantiations in bioinspired robotics, soft robotics, robotic swarms, and many other areas. However, rigorous theoretical understanding and quantitative measures of mechanical intelligence have lagged behind the engineering systems that the community has devel-oped. In this work, using modern legged robots as a benchmark and exemplar, we propose several information-theoretic metrics for quantifying mechanical intelligence. By viewing body dy-namics as both a computational process and a communication channel, we show that several prior insights in legged-robot engineering can be described using information theory, and we quantify how bits are processed by mechanical modes and across robot coordinates. Specifically, we examine the trade-off between explicitly incorporating compliance through series-elastic actuation and using so-called proprioceptive, low-gear-ratio transmissions, and we explore how these mechanisms interact with control policies during locomotion. We develop these results on systems of increasing complexity: a simplified linear model of a robot-leg transmission, a nonlinear single-leg simulation, and simulated quadruped robots controlled by a learned policy while navigating challenging terrain. These results lay the groundwork for broader study of robot mecha-nisms and their role in embodied computation. 
+
+I. I NTRODUCTION 
+
+Ever since the early 1980s and the development of hopping robots [1], [2], legged robots have been built to utilize often complex nonlinear dynamics to achieve agile and efficient locomotion behaviors. The underlying perspective, that so-called “mechanical intelligence” can be somehow built into the physical design of the robot, has reached into every corner of the robotics enterprise and inspired large sub-communities such as bioinspired robotics and soft robotics [3]. Many engineers explicitly see their work in these terms while producing some of the most consequential recent innovations in the field. Nowhere is this more salient than in the work of Dr. Sangbae Kim and colleagues on the pro-prioceptive actuation concept for the MIT Cheetah platform [4], [5], leading directly to the modern boom in affordable and effective quadrupedal and bipedal robots. While Kim and colleagues developed their engineering methodologies to solve the problem of high-rate control for legged robots, they explicitly saw their project as developing “physical in-telligence,” creating mechanical designs that facilitated easier control solutions [6]. Their success in achieving this goal  
+
+> 1Mechanical and Aerospace Engineering, Case Western Reserve Uni-versity. zpatt@case.edu *This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible
+
+makes these systems ideal benchmarks for understanding mechanical intelligence in general. Specifically, Wensing et al. in their seminal paper [7] showed that the proprioceptive properties of the low-gear-ratio transmission enable more ef-fective high-bandwidth force control than series-elastic actu-ator (SEA) transmissions. They performed frequency-domain analysis by linearizing a simplified dynamical model of the system to approximate the open-loop bandwidth properties of various transmission designs. Here, we show that we can reach the same conclusions without specialized analysis, and simply by leveraging general information-theoretic metrics to quantify the mechanical intelligence of the mechanisms. Furthermore, we extend the analysis to simulations of real leg mechanics to show that the methods and results are not limited by the simplifications introduced in the linear model. Despite the enduring popularity of the mechanical intel-ligence concept, efforts to formalize and mathematize the field’s understanding have lagged behind the engineering innovations. However, there has been some foundational work in this area. In 2004, Pfeifer and Iida provided one of the first descriptions of the topic [8], and researchers have since sought to apply the concept of reservoir computing to study the information-processing capabilities of soft-bodied robots [9]. There has also been substantial work on using information theory to quantify mechanical intelligence by Ay, Ghazi-Zahedi, and other collaborators [10]. Information theory quantifies the amount of information, defined statis-tically, that is transmitted or stored during a given process [11], [12], making it a natural tool to study computation [13]. Their approach adopts a particular formulation of mechanical intelligence (or “morphological computation”, MC, as they refer to it), and they demonstrate that it is useful to describe the sensorimotor behaviors of simple robots operating in mazes [14], hopping [15], etc. This literature is the most direct intellectual predecessor of this paper, and the results serve as a critical intellectual foundation. However, that work primarily deals with systems with relatively little mechanical complexity, and thus does not establish a methodology for seeing into the mechanically intelligent system. Existing approaches also fail to scale well to fully passive mechanical systems. This latter issue is critical, as mechanical intelli-gence at its limit includes systems or subsystems that have no explicit control whatsoever. That said, these works have established the utility of information theory for understand-ing this foundational robotics problem. To further the study of mechanical intelligence in robotic systems, we will present the following contributions. We extend the information-theoretic analysis of mechanical intel-arXiv:2609.19588v1 [cs.RO] 17 Sep 2026 ligence to systems that are fully passive. We propose several metrics that capture the high-level behavior of mechanically intelligent systems. These metrics are then validated on the MIT Cheetah/Unitree Go family of quadruped robots, which we propose as a benchmark system for this topic. We demonstrate our approach on a linear template model, on a single simulated leg, and on a full quadruped robot simulation controlled with a modern learned policy. Overall, this analysis provides a framework for deeper understanding of mechanical intelligence that can be applied to many other robot systems. II. I NFORMATION THEORETIC ANALYSIS 
+
+The following is a brief summary of the key information-theoretic results used in this analysis. Given a discrete random variable, X, which is distributed according to the probability distribution p(x), we define the entropy of X
+
+as H(X) = − P 
+
+> x
+
+p(x) log p(x), which is a measure of the average uncertainty associated with a random variable. The conditional entropy, which measures the average uncertainty associated with a random variable X given that the value of another random variable Y is known, is defined as 
+
+H(X|Y ) = − P 
+
+> x,y
+
+p(x, y ) log p(x|y). We can then define the mutual information between two random variables X
+
+and Y as 
+
+I(X; Y ) = H(X) − H(X|Y ), (1) which measures the amount of information shared between the two variables [16]. This mutual information is a natural quantity of interest for analyzing mechanical intelligence, as it allows us to quantify, for example, the number of bits that the body has about the world. Mutual information has a number of extensions that allow us to analyze more complex systems. For example, we can define the conditional mutual information between X and Y
+
+given a third variable Z as 
+
+I(X; Y |Z) = H(X|Z) − H(X|Y, Z ) , (2) which measures the amount of information shared between 
+
+X and Y that is not already contained in Z. This is particularly useful for analyzing systems with multiple inter-acting components, as it allows us to isolate the information shared between specific components while accounting for the influence of others. With the information theory background out of the way, we can proceed to describing our more specific framework for analyzing mechanical intelligence. To begin, the systems considered in this paper must include the passive case. In other words, they may not have observations in the control-theoretic sense (so no sensors). While sensors are undoubtedly a critical component for understanding MI, it is logical that MI is prior to and independent of sensing; the body must first respond before something can be sensed, and an intelligent mechanical response may never involve a sensorimotor loop. Therefore, we conclude that a key relationship in MI is between the body’s state X and the world state and/or parameters W , and the proposed methods will begin with this interaction, before extending to the in-teraction with control, A. This thought process is equivalent to viewing the body as a communication bottleneck between the world and the brain. The amount of information available for the body itself to process, or to pass off to the brain, is therefore constrained by I(W ; X), the mutual information between the body and the world. This basic quantity is our starting point. However, a number of other metrics will be considered, especially as we incorporate feedback control into the analysis. One possible control-oriented metric is I(W ; X|A), which is the conditional mutual information between our world parameters and our state given that we know the action. In other words, this metric can tell us how much information is processed by the body independent of the action, which gives us an initial picture of the relative computation between body and controller. Similarly, Zahedi and Ay introduced the mor-phological computation metric M C W , which quantifies the amount of information about the next state of the robot and 
+
+world that is contained in the current state, given the current action [10]. This can be calculated by the conditional mutual information (using a slightly different notation from Zahedi) 
+
+I(Xn+1 , W n+1 ; Xn, W n|An), where n is the discrete time step. The conceptual idea is that, as this value increases, the physical interaction between the robot’s body and the world performs more computation to determine its next state. In the discrete setting, calculating the necessary informa-tion quantities is straightforward, but continuous determin-istic systems require additional care [17]. In this setting, mutual information becomes finite only after 1) assigning a probability distribution to the unknown environment and 2) introducing a finite resolution on the state, which is a common approach in the literature [18]. Together, the environment distribution and state resolution allow the finite information quantities used throughout this analysis. We comment on these assumptions, particularly that of finite state resolution, in the Discussion. For linear systems, these assumptions allow us to derive closed-form expressions by using the expression for the mutual information of a linear Gaussian channel 
+
+I(W ; X) = 12 log det  I + σ−2 LKL ⊤ , (3) where K is the covariance of the input distribution, σ2 is the variance of the state noise, and L is the linear map from input to output. For nonlinear systems, this straightforward closed-form mutual information is not available, and the mutual infor-mation must instead be estimated. While this is associated with a number of difficulties [19], we use the state-of-the-art InfoNCE estimator [20]. This estimator is based on a contrastive learning approach, which allows us to draw samples of the joint distribution of the variables of interest. Briefly, let f : R×Rnz → R be a scoring function, called the 
+
+critic , and let {(w(i), x (i))}Ni=1 be N independent samples with w(i) a scalar and x(i) a vector. The InfoNCE bound is 
+
+ˆI = log N − 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+"
+
+− log exp f (w(i), x (i))
+
+PNj=1 exp f (w(i), x (j))
+
+#
+
+.
+
+(4) The bracketed term is the cross-entropy loss L of a N -way classification problem: given a scalar w(i), identify which of the N observations in the batch was produced by it. There-fore, the estimated information is ˆI = (log N − L )/ log 2 in bits. We give more specific information about how we use this estimator for simulation experiments in Section IV. III. A NALYTICAL MODEL 
+
+Following Wensing et al. [7], we begin with a simpli-fied model of one leg pressing against the ground. The proprioceptive transmission has one generalized coordinate, 
+
+q = θ, with inertia H = mlr2 + Irot . The SEA transmission instead has q = [ θj , θ m]⊤, with the rotor on an independent motor coordinate θm, coupled to the joint coordinate θj by a spring damper of stiffness ks and damping bs. It has inertia 
+
+H = diag( mlr2, I rot ). Both mechanisms have 
+
+H ¨q + D ˙q + Kq = J⊤f (t), xq =
+
+q
+
+˙q
+
+
+
+, (5) where J maps generalized motion to vertical foot displace-ment. J = −r for the proprioceptive design and J = [ −r, 0] 
+
+for the SEA design. We model the stiffness and damping of the ground, foot, and leg by ki and bi. For the SEA spring-damper, we define the matrices 
+
+KSEA =
+
+ ks −ks
+
+−ks ks
+
+
+
+, D SEA =
+
+ bs −bs
+
+−bs bs
+
+
+
+(6) These matrices penalize the relative displacement θj − θm.The assembled stiffness and damping matrices are 
+
+K = KSEA + J⊤kiJ, D = DSEA + J⊤biJ, (7) with KSEA = DSEA = 0 for the proprioceptive transmission. We set the series damping to bs = 2 ζs
+
+√ksIrot with ζs =0.10 . The leg mass, transmission radius, rotor inertia, and contact stiffness are taken from Wensing et al. [7]: ml =3 kg , r = 0 .1 m , Irot = 0 .010 kg m 2, and ki = 10 6 N/m.Contact damping is set to bi = 600 N s /m.As a check on the model, the proprioceptive transmission has a natural frequency of 79 .6 Hz, compared with the 
+
+79 .7 Hz reported in [7]. The series-elastic design with 
+
+ks = 70 N m/rad gives 13 .3 Hz, compared with the reported 
+
+13 .5 Hz. As ks increases, the link and motor coordinates lock together and the series-elastic model converges to the proprioceptive model. 
+
+A. Passive system response 
+
+To assess the passive information-processing capabilities of these transmissions, we model the unknown force over a contact window of duration T as band-limited to Bw. Such a force has approximately d = 2 BwT degrees of freedom over the window. We therefore have a force described by 
+
+f (t) = 
+
+> d
+
+X
+
+> j=1
+
+wj φj (t), w ∼ N (0 , σ 2
+
+> w
+
+I), (8) 
+
+Fig. 1: Relationship between mutual information and dynamics for the passive leg model. The simplified robot leg is excited by a sum of randomized forces at different frequencies and amplitudes. The result is swept across series-elastic stiffness values, and the mutual information between the leg state and the force is assessed. Top: Total bits present in the passive response. Bottom: Bits grouped by their corresponding frequencies. Dashed lines correspond to the natural frequencies of the mechanical modes. where {φj }dj=1 are discrete-cosine basis functions spanning frequencies up to Bw. We use T = 0 .085 s and Bw =200 Hz, giving d = 34 .To compare configurations and velocities in a common physical unit and thereby obtain coordinate-invariant noise, we define the energy metric 
+
+E =
+
+K 00 H
+
+
+
+, x = E1/2xq . (9) The quadratic form x⊤ 
+
+> q
+
+Ex q measures twice the energy associ-ated with the state. Thus, x expresses every state direction in units of √joules , rather than directly comparing coordinates with different units and inertias. This whitening procedure resembles approaches used in modal analysis [21], control-lability [22], statistical mechanics [23], parameter identifi-cation [24], and, most directly, the Gibbs distribution [25]. We integrate (5) once for each force basis function, apply (9) to whiten the states, and stack the complete whitened trajectories into the columns of a response matrix M . The resulting channel is linear and Gaussian, so its information is computed exactly by substituting L = M and K = σ2
+
+> w
+
+I into Fig. 2: Coordinate-wise Shapley share of information content. Top: Share of information contributed by each co-ordinate over a stiffness sweep. Bottom: Temporal evolution of the information share at a single stiffness. (3); this can be done per frequency band to produce mutual information at each frequency. Results of the primary passive system response experiment are shown in Fig. 1. The top plot shows the total bits of information in the passive response, while the bottom plot shows the frequency-wise distribution of bits. The dashed lines correspond to the natural frequencies of the mechanical modes. As expected, bits are concentrated around the natural frequencies of the system. The total mutual information peaks as the second natural frequency goes to infinity, which implies that the SEA mechanism has more total information available. This is consistent with the common intuition that the more compliant system (with an extra DOF) often has more mechanical intelligence. However, much of the information for the compliant SEA is related to the second natural frequency, which makes accessing this processing capacity during practical control difficult. We will present the implications of this in Section III-B. We also want to examine the information content of each coordinate in the passive response. Because the relative con-tributions as assessed by the chain rule of mutual information are dependent on ordering, we instead use the Shapley value [26] to assess the contribution of each coordinate. The Shapley value is a game-theoretic concept that fairly distributes the total value of a coalition to its members. For each subset S of coordinates, we compute the information from observing only those coordinates, ν(S) = I(W ; XS ).Then coordinate i’s Shapley value is its chain-rule increment averaged over all orderings: 
+
+ϕi = X 
+
+> S⊆N\{ i}
+
+|S|! ( n − | S| − 1)! 
+
+n! [ν(S ∪ { i}) − ν(S)] .
+
+(10) This rule provides a unique attribution for which the ϕi sum to the total exactly and coordinates contributing identically to every subset get identical credit. We show the results of this analysis in Fig. 2. The top plot shows the share of information contributed by each coordinate over a stiffness sweep. The bottom plot shows the temporal evolution of the share of information contributed over time for a single stiffness. We see that the SEA’s leg-side coordinate contributes a large share of information at low stiffness, but this contribution diminishes as stiffness increases and the two coordinates lock together (these co-ordinates are redundant at high stiffness, and so give equal Shapley contributions). 
+
+B. Simplified controlled analytical model 
+
+We next want to examine how much computation is per-formed by the state during feedback control. The controlled plant adds a torque input at the motor, so (5) is modified as follows: 
+
+H ¨q + D ˙q + Kq = J⊤f (t) + Buτd (11) where Bu = [0 , 1] ⊤ for SEA and Bu = 1 for proprioceptive actuation. The control input, τd, is set according to the following control laws. For proprioceptive actuation, we follow Wensing et al. [7], and use open-loop force control: 
+
+τd = J⊤fd. (12) For the SEA, we instead perform closed-loop control using the spring deflection to measure force, as is standard for SEAs. The control law is 
+
+τd = J⊤fd + kpef + kddf , (13) 
+
+ef = J⊤fd − ks(θj − θm + ν), (14) where kp = 1 , kd = 2 ζpIrot /k s, df is the discrete low-pass-filtered (cutoff frequency 400 Hz) derivative of ef , and 
+
+ν ∼ N  0, σ 2
+
+> θ
+
+. The angular resolution of the force sensor is set as σθ = 10 −5 rad. The controller is run at 1 kHz. For these experiments, the value of fd has no impact on the information because any known value has no uncertainty associated with it. We can now compute the total information between the world ( W ) and the body ( X) and action ( A) jointly. For these experiments, the world W is the ground reaction force (GRF), f (t), which is parametrized by the randomly drawn amplitude coefficients wk. We then calculate the mutual information conditioned on the action. This quantity mea-sures information uniquely carried by the mechanical state, enabling direct comparison of the mechanical intelligence of Fig. 3: Information processing in the body during feed-back control. During a force-control task, the conditional mutual information given the control action (16) gives the relative contribution of the body to computation. Top: As stiffness increases toward the proprioceptive limit, this value increases even as the total information drops due to the loss of a second mode. Bottom: As stiffness increases, the mechanical computation is effective for increasingly higher frequencies. the two transmissions. The mutual information is computed as: 
+
+I(W ; X, A ), (15) 
+
+I(W ; X | A) = I(W ; X, A ) − I(W ; A). (16) Results of this computation are shown in Fig. 3. While the total information from state and action, I(W ; X, A )
+
+decreases towards the proprioceptive limit, the conditional mutual information ( I(W ; X | A)) increases. This indicates that the stiffer designs accomplish more of the force control task using the body. By looking at the frequency-wise distri-bution of bits, we also see that stiffer designs perform more mechanical computation at higher frequencies, aligning with the insight that force control is deeply tied to the mechanical bandwidth. IV. S IMULATED ROBOT LEG 
+
+We perform similar experiments in simulation to those with the analytical model. The simulated robot is the Unitree Go2 quadruped robot. We use the MuJoCo physics engine [27] to simulate a single leg of the robot (from MuJoCo Menagerie [28]) with a fixed base (see Fig. 4 inset for a rendering of the simulation). The leg has 3 degrees of free-dom and, for the SEA transmissions, we add an additional hinge joint with a torsional spring to the MuJoCo model at each joint. Each simulation rollout is 85 ms long, the same as in the analytical model, and the timestep is 5e-5 s. We simulate the leg, foot, and ground as a spring-damper acting on the foot, using a boundary condition analogous to that of the linear model. This force is applied as follows: 
+
+Ffoot = −kf (zf − z0) − bf Jz ˙q, (17) where zf is the foot position, z0 is the ground position, Jz
+
+is the Jacobian of the foot in the vertical direction. kf =10 6 N/m and bf = 2 ζf
+
+pkf me, where me = 1 /J z H−1J⊤
+
+> z
+
+and ζf = 0 .15 . This results in a fixed bf = 219 .6 N s /m for all designs. We leverage MuJoCo Warp, MuJoCo’s massively parallel implementation, to parallelize the simulation across multiple worlds on a GPU, which allows us to run many rollouts in parallel. Each world receives an independent draw of the force coefficients. After simulation, we whiten the state according to the same procedure described in (9), with the physical terms required to calculate E taken from MuJoCo. The experiments directly mirror those conducted for the linear model. For the passive experiments, the foot is stimu-lated with the external force specified by (8) and N rollouts are collected for each of 5 spring stiffness values. The states are whitened according to the same energy metric (9), and trajectories are stacked as before. Unlike the linear case, we must use the InfoNCE estimator (4) to calculate mutual in-formations, which produces a lower bound. We also compare results to the information calculated using the linearization of the nonlinear dynamics. We also perform similar controlled experiments to those performed for the analytic model, using the controllers denoted by (12) and (13). This time, the commanded force is fd = 40 sin(40 πt ) N. We estimate the mutual information as follows. As before, for each frequency band, we estimate the conditional mutual information I(wk; x | w<k ), where wk is the unknown force coefficient of band k from (8) and x is the whitened and flattened state trajectory. We collect 340 rollouts per band, giving pairs (wk, x ). To realize the desired conditional mutual information (conditioned on the frequencies below k)the coefficients below k are held fixed across all rollouts used for that term. InfoNCE requires a critic, which we design as a pair of multilayer perceptrons for each band k, in the separable form 
+
+f (w, x ) = g(w)⊤h(x), (18) where g : R → R32 and h : Rnz → R32 each have two hidden layers of width 256 with ReLU activations. This separable form allows (18) to be evaluated using a single B × B matrix product after two encoder passes, whereas a critic that jointly takes both arguments would require B2 forward passes. For the controlled experiments, we concatenate the state with the commanded torque in the observation, but we encode the two signals separately and sum the embeddings, f (w, [x, u ]) = g(w)⊤(hx(x) + hu(u)) ,Fig. 4: Single leg simulation results. We use the MuJoCo simulator to replicate the results derived from the linear analytic model on a simulated nonlinear robot leg. Again, the goal is to measure how much information about a sinusoidal GRF is present in the state of the leg with and without feedback control. Top: Passive force-response experiments, comparing the analytic solution with the sampled nonlin-ear solution. An image of the simulator is inset. Bottom: 
+
+Feedback-controlled response experiments, with the CMI conditioned on actions produced by force control. which we found delivered better results than using a single encoder. We train the critic on a stream of rollouts as follows. A buffer of 32 , 768 rollouts is held on the GPU and each gradi-ent step draws a batch of 1024 and takes one gradient update step on the loss. Every 128 steps the buffer is discarded and refilled from the simulator, preventing overfitting. After training, a further 16 batches of 1024 rollouts are generated and (4) is evaluated on each. See Figure 4 for results from the simulated leg, which is shown in the inset. Passive experiments are shown in the top figure, which shows the information contained in the state of the leg about the GRF. While the simulation estimate is likely an underestimate of the true information due to the lower-bound properties of the InfoNCE estimator, the result shows good qualitative agreement with the analytic results (reproduced at the same points). We see a moderate peak at high stiffness due to the activation of high-frequency modes, followed by a convergence to a steady value. The 
+
+Fig. 5: Single leg controlled spectra. Shows the results at individual frequencies corresponding to the total mutual information shown in Fig. 4. The modal breakdown of con-ditional mutual information largely follows the analytic case, with more rigid designs performing more high-frequency physical computation. Negative CMI values are not possible and are the result of estimation error that is more likely when the actual value is close to zero. bottom plot shows the information about GRF during active force control. Results here are simulation-only, and we see a similar trend to that of the analytic results from Fig. 3, with the conditional mutual information I(W ; X | A) increasing as the stiffness increases towards the proprioceptive limit. This again implies that the body is doing relatively more of the force-control task for the stiffer transmissions. These insights are extended in Figure 5, which shows the spectral information properties of the simulated mechanism. Similar to the analytic case, the stiffer transmissions have high condi-tional mutual information in their states at high frequencies, again replicating the high-bandwidth force-control arguments that motivate the proprioceptive transmission. Note that, for the more compliant mechanism, the CMI is often below zero, which is mathematically impossible. Here, it is a numerical artifact of the InfoNCE estimator producing a lower bound for a near-zero quantity. V. F ULL ROBOT SIMULATION 
+
+As a preliminary study, we validate our approach on a simulated quadruped robot controlled by a learned policy using reinforcement learning. As before, we use the MuJoCo Menagerie [28] version of the Unitree Go2, which we modify to add series-elastic joints. Because this portion of the paper is meant to be a proof of concept (and due to space constraints), we will present the details at a high level. Our task is velocity tracking, where the robot must simply follow a commanded velocity vector over difficult and varied terrain. We implemented our reward function and training procedures by adapting the Unitree RL Mjlab training procedure for the Go2 [29], which in turn is based on the mjlab API for training policies in MuJoCo [30]. We train each policy with Proximal Fig. 6: Screenshot from velocity tracking environment. In the velocity tracking task, the robot must learn to navigate challenging terrain while tracking a desired body velocity. Policy Optimization (PPO) [31] for 3000 iterations. We experiment with several different robot designs for these simulations, using different spring stiffness and actu-ator armatures. After training, we collect rollouts to train an InfoNCE estimator according to the same procedure as discussed for the single-leg case. To avoid differences caused by uneven sampling across terrain types, we collect the same number of rollouts on each terrain type. Finally, another difference is that we randomly perturb the robot by applying 
+
+15 N forces on the calves. We call this random force wext .We calculate several metrics for the full-body simulation. First, we calculate the median velocity-tracking error over a rollout. The information metric I(wext ; xn | x<n , u n)
+
+denotes the information about the disturbance force con-tained in the state conditioned on the previous state history 
+
+x<n and the control input un, where n is the timestep. 
+
+I(F ; xn | x<n , u n) is the same quantity but with F as the ground reaction force, making this quantity similar to what we calculated in other sections of the paper, but conditioned 
+
+temporally . Finally, MC W is described in Section II. Results are shown in Table I. Generally, we see that performance is negatively correlated with higher rotor inertias, whereas se-ries elasticity has a smaller effect on tracking error, which is a testament to the effectiveness of PPO at finding good control solutions for diverse systems. We also observe that perfor-mance is roughly correlated with I(wext ; xn | x<n , u n),which corresponds to a body’s instantaneous information processing of a disturbance independent of control. On the other hand, performance is somewhat correlated with 
+
+I(F ; xn | x<n , u n); especially because the “not resolvable” values can be thought of as close to zero (they came out negative, which is impossible). This reveals a tension: SEA designs have higher MC W according to Zahedi’s metric, but this metric does not cleanly compare with performance or with the other metrics described in this paper. VI. D ISCUSSION AND CONCLUSIONS 
+
+We have presented a series of methods for analyzing the mechanical intelligence of two forms of transmissions for legged robots, namely the proprioceptive actuator and the series-elastic actuator. We showed that information-theoretic metrics can readily be used to describe consequential dif-ferences in the way that these transmission systems pro-cess ground reaction forces through mechanical modes and through their coordinates. Critically, we also presented met-rics to describe the amount of computation that is performed by the body independently of the controller. This latter metric aligned with predictions made based on the work of Wensing et al., who showed that proprioceptive actuation should be capable of higher-bandwidth force control than SEAs even in the absence of a sensor to close the loop. This simple concept is therefore an ideal benchmark for developing mechanical intelligence benchmarks, as it is simple enough to admit analytical solutions on simplified versions of the problem while rich enough to force us to deal with the complexity of real robot systems. While this work represents progress on the formal analysis of mechanical intelligence, it only scratches the surface of the work to be done on the topic. There are many avenues to strengthen the methods used here to arrive at a richer understanding. First, we would like to expand the work to apply to other types of mechanical systems and robots to solidify the generality and usefulness of the approach. Sec-ond, as discussed, the use of information-theoretic methods on deterministic systems is challenging, and further work is needed to formalize the set of acceptable assumptions. In this work, we made pragmatic choices to use stochastic external disturbances and noisy state channels, verifying that the results were sensible and convergent to finite information. However, there is a potential contradiction in the use of the noisy state assumption. It implicitly assumes that mechanical intelligence acts like a sensor, with some finite resolution, as opposed to an infinitely sensitive physical system. This presents a host of philosophical and theoretical issues that will require careful study. Similarly, the energy metric that we use to whiten the state was essential to producing results that were invariant and thus coherent and comparable across different state dimensionalities. The metric has appealing qualities in that it inherently links our information analysis to the physical energy of the system. However, the implications of that link are not tested in this work, and they are deeply related to statistical mechanics and the Gibbs distribution [25]. Another limitation of the work is the preliminary nature of the full quadruped demonstrations. For a first paper, we considered it important to focus on simpler systems to establish the basic framework, but future work will expand upon our demonstrations of the RL-controlled quadruped and examine other complex robot systems and benchmarks. Of course, the complexity of that setting grows substantially, as we have the interaction of reward function, learning algorithm, robot design, simulation environment, information estimator, etc. Due to the highly statistical nature of many of these components and particularly due to the dependence on stochastic learning, testing across many seeds will be essen-tial to constructing robust conclusions. Finally, while it is not a focus of this work, we have repeatedly found that Zahedi’s metric [10], MC W , does not cleanly relate to those that we TABLE I: Information metrics across six leg transmissions on the Go2. n.r. means not resolvable. 
+
+Design ks Rotor med. error I(wext ; xn | x<n , u n) I(F ; xn | x<n , u n) MC W
+
+Rigid inf 1× 0.154 0.133 ± 0.008 1.032 ± 0.011 0.211 ± 0.009 
+
+SEA 70 1× 0.154 0.128 ± 0.008 0.705 ± 0.011 0.438 ± 0.007 
+
+SEA 300 1× 0.186 0.110 ± 0.008 0.874 ± 0.014 0.358 ± 0.014 
+
+SEA 300 5× 0.203 0.067 ± 0.005 n.r. 0.300 ± 0.010 
+
+SEA 300 8.3 × 0.201 0.056 ± 0.003 n.r. 0.303 ± 0.005 
+
+SEA 70 10 × 0.205 0.044 ± 0.003 0.404 ± 0.006 0.273 ± 0.010 
+
+have presented. In fact, based on our presented results, it tends to consider SEA designs to be more morphologically intelligent than proprioceptive transmissions. Thus, there is a tension between morphological computation, defined as the body’s causal impact on its future state independent of control, and our notion of mechanical intelligence, which is the body’s function as a channel between the world and the robot state (and then to the sensors and controllers). We will explore these ideas in future work. In conclusion, our study replicates key features of quadrupedal robot transmission design principles using information-theoretic metrics. We show how information theory can adjudicate between “computation” that is per-formed by the body and computation that is performed by conventional feedback control. We test these principles on a linear template model, a nonlinear simulated leg, and a full quadruped simulation, demonstrating the scalability and generalization potential of the underlying approach. VII. A CKNOWLEDGMENTS 
+
+Claude Code was used to assist in software development for this study. REFERENCES [1] M. H. Raibert, “Dynamic stability and resonance in a legged hopping machine,” in Conference on Theory and Practice of Robots and Manipulators, IFToMM , 1983, pp. 352–367. [2] ——, “Hopping in legged systems-modeling and simulation for the two-dimensional one-legged case,” IEEE Transactions on Systems, Man, and Cybernetics , no. 3, pp. 451–463, 1984. [3] S. Kim, C. Laschi, and B. Trimmer, “Soft robotics: a bioinspired evolution in robotics,” Trends in biotechnology , vol. 31, no. 5, pp. 287–294, 2013. [4] G. Bledt, M. J. Powell, B. Katz, J. Di Carlo, P. M. Wensing, and S. Kim, “MIT Cheetah 3: Design and Control of a Robust, Dynamic Quadruped Robot,” in 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , Oct. 2018, pp. 2245–2252. [5] B. Katz, J. D. Carlo, and S. Kim, “Mini Cheetah: A Platform for Pushing the Limits of Dynamic Quadruped Control,” in 2019 International Conference on Robotics and Automation (ICRA) , May 2019, pp. 6295–6301. [6] S. Kim, “Cognitive biases towards ai & physical intelligence,” 2024, expanding Horizons in Computing. [Online]. Available: https://www.youtube.com/watch?v=i T5cKLRuZ4 [7] P. M. Wensing, A. Wang, S. Seok, D. Otten, J. Lang, and S. Kim, “Proprioceptive Actuator Design in the MIT Cheetah: Impact Miti-gation and High-Bandwidth Physical Interaction for Dynamic Legged Robots,” IEEE Transactions on Robotics , vol. 33, no. 3, pp. 509–522, Jun. 2017. [8] R. Pfeifer and F. Iida, “Embodied artificial intelligence: Trends and challenges,” Lecture notes in computer science , pp. 1–26, 2004. [9] K. Nakajima, H. Hauser, T. Li, and R. Pfeifer, “Information processing via physical soft body,” Scientific Reports , vol. 5, no. 1, p. 10487, May 2015. [10] K. Zahedi and N. Ay, “Quantifying Morphological Computation,” 
+
+Entropy , vol. 15, no. 5, pp. 1887–1915, May 2013. [11] L. Brillouin, Science and Information Theory: Second Edition .Courier Corporation, Jul. 2013. [12] J. V. Stone, Information Theory: A Tutorial Introduction to the Principles and Applications of Information Theory . Packt Publishing Ltd, Nov. 2024. [13] D. J. MacKay, Information Theory, Inference and Learning Algo-rithms . Cambridge university press, 2003. [14] C. Langer and N. Ay, “How Morphological Computation Shapes Integrated Information in Embodied Agents,” Frontiers in Psychology ,vol. 12, Nov. 2021. [15] K. Ghazi-Zahedi, D. F. B. Haeufle, G. Mont´ ufar, S. Schmitt, and N. Ay, “Evaluating Morphological Computation in Muscle and DC-Motor Driven Models of Hopping Movements,” Frontiers in Robotics and AI , vol. 3, Jul. 2016. [16] C. E. Shannon, “A mathematical theory of communication,” The Bell System Technical Journal , vol. 27, no. 3, pp. 379–423, Jul. 1948. [17] E. Penocchio, F. Avanzini, and M. Esposito, “Information thermody-namics for deterministic chemical reaction networks,” The Journal of Chemical Physics , vol. 157, no. 3, 2022. [18] R. Metzler, Y. Bar-Yam, and M. Kardar, “Information flow through a chaotic channel: Prediction and postdiction at finite resolution,” 
+
+Physical Review E—Statistical, Nonlinear, and Soft Matter Physics ,vol. 70, no. 2, p. 026205, 2004. [19] P. Czy˙ z, F. Grabowski, J. Vogt, N. Beerenwinkel, and A. Marx, “Beyond normal: On the evaluation of mutual information estimators,” 
+
+Advances in neural information processing systems , vol. 36, pp. 16 957–16 990, 2023. [20] A. van den Oord, Y. Li, and O. Vinyals, “Representation Learning with Contrastive Predictive Coding,” Jan. 2019. [21] D. S. Li, H. N. Li, and C. P. Fritzen, “The connection between effective independence and modal kinetic energy methods for sensor placement,” Journal of Sound and Vibration , vol. 305, no. 4, pp. 945– 955, Sep. 2007. [22] B. Moore, “Principal component analysis in linear systems: Control-lability, observability, and model reduction,” IEEE Transactions on Automatic Control , vol. 26, no. 1, pp. 17–32, Feb. 1981. [23] R. Kubo, “The fluctuation-dissipation theorem,” Reports on Progress in Physics , vol. 29, no. 1, p. 255, Jan. 1966. [24] T. Lee, P. M. Wensing, and F. C. Park, “Geometric Robot Dynamic Identification: A Convex Programming Approach,” IEEE Transactions on Robotics , vol. 36, no. 2, pp. 348–365, Apr. 2020. [25] E. T. Jaynes, “Information Theory and Statistical Mechanics,” Physical Review , vol. 106, no. 4, pp. 620–630, May 1957. [26] L. S. Shapley, “Notes on the n-person game—ii: The value of an n-person game,” 1951. [27] E. Todorov, T. Erez, and Y. Tassa, “Mujoco: A physics engine for model-based control,” in 2012 IEEE/RSJ International Conference on Intelligent Robots and Systems . IEEE, 2012, pp. 5026–5033. [28] K. Zakka, Y. Tassa, and MuJoCo Menagerie Contributors, “MuJoCo Menagerie: A collection of high-quality simulation models for MuJoCo,” 2022. [Online]. Available: http://github.com/ google-deepmind/mujoco menagerie [29] Unitree RL Mjlab Contributors, “Unitree RL Mjlab,” 2026. [Online]. Available: https://github.com/unitreerobotics/unitree rl mjlab [30] K. Zakka, Q. Liao, B. Yi, L. L. Lay, K. Sreenath, and P. Abbeel, “mjlab: A lightweight framework for gpu-accelerated robot learning,” 2026. [Online]. Available: https://arxiv.org/abs/2601.22074 [31] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal policy optimization algorithms,” arXiv preprint arXiv:1707.06347 , 2017.
