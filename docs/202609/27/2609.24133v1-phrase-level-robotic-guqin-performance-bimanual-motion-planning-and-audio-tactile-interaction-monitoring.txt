@@ -1,0 +1,463 @@
+Title: Phrase-Level Robotic Guqin Performance: Bimanual Motion Planning and Audio-Tactile Interaction Monitoring
+
+URL Source: https://arxiv.org/pdf/2609.24133v1
+
+Published Time: Tue, 22 Sep 2026 02:53:38 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+> 1
+
+# Phrase-Level Robotic Guqin Performance: Bimanual Motion Planning and Audio-Tactile Interaction Monitoring 
+
+Zhen Wang 1,†, Zhiheng Chen 1,†, Tianyuan Bao 1,† and Tianwei Zhang 1,3,∗
+
+Abstract —Recent advances in humanoid robotics and em-bodied intelligence have enabled robots to perform increas-ingly complex manipulation tasks. However, musical instrument performance remains a formidable benchmark, demanding not only collision-free trajectory execution but also precise contact timing, asymmetric bimanual coordination, and target acoustic outcomes on physical instruments. The guqin, a seven-string fretless zither, presents unique manipulation challenges due to its millimetric string spacing, transient right-hand plucking, and sustained left-hand harmonic contacts. In this work, we present a physical heterogeneous dual-arm robotic system for phrase-level autonomous guqin performance. We formulate guqin playing as a hybrid discrete–continuous execution problem and develop a hierarchical planning framework that coordinates working-finger assignment, configuration continuity, obstacle avoidance, and tight bimanual contact schedules across consecutive musical events. The system integrates vision-guided instrument localiza-tion, tactile-based harmonic contact monitoring, and auditory-feedback-informed plucking parameter calibration. Real-world experiments on a 25-event phrase demonstrate that the system reliably executes coordinated open-string and seventh-hui har-monic sequences on a physical guqin, achieving 93.6% and 96.8% event correctness across repeated trials. 
+
+I. I NTRODUCTION 
+
+Robotic musical performance serves as a rigorous testbed for robotic perception, dexterous manipulation, and physical interaction control [1]. Unlike conventional pick-and-place or trajectory-following tasks, acoustic performance requires a robot to establish precise physical contact with an instrument under strict temporal constraints, where the functional success of manipulation is directly governed by physical and acoustic outcomes [2]. The guqin is an ancient seven-string fretless plucked zither characterized by asymmetric bimanual interaction [3]. During performance, the right hand executes transient plucking actions across densely spaced strings, while the left hand provides light, timed contact at specific inlaid markers ( hui ) to produce harmonics or sustained contact for stopped notes. Achieving phrase-level robotic performance on a physical guqin intro-duces several fundamental challenges: 
+
+1) High-dimensional bimanual coordination: The sys-tem must schedule discrete musical events into collision-free, kinematic-feasible trajectories across two heterogeneous ma-nipulators, ensuring configuration continuity across adjacent strings and avoiding singular or disjoint inverse-kinematics (IK) branches. 
+
+2) Millimetre-level spatial and contact precision: The closely spaced strings ( < 20 mm) demand reliable 3D local- 
+
+> 1The Shenzhen Institute of Artificial Intelligence and Robotics for Society, Shenzhen, China
+> 2The Chinese University of Hong Kong - Shenzhen, Shenzhen, China
+> †These authors contributed equally to this work. * Corresponding Author:
+
+zhangtianwei@cuhk.edu.cn 
+
+Fig. 1: Physical heterogeneous dual-arm robotic system executing phrase-level performance on a real guqin. The setup integrates an Elfin manipulator with a multi-fingered hand for right-hand pluck-ing, a UR5 manipulator with a contact-sensing hand for left-hand harmonic interaction, an RGB-D camera for instrument localization, and an acoustic feedback pipeline. 
+
+ization and fine positional offsets to avoid collateral damping or missed plucks. 
+
+3) Tight inter-arm temporal synchronization: Harmonics require the left hand to establish stable string contact strictly before right-hand excitation and release within a narrow tem-poral window after the pluck, necessitating real-time contact-state monitoring. Prior research on stringed-instrument robotics has primarily focused on isolated plucking, bowing mechanisms, or single-contact explorations on instruments such as the guitar, cello, or guzheng [4]–[6]. While recent studies have examined guqin acoustics, gestural typologies, and preliminary single-finger contact interfaces [7], [8], realizing a complete, physical phrase-level guqin performance remains an open problem. Existing methods often rely on manual trajectory teaching or single-note triggering, lacking a unified framework to compile structured musical scores into feasible bimanual motions while monitoring physical and acoustic interaction states. To bridge this gap, this paper presents a complete heteroge-neous dual-arm robotic system for phrase-level guqin playing on a real instrument (See Fig. 1). Rather than focusing on specialized tactile transducer design or isolated single-note interactions, this work addresses the system-level problem of transforming structured multi-event phrases into coordinated, physically executable bimanual actions. The framework mod-els the performance as an ordered set of hybrid discrete– continuous events, jointly optimizing fingering assignments, IK branch selections, trajectory smoothness, and bimanual temporal schedules. Furthermore, we incorporate multimodal perception into the execution pipeline: visual sensing provides 3D string and hui geometry; tactile sensing gates left-hand har-monic contact states; and auditory feedback enables plucking parameter refinement during calibration intervals and event-level outcome evaluation during performance. arXiv:2609.24133v1 [cs.RO] 21 Sep 2026 2
+
+To the best of our knowledge, this is the first physi-cal robotic system capable of executing multi-event musical phrases with coordinated open-string and harmonic interac-tions on a real guqin. The main contributions are as follows:  
+
+> •
+
+We formulate phrase-level guqin playing as a hybrid discrete–continuous task, mapping structured musical events to physically feasible dual-arm interaction targets.  
+
+> •
+
+We develop a hierarchical bimanual planning and scheduling framework that resolves fingering assign-ment, IK branch continuity, obstacle avoidance, and tight plucking–harmonic contact timing.  
+
+> •
+
+We deploy the system on a physical dual-arm robot with multimodal monitoring and calibration, validating repeated 25-event open-string and harmonic phrase exe-cution on a real guqin. II. R ELATED WORK 
+
+A. Robotic String and Musical Instrument Performance 
+
+Robotic musical performance has long served as a demand-ing benchmark combining high-dimensional actuation, precise kinematic planning, and multimodal physical interaction [1]. Across various instruments, early systems primarily focused on reproducing kinematics or automated actuation mecha-nisms, such as robotic percussionists [9] and anthropomorphic flute-playing robots incorporating auditory parameter tuning [10]. For keyboard and stringed instruments, research has in-creasingly emphasized dexterous contact and score-driven execution. Anatomically inspired and soft-skeleton hands have demonstrated piano playing with contact-sensitive dynamics [11], [12]. For chordophones, Yang et al. developed an ex-pressive robotic guitarist capable of fret-shifting, strumming, and plucking on an acoustic guitar [4]. Recently, Sudhoff et al. presented an end-to-end score-to-motion pipeline that con-verts MIDI scores into collision-aware bowing trajectories for robotic cello performance [5]. These advancements illustrate a clear progression from single-string automation toward score-driven, collision-aware manipulation on physical instruments. 
+
+B. Multimodal Perception and Learning in Instrument Playing 
+
+Achieving reliable acoustic outcomes on physical instru-ments requires perceptual feedback to handle positioning un-certainties and contact dynamics. Learning-based frameworks such as RoboPianist [13] and physical Sim2Real approaches [14] have explored high-dimensional dexterous control for keyboard playing. Beyond simulation, physical instrument manipulation heavily relies on tactile and auditory perception to evaluate contact states and acoustic responses. For instance, G¨ orner et al. proposed a self-supervised exploration strategy combining audio-tactile interaction with Gaussian processes to localize strings and refine feasible plucking motions on a guzheng [6]. While these studies highlight the effectiveness of integrating tactile sensing and acoustic feedback to refine interaction primitives, most existing methods focus on single-arm setups or isolated contact skills. Extending multimodal feedback to asymmetric dual-arm systems executing long-horizon musical phrases requires coordinating discrete contact events with con-tinuous multi-arm trajectories under strict temporal constraints. 
+
+C. Guqin Performance and Robotic Interaction 
+
+The guqin presents unique robotic manipulation challenges due to its fretless soundboard, close string arrangements, and asymmetric hand roles [3]. Musicological and acoustic studies have analyzed characteristic guqin playing techniques, establishing typologies for sliding tones, pressed notes, and harmonics [7]. Computational approaches have further devel-oped machine-learning models to recognize guqin fingering and modes from performance recordings [15]. In robotic guqin manipulation, prior research has largely focused on isolated string-contact phenomena or end-effector validation. For example, recent work evaluated a biomimetic tactile finger on isolated open-string plucks, harmonic parame-ter sweeps, and contact-triggered single-note coordination [8]. However, isolated single-finger or single-note interactions do not address the broader system-level challenges of phrase-level performance. Executing a continuous multi-event guqin phrase requires: (i) vision-guided 3D localization of dense strings and 
+
+hui positions; (ii) hierarchical bimanual planning to maintain configuration continuity across consecutive string switches; and (iii) tight temporal scheduling where left-hand harmonic contacts and right-hand plucks are monitored and calibrated via multimodal feedback. This paper presents an integrated system framework addressing these challenges on a physical dual-arm platform. III. S YSTEM FRAMEWORK AND METHODS 
+
+A. Task Representation and System Overview 
+
+We formulate phrase-level physical guqin performance as a hybrid discrete–continuous manipulation task, where an or-dered sequence of discrete musical events governs continuous bimanual coordination and localized string interactions. As illustrated in Fig. 2, the overall framework integrates four core modules: (i) Task Representation , which translates structured score semantics into parametric performance events; (ii) Multi-modal Perception , which establishes shared 3D geometric task frames and continuous state representations; (iii) Hierarchical Bimanual Planning , which resolves working-finger assign-ment, configuration continuity across strings, and inter-arm temporal synchronization; and (iv) Execution and Monitoring ,which executes coordinated trajectories while leveraging tac-tile and auditory observations for contact gating and parameter refinement. A reference musical phrase is formalized as an ordered sequence of N discrete playing events: 
+
+E = {ei}Ni=1 , ei =  si, ξ i, τ i, f ref  
+
+> i
+
+, m i
+
+ , (1) where si ∈ { 1, . . . , 7} denotes the target string index (num-bered from player side outward), ξi ∈ { 1, . . . , 13 } indicates the target hui marker position along the soundboard, τi ∈ R+
+
+is the desired inter-onset interval (IOI) between consecutive notes, f ref  
+
+> i
+
+denotes the reference plucking finger from score notation, and mi ∈ { 0, 1, 2} specifies the articulation mode corresponding to open-string tones, harmonics, and stopped notes, respectively. 3 
+
+> Fig. 2: Overview of the proposed phrase-level robotic guqin performance framework, integrating event-level score parsing, vision-guided 3D localization, hierarchical bimanual motion planning, and audio-tactile interaction monitoring.
+
+Driven by this event stream, the framework bridges score semantics with continuous robotic execution through role-specific arm–hand coordination:  
+
+> •
+
+Right-hand plucking system: Excites target strings across the 7-string array near the first hui . The plan-ner assigns working fingers and selects smooth inverse-kinematics (IK) branches to ensure spatial reachability and posture continuity during rapid string switches.  
+
+> •
+
+Left-hand contact system: Governed by articulation mode mi. For open strings ( mi = 0 ), the hand remains safely idle; for harmonics ( mi = 1 ), it executes a timed 
+
+Approach–Touch–Hold–Release sequence at the target hui 
+
+ξi, where tactile sensing verifies contact onset before the right-hand pluck; for stopped notes ( mi = 2 ), it firmly clamps the string against the soundboard throughout the sounding duration. During execution, bimanual motions are synchronized via a unified performance clock anchored to plucking onsets. Proprioceptive feedback continuously gates phase transitions. Between performances or during dedicated calibration inter-vals, event-aligned tactile traces and auditory outcome metrics are evaluated against target acoustic templates to update local primitive offsets for subsequent phrase executions, establishing a structured multimodal feedback pipeline. 
+
+B. Vision-Based Spatial Representation and Target Generation 
+
+Precise guqin playing requires resolving sub-centimeter string intervals ( < 20 mm) and converting musical semantics into metric manipulator targets. The vision pipeline first de-tects the guqin soundboard region via instance segmentation, and subsequently extracts the continuous centerlines of the seven strings and the discrete 3D coordinates of the thirteen 
+
+hui markers using a multi-task network with geometric line-fitting constraints. Using the guqin coordinate frame FG as the unified world reference for both arms, the visual observation is formalized as: 
+
+zVt =
+
+C TG(t), Gγs(u) 7 
+
+> s=1
+
+, Ghℓ
+
+> 13
+> ℓ=1
+
+
+
+, (2) where C TG(t) ∈ SE(3) denotes the guqin pose relative to the overhead camera, Gγs(u) ∈ R3 describes the 3D centerline of string s parameterized by the normalized longitudinal coordinate u ∈ [0 , 1] , and Ghℓ ∈ R3 denotes the position of the ℓ-th hui marker. For each string s, we establish a local orthonormal coordi-nate basis Rs = [ ts, rs, ns]:
+
+ts = ∂γs/∂u 
+
+∥∂γs/∂u ∥ , ns = nboard , rs = ns × ts, (3) where ts, rs, and ns represent the longitudinal string direction, the transverse in-plane direction toward the player, and the outward soundboard normal, respectively. Given the performance event ei = ( si, ξ i, τ i, f ref  
+
+> i
+
+, m i), the task-space fingertip position targets in FG are generated as: 
+
+> G
+
+pai = Gγsi (uai ) + Rsi δai , a ∈ { R, L }, (4) where the right-hand longitudinal coordinate uRi is anchored near the first hui plucking zone, while the left-hand coordinate 
+
+uLi is aligned with the target hui marker Ghξi . The local offset vector δai = [ δax, δ ay , δ az ]T parameterizes the approach, pre-contact, plucking, and contact displacements for the active motion phase. Combining the fingertip target pose with hand kinematic transformations yields the desired wrist pose Ba TWa in each manipulator’s base frame FBa : 
+
+> Ba
+
+TWa = Ba TG · GTFa ·  Wa TFa (qHa )−1 , (5) where Ba TG is obtained via eye-to-hand calibration, and qHa
+
+denotes the joint configuration of the dexterous hand. 
+
+C. Hierarchical Bimanual Planning and Temporal Coordina-tion 
+
+The planner translates the event sequence E into collision-free, kinematic-feasible bimanual trajectories through three hierarchical stages: working-finger selection, continuous con-figuration optimization, and inter-arm temporal scheduling. 4   
+
+> Fig. 3: State machine transitions and bimanual temporal coordination timeline. The top panels depict the phase state machines for right-hand plucking and left-hand harmonic interaction. The bottom timeline illustrates the unified performance schedule, detailing the left-hand contact window relative to the right-hand plucking onset tKi, the tactile contact-gating interval, and the post-pluck acoustic evaluation window.
+
+1) Working-Finger Assignment 
+
+To prevent kinematic awkwardness and frequent finger collisions across the densely arranged strings, the right-hand working finger sequence f ∗ = {f ∗ 
+
+> 1
+
+, . . . , f ∗ 
+
+> N
+
+} is determined by solving an optimal assignment problem across all events: 
+
+f ∗ = arg min 
+
+> f
+> N
+
+X
+
+> i=1
+
+Cref (fi, f ref  
+
+> i
+
+) +  
+
+> N−1
+
+X
+
+> i=1
+
+Ctr (fi, s i, f i+1 , s i+1 ),
+
+(6) subject to fi ∈ F (si), where F(si) denotes the set of kine-matically feasible fingers for string si. The score-compliance cost is defined as Cref (fi, f ref  
+
+> i
+
+) = wr I(fi̸ = f ref  
+
+> i
+
+), penalizing deviations from the reference score fingering. The transition cost Ctr is explicitly modeled as: 
+
+Ctr = wsI(fi̸ = fi+1 ) + wd|si+1 − si|, (7) which jointly penalizes frequent finger switches and large spa-tial string jumps between consecutive notes, ensuring smooth hand transitions. 
+
+2) Configuration Continuity and Trajectory Generation 
+
+For the assigned finger f ∗ 
+
+> i
+
+, the right arm executes a phase state machine: Hover → Pre-pluck → Pluck → Retract. The left arm concurrently plans an Approach → Touch → Hold →
+
+Release sequence for harmonics ( mi = 1 ), or a sustained clamping trajectory for stopped notes ( mi = 2 ). To prevent discontinuous branch jumping in the 6-DoF inverse kinematics (IK) solution space across adjacent strings, candidate IK solutions Qf,s = {q(1) , . . . , q(M )} are priori-tized around calibrated nominal poses ¯qR,f,s . The full-phrase joint trajectory Q∗ is optimized offline to minimize joint acceleration and jerk: 
+
+Q∗ = arg min 
+
+> Q
+> N
+
+X
+
+> i=1
+
+∥qi − ¯qf ∗  
+
+> i,s i
+
+∥2 
+
+> W
+
++ λs
+
+Z
+
+∥¨q(t)∥2dt, (8) subject to joint position, velocity, and torque limits, as well as collision-free clearance between both arms and the guqin body. 
+
+3) Bimanual Temporal Coordination 
+
+As illustrated in Fig. 3, bimanual execution is coordinated by a unified performance clock anchored to discrete plucking onsets {tKi }Ni=1 . The framework aligns the right-hand plucking phases (Hover → Pre-pluck → Pluck → Retract) with the left-hand contact state machine (Approach → Touch → Hold →
+
+Release), while enforcing strict temporal constraints for re-liable sound production. The inter-event scheduling enforces kinematic feasibility across consecutive events: 
+
+tKi+1 − tKi ≥ max  κτ i, T min  
+
+> R,i
+
+, T min  
+
+> L,i
+
+, T min 
+
+> H,i
+
+ , (9) where κ is a temporal scaling factor, and T min  
+
+> a,i
+
+is the minimum execution duration required by subsystem a ∈ { R, L, H } to complete interaction at event i and transition to event i + 1 .For harmonic events ( mi = 1 ), strict asymmetric contact constraints are enforced: the left hand must establish stable string contact strictly before right-hand plucking, and must release within a prescribed acoustic window after the pluck: 
+
+tT,on  
+
+> i
+
+< t Ki , δmin  
+
+> T
+
+≤ tT,off  
+
+> i
+
+− tKi ≤ δmax  
+
+> T
+
+, (10) where tT,on  
+
+> i
+
+and tT,off  
+
+> i
+
+denote the contact onset and release instants, respectively. For stopped notes ( mi = 2 ), the left hand completes string pressing before plucking and maintains contact throughout the sounding duration: 
+
+tP,on  
+
+> i
+
+< t Ki , tP,off  
+
+> i
+
+− tKi ≥ Di, (11) where Di denotes the required post-pluck pressing duration. These constraints guarantee that multi-arm physical interac-tions satisfy the precise physical sound-production physics of each articulation mode. 
+
+D. Multimodal Monitoring and Feedback-Informed Calibra-tion 
+
+To ensure robust physical interaction and acoustic sound production on a real guqin, the framework incorporates a two-stage multimodal pipeline: (i) feedback-informed parameter calibration prior to formal execution, and (ii) event-level exe-cution monitoring and contact gating during phrase playing. 5
+
+1) Auditory-Feedback-Informed Primitive Calibration 
+
+Although vision provides structured 3D string geometry, millimetric discrepancies in string tension, fingertip compli-ance, and mounting errors can prevent clean acoustic exci-tation. Prior to formal performance, the system refines the nominal plucking targets for each working finger f and string 
+
+s through an automated acoustic calibration procedure. Starting from the visually estimated hover position pHf,s ,the local plucking offset ηf,s = [∆ yf,s , ∆zf,s ]T is iteratively adjusted in discrete steps ( ±1 mm). After each trial pluck, the Azure Kinect microphone records the acoustic response and extracts event features: 
+
+zA =
+
+
+
+tA
+
+> on
+
+, ˆs, ˆf0, L, SNR 
+
+
+
+, (12) comprising acoustic onset time tA
+
+> on
+
+, detected vibrating string 
+
+ˆs, estimated fundamental frequency ˆf0, loudness level L (in dBFS), and signal-to-noise ratio SNR . The acoustic discrep-ancy relative to a human reference sound template zA, ref  
+
+> f,s
+
+is quantified by an acoustic loss: 
+
+LA = wsI(ˆ s̸ = s) + wf | ˆf0 − f ref 0 | + wL|L − Lref |. (13) A parameter update is accepted and committed only when LA
+
+decreases, terminating when a prescribed similarity threshold is reached or a trial budget is exhausted. The calibrated offsets are stored in a primitive library Πf,s and held fixed during subsequent formal phrase performances. 
+
+2) Event-Level Execution Monitoring and Contact Gating 
+
+During formal phrase execution, the system maintains strict trajectory continuity for rapid interaction phases (such as Pre-pluck , Pluck , and Touch ), while using multimodal observations for event-level gating and diagnostics:  
+
+> •
+
+Proprioceptive tracking gating: Joint-level tracking er-rors are continuously monitored. The controller enables the transition to the next active interaction phase only when manipulator and hand errors satisfy: 
+
+∥qa
+
+> cmd
+
+(t) − qa
+
+> meas
+
+(t)∥∞ ≤ ϵa, a ∈ { R, L, H }. (14)  
+
+> •
+
+Tactile contact gating for harmonics: For harmonic events ( mi = 1 ), the left-hand tactile stream does not perform continuous trajectory servoing; instead, it serves as an event-gating signal within the temporal scheduler. The right-hand plucking motion is released only after left-hand contact establishment is validated: 
+
+ˆtT,on  
+
+> i
+
+< t Ki , Fmin ≤ Fi(tKi ) ≤ Fmax , (15) where ˆtT,on  
+
+> i
+
+is the measured contact instant, and 
+
+[Fmin , F max ] defines the allowable normal contact range to avoid acoustic damping or string displacement.  
+
+> •
+
+Post-event outcome assessment: Following each pluck, the auditory system verifies string correctness, funda-mental frequency, and short-time acoustic energy. As illustrated in Fig. 4, continuous audio streams are time-aligned with commanded plucking onsets, showing clear STFT spectral harmonics and sharp RMS energy peaks corresponding to target string excitations. While commit-ted trajectories within the active phrase are not altered mid-motion to preserve dynamic smoothness, anomalous events (e.g., missed plucks or misidentified strings) are logged to trigger targeted primitive recalibration during subsequent safe update intervals.  
+
+> Fig. 4: Event-level acoustic monitoring of five consecutive open-string plucks. Top: STFT spectrogram and short-time RMS level time-aligned with commanded event onsets (dashed lines). Bottom: Synchronized snapshot sequences from simulation and physical robot execution.
+
+This structure establishes a robust multimodal pipeline linking visual spatial mapping, robot execution, tactile contact gating, and acoustic outcome evaluation. IV. E XPERIMENTAL RESULTS 
+
+We evaluate the physical robotic system on three key aspects: Q1: How reliably does the system execute a 25-event guqin phrase across repeated open-string and seventh-hui harmonic (H7) trials? Q2: How do multimodal observations guide offline parameter refinement and verify contact states? 
+
+Q3: Can the event representation and planning framework transfer across different dexterous hands? 
+
+A. Experimental Setup and Evaluation Protocol 
+
+The experimental platform (Fig. 1) consists of an Elfin E03 manipulator with a multi-fingered Wuji Hand for right-hand plucking, a UR5 manipulator with a Linker H L20 hand for left-hand harmonic interaction, an overhead Azure Kinect RGB-D camera for 3D localization, and a microphone recording at 48 kHz [1]. The system runs on Ubuntu 22.04 with ROS 2 Humble. The benchmark task is a 25-event musical phrase extracted from the traditional guqin piece Cang Hai Xiao . The phrase spans all seven strings over a 22.0 s duration, requiring middle-finger plucks for events 6–10 and index-finger plucks for all others. We evaluate two performance modes using identical score timing: (i) Open-string mode (mi = 0 ), and (ii) Seventh-hui (H7) harmonic mode (mi = 1 ). For each mode, five 6
+
+Fig. 5: Event-level outcomes, normalized onset errors, and pitch errors across five trials in open-string (top) and seventh-hui harmonic (H7, bottom) modes. Crosses indicate plucks whose sound level did not reach the detection threshold(M), exclamation marks indicate improper plucking motions that produced sounds inconsistent with the reference tones(W), and extra detections indicate that two strings were plucked simultaneously (E). 
+
+consecutive trials were conducted using fixed calibrated pa-rameters, with no recalibration between trials. 
+
+1) Calibration Protocol 
+
+Right-hand plucking targets are initialized from visual string localization and iteratively refined via acoustic loss 
+
+LA (Sec. III-D1). Left-hand harmonic contact positions are established by lowering the finger until raw tactile readings reach a stable baseline ( 10 –15 raw units). All spatial offsets and hold durations remain fixed during formal performance trials. 
+
+2) Acoustic Metrics 
+
+Accepted acoustic onsets, string identities, and fundamen-tal frequencies ˆf0 are extracted from microphone streams. Performance is benchmarked against human-played reference templates. Each trial’s first detected onset is aligned to the reference start without time scaling. A monotonic one-to-one temporal matching within a 0.25 s correspondence window is applied. Reference templates and evaluation recordings were collected separately, and all trials were evaluated using the same fixed detector configuration. For each round of the experiment, we report:  
+
+> •
+
+Event Correctness: Ratio of correctly matched events with target string labels over 25.  
+
+> •
+
+Full-Phrase Success: Strict binary metric requiring all 25 correct matches with zero extra detections.  
+
+> •
+
+Timing Errors: Root-mean-square onset error RMSE t
+
+and mean absolute inter-onset error MAE IOI across matched event pairs P. 
+
+> •
+
+Pitch MAE: 1200 | log 2( ˆf0/f ref 0 )| in cents across all valid matches.  
+
+> •
+
+Event Score: Sevt = 10 · 2C 
+
+> 25+ A
+
+, scaling the event-level F1-score to a 10-point scale ( C: correct matches, A: total accepted detections). 
+
+TABLE I: Five-Trial Acoustic Evaluation on the 25-Event Phrase. 
+
+M/W/E denotes Unmatched, Wrong-Label, and Extra Detections. Bold indicates best trial per mode.                                                                                                               
+
+> Mode Trial Correct M/W/E RMSE t(ms) MAE IOI (ms) Pitch MAE (cent) Sevt / 10
+> Open O1 25/25 0/0/0 188.96 123.61 3.95 10.000
+> Open O2 24/25 1/0/0 157.26 101.33 3.64 9.796 Open O3 23/25 0/2/1 215.17 160.39 34.41 9.020 Open O4 24/25 0/1/0 156.04 93.94 31.84 9.600 Open O5 21/25 2/2/0 118.16 88.43 20.87 8.750
+> Open Avg. –93.6% 0.6/1/0.2 167 .1±36 .8113 .5±29 .418 .9±14 .79.43 ±0.52
+> H7 H1 24/25 1/0/1 156.52 94.45 6.74 9.600 H7 H2 25/25 0/0/1 127.06 84.72 7.89 9.804
+> H7 H3 24/25 1/0/0 159.37 98.09 5.09 9.796 H7 H4 24/25 1/0/0 152.45 94.15 6.15 9.796 H7 H5 24/25 1/0/0 155.75 107.00 4.52 9.796
+> H7 Avg. –96.8% 0.8/0/0.4 150 .2±13 .295 .7±8.06.1±1.39.76 ±0.09
+
+B. Phrase-Level Performance Validation (Q1) 
+
+Table I and Fig. 5 present the quantitative results across five repeated trials per mode. The system attains an aggregate event correctness of 93.6% (117/125) for open strings and 96.8% (121/125) for H7 harmonics. Under the strict full-phrase success metric, trial O1 achieved 25/25 correct notes with zero extra detections (1/5 success). For H7 harmonics, trial H2 successfully triggered all 25 target notes but logged one spurious extra detection (0/5 strict success). Notably, harmonic performance exhibits superior timing stability ( RMSE t = 150 .2 ± 13 .2 ms) and pitch fidelity (Pitch MAE = 6 .08 ± 1.34 cents) compared to open strings (18 .94 ± 14 .73 cents). This confirms that left-hand contact 7 
+
+> Fig. 6: (a) Right-hand positional calibration offsets for String 7. (b) Waveforms and 20-ms RMS energy across calibration states, showing successful excitation at state S3.
+
+effectively damps adjacent string resonance, yielding clearer fundamental onsets. 
+
+C. Multimodal Observations during Calibration and Execu-tion (Q2) 
+
+We investigate how acoustic evaluation guides right-hand position refinement and how tactile sensing verifies left-hand harmonic gating. 
+
+1) Right-Hand Acoustic Calibration 
+
+Fig. 6 (a) depicts the discrete update trajectory for string-7 plucking. While initial visual estimates (S1) failed to produce sufficient excitation, the acoustic-guided update reached state S3 ( ∆y = 10 mm, ∆z = −17 mm), successfully triggering clean open-string vibration at ˆf0 = 144 .7 Hz (Fig. 6 (b)). 
+
+2) Left-Hand Contact Gating and Hold Selection 
+
+Fig. 7 (a) compares tactile responses under different hold commands. A 1 ms hold fails to establish sufficient acoustic boundary conditions (resulting in open-string tones), whereas hold durations of 100 –170 ms (Table II) provide the necessary contact damping to produce resonant harmonics. Fig. 7 (b) confirms consistent tactile contact activity across all five H7 phrase executions, validating that the left hand established reliable string contact before each pluck.                       
+
+> TABLE II: Calibrated Left-Hand Hold Durations (ms) by Plucking Finger and String. Dashes denote Unused Combinations.
+> Finger / String S1 S2 S3 S4 S5 S6 S7
+> Right Index 150 150 170 125 100 150 150 Right Middle 100 100 150 100 100 ––
+
+D. Cross-Hand Hardware Transfer Feasibility (Q3) 
+
+To assess representation transferability, we replaced the right Wuji Hand with an L20 hand without altering high-level planning. Fig. 8 (a) compares the event sequences. The Wuji Hand executed the 25 events in 22.4 s (100% order coverage), while the L20 hand reproduced 21 events in 56.2 s (84% order coverage). All 21 accepted L20 events can be matched in ref-erence order. Fig. 8 (b) fits the order-aligned measured onsets as ˆt = at ref + b. Wuji has a = 1 .011 , R2 = 0 .9996 , and a 0.145-s residual RMSE; L20 has a = 2 .457 , R2 = 0 .9924 , and a 1.487-s residual RMSE. Thus, the L20 execution preserves an approximately affine temporal progression while operat-ing at a substantially expanded time scale. While hardware differences in finger velocity limit dynamic equivalence, the result demonstrates that the task representation and inverse kinematics mappings can be transferred across different end-effectors. V. C ONCLUSION 
+
+This work presents a physical heterogeneous dual-arm robotic system for event-level guqin performance. The system converts a structured performance sequence into collision-aware, hardware-feasible bimanual motions through vision-based instrument localization, primitive selection, configu-ration continuity optimization, and temporal coordination. Tactile observations are used to monitor left-hand har-monic contact, while auditory observations support plucking-primitive calibration and event-level outcome assessment. Ex-periments on a 25-event phrase demonstrate repeated open-string and seventh-hui harmonic execution on a physical guqin. REFERENCES [1] M. Bretan and G. Weinberg, “A survey of robotic musicianship,”   
+
+> Communications of the ACM , vol. 59, no. 5, pp. 100–109, 2016. 1, 2, 5 [2] T. Bin, H. Yan, N. Wang, M. N. Nikoli´ c, J. Yao, and T. Zhang, “A survey 8
+
+Fig. 7: (a) Tactile sensor responses under commanded hold times of 1, 100, and 150 ms. (b) Continuous tactile intensity traces across all five harmonics trials, with dashed lines marking verified acoustic onsets. 
+
+Fig. 8: (a) Accepted event sequences. Discrete string event repro-duction comparison between the Wuji Hand (22.4 s) and replacement L20 Hand (56.2 s) against the score reference. (b) Temporal transfer. 
+
+on the visual perception of humanoid robot,” Biomimetic Intelligence and Robotics , vol. 5, no. 1, p. 100197, 2025. 1 [3] H. Penttinen, J. Pakarinen, V. V¨ alim¨ aki, M. Laurson, H. Li, and M. Leman, “Model-based sound synthesis of the guqin,” The Journal of the Acoustical Society of America , vol. 120, no. 6, pp. 4052–4063, 2006. 1, 2 [4] N. Yang, A. Rogel, and G. Weinberg, “Design of an expressive robotic guitarist,” IEEE Robotics and Automation Letters , vol. 8, no. 11, pp. 7066–7073, 2023. 1, 2 [5] S. Sudhoff, P. Velmurugan, J. Liu, V. Zhao, Y.-H. Lu, and K. Y.-J. Yun, “From score to sound: An end-to-end MIDI-to-motion pipeline for robotic cello performance,” arXiv preprint arXiv:2601.03562 , 2026. 1, 2[6] M. G¨ orner, N. Hendrich, and J. Zhang, “Pluck and play: Self-supervised exploration of chordophones for robotic playing,” in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA) ,2024, pp. 18 286–18 293. 1, 2 [7] H. Li and M. Leman, “A gesture-based typology of sliding-tones in guqin music,” Journal of New Music Research , vol. 36, no. 2, pp. 61–82, 2007. 1, 2 [8] T. Zhang, H. Yan, Y. Yang, and Z. Wang, “A haptic robot finger designed for guqin instrument playing,” IEEE Transactions on Haptics , pp. 1–12, 2026, early Access. 1, 2 [9] G. Weinberg and S. Driscoll, “Toward robotic musicianship,” Computer Music Journal , vol. 30, no. 4, pp. 28–45, 2006. 2 [10] J. Solis, K. Taniguchi, T. Ninomiya, T. Yamamoto, and A. Takan-ishi, “Development of waseda flutist robot wf-4riv: Implementation of auditory feedback system,” in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA) , 2008, pp. 3654–3659. 2[11] A. Zhang, M. Malhotra, and Y. Matsuoka, “Musical piano performance by the ACT hand,” in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA) , 2011, pp. 3536–3541. 2 [12] J. A. E. Hughes, P. Maiolino, and F. Iida, “An anthropomorphic soft skeleton hand exploiting conditional models for piano playing,” Science Robotics , vol. 3, no. 25, p. eaau3098, 2018. 2 [13] K. Zakka, P. Wu, L. Smith, N. Gileadi, T. Howell, X. B. Peng, S. Singh, Y. Tassa, P. Florence, A. Zeng, and P. Abbeel, “Robopianist: Dexterous piano playing with deep reinforcement learning,” in Proceedings of the 7th Conference on Robot Learning (CoRL) , ser. Proceedings of Machine Learning Research, vol. 229, 2023, pp. 2975–2994. 2 [14] Y.-S. Zeulner, S. Cr¨ amer, S. Selvaraj, and R. Calandra, “Learning to play piano in the real world,” arXiv preprint arXiv:2503.15481 , 2026. 2[15] Y.-F. Huang, J.-I. Liang, I.-C. Wei, and L. Su, “Joint analysis of mode and playing technique in guqin performance with machine learning,” in Proceedings of the 21st International Society for Music Information Retrieval Conference (ISMIR) , 2020, pp. 85–92. 2
