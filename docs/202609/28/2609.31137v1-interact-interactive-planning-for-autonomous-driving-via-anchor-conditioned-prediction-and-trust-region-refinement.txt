@@ -1,0 +1,433 @@
+Title: INTERACT: Interactive Planning for Autonomous Driving via Anchor-Conditioned Prediction and Trust-Region Refinement
+
+URL Source: https://arxiv.org/pdf/2609.31137v1
+
+Published Time: Mon, 28 Sep 2026 00:57:41 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# INTERACT: Interactive Planning for Autonomous Driving via Anchor-Conditioned Prediction and Trust-Region Refinement 
+
+Aron Distelzweig 1,2, Andreas Look 3, Faris Janjoš 1, Steffen Hagedorn 1, Luigi Palmieri 1, Joschka Boedecker 2
+
+Abstract — Driving in dense urban traffic is interactive: whether a merge or an unprotected turn succeeds depends on how surrounding agents respond to the ego vehicle. Conven-tional planners predict first and plan second and, therefore, cannot account for this dependency. Methods that integrate prediction and planning either train both jointly, which in-troduces task interference, or keep them separate and are restricted to a predefined set of proposals. We present I N-
+
+> TERACT
+
+: Interactive Planning for Autonomous Driving via Anchor-Conditioned Prediction and Trust-Region Refinement. Our key insight is that surrounding agents react to the intent a trajectory expresses rather than to its exact realization, so a single reactive prediction stays valid across an entire family of plans. I NTERACT therefore decomposes interactive planning into prediction across driving intents and optimization within each intent. We derive a small set of diverse intents, which we call anchors, from map geometry, query a dedicated ego-conditioned prediction model once per anchor, and refine every anchor with the Cross-Entropy Method under a trust-region penalty that keeps the refined plan close enough to its anchor for the conditioned reaction to still apply. Prediction thus remains a separate model, avoiding task interference, while conditioning on anchors preserves the dependency. Because each anchor is refined continuously, the final plan is not restricted to the anchor set, yet I NTERACT requires only one predictor query per anchor rather than one per candidate plan, with all anchors processed in parallel. On the nuPlan and interPlan closed-loop benchmarks, I NTERACT sets a new state of the art, with the largest gains precisely in the interactive scenarios that motivate the method. The code will be released upon acceptance. 
+
+I. I NTRODUCTION 
+
+Driving in dense urban traffic is inherently interactive: at unprotected left turns, lane merges, or passages through narrow gaps, the feasibility of a maneuver depends on how surrounding agents respond to the ego vehicle. A planner whose forecast of the other agents is independent of its own plan implicitly assumes that no one will react, which yields overly conservative behavior and, in the limit, the frozen-robot problem [1], [2]. No amount of forecasting accuracy resolves this; the deficit lies in the missing coupling. Integrated prediction and planning, in which the prediction is conditioned on the ego plan, is the natural remedy. However, on the nuPlan benchmark [3], the strongest plan-ners that reason about surrounding agents still do so through constant-velocity forecasts [4], whereas approaches built on reactive predictions have not converted their more expressive interaction modeling into better closed-loop driving [5], [6], [7]. Two properties of current approaches account for this. 
+
+> 1Robert Bosch GmbH, Germany.
+> 2University of Freiburg, Germany.
+> 3Coburg University, Germany.
+
+Plan Score Select Optimize Plan Score Select     
+
+> Fixed proposal set
+> Beyond proposals (Ours)
+> 00.7 1.0 0.7
+> Fig. 1. Interactive planning beyond a fixed proposal set. Proposal-based planners (top) score a fixed set of candidate trajectories and select the best one; the executed plan can therefore never be better than the best candidate in that set. I NTERACT (bottom) treats each candidate as an anchor
+> that expresses a driving intent, queries an ego-conditioned predictor once per anchor, and refines the anchor continuously under a trust-region penalty that keeps the reaction valid. Scoring and selection then operate on refined plans, so the final trajectory is no longer confined to the initial set, at the cost of one predictor query per anchor rather than one per candidate plan.
+
+First, learned integration approaches commonly train pre-diction and planning jointly within a single network [5], [6], but the two are distinct tasks that interfere under a shared parameterization [8], leaving the predictions behind dedicated state-of-the-art models and degrading planning performance as well. The plan is additionally regressed from expert demonstrations [6], [9], [10], which inherits the statistics of driving data where interactive situations are rare and lane keeping dominates, so the imitation objective is dominated by the very regime in which interaction reasoning is irrelevant. Evaluated in interactive scenarios, the resulting proposal sets fall below a simple lane-following baseline [7]. Second, approaches that avoid learning the plan instead rely on a fixed set of proposals, scored against their con-ditioned predictions [11], [5], and are thereby confined to whatever that set contains. The proposals are generated before any prediction is available, so conditioning determines which plan is selected but never what any plan looks like. Enlarging the set is no remedy, as a separate predictor must be queried once for every plan it is conditioned on. We therefore approach the integration of prediction and planning differently. Our key insight is that surrounding agents primarily react to the intent rather than to the exact realization. Trajectories that share an intent induce near-identical reactions, so a prediction conditioned on one repre-sentative trajectory stays valid while that trajectory is refined locally. A single query therefore covers an entire family of plans, which is what makes a dedicated predictor affordable in closed loop. This lets us decompose interactive planning into prediction across intents and optimization within each intent, and to design the two stages independently with arXiv:2609.31137v1 [cs.RO] 25 Sep 2026 methods suited to their respective objectives. We first derive a small set of diverse intents, which we call anchors, from map geometry. Unlike rule-based proposal sets, anchors are not the final output but the conditioning variable of the predictor: each one is subsequently optimized against its own forecast. We then adapt a state-of-the-art multi-agent prediction model into an anchor-conditioned predictor, queried once per planning step to return one reactive scene prediction per anchor. Because this model is trained for prediction alone, it retains the quality of a dedicated predictor. Finally, we refine each anchor with the Cross-Entropy Method (CEM) [12] against its conditioned prediction, adding a trust-region term that keeps the refined plan close enough to its anchor for the conditioned reaction to still apply. The predictor is therefore never re-queried dur-ing optimization. The same construction removes a known weakness of CEM in multimodal settings, where a single search distribution tends to average across distinct modes: here the anchors supply the modes, and the trust region confines each refinement to the one it started from. In summary, our contributions are:  
+
+> •
+
+We formulate interactive planning as prediction across intents and optimization within intents, based on the insight that the reaction of surrounding agents is deter-mined by the intent a trajectory expresses rather than by its exact realization.  
+
+> •
+
+We turn a state-of-the-art multi-agent prediction model into an anchor-conditioned predictor that produces one reactive scene prediction per anchor, keeping prediction and planning as separate specialized components.  
+
+> •
+
+We introduce a trust-region CEM refinement that op-timizes a novel continuous relaxation of the PDM score, keeps each plan within the range in which its conditioned prediction remains valid, mitigates mode averaging, and runs independently across anchors.  
+
+> •
+
+INTERACT sets a new state of the art on nuPlan and interPlan, with the largest gains in interactive scenarios. II. R ELATED WORK 
+
+A. Integrated Prediction and Planning 
+
+To date, the predominant order of tasks in modular Autonomous Driving pipelines is perception followed by prediction, planning, and control. Even when optimized end-to-end for the final driving objective, this design remains inherently reactive: the ego vehicle can react to the predicted behavior of other traffic participants but the predictions do not account for the planned ego behavior. Instead of realistically modeling interactions, the ego vehicle disregards its own influence on the traffic scene and behaves overly conservative [4], [2]. Planning the ego trajectory first and then conditioning prediction on it does not resolve the issue as it barely inverts the dependency while keeping it unidirectional and therefore reactive [13]. Joint prediction and planning goes beyond reactive modeling by solving both tasks in a common step. However, it assumes that all vehicles follow a joint driving objective, resulting in a single global solution [6], [14]. Only bidirectional integration schemes, where prediction is conditioned on planning and vice versa explicitly model interactions by rolling out a what-if simu-lation of alternative futures to ultimately decide for an ego behavior. While conceptually promising, bidirectional inter-action modeling comes at a high computational cost. Existing methods take different measures to limit this cost: TPP [15] and DTPP [5] perform a tree search with strictly restricted depth whereas HYPE [10] constrains its width. HPP [16] alternates prediction and ego plan optimization but starts from a joint prediction instead of considering multimodal futures. In contrast, CoPlanner [9] makes a conservative unimodal short-term prediction and only accounts for diverse behaviors in the long term whereas BIBeR [11] asserts a game-theoretic iterative best response framework. Our work instead avoids the cost of full bidirectional rollouts by a simplified formulation: interactive planning as prediction across discrete intents and optimization within those intents. This design is grounded in the assumption that surrounding agents primarily react to the overarching intent, allowing us to reduce complexity in a task-compliant manner. 
+
+B. Conditional Prediction 
+
+General trajectory prediction models have achieved high forecasting accuracy [17], [18], [19]. However, the benefit of these models for interactive planning remains marginal [7]. One limitation is that most existing models are unconditional, even though this conditioning is crucial for modeling bidirec-tional interactions. They forecast future behavior based only on historical context and do not account for the intended fu-ture behavior of the ego vehicle. While integrated approaches like DTPP [5] and HYPE [10] address this by learning custom conditional prediction models, these architectures share model capacity with the planning objective and often fall short of the accuracy achieved by dedicated prediction models. To overcome this, we adopt SMART [18] as our base model and adapt it into an ego-conditioned predictor. As detailed in the following section, this integration leverages the model’s autoregressive structure, requiring no architec-tural modifications or retraining, which ensures that baseline prediction performance is preserved. 
+
+C. Test Time Optimization 
+
+Test-time trajectory optimization refines behavioral pro-posals prior to execution. Diffusion-ES [20] employs asimilar optimization concept to ours but faces computational inefficiencies due to the iterative querying of a diffusion model. Furthermore, it assumes constant-velocity predic-tions, thereby failing to model interactions between the ego vehicle and surrounding agents. Another recent method [21] optimizes trajectories for end-to-end architectures but does not integrate reactive multi-agent predictions into the re-finement process. In contrast, our approach utilizes the conditional predictions outlined in the previous section to explicitly model bidirectional interactions. We apply Cross-Entropy Maximization (CEM) to independently refine dis-tinct maneuver anchors against their respective reactive scene predictions. To circumvent the computational burden of repeatedly querying the SMART predictor during this search, we constrain the refinement to a limited trust region. This keeps the optimization local, ensuring the refined trajectory remains within a valid neighborhood of the initial prediction anchor and naturally mitigating the mode-averaging problem associated with CEM. Unlike existing approaches that rely on discrete, rule-based cost functions [4], [22], we evaluate can-didate trajectories using a continuous surrogate score. This continuous formulation resolves the flat plateaus inherent to discrete scoring metrics, enabling smoother convergence and a more precise ranking of interactive behaviors. III. M ETHODOLOGY 
+
+Our approach consists of four steps. First, we generate a set of diverse, kinematically feasible ego trajectories from route geometry, called anchors (Sec. III-A). Second, for each anchor, a prediction model predicts how the surrounding agents react to this ego intent (Sec. III-B). Third, we refine each anchor against its own prediction using CEM [12] (Sec. III-C). Fourth, a pairwise comparison selects the plan that is executed (Sec. III-D). Fig. 2 provides an overview. 
+
+A. Anchor Generation 
+
+Anchors are ego trajectories that represent a driving maneuver. They are used to condition the prediction and to initialize the refinement. The anchor set is constructed from map geometry: each path is combined with several target speeds. The paths are the route centerline and the neighboring lanes. Each of them is not followed directly, since the ego is generally offset from it in both position and heading. For a point ℓm = ( xm, y m, ψ m) on the lane, a cubic Bézier curve connects the current pose (x0, y 0, ψ 0)
+
+to it, yielding a path Γ parameterized by arc length s. Here, 
+
+(x, y ) denotes the position and ψ the heading. Varying the point yields the same maneuver at different levels of urgency: an early merge produces a fast and a late one a slow lane change. Every path is followed with five different speed profiles. Given the current speed v0 and the local speed limit 
+
+vlim , profile k targets v(k) = κkvlim with a fixed fraction κk
+
+and approaches it at a constant rate, 
+
+vt+1 =
+
+(min( vt + aacc ∆t, v (k)), vt < v (k),
+
+max( vt − adec ∆t, v (k)), otherwise , (1) 
+
+st+1 = st + vt+1 ∆t, (2) starting at the point on Γ closest to the ego vehicle. The reference poses then follow from the path geometry as ¯pt =Γ( st). Path and speed profile thus separate the two degrees of freedom: the path determines the shape of the maneuver, while the profile determines its temporal progression. The resulting reference trajectories are tracked by an LQR con-troller, yielding control sequences that are rolled out with the kinematic bicycle model BM( ·). This produces dynamically feasible trajectory candidates. The candidates are ranked by the score of Sec. III-C. Finally, N anchors 
+
+T = {τ1, . . . , τ N }, τi = ( pi
+
+> 1
+
+, . . . , p iT ), (3) are selected by farthest-point sampling in trajectory space, initialized with the highest-scoring candidate rather than a random one. pit = ( xit, y it, ψ it) denotes the pose of anchor 
+
+i at time step t. We additionally retain the corresponding control sequence uanc  
+
+> i
+
+that generated each selected anchor. Sampling for spatial diversity rather than for score ensures that the subsequent optimization starts from genuinely dif-ferent driving intents instead of N variants of the same one. 
+
+B. Anchor-Conditioned Prediction 
+
+We use SMART [18], which is a next-token prediction model that represents each agent trajectory as a sequence of discrete motion tokens and factorizes the joint future autoregressively over time steps. Each token encodes ashort trajectory segment of fixed duration. The model is trained with teacher forcing on ground-truth token sequences. Writing a nt for the token of agent n at time step t, Na for the number of agents and C for the scene context (map and observed history), the model defines 
+
+pθ
+
+ a 1: Na 
+
+> 1: T
+
+| C  =
+
+> T
+
+Y
+
+> t=1
+> Na
+
+Y
+
+> n=1
+
+pθ
+
+ a nt | a 1: Na 
+
+> <t
+
+, C, (4) i.e. the factorization is causal in time while agents within one step are conditionally independent given the joint history. Rollouts are obtained by sampling: at each time step every agent draws a token from its predicted distribution, all tokens are written back into the sequence, and the interaction structure is rebuilt from the updated poses before next step. We exploit this structure to condition the prediction on anchors. Let n = 0 denote the ego. For anchor τi we tokenize its pose sequence into ¯a 01: T (τi) using the same tokenizer, and replace the ego tokens during sampling in Eq. 4: 
+
+pθ
+
+ a nt | a 1: Na 
+
+> <t
+
+, C, τ i
+
+ =
+
+(Ia 0 
+
+> t
+
+= ¯ a 0 
+
+> t
+
+(τi), n = 0 ,pθ
+
+ a nt | a 1: Na 
+
+> <t
+
+, C, n̸ = 0 . (5) Concretely, after each decoding step the ego’s sampled token is overwritten by the anchor token, so that all subsequent predictions are conditioned on the anchor. Since the model factorizes autoregressively over the joint sequence of all agents, this substitution amounts to exact conditioning on 
+
+τi rather than to sampling the ego freely. Reading out only the non-ego tokens then gives the conditioned prediction 
+
+ˆYi =  ˆy nt
+
+ 
+
+> n=1 ...N, t =1 ...T
+
+∼ pθ
+
+ · | C , τ i
+
+, (6) where ˆy nt denotes the predicted state of agent n at time step t, n=0 indexes the ego vehicle and n=1 , . . . , N the surrounding agents, C is the scene context and τi the i-th ego anchor. All N conditioned rollouts are computed in parallel. 
+
+C. Refinement 
+
+Each anchor τi is refined independently against its condi-tioned prediction ˆYi, which is fixed during refinement. We optimize in the space of control sequences u = ( ut)Tt=1 
+
+with ut = ( at, ˙δt), where at denotes the acceleration and Anchor Conditioned Prediction 2Anchor Generation Cross Entropy Maximization (CEM) 1 3        
+
+> Ego Vehicle Surrounding Vehicles Ego Trajectory Proposal Surrounding Agent Prediction
+> ⋮⋮
+> Sample Sample Scoring
+> 𝑆 𝜏 − 𝜆 & ‖𝜏 !− 𝑥‖ "
+> Scoring
+> 𝑆 𝜏 − 𝜆 & ‖𝜏 #− 𝑥‖ "
+> Update CEM distribution Update CEM distribution
+> Elite set Elite set
+> ⋮⋮
+
+Set of anchors: 
+
+## 𝒯 = {𝜏 !, 𝜏 ", … , 𝜏 #} 
+
+> Prediction Model
+> 𝜏 !
+> 𝜏 "
+> × N × N × K × K
+
+Fig. 2. Overview of INTERACT. 1 Anchor Generation: We generate a diverse set of anchors, representing different ego intents. 2 Anchor-Conditioned Prediction: For each anchor, a conditional prediction model predicts how surrounding agents react to the corresponding ego intent. 3
+
+Trajectory Refinement: Each anchor is independently refined with Cross-Entropy Maximization (CEM) within a local region, preserving its maneuver intent and thereby the validity of the corresponding anchor-conditioned prediction. 
+
+Fig. 3. Comparison of our continuous score components (left) with their discrete PDM counterparts (right) on a nuPlan scenario. For every map location, the progress, TTC, and collision terms are evaluated. Color encodes the score value. The discrete terms are piecewise constant: gradients exist only at edges, leaving the search without guidance on the flat plateaus, backing up scores identically to standing still, and every colliding pose is equally bad. The continuous terms provide an informative gradient throughout: progress degrades smoothly behind the ego and pulls laterally toward the goal lane, TTC decays with the closing distance to slower vehicles, and the collision term grades severity by footprint overlap, pointing out of the conflict. 
+
+˙δt the steering rate. A control sequence is rolled out with the kinematic bicycle model, 
+
+BM( u) = ( p1, . . . , p T ), (7) where pt = ( xt, y t, ψ t) denotes the resulting ego pose at step 
+
+t. For each τi, we define the objective to be maximized 
+
+Ji(u) = S BM( u), ˆYi
+
+ − λ 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+(xt, y t) − (xit, y it) 2 .
+
+(8) Here, (xt, y t) denote the positions obtained by rolling out 
+
+u with BM , while (xit, y it) are the corresponding positions of anchor τi. The first term evaluates the candidate according to general planning criteria, including comfort, collision avoidance, and drivable-area compliance, where interaction-dependent criteria are evaluated against the predicted agent trajectories ˆYi. The second term penalizes deviations from the anchor. The score S(·) is a continuous surrogate of the PDM score [4], preserving its original multiplicative-gate and weighted-average structure. We replace the dis-crete collision, drivable-area, driving-direction, and time-to-collision (TTC) terms with continuous counterparts and use continuous progress instead of its gated variant. We show a comparison in Fig. 3. This yields a smoother ranking of candidate trajectories and simplifies the optimization. We optimize Eq. 8 using the Cross-Entropy Method (CEM) [12], maintaining per anchor a diagonal Gaussian distribution with parameters μ(k) 
+
+> i
+
+, σ (k) 
+
+> i
+
+∈ RT ×2 over control sequences. Since the control sequence of each anchor is retained during anchor generation, the search is initialized directly at the anchor, 
+
+μ(0)  
+
+> i
+
+= uanc  
+
+> i
+
+, σ(0)  
+
+> i,t
+
+= ρ· 12
+
+ umax −umin 
+
+, t = 1 , . . . , T, 
+
+(9) where uanc  
+
+> i
+
+are the anchor controls, umin , u max ∈ R2 are fixed control bounds, and ρ = 0 .15 sets the initial exploration range, scaling by the admissible range accounts for the different magnitudes of acceleration and steering rate. In each iteration k we draw a population of P control sequences, 
+
+u(k,j ) 
+
+> i
+
+= clip  μ(k) 
+
+> i
+
++ σ(k) 
+
+> i
+
+⊙ ε(k,j ), j = 1 , . . . , P, (10) where ⊙ is the elementwise product and clipping keeps the samples inside the control bounds. Following iCEM [23], the perturbations ε(k,j ) ∈ RT ×2 are unit-variance colored noise with power spectral density ∝ 1/f β (β=2 ), drawn per control dimension over the full horizon: each step is marginally Gaussian, but consecutive steps are correlated, which concentrates the search on smooth control sequences rather than white-noise chatter. Every candidate is scored by Eq. 8 and the E best form the elite set E(k) 
+
+> i
+
+, to which the distribution is refit, 
+
+μ(k+1)  
+
+> i
+
+= mean  E(k)
+
+> i
+
+, σ(k+1)  
+
+> i
+
+= std  E(k)
+
+> i
+
+. (11) After K iterations, the best control sequence u∗ 
+
+> i
+
+found during the search defines the refined trajectory 
+
+τ ∗ 
+
+> i
+
+= BM( u∗ 
+
+> i
+
+). (12) 
+
+D. Final Plan Selection 
+
+The final plan is given by 
+
+τ ⋆ = arg max 
+
+> i=1 ...N
+
+S τ ∗ 
+
+> i
+
+, ˆYi
+
+. (13) The trust region confines each refinement to the validity region of its own prediction, so no re-prediction is required during the K CEM iterations. Beyond this, the per-anchor process of warm start, sampling, rollout and scoring is fully independent across anchors and therefore parallelizable, with only the final plan selection requiring synchronization. IV. E XPERIMENTS 
+
+A. Experimental Setup 
+
+We build on nuPlan [3], a closed-loop simulation frame-work based on real-world driving logs, and evaluate our approach on five established and widely used benchmarks. Val14 [4] contains 1,118 scenarios from the nuPlan validation split, with up to 100 instances for each of 14 scenario types. Test14 [27] comprises two variants: Test14-random uniformly samples scenarios from each type, whereas Test14-hard is constructed by evaluating 100 scenarios per type with the state-of-the-art rule-based planner PDM-Closed [4] and retaining the 20 lowest-scoring scenarios per type. Follow-ing [5], [10], we additionally evaluate on a split containing only dynamic scenario types that involve interactions with surrounding traffic. The split comprises 10 scenario types with 20 scenarios each, resulting in 200 scenarios in total. We refer to this split as Dynamic-10. Finally, interPlan [30] con-sists of hand-crafted out-of-distribution scenarios covering challenging interactions such as maneuvering around parked vehicles, reacting to jaywalkers, and changing lanes in dense traffic. We report results on the commonly used subset of 80 scenarios, denoted as interPlan, and on the complete set of 335 scenarios, denoted as interPlan-full. In addition, we evaluate on a subset of 30 lane-change scenarios, denoted as interPlan-LC, which emphasizes ego-traffic interaction and is evenly split across low, medium, and high traffic densities. 
+
+B. Implementation Details 
+
+We extract N = 5 anchors which span a time horizon of 
+
+4 s . For the conditioned prediction, we transform the anchors into a sequence of 8 tokens with each spanning a horizon of 0.5 s . CEM operates on sequences of acceleration and steering-rate commands over a 4 s horizon at 10 Hz (T = 40 ). For each of the N = 5 anchors we run K = 10 iterations with a population of P = 24 candidates and E = 6 elites. The trust-region weight is λ = 0 .1 and λ = 0 for anchors which lead to a collision under the conditioned prediction. 
+
+C. Main Results 
+
+Tab. I compares our method (INTERACT) against existing planners, grouped according to the type of agent prediction used during planning. We distinguish three categories. None 
+
+do not explicitly model the future motion of surrounding agents and must therefore account for interactions implicitly. 
+
+Constant-velocity methods use fixed predictions that extrap-olate the current motion of other agents independently of the candidate ego plan. Such predictions provide a simple approximation and can be effective when interactions are limited. However, they cannot represent how other agents may react to different ego behaviors. Finally, reactive learned 
+
+methods explicitly model future agent behavior while ac-counting for the interaction with the ego vehicle. This is important in interactive scenarios, where different ego plans can lead to different responses from surrounding agents. INTERACT achieves the best performance on Test14-hard, Dynamic-10, interPlan-LC, and interPlan-full, with closed-loop reactive (R) scores of 85 .28 , 94 .65 , 89 .07 , and 
+
+79 .11 , respectively, and ranks second on Val14 (93 .18 )and Test14-random ( 92 .48 ). The gains are particularly pro-nounced on the interaction-focused benchmarks. On the Dynamic-10 split, INTERACT improves over the strongest reported method, PDM-Closed, by +3 .15 and over the strongest competing reactive learned method, HYPE, by 
+
++3 .38 . On Test14-hard, INTERACT improves over the strongest reactive learned baseline, BIBeR-CV, by +2 .28 .Similarly, on interPlan-LC, which contains challenging lane-change interactions, INTERACT improves over BIBeR-CV by +4 .54 . The consistent gains across these interaction-heavy benchmarks indicate that explicitly accounting for how surrounding agents may react to candidate ego plans becomes increasingly beneficial as the degree of interaction increases. A different baseline is TerraZero, which reaches the high-est score on Val14 ( 94 .19 , +1 .01 over INTERACT) and on interPlan ( 70 .87 ), but is outperformed by INTERACT on interPlan-full by +7 .80 . Rather than improving the prediction consumed by a planner, TerraZero scales policy learning itself through self-play, which requires substantially more training interaction and yields a policy not decomposable into an explicit prediction and planning stage. The two directions are therefore orthogonal, and the strong interPlan-full result of INTERACT suggests that explicit reactive predictions remain competitive with and complementary to large-scale learned policies. We note that TerraZero results are not reported on all splits, which limits a full direct comparison. On the less interaction-focused Test14-random split, IN-TERACT remains highly competitive, although the gains over approaches with fixed predictions are smaller than on the interaction-rich benchmarks. This highlights an important trade-off between fixed and reactive predictions. When the future motion of surrounding agents can be approximated sufficiently well without accounting for their response to the ego vehicle, simple fixed predictions can provide astrong and robust planning signal without introducing er-rors from a learned interaction model. In contrast, their Predictions Method Val14 (R) ↑ Test14-hard (R) ↑ Test14-random (R) ↑ Dynamic-10 (R) ↑ interPlan (R) ↑ interPlan-LC (R) ↑ interPlan-full (R) ↑                                                                                                                       
+
+> None Urban Driver [24] 64.11 49.95 67.15 65.98 4.00 9.65 —GC-PGP [25] 63.82 39.36 51.39 —14.55 34.99 —PlanCNN [26] 72.00 52.20 67.50 ——58.35 —PlanTF [27] 76.95 61.61 79.58 —30.53 55.18 —PDM-Open [4] 54.24 35.83 57.23 ——23.35 —DiffusionPlanner [28] 82.80 69.22 82.93 —25.76 25.96 —TerraZero [29] 94.19 ———70.87 —71.31 Constant Velocity PDM-Closed [4] 92.12 75.19 91.63 91.50 41.88 61.55 —PDM-Hybrid [4] 92.11 76.07 91.28 —41.61 61.72 —Diffusion-ES [20] 92.00 ——————Reactive Learned GameFormer [6] 79.78 67.05 82.05 —21.26 30.49 —DTPP [5] 66.09 63.66 —89.78 30.32 67.88 —HYPE [10] 92.63 ——91.27 ———CoPlanner [9] 93.13 78.59 92.00 ————BIBeR-CV* [11] 92.75 83.00 93.01 —60.05 84.53 —BIBeR [11] 89.79 79.57 90.92 —55.59 81.17 —
+> INTERACT (Ours) 93.18 85.28 92.48 94.65 58.29 89.07 79.11
+
+TABLE I COMPARISON OF PLANNING PERFORMANCE ON THE NU PLAN BENCHMARKS , GROUPED BY THE TYPE OF AGENT PREDICTION THE PLANNER CONSUMES . W E REPORT CLOSED -LOOP REACTIVE (R) SCORES FOR THE VAL 14, T EST 14-HARD , T EST 14-RANDOM , AND INTERACTIVE SPLITS , AS WELL AS FOR INTER PLAN , INTER PLAN -LC, AND INTER PLAN -FULL . H IGHER VALUES INDICATE BETTER PERFORMANCE . B EST AND SECOND -BEST VALUES PER COLUMN ARE MARKED IN BOLD AND UNDERLINED , RESPECTIVELY . O UR METHOD IS HIGHLIGHTED . *BIB ER-CV FILTERS CANDIDATE PLANS BASED ON CONSTANT -VELOCITY PREDICTIONS BUT USES REACTIVE LEARNED PREDICTIONS AFTERWARDS .
+
+underlying independence assumption becomes restrictive in strongly interactive situations. The consistent improvements of INTERACT on the Dynamic-10, Test14-hard, interPlan-LC, and interPlan-full splits therefore suggest that its main advantage lies precisely in these scenarios, where reasoning about the coupled future behavior of the ego vehicle and surrounding traffic is most important. 
+
+D. Ablation Studies 
+
+Trust-region weight. Fig. 4 shows the effect of the trust-region weight λ, which penalizes deviations of the refined trajectory from its anchor. Without the trust region ( λ = 0 ), CEM can exploit the predicted scene more aggressively, leading to the highest progress on both benchmarks (e.g., 
+
++4 .0 on Test14-hard relative to the default setting). How-ever, this also results in overconfident refinements: time-to-collision compliance (TTC) decreases by 6.3 on Test14-hard and 6.7 on interPlan-LC. This behavior is expected, the agent predictions are conditioned on the anchor trajectory and are therefore only reliable within a local neighborhood. In contrast, a large trust-region weight ( λ = 0 .5) con-strains the refinement too strongly to the anchor. This reduces progress ( −2.5 on Test14-hard) without yielding further safety improvements, as the optimizer has insufficient freedom to improve the original trajectory. This result sup-ports our motivation: allowing moderate deviations from the anchor improves progress while safety remains unaffected. The default setting of λ=0 .1 provides the best trade-off and achieves the highest overall score on both benchmarks. These results demonstrate the role of the trust region as a regularizer for prediction validity: it allows local refinement of the ego trajectory while preventing large deviations for which the anchor-conditioned prediction may no longer be accurate. 
+
+Component ablation. Tab. II analyzes the contribution of the individual components of INTERACT on Test14-hard and interPlan-LC. Removing any component decreases 0.0 0.1 0.5       
+
+> Trust-region weight λ
+> 80 83 86 89 92
+> Test14-hard
+> 0.0 0.1 0.5
+> Trust-region weight λ
+> 76 82 88 94 100
+> interPlan-LC
+> Score TTC compliance Progress along route
+
+Fig. 4. Sensitivity to the trust-region weight λ on Test14-hard (left) and interPlan-LC (right): closed-loop score (solid), TTC compliance (dashed) and progress along the route (dash-dotted). A small λ lets the CEM trade safety for progress, a large λ keeps it close to the anchors and sacrifices progress without further safety gains. 
+
+the overall score on both benchmarks, indicating that each component addresses important aspects. The anchor trajectories constitute the most important component. Removing them causes the largest performance drop, with −13 .35 on Test14-hard and −12 .19 on interPlan-LC. On Test14-hard, this degradation is reflected across both safety and progress metrics, including −10 .00 TTC, 
+
+−4.25 At-Fault, and −5.92 Making Progress. Similarly, on interPlan-LC, drivable-area compliance (DAC) decreases by 
+
+−13 .33 . Interestingly, comfort improves without anchors on both benchmarks. This suggests that optimizing without anchors can produce locally smooth or progressive trajec-tories, but these trajectories are less reliable with respect to interaction safety and map constraints. The anchors therefore provide a structured prior over plausible driving intents. Removing the CEM refinement results in a smaller but consistent decrease of −2.92 on Test14-hard and −4.95 
+
+on interPlan-LC. On Test14-hard, the unrefined anchors are slightly safer in terms of at-fault collision (At-Fault) and TTC, but lose −7.40 in progress. The effect is even clearer on interPlan-LC, where removing refinement reduces route progress by −6.60 and comfort by −13 .33 . This indicates TABLE II COMPONENT ABLATION ON TEST 14-HARD AND THE LANE -CHANGE SCENARIOS OF INTER PLAN (INTER PLAN -LC). E ACH ROW REMOVES ONE COMPONENT OF THE FULL APPROACH AND REPORTS THE DIFFERENCE TO THE FULL APPROACH (BLUE : BETTER , RED : WORSE ). Configuration At-Fault TTC DAC Making Progress Progress along Route Comfort Score                                                         
+
+> Test14-hard
+> Ours 97.43 89.71 98.90 96.32 85.10 81.25 85.35 w/o anchors −4.25 −10.00 −4.43 −5.92 −4.17 +12.48 −13.35 w/o refinement +0.74 +2.94 −0.37 −1.47 −7.40 −2.57 −2.92 w/o continuous score −1.47 −3.31 0.00 +0.37 −1.16 +0.74 −2.19
+> interPlan-LC
+> Ours 100.00 100.00 100.00 100.00 80.34 76.67 89.07 w/o anchors −3.33 −3.33 −13.33 0.00 +4.09 +13.33 −12.19 w/o refinement 0.00 −3.33 0.00 0.00 −6.60 −13.33 −4.95 w/o continuous score 0.00 −6.67 0.00 0.00 −2.22 +10.00 −3.07
+
+TABLE III EFFECT OF PREDICTION USED ON TEST 14-HARD AND LANE -CHANGE SCENARIOS OF INTER PLAN (INTER PLAN -LC). R OWS BELOW OURS REPORT THE DIFFERENCE TO OUR ANCHOR -CONDITIONED SMART  
+
+> PREDICTION
+
+(BLUE : BETTER , RED : WORSE ). Prediction At-Fault TTC DAC Making Progress Progress along Route Comfort Score                                             
+
+> Test14-hard
+> Conditioned (Ours) 97.43 89.71 98.90 96.32 85.10 81.25 85.35 Unconditioned +0.37 +0.74 0.00 −0.37 0.00 +2.21 +0.14 Constant velocity −0.37 −1.47 0.00 0.00 −0.19 −1.47 −1.24
+> interPlan-LC
+> Conditioned (Ours) 100.00 100.00 100.00 100.00 80.34 76.67 89.07 Unconditioned 0.00 0.00 0.00 0.00 −6.12 0.00 −4.36 Constant velocity 0.00 −3.33 0.00 0.00 −2.05 0.00 −3.79
+
+that the anchor set already provides strong and conserva-tive driving intents, while the refinement step is primarily responsible for adapting these trajectories to the predicted interaction and improving their efficiency and quality. Finally, removing the continuous score reduces perfor-mance by −2.19 on Test14-hard and −3.07 on interPlan-LC. The most consistent degradation occurs in TTC ( −3.31 and 
+
+−6.67 , respectively), accompanied by reduced route progress on both benchmarks. In contrast to discrete scoring, the continuous formulation provides a more informative ranking of CEM candidates and allows the optimizer to distinguish between trajectories with different degrees of safety and progress even when they satisfy the same discrete criterion. Overall, the ablation shows that the anchors provide the structural basis of INTERACT, while the continuous scoring, and local CEM refinement progressively improve interaction safety and driving efficiency. 
+
+Predictions. Tab. III studies effects of predictions dur-ing trajectory scoring. We compare our anchor-conditioned prediction against unconditioned learned prediction and a constant-velocity baseline. While all three provide similar performance on Test14-hard, larger differences emerge on the more interaction-heavy interPlan-LC benchmark. On Test14-hard, the unconditioned predictor performs nearly identically to the conditioned variant and achieves a marginally higher overall score ( +0 .14 ). This suggests that, for many scenarios in this benchmark, modeling the future 
+
+TABLE IV RUNTIME (MS ) PER ANCHOR AVERAGED OVER TEN INTERACTIVE SCENARIOS .Stage Runtime (ms) Anchor generation 32.6 SMART inference 17.2 Refinement 31.8 
+
+motion of surrounding agents is more important than explic-itly conditioning their behavior on the ego trajectory. In con-trast, constant-velocity predictions reduce the overall score by −1.24 , together with lower TTC compliance ( −1.47 ) and comfort ( −1.47 ), indicating that learned predictions provide a more accurate representation of the surrounding traffic even when explicit interaction modeling is less critical. The benefit of conditioning becomes more pronounced on interPlan-LC. Replacing the conditioned prediction with the unconditioned variant reduces the overall score by −4.36 ,primarily due to a −6.12 reduction in progress. Constant-velocity predictions similarly decrease the score by −3.79 
+
+and additionally reduce TTC compliance by −3.33 . These results are consistent with the highly interactive nature of lane-change scenarios: the future behavior of surrounding agents depends on the intended ego maneuver, and a predic-tion that is independent of the ego trajectory cannot capture such reactions. Conditioning the prediction on the anchor therefore provides the planner with an interaction-consistent estimate of the future scene. Overall, the results indicate that reactive conditioning is most beneficial in scenarios where the ego vehicle actively influences the behavior of other agents. In less interactive set-tings, unconditioned learned predictions can already provide a strong estimate of future traffic evolution, whereas fixed constant-velocity predictions consistently lose performance due to their inability to model more complex agent behavior. 
+
+Anchors. Fig. 5 analyzes the sensitivity of INTERACT to the number of anchors N . Increasing the number of anchors from one to five substantially improves performance on both benchmarks. With only a single anchor, the planner lacks sufficient maneuver diversity, which mainly limits progress, particularly on interPlan-LC. At N = 5, the anchor set captures the relevant maneuver alternatives, leading to a clear increase in progress and the highest overall scores. Adding further anchors provides little additional benefit. On interPlan-LC, both progress and score saturate, indicating that the required lane-change intents are already covered. On Test14-hard, additional anchors slightly increase progress but reduce the overall score due to a higher rate of at-fault collisions. This suggests that overly large anchor sets mainly introduce additional, potentially riskier maneuver alternatives rather than useful new intents. Overall, N = 5 provides the best trade-off between maneuver diversity and robustness. 
+
+E. Runtime Analysis 
+
+Tab. IV reports the runtime of a single anchor, as all anchors are processed independently and can therefore be evaluated in parallel. The reported SMART inference time 1 5 8 10        
+
+> Number of anchors N
+> 76 82 88 94 100
+> Test14-hard
+> 15810
+> Number of anchors N
+> 64 73 82 91 100
+> interPlan-LC
+> Score At-fault collisions Progress along route
+
+Fig. 5. Sensitivity to the number of anchors N on Test14-hard (left) and interPlan-LC (right): closed-loop score (solid), at-fault collisions (dashed) and progress along the route (dash-dotted). Going from one to five anchors unlocks progress additional anchors only add risk (at-fault collisions on Test14-hard) without improving the score. 
+
+corresponds to a single token, i.e. one rollout step of the prediction model, which has to be queried repeatedly to cover the full horizon. We use ten tokens ( 5 s ) by default: the planned trajectory spans 4 s , and the additional second is required to evaluate time-to-collision at the end of the horizon. Shortening the horizon reduces the inference cost proportionally and leads to a slight drop in performance. Beyond that, the overall runtime is dominated by the predic-tion model and can be reduced further by replacing SMART with a faster predictor or reducing the parameters. V. C ONCLUSION AND FUTURE WORK 
+
+We propose INTERACT, an interactive planning frame-work that combines anchor-conditioned prediction with trust-region trajectory refinement. By separating prediction across maneuver intents from optimization within each intent, IN-TERACT incorporates reactive learned predictions without repeatedly querying the prediction model during optimiza-tion. The anchors provide diverse maneuvers, while local CEM refinement adapts them to the predictions. Experiments on the nuPlan closed-loop benchmark show strong perfor-mance across a wide range of scenarios, with large gains on challenging and highly interactive benchmarks. Future work may extend INTERACT with adaptive trust regions that adjust the refinement range based on sensitivity of surrounding-agent predictions to changes in the ego tra-jectory. Another direction is to apply the refinement to end-to-end driving models, using their predicted trajectories as anchors and refining them with a reactive prediction model. REFERENCES [1] P. Trautman and A. Krause, “Unfreezing the robot: Navigation in dense, interacting crowds,” in 2010 IEEE/RSJ International Confer-ence on Intelligent Robots and Systems , 2010, pp. 797–803. [2] S. Hagedorn, M. Hallgarten, M. Stoll, and A. Condurache, “The integration of prediction and planning in deep learning automated driving systems: A review,” 2024. [3] H. Caesar, J. Kabzan, K. S. Tan, W. K. Fong, E. Wolff, A. Lang, L. Fletcher, O. Beijbom, and S. Omari, “Nuplan: A closed-loop ml-based planning benchmark for autonomous vehicles,” 2022. [Online]. Available: https://arxiv.org/abs/2106.11810 [4] D. Dauner, M. Hallgarten, A. Geiger, and K. Chitta, “Parting with misconceptions about learning-based vehicle motion planning,” in 
+
+Conference on Robot Learning (CoRL) , 2023. [5] Z. Huang, P. Karkus, B. Ivanovic, Y. Chen, M. Pavone, and C. Lv, “Dtpp: Differentiable joint conditional prediction and cost evaluation for tree policy planning in autonomous driving,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) , 2024. [6] Z. Huang, H. Liu, X. Mo, and C. Lyu, “Gameformer planner: A learning-enabled interactive prediction and planning framework for autonomous vehicles,” URL https://opendrivelab. com/e2ead/AD23Challenge/Track_4_AID. pdf , 2023. [7] A. Distelzweig, F. Janjoš, O. Scheel, S. R. Varra, R. Rajan, and J. Boedecker, “Perfect prediction or plenty of proposals? what matters most in planning for autonomous driving,” 2025. [Online]. Available: https://arxiv.org/abs/2510.15505 [8] T. Seo, S. Jeon, G. Lee, K.-J. Yoon, and D. Park, “Unified prediction and planning via conflict-aware disjoint parameter training,” 2026. [9] R. Zhong, R. Yao, P. Liu, X. Chen, R. Yang, and J. Ma, “Coplanner: An interactive motion planner with contingency-aware diffusion for autonomous driving,” 2025. [10] H. Yu, J. Jordan, J. Schmidt, S. Lindner, A. Canevaro, and W. Stork, “Hype: Hybrid planning with ego proposal-conditioned predictions,” in 2025 IEEE 28th International Conference on Intelligent Transporta-tion Systems (ITSC) , 2025, pp. 1286–1293. [11] A. Distelzweig, Y. Wang, F. Janjoš, M. Hallgarten, M. Dobre, A. Lang-mann, J. Boedecker, and J. Betz, “Driving is a game: Combining planning and prediction with bayesian iterative best response,” 2025. [12] R. Y. Rubinstein, “The cross-entropy method for combinatorial and continuous optimization,” Methodology And Computing In Applied Probability , vol. 1, pp. 127–190, 1999. [13] H. Song, W. Ding, Y. Chen, S. Shen, M. Y. Wang, and Q. Chen, “Pip: Planning-informed trajectory prediction for autonomous driving,” in 
+
+European conference on computer vision . Springer, 2020. [14] R. Chekroun, T. Gilles, M. Toromanoff, S. Hornauer, and F. Moutarde, “Mbappe: Mcts-built-around prediction for planning explicitly,” 2023. [Online]. Available: https://arxiv.org/abs/2309.08452 [15] Y. Chen, P. Karkus, B. Ivanovic, X. Weng, and M. Pavone, “Tree-structured policy planning with learned behavior models,” 2023. [Online]. Available: https://arxiv.org/abs/2301.11902 [16] H. Liu, Z. Huang, W. Huang, H. Yang, X. Mo, and C. Lv, “Hybrid-prediction integrated planning for autonomous driving,” IEEE Trans-actions on Pattern Analysis and Machine Intelligence , 2025. [17] M. Liu, H. Cheng, L. Chen, H. Broszio, J. Li, R. Zhao, M. Sester, and M. Y. Yang, “Laformer: Trajectory prediction for autonomous driving with lane-aware scene constraints,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops , June 2024, pp. 2039–2049. [18] W. Wu, X. Feng, Z. Gao, and Y. Kan, “Smart: Scalable multi-agent real-time motion generation via next-token prediction,” in Advances in Neural Information Processing Systems , A. Globerson, L. Mackey, D. Belgrave, A. Fan, U. Paquet, J. Tomczak, and C. Zhang, Eds., vol. 37. Curran Associates, Inc., 2024, pp. 114 048–114 071. [19] Z. Zhou, L. Ye, J. Wang, K. Wu, and K. Lu, “Hivt: Hierarchical vector transformer for multi-agent motion prediction,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , June 2022. [20] B. Yang, H. Su, N. Gkanatsios, T.-W. Ke, A. Jain, J. Schneider, and K. Fragkiadaki, “Diffusion-es: Gradient-free planning with diffusion for autonomous and instruction-guided driving,” in 2024 IEEE/CVF Conf. on Computer Vision and Pattern Recognition (CVPR) , 2024. [21] Y. Xu, E. Zablocki, Y. Yin, E. Ramzi, E. Kirby, A. Boulch, and M. Cord, “Test-time trajectory optimization for autonomous driving,” 2026. [22] S. Hagedorn, A. Distelzweig, and A. P. Condurache, “Diffusearch: How hybrid trajectory planning benefits from aligned objectives in diffusion and action space,” arXiv preprint arXiv:2609.02252 , 2026. [23] C. Pinneri, S. Sawant, S. Blaes, J. Achterhold, J. Stueckler, M. Rolinek, and G. Martius, “Sample-efficient cross-entropy method for real-time planning,” in Conference on Robot Learning 2020 , 2020. [24] O. Scheel, L. Bergamini, M. Wolczyk, B. Osi´ nski, and P. Ondruska, “Urban driver: Learning to drive from real-world demonstrations using policy gradients,” in Conference on Robot Learning . PMLR, 2022. [25] M. Hallgarten, M. Stoll, and A. Zell, “From prediction to planning with goal conditioned lane graph traversals,” in 2023 IEEE 26th International Conf. on Intelligent Transp. Systems (ITSC) , 2023. [26] K. Renz, K. Chitta, O.-B. Mercea, A. S. Koepke, Z. Akata, and A. Geiger, “Plant: Explainable planning transformers via object-level representations,” 2022. [27] J. Cheng, Y. Chen, X. Mei, B. Yang, B. Li, and M. Liu, “Rethinking imitation-based planners for autonomous driving,” 2023. [28] Y. Zheng, R. Liang, K. Zheng, J. Zheng, L. Mao, J. Li, W. Gu, R. Ai, S. E. Li, X. Zhan, and J. Liu, “Diffusion-based planning for autonomous driving with flexible guidance,” 2025. [29] Z. Wu, A. Rangesh, W. Li, W.-J. Chang, Z. Lee, S. Bonab, T. Wang, and W. Zhan, “Terrazero: Procedural driving simulation for zero-demonstration self-play at scale,” 2026. [30] M. Hallgarten, J. Zapata, M. Stoll, K. Renz, and A. Zell, “Can vehicle motion planning generalize to realistic long-tail scenarios?” 2024. [Online]. Available: https://arxiv.org/abs/2404.07569
