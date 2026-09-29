@@ -6,54 +6,75 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-28
-- 运行时间：2026-09-28 23:43:27 UTC
+- 最新运行日期：2026-09-29
+- 运行时间：2026-09-29 22:52:11 UTC
 - 运行状态：成功
-- 本次总论文数：10
+- 本次总论文数：17
 - 精读区：6
-- 速读区：4
+- 速读区：11
 
 ### 今日简报（AI）
-今天筛出 10 篇论文，精读 6 篇、速读 4 篇，主题集中在自动驾驶与机器人操作两大方向。
+今日筛出17篇，精读6篇、速读11篇，具身智能与VLA是绝对焦点。
 
-最值得看的是两篇 9.0 分的自动驾驶工作——《Evaluation Is All You Need for Multi-Modal Autonomous Driving》聚焦多模态自动驾驶的评测，以及《INTERACT》用锚点条件预测加信任域细化做交互式规划。
+最值得看的是两篇9分精读：RoboFoundry用“系统即策略演化”让具身智能体自学习，以及触觉交互感知的物体中心表征助力机器人操作；速读中VLA自改进、RecastVLA和自动驾驶因果推理也值得关注。
 
-普通读者可先从这两篇 9.0 分精读入手，再按兴趣扫一遍 8.0 分的机器人操作速读篇目。
-- 详情：[/202609/28/README](/202609/28/README)
+普通读者可先读两篇9分精读，再按兴趣补VLA或自动驾驶速读，快速抓住当前机器人学习主线。
+- 详情：[/202609/29/README](/202609/29/README)
 
 ### 精读区论文标签
-1. [Evaluation Is All You Need for Multi-Modal Autonomous Driving](/202609/28/2609.30818v1-evaluation-is-all-you-need-for-multi-modal-autonomous-driving)  
+1. [RoboFoundry: System-as-Policy Evolution for Self-Learning Embodied Agents](/202609/29/2609.32862v1-robofoundry-system-as-policy-evolution-for-self-learning-embodied-agents)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶的多模态规划与轨迹评估框架
-2. [INTERACT: Interactive Planning for Autonomous Driving via Anchor-Conditioned Prediction and Trust-Region Refinement](/202609/28/2609.31137v1-interact-interactive-planning-for-autonomous-driving-via-anchor-conditioned-prediction-and-trust-region-refinement)  
+   evidence：自演化具身智能体的系统即策略框架
+2. [Learning with Object-centric Representations of Tactile Interactive Perception for Robot Manipulation](/202609/29/2609.33235v1-learning-with-object-centric-representations-of-tactile-interactive-perception-for-robot-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：自动驾驶交互式预测与规划
-3. [TriWorldBench: A Tri-View Consistency Perspective on Embodied World Models](/202609/28/2609.26314v1-triworldbench-a-tri-view-consistency-perspective-on-embodied-world-models)  
+   evidence：面向机器人操作的触觉交互感知
+3. [ZeroBot: Learning from Scratch in Minutes with Generative Real2Sim](/202609/29/2609.34010v1-zerobot-learning-from-scratch-in-minutes-with-generative-real2sim)  
+   标签：评分：9.0/10、query:ad
+   evidence：生成式真实到仿真与强化学习的机器人操作学习
+4. [AD-E2E-JEPA: A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving](/202609/29/2609.34085v1-ad-e2e-jepa-a-joint-embedding-predictive-architecture-for-end-to-end-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向端到端自动驾驶规划的JEPA世界模型
+5. [RefineDrive: Reliable Failure-Guided Learning for Vision-Language-Action Driving](/202609/29/2609.35078v1-refinedrive-reliable-failure-guided-learning-for-vision-language-action-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向自动驾驶VLA模型的失败引导学习
+6. [DriveHierarchy: A Benchmark for Diagnosing VLM Driving Capabilities from Open-Loop Understanding to Closed-Loop Execution](/202609/29/2609.31814v1-drivehierarchy-a-benchmark-for-diagnosing-vlm-driving-capabilities-from-open-loop-understanding-to-closed-loop-execution)  
    标签：评分：8.0/10、query:ad
-   evidence：面向具身世界模型、评估双臂操作三视角一致性的基准
-4. [WALT: Learning World-Model-Aligned Latent Trajectories for Autonomous Driving](/202609/28/2609.30436v1-walt-learning-world-model-aligned-latent-trajectories-for-autonomous-driving)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向驾驶的世界模型对齐潜在轨迹规划
-5. [SoGuDiff: Socially Guided Diffusion for Steerable, Norm-Grounded Robot Navigation](/202609/28/2609.30560v1-sogudiff-socially-guided-diffusion-for-steerable-norm-grounded-robot-navigation)  
-   标签：评分：8.0/10、query:ad
-   evidence：可在部署时调节社交规范的扩散式机器人导航
-6. [Praxis: Distilling Physical Interaction Priors from Egocentric Videos for Generalizable Whole-Body Manipulation](/202609/28/2609.30735v1-praxis-distilling-physical-interaction-priors-from-egocentric-videos-for-generalizable-whole-body-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：融合导航与在线感知的全身人形操作
+   evidence：从理解到闭环执行的VLM自动驾驶分层诊断基准
 
 ### 速读区论文标签
-1. [FRAM: Trajectory-Guided Visual Feature Selection for Compact Language-Conditioned Robot Manipulation](/202609/28/2609.30965v1-fram-trajectory-guided-visual-feature-selection-for-compact-language-conditioned-robot-manipulation)  
+1. [Find Something You Can't Do: Agentic Real-World Reinforcement Learning for Self-Improving VLA Models](/202609/29/2609.32069v1-find-something-you-cant-do-agentic-real-world-reinforcement-learning-for-self-improving-vla-models)  
    标签：评分：8.0/10、query:ad
-   evidence：紧凑语言条件机器人操作策略
-2. [DualManip: Agentic Dynamic Manipulation via Dual-Path Semantic Reasoning and Geometric Adaptation](/202609/28/2609.31112v1-dualmanip-agentic-dynamic-manipulation-via-dual-path-semantic-reasoning-and-geometric-adaptation)  
+   evidence：面向机器人操作VLA自改进的真实世界强化学习
+2. [RecastVLA: From Past Interaction to Future Control with Adaptive Policy States](/202609/29/2609.32155v1-recastvla-from-past-interaction-to-future-control-with-adaptive-policy-states)  
    标签：评分：8.0/10、query:ad
-   evidence：结合视觉语言模型语义推理与几何自适应的智能体动态操作
-3. [Learning Robot Policies from Sparse Success Signals via STL-Guided Stein Variational Policy Gradient](/202609/28/2609.31606v1-learning-robot-policies-from-sparse-success-signals-via-stl-guided-stein-variational-policy-gradient)  
+   evidence：带持久策略状态的顺序机器人操作
+3. [CausalDriveBench: Evaluating Causal Reasoning in Vision-Language-Action Models for Autonomous Driving](/202609/29/2609.32157v1-causaldrivebench-evaluating-causal-reasoning-in-vision-language-action-models-for-autonomous-driving)  
    标签：评分：8.0/10、query:ad
-   evidence：从稀疏成功信号学习机器人策略
-4. [CognitiveReality: Robot-Agnostic Semantic Gaussian Mapping with an LLM Agent for Immersive Collaborative VR Teleoperation](/202609/28/2609.31418v1-cognitivereality-robot-agnostic-semantic-gaussian-mapping-with-an-llm-agent-for-immersive-collaborative-vr-teleoperation)  
+   evidence：面向自动驾驶VLA模型的因果推理评测
+4. [RoboFFT: Finetuning generative robot policy via online reinforcement learning with forward process](/202609/29/2609.32236v1-robofft-finetuning-generative-robot-policy-via-online-reinforcement-learning-with-forward-process)  
+   标签：评分：8.0/10、query:ad
+   evidence：用强化学习微调生成式机器人策略
+5. [Federated Subspace Guided Vision-Language-Action Policy Distillation for Non-IID Multi-Robot Manipulation](/202609/29/2609.32239v1-federated-subspace-guided-vision-language-action-policy-distillation-for-non-iid-multi-robot-manipulation)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向异构多机器人操作的联邦视觉-语言-动作策略蒸馏
+6. [Proactive Motion Planning for Human-Robot Cooperation](/202609/29/2609.32354v1-proactive-motion-planning-for-human-robot-cooperation)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向人机协作的人体感知主动运动规划
+7. [End-to-end QP-based policies: A unified perspective on robust control and robot learning](/202609/29/2609.31905v1-end-to-end-qp-based-policies-a-unified-perspective-on-robust-control-and-robot-learning)  
    标签：评分：7.0/10、query:ad
-   evidence：将机器人RGB-D感知构建为语义索引高斯-TSDF地图用于遥操作
+   evidence：统一鲁棒控制与机器人学习的端到端QP策略
+8. [WSM-Aware HRI: An IoT-Enhanced Framework for Early Detection and Norm-Guided Repair of Failures with LLM Guidance](/202609/29/2609.32336v1-wsm-aware-hri-an-iot-enhanced-framework-for-early-detection-and-norm-guided-repair-of-failures-with-llm-guidance)  
+   标签：评分：7.0/10、query:ad
+   evidence：基于世界状态错配与大模型的人机交互故障检测
+9. [GAE: General Action Expert for Real-Time Humanoid Teleoperation](/202609/29/2609.34233v1-gae-general-action-expert-for-real-time-humanoid-teleoperation)  
+   标签：评分：7.0/10、query:ad
+   evidence：人形全身遥操作与人机同步
+10. [ARS: Agentic Reward System for Robot Learning](/202609/29/2609.34484v1-ars-agentic-reward-system-for-robot-learning)  
+   标签：评分：7.0/10、query:ad
+   evidence：支撑机器人学习与强化学习的奖励建模框架
+11. [RLE-Bench: A Qualifying Exam for Coding Agents as Robot Learning Engineers](/202609/29/2609.34210v1-rle-bench-a-qualifying-exam-for-coding-agents-as-robot-learning-engineers)  
+   标签：评分：6.0/10、query:ad
+   evidence：涵盖控制、策略学习与感知的机器人学习工作流基准
 
 
 <div class="dpr-home-promo-card">
