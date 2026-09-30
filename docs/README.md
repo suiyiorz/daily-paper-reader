@@ -6,75 +6,73 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-29
-- 运行时间：2026-09-29 22:52:11 UTC
+- 最新运行日期：2026-09-30
+- 运行时间：2026-09-30 23:07:58 UTC
 - 运行状态：成功
 - 本次总论文数：17
 - 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-今日筛出17篇，精读6篇、速读11篇，具身智能与VLA是绝对焦点。
-
-最值得看的是两篇9分精读：RoboFoundry用“系统即策略演化”让具身智能体自学习，以及触觉交互感知的物体中心表征助力机器人操作；速读中VLA自改进、RecastVLA和自动驾驶因果推理也值得关注。
-
-普通读者可先读两篇9分精读，再按兴趣补VLA或自动驾驶速读，快速抓住当前机器人学习主线。
-- 详情：[/202609/29/README](/202609/29/README)
+1) 今日筛选17篇论文，精读6篇、速读11篇，最高分落在自动驾驶视觉聚焦推理与机器人操作测试时空间推理两篇9.0分工作。  
+2) 最值得看的是9.0分的《FocusDrive》和《Test-Time Spatial Reasoning for Robot Manipulation Using Generative Real-to-Sim》，速读可顺带关注8.0分的具身代码策略、几何时空策略与终身导航方向。  
+3) 普通读者建议先读两篇9.0分精读，再用8.0分速读扩展具身智能与导航视野。
+- 详情：[/202609/30/README](/202609/30/README)
 
 ### 精读区论文标签
-1. [RoboFoundry: System-as-Policy Evolution for Self-Learning Embodied Agents](/202609/29/2609.32862v1-robofoundry-system-as-policy-evolution-for-self-learning-embodied-agents)  
+1. [FocusDrive: Reasoning with Visual Focus for Autonomous Driving](/202609/30/2609.33190v1-focusdrive-reasoning-with-visual-focus-for-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：自演化具身智能体的系统即策略框架
-2. [Learning with Object-centric Representations of Tactile Interactive Perception for Robot Manipulation](/202609/29/2609.33235v1-learning-with-object-centric-representations-of-tactile-interactive-perception-for-robot-manipulation)  
+   evidence：面向自动驾驶端到端规划的显式视觉聚焦推理
+2. [Test-Time Spatial Reasoning for Robot Manipulation Using Generative Real-to-Sim](/202609/30/2609.33982v1-test-time-spatial-reasoning-for-robot-manipulation-using-generative-real-to-sim)  
    标签：评分：9.0/10、query:ad
-   evidence：面向机器人操作的触觉交互感知
-3. [ZeroBot: Learning from Scratch in Minutes with Generative Real2Sim](/202609/29/2609.34010v1-zerobot-learning-from-scratch-in-minutes-with-generative-real2sim)  
-   标签：评分：9.0/10、query:ad
-   evidence：生成式真实到仿真与强化学习的机器人操作学习
-4. [AD-E2E-JEPA: A Joint-Embedding Predictive Architecture For End-to-End Autonomous Driving](/202609/29/2609.34085v1-ad-e2e-jepa-a-joint-embedding-predictive-architecture-for-end-to-end-autonomous-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向端到端自动驾驶规划的JEPA世界模型
-5. [RefineDrive: Reliable Failure-Guided Learning for Vision-Language-Action Driving](/202609/29/2609.35078v1-refinedrive-reliable-failure-guided-learning-for-vision-language-action-driving)  
-   标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶VLA模型的失败引导学习
-6. [DriveHierarchy: A Benchmark for Diagnosing VLM Driving Capabilities from Open-Loop Understanding to Closed-Loop Execution](/202609/29/2609.31814v1-drivehierarchy-a-benchmark-for-diagnosing-vlm-driving-capabilities-from-open-loop-understanding-to-closed-loop-execution)  
+   evidence：通过仿真实现机器人操作的测试时空间推理
+3. [From Scene Graphs to Answers: Selective Neuro-Symbolic Reasoning for Autonomous Driving](/202609/30/2609.32645v1-from-scene-graphs-to-answers-selective-neuro-symbolic-reasoning-for-autonomous-driving)  
    标签：评分：8.0/10、query:ad
-   evidence：从理解到闭环执行的VLM自动驾驶分层诊断基准
+   evidence：面向自动驾驶问答的神经符号推理
+4. [SV2V-RSim: A Comprehensive Benchmark for Self-Selective V2V Cooperative Perception with Near-Realistic Data](/202609/30/2609.32863v1-sv2v-rsim-a-comprehensive-benchmark-for-self-selective-v2v-cooperative-perception-with-near-realistic-data)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向自动驾驶的车车协同感知基准
+5. [TAO-DA: Towards Autonomous Operation--A Dual-Arm Vision-Language-Action Model for Coordinated Manipulation](/202609/30/2609.33197v1-tao-da-towards-autonomous-operation--a-dual-arm-vision-language-action-model-for-coordinated-manipulation)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向双臂协调操作的双臂视觉-语言-动作模型
+6. [Principal Steering Subspaces for Online Adaptation of Frozen Generative Robot Policies](/202609/30/2609.33765v1-principal-steering-subspaces-for-online-adaptation-of-frozen-generative-robot-policies)  
+   标签：评分：8.0/10、query:ad
+   evidence：通过子空间引导对冻结生成式机器人策略的强化学习在线适配
 
 ### 速读区论文标签
-1. [Find Something You Can't Do: Agentic Real-World Reinforcement Learning for Self-Improving VLA Models](/202609/29/2609.32069v1-find-something-you-cant-do-agentic-real-world-reinforcement-learning-for-self-improving-vla-models)  
+1. [CodeActionBench: Evaluating Agentic Code-as-Policy for Embodied Manipulation](/202609/30/2609.33807v1-codeactionbench-evaluating-agentic-code-as-policy-for-embodied-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人操作VLA自改进的真实世界强化学习
-2. [RecastVLA: From Past Interaction to Future Control with Adaptive Policy States](/202609/29/2609.32155v1-recastvla-from-past-interaction-to-future-control-with-adaptive-policy-states)  
+   evidence：评估具身操作中智能体式代码即策略
+2. [Robot-GST: geometry-aware spatial-temporal robot policy representation and evaluation](/202609/30/2609.33872v1-robot-gst-geometry-aware-spatial-temporal-robot-policy-representation-and-evaluation)  
    标签：评分：8.0/10、query:ad
-   evidence：带持久策略状态的顺序机器人操作
-3. [CausalDriveBench: Evaluating Causal Reasoning in Vision-Language-Action Models for Autonomous Driving](/202609/29/2609.32157v1-causaldrivebench-evaluating-causal-reasoning-in-vision-language-action-models-for-autonomous-driving)  
+   evidence：面向操作策略的几何感知时空表示与评估
+3. [NavHarness: Towards Lifelong Embodied Navigation](/202609/30/2609.34276v1-navharness-towards-lifelong-embodied-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向自动驾驶VLA模型的因果推理评测
-4. [RoboFFT: Finetuning generative robot policy via online reinforcement learning with forward process](/202609/29/2609.32236v1-robofft-finetuning-generative-robot-policy-via-online-reinforcement-learning-with-forward-process)  
+   evidence：具备记忆的终身具身导航智能体
+4. [Alignment-Guided Flow Transformer for Efficient Vision-Language-Action Policy Learning](/202609/30/2609.34467v2-alignment-guided-flow-transformer-for-efficient-vision-language-action-policy-learning)  
    标签：评分：8.0/10、query:ad
-   evidence：用强化学习微调生成式机器人策略
-5. [Federated Subspace Guided Vision-Language-Action Policy Distillation for Non-IID Multi-Robot Manipulation](/202609/29/2609.32239v1-federated-subspace-guided-vision-language-action-policy-distillation-for-non-iid-multi-robot-manipulation)  
+   evidence：统一感知、指令与控制的视觉-语言-动作策略学习
+5. [JRDB-AVR: An Active Visual Reasoning Benchmark for Embodied Agents in Real-World Environments](/202609/30/2609.35032v1-jrdb-avr-an-active-visual-reasoning-benchmark-for-embodied-agents-in-real-world-environments)  
    标签：评分：8.0/10、query:ad
-   evidence：面向异构多机器人操作的联邦视觉-语言-动作策略蒸馏
-6. [Proactive Motion Planning for Human-Robot Cooperation](/202609/29/2609.32354v1-proactive-motion-planning-for-human-robot-cooperation)  
+   evidence：真实环境具身智能体主动视觉推理基准
+6. [Zero-Shot Reactive Obstacle Avoidance for Generative Robot Policies](/202609/30/2609.35231v2-zero-shot-reactive-obstacle-avoidance-for-generative-robot-policies)  
    标签：评分：8.0/10、query:ad
-   evidence：面向人机协作的人体感知主动运动规划
-7. [End-to-end QP-based policies: A unified perspective on robust control and robot learning](/202609/29/2609.31905v1-end-to-end-qp-based-policies-a-unified-perspective-on-robust-control-and-robot-learning)  
+   evidence：面向机器人策略与导航的实时避障
+7. [PHIRL: Aligning Learned Rewards with Task Progress for Inverse Reinforcement Learning](/202609/30/2609.31855v1-phirl-aligning-learned-rewards-with-task-progress-for-inverse-reinforcement-learning)  
    标签：评分：7.0/10、query:ad
-   evidence：统一鲁棒控制与机器人学习的端到端QP策略
-8. [WSM-Aware HRI: An IoT-Enhanced Framework for Early Detection and Norm-Guided Repair of Failures with LLM Guidance](/202609/29/2609.32336v1-wsm-aware-hri-an-iot-enhanced-framework-for-early-detection-and-norm-guided-repair-of-failures-with-llm-guidance)  
+   evidence：使学习奖励与任务进度对齐的逆强化学习
+8. [An Empirical Study on What Matters for Viewpoint-Generalizable Policies in Visual Imitation Learning](/202609/30/2609.32762v1-an-empirical-study-on-what-matters-for-viewpoint-generalizable-policies-in-visual-imitation-learning)  
    标签：评分：7.0/10、query:ad
-   evidence：基于世界状态错配与大模型的人机交互故障检测
-9. [GAE: General Action Expert for Real-Time Humanoid Teleoperation](/202609/29/2609.34233v1-gae-general-action-expert-for-real-time-humanoid-teleoperation)  
+   evidence：机器人操作的视觉运动策略跨视角泛化
+9. [Beyond Tasks: A Vision for Reproducing an Animal-like Behavioral Substrate Using Modern Robot Learning Techniques](/202609/30/2609.33165v1-beyond-tasks-a-vision-for-reproducing-an-animal-like-behavioral-substrate-using-modern-robot-learning-techniques)  
    标签：评分：7.0/10、query:ad
-   evidence：人形全身遥操作与人机同步
-10. [ARS: Agentic Reward System for Robot Learning](/202609/29/2609.34484v1-ars-agentic-reward-system-for-robot-learning)  
+   evidence：面向物理环境中具身智能体的行为基质
+10. [SocialHumanoid: Towards Expressive Humanoid Behavior via One-Step Co-Speech Motion Generation](/202609/30/2609.33311v1-socialhumanoid-towards-expressive-humanoid-behavior-via-one-step-co-speech-motion-generation)  
    标签：评分：7.0/10、query:ad
-   evidence：支撑机器人学习与强化学习的奖励建模框架
-11. [RLE-Bench: A Qualifying Exam for Coding Agents as Robot Learning Engineers](/202609/29/2609.34210v1-rle-bench-a-qualifying-exam-for-coding-agents-as-robot-learning-engineers)  
+   evidence：单步共语运动生成实现具身人形机器人社交行为
+11. [From Visual Search to Movement Control: A Priority Field for Artificial Agents](/202609/30/2609.30704v1-from-visual-search-to-movement-control-a-priority-field-for-artificial-agents)  
    标签：评分：6.0/10、query:ad
-   evidence：涵盖控制、策略学习与感知的机器人学习工作流基准
+   evidence：优先级场引导智能体视觉搜索与避障运动控制
 
 
 <div class="dpr-home-promo-card">
