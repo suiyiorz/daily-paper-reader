@@ -6,73 +6,59 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-30
-- 运行时间：2026-09-30 23:07:58 UTC
+- 最新运行日期：2026-10-01
+- 运行时间：2026-10-01 23:57:40 UTC
 - 运行状态：成功
-- 本次总论文数：17
+- 本次总论文数：13
 - 精读区：6
-- 速读区：11
+- 速读区：7
 
 ### 今日简报（AI）
-1) 今日筛选17篇论文，精读6篇、速读11篇，最高分落在自动驾驶视觉聚焦推理与机器人操作测试时空间推理两篇9.0分工作。  
-2) 最值得看的是9.0分的《FocusDrive》和《Test-Time Spatial Reasoning for Robot Manipulation Using Generative Real-to-Sim》，速读可顺带关注8.0分的具身代码策略、几何时空策略与终身导航方向。  
-3) 普通读者建议先读两篇9.0分精读，再用8.0分速读扩展具身智能与导航视野。
-- 详情：[/202609/30/README](/202609/30/README)
+今日精读6篇、速读7篇共13篇，聚焦自动驾驶世界模型与规划器。最值得看的是两篇9.0分精读：S2Planner多尺度语义规划器，以及MomWorld动量感知长时域潜世界模型。普通读者可优先浏览这两篇的摘要与图示，再按兴趣补看速读中的机器人操作与VLA方向。
+- 详情：[/202610/01/README](/202610/01/README)
 
 ### 精读区论文标签
-1. [FocusDrive: Reasoning with Visual Focus for Autonomous Driving](/202609/30/2609.33190v1-focusdrive-reasoning-with-visual-focus-for-autonomous-driving)  
+1. [S2Planner: Multi-Scale Semantic Planner for End-to-End Autonomous Driving](/202610/01/2609.29813v1-s2planner-multi-scale-semantic-planner-for-end-to-end-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶端到端规划的显式视觉聚焦推理
-2. [Test-Time Spatial Reasoning for Robot Manipulation Using Generative Real-to-Sim](/202609/30/2609.33982v1-test-time-spatial-reasoning-for-robot-manipulation-using-generative-real-to-sim)  
+   evidence：面向端到端自动驾驶的多尺度语义轨迹规划器
+2. [MomWorld: Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving](/202610/01/2609.33737v1-momworld-momentum-aware-latent-world-model-for-long-horizon-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：通过仿真实现机器人操作的测试时空间推理
-3. [From Scene Graphs to Answers: Selective Neuro-Symbolic Reasoning for Autonomous Driving](/202609/30/2609.32645v1-from-scene-graphs-to-answers-selective-neuro-symbolic-reasoning-for-autonomous-driving)  
+   evidence：面向长时域自动驾驶规划的动量感知潜在世界模型
+3. [CAR-VLA: Complexity-Aware and Risk-Adaptive Reasoning for Autonomous Driving](/202610/01/2609.34387v1-car-vla-complexity-aware-and-risk-adaptive-reasoning-for-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向自动驾驶视觉-语言-动作模型的复杂度与风险自适应推理
+4. [Uni-VLaT: Whole-Body Tactile Adaptation of VLA Policies for Humanoid Loco-Manipulation](/202610/01/2609.35450v1-uni-vlat-whole-body-tactile-adaptation-of-vla-policies-for-humanoid-loco-manipulation)  
+   标签：评分：9.0/10、query:ad
+   evidence：将全身触觉感知融入人形机器人移动操作策略
+5. [X-Reset: Scaling Object-Centric Reinforcement Learning via Cross-Embodiment Resets](/202610/01/2609.35715v1-x-reset-scaling-object-centric-reinforcement-learning-via-cross-embodiment-resets)  
+   标签：评分：9.0/10、query:ad
+   evidence：跨具身重置的物体中心强化学习灵巧操作
+6. [AquaWAM: A Dynamics-aware World Action Model for Underwater Embodied Agents](/202610/01/2609.33299v1-aquawam-a-dynamics-aware-world-action-model-for-underwater-embodied-agents)  
    标签：评分：8.0/10、query:ad
-   evidence：面向自动驾驶问答的神经符号推理
-4. [SV2V-RSim: A Comprehensive Benchmark for Self-Selective V2V Cooperative Perception with Near-Realistic Data](/202609/30/2609.32863v1-sv2v-rsim-a-comprehensive-benchmark-for-self-selective-v2v-cooperative-perception-with-near-realistic-data)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向自动驾驶的车车协同感知基准
-5. [TAO-DA: Towards Autonomous Operation--A Dual-Arm Vision-Language-Action Model for Coordinated Manipulation](/202609/30/2609.33197v1-tao-da-towards-autonomous-operation--a-dual-arm-vision-language-action-model-for-coordinated-manipulation)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向双臂协调操作的双臂视觉-语言-动作模型
-6. [Principal Steering Subspaces for Online Adaptation of Frozen Generative Robot Policies](/202609/30/2609.33765v1-principal-steering-subspaces-for-online-adaptation-of-frozen-generative-robot-policies)  
-   标签：评分：8.0/10、query:ad
-   evidence：通过子空间引导对冻结生成式机器人策略的强化学习在线适配
+   evidence：面向水下具身智能体的世界动作模型
 
 ### 速读区论文标签
-1. [CodeActionBench: Evaluating Agentic Code-as-Policy for Embodied Manipulation](/202609/30/2609.33807v1-codeactionbench-evaluating-agentic-code-as-policy-for-embodied-manipulation)  
+1. [Recursive Harness Distillation across Agents for Robot Manipulation](/202610/01/2609.33378v1-recursive-harness-distillation-across-agents-for-robot-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：评估具身操作中智能体式代码即策略
-2. [Robot-GST: geometry-aware spatial-temporal robot policy representation and evaluation](/202609/30/2609.33872v1-robot-gst-geometry-aware-spatial-temporal-robot-policy-representation-and-evaluation)  
+   evidence：基于VLA模型的机器人操作与跨任务自适应
+2. [SLIP-VLA: Single-Step Latent Imagination for Policy Learning in Vision-Language-Action Models](/202610/01/2609.33575v1-slip-vla-single-step-latent-imagination-for-policy-learning-in-vision-language-action-models)  
    标签：评分：8.0/10、query:ad
-   evidence：面向操作策略的几何感知时空表示与评估
-3. [NavHarness: Towards Lifelong Embodied Navigation](/202609/30/2609.34276v1-navharness-towards-lifelong-embodied-navigation)  
+   evidence：面向机器人操作的未来感知策略学习框架
+3. [Hierarchical Multi-agent Reinforcement Learning for Warehouse Robot Coordination under Communication Loss](/202610/01/2609.33637v1-hierarchical-multi-agent-reinforcement-learning-for-warehouse-robot-coordination-under-communication-loss)  
    标签：评分：8.0/10、query:ad
-   evidence：具备记忆的终身具身导航智能体
-4. [Alignment-Guided Flow Transformer for Efficient Vision-Language-Action Policy Learning](/202609/30/2609.34467v2-alignment-guided-flow-transformer-for-efficient-vision-language-action-policy-learning)  
+   evidence：面向机器人协同的分层多智能体强化学习
+4. [EMPIRIC: Experiment-Driven Learning of Residual World Models for Robot Planning](/202610/01/2609.35047v1-empiric-experiment-driven-learning-of-residual-world-models-for-robot-planning)  
    标签：评分：8.0/10、query:ad
-   evidence：统一感知、指令与控制的视觉-语言-动作策略学习
-5. [JRDB-AVR: An Active Visual Reasoning Benchmark for Embodied Agents in Real-World Environments](/202609/30/2609.35032v1-jrdb-avr-an-active-visual-reasoning-benchmark-for-embodied-agents-in-real-world-environments)  
+   evidence：通过实验学习残差世界模型以支持机器人规划
+5. [Self-Evolving Coding Agents: From Digital Programs to Physical-World Intelligence](/202610/01/2609.35432v1-self-evolving-coding-agents-from-digital-programs-to-physical-world-intelligence)  
    标签：评分：8.0/10、query:ad
-   evidence：真实环境具身智能体主动视觉推理基准
-6. [Zero-Shot Reactive Obstacle Avoidance for Generative Robot Policies](/202609/30/2609.35231v2-zero-shot-reactive-obstacle-avoidance-for-generative-robot-policies)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向机器人策略与导航的实时避障
-7. [PHIRL: Aligning Learned Rewards with Task Progress for Inverse Reinforcement Learning](/202609/30/2609.31855v1-phirl-aligning-learned-rewards-with-task-progress-for-inverse-reinforcement-learning)  
+   evidence：从数字程序到物理世界智能的自演化编码智能体
+6. [Where Do Embodied Decisions Come From? Rethinking Latent and Explicit Reasoning](/202610/01/2609.34794v1-where-do-embodied-decisions-come-from-rethinking-latent-and-explicit-reasoning)  
    标签：评分：7.0/10、query:ad
-   evidence：使学习奖励与任务进度对齐的逆强化学习
-8. [An Empirical Study on What Matters for Viewpoint-Generalizable Policies in Visual Imitation Learning](/202609/30/2609.32762v1-an-empirical-study-on-what-matters-for-viewpoint-generalizable-policies-in-visual-imitation-learning)  
-   标签：评分：7.0/10、query:ad
-   evidence：机器人操作的视觉运动策略跨视角泛化
-9. [Beyond Tasks: A Vision for Reproducing an Animal-like Behavioral Substrate Using Modern Robot Learning Techniques](/202609/30/2609.33165v1-beyond-tasks-a-vision-for-reproducing-an-animal-like-behavioral-substrate-using-modern-robot-learning-techniques)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向物理环境中具身智能体的行为基质
-10. [SocialHumanoid: Towards Expressive Humanoid Behavior via One-Step Co-Speech Motion Generation](/202609/30/2609.33311v1-socialhumanoid-towards-expressive-humanoid-behavior-via-one-step-co-speech-motion-generation)  
-   标签：评分：7.0/10、query:ad
-   evidence：单步共语运动生成实现具身人形机器人社交行为
-11. [From Visual Search to Movement Control: A Priority Field for Artificial Agents](/202609/30/2609.30704v1-from-visual-search-to-movement-control-a-priority-field-for-artificial-agents)  
+   evidence：具身VLA智能体中潜在推理与显式推理的对比
+7. [DEAL-Grasp: Decoupled Alignment Representation for Geometry-Aware Dexterous Grasp Generation](/202610/01/2609.28131v1-deal-grasp-decoupled-alignment-representation-for-geometry-aware-dexterous-grasp-generation)  
    标签：评分：6.0/10、query:ad
-   evidence：优先级场引导智能体视觉搜索与避障运动控制
+   evidence：面向具身智能的几何感知灵巧抓取生成
 
 
 <div class="dpr-home-promo-card">
