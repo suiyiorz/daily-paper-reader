@@ -1,0 +1,329 @@
+Title: Experience-Based Feasibility-Aware Generative Adversarial Imitation from Observation under Embodiment Mismatch
+
+URL Source: https://arxiv.org/pdf/2610.01171v1
+
+Published Time: Fri, 02 Oct 2026 01:07:28 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Experience-Based Feasibility-Aware Generative Adversarial Imitation from Observation under Embodiment Mismatch 
+
+Yoshiki Takebayashi 1, Giovanni Perantoni 1, Hikaru Sasaki 1, Matteo Saveriano 2, Takamitsu Matsubara 1
+
+Abstract — With the increasing use of robot-free demonstra-tion interfaces that provide state trajectories without action labels, imitation from observation has become a promising approach for learning robot behaviors from human demon-strations. However, due to differences in embodiment and dynamics between humans and robots, demonstrated human motions may not be feasible for the robot, potentially degrading policy performance. In this study, we propose Experience-Based Feasibility-Aware Generative Adversarial Imitation from Observation (EF-GAIfO), which estimates the feasibility of state-only demonstrations from the robot’s own experience rather than relying on explicit dynamics models or large prior exploration datasets. A key feature of EF-GAIfO is that the notion of feasibility evolves with policy learning: as the policy improves and the robot experiences a broader range of state transitions, the feasible region is progressively expanded, allowing additional demonstrations to be incorporated into learning. This enables feasibility-aware imitation that adapts to the current stage of policy learning, rather than relying on a pre-designed feasibility criterion. We validate the effectiveness of EF-GAIfO on a locomotion task in simulation and on a real quadruped robot performing a object-reaching-and-grasping task. 
+
+I. I NTRODUCTION 
+
+In recent years, imitation learning approaches using human demonstrations collected through robot-free demonstration interfaces have attracted increasing attention. Several ap-proaches have been proposed, ranging from purely video-based ones [1] to those based on external infrastructures [2], [3], and those based on self-contained onboard tracking [4], [5]. Such interfaces allow users to provide demonstra-tions through their own hand movements without directly teleoperating a robot. However, demonstrations collected through such interfaces typically consist of state trajectories without corresponding robot action labels. Imitation from Observation (IfO) [6], [7], which learns policies from state-only demonstrations, is therefore a suitable framework for utilizing such data. However, due to an embodiment mismatch between hu-mans and robots, demonstrated state transitions collected via robot-free demonstration interfaces are not necessarily 
+
+*This work was supported by JSPS KAKENHI Grant Numbers 26K17349 and 24K03018. 
+
+> 1
+
+Y. Takebayashi, G. Perantoni, H. Sasaki, and T. Matsubara are with the Division of Information Science, Graduate School of Information Science, Nara Institute of Science and Technology (NAIST), Nara, Japan. email: takebayashi.yoshiki.ub0@naist.ac.jp, perantoni.giovanni.pm7@naist.ac.jp, sasaki.hikaru@is.naist.jp, takam-m@is.naist.jp 
+
+> 2
+
+M. Saveriano is with the Department of Industrial En-gineering of the University of Trento, Trento, Italy. email: 
+
+matteo.saveriano@unitn.it Low Feasibility High Feasibility Estimated Feasibility  
+
+> Early Learning: Limited Experience Later Learning: Expanded Experience
+> State-Only Demonstrations State-Only Demonstrations Robot Experienced State Space
+
+Fig. 1: Evolution of feasibility estimation during policy learning. Early in learning, limited robot experience yields high feasibility estimates only for demonstration transitions near the experienced region. As experience accumulates, the covered region expands, allowing more demonstration transitions to receive high feasibility estimates. This progressively reduces the influence of infeasible demonstrations during imitation learning. 
+
+feasible for the robot. Such demonstrations may contain state transitions that cannot be reproduced under the robot’s em-bodiment. If these demonstrations are directly used for IfO, the learned policy may be influenced by robot-infeasible mo-tions. Consequently, the learned policy may be encouraged to reproduce robot-infeasible motions, potentially resulting in falls or degraded task performance. To reduce the influence of infeasible demonstrations, model-based approaches evaluate whether demonstrated mo-tions are feasible for the robot using a robot dynamics model [8], [9]. These methods predict the feasibility of demonstrated motions using known or learned robot dy-namics models. However, whole-body dynamics are strongly coupled, and contact interactions and balance constraints must also be considered. Therefore, constructing an accurate dynamics model is not straightforward. These limitations motivate a different approach to feasi-bility estimation: rather than explicitly modeling, what the robot can do, we infer feasibility from what it has actu-ally experienced (Fig. 1). During policy learning, the robot continuously generates state transitions that are physically realizable under its embodiment, providing direct evidence of feasible motion. We therefore use this experience distri-bution as an embodiment-specific reference: demonstration transitions well supported by the robot’s experience are likely to be feasible, without requiring an explicit dynamics model. In this study, we propose Experience-based Feasibility-aware Generative Adversarial Imitation from Observation (EF-GAIfO). EF-GAIfO estimates the feasibility of state-only demonstration transitions using experience data col-lected during GAIfO-based policy learning and reduces the influence of demonstrations with low estimated feasibility. arXiv:2610.01171v1 [cs.RO] 1 Oct 2026 For feasibility estimation, we train a state-transition re-construction model using the robot’s experience data and evaluate demonstration transitions based on their reconstruc-tion error. The estimated feasibility is incorporated into the discriminator objective as a weight, allowing the policy to preferentially imitate demonstration transitions that are sup-ported by the robot’s experience. We evaluate the proposed method through experiments in a point-mass environment and a quadruped robot environment. II. R ELATED WORK 
+
+A. Imitation Learning from Observation 
+
+Unlike behavior cloning, which uses state-action pairs, imitation from observation aims to learn from demonstrations consisting only of state sequences or visual observations. A possible approach to learn, despite the absence of expert actions, consists of inferring the missing actions through a learned inverse dynamics model that maps state transitions to actions [6]. Another approach to infer the missing action involves learning a latent action space directly from state observations that will be later aligned to the true action space using a small number of environment interactions [10]. Liu et al. [11], instead, translate a demonstrator’s raw video observations into the imitator’s own context, enabling imitation in scenarios where the demonstrator’s viewpoint or environment configuration is not the same as that of the imitator. A separate line of work extends adversarial imitation learning to observation-only settings by matching distributions over state transitions instead of state-action pairs [12], using a Wasserstein formulation to handle rough or partial demonstrations [13], an inverse dynamics disagree-ment objective [14], or off-policy reuse of past interactions to improve sample efficiency [15]. Previous methods for learning from observation mainly focus on observation-only or partial demonstrations, but they do not fully address the feasibility problem caused by differences between the demonstrator and the robot. When the demonstrator and the robot have different physical capabilities, some observed transitions may be difficult or impossible for the robot to reproduce. In contrast, this work introduces an experience-based feasibility estimation mech-anism to reduce the influence of robot-infeasible transitions during imitation learning. 
+
+B. Imitation Learning from Imperfect and Infeasible Demon-strations 
+
+In practical imitation learning, demonstration data are not always optimal, clean, or suitable for the robot. Demon-strations may contain suboptimal actions, mistakes, noisy trajectories, or motions that cannot be executed by the robot. To address imperfect demonstrations, several studies have investigated methods for estimating the quality or confi-dence of demonstration data. A common approach is to downweight low-quality demonstrations by estimating a per-sample confidence or quality score, either by using a subset of explicit confidence labels [16], or by adding a negative-risk term to counteract bias toward frequently occurring state-action pairs [17]. In offline settings, one can distinguish expert from non-expert data without environment interaction, using cooperative discriminator training [18] or importance-sampling-weighted behavior cloning [19]. Another popular approach consists of ranking the demonstrations by quality to extrapolate reward functions that can surpass the best avail-able demonstration [20], an idea later extended to incorporate the generator’s own experience into the ranking process [21]. Wang et al. [22], instead, learn per-demonstration weights directly within the adversarial imitation learning framework. A paradigm more related to the proposed method, even though less explored, is feasibility-aware imitation learning, which considers whether demonstrated motions are exe-cutable by the imitator. Existing work addresses mismatched dynamics between demonstrator and learner [23], the ques-tion of whether to follow potentially non-reproducible behav-ior [24], and the estimation of feasibility for demonstrations collected via hand-mounted interfaces, using either a robot dynamics model [8] or multimodal visual and haptic feed-back [25]. These methods focus on demonstration quality, require confidence labels, rely on explicit or learned robot dynamics models, or use prior robot execution data. In contrast, the proposed method estimates demonstration feasibility from state transitions collected online during policy learning. This enables the policy to reduce the influence of robot-infeasible demonstrations without requiring confidence labels, an ex-plicit dynamics model, or a separate prior exploration dataset. Therefore, this work focuses on experience-based feasibility estimation for IfO with demonstrations that may contain robot-infeasible motions. III. G ENERATIVE ADVERSARIAL IMITATION LEARNING FROM OBSERVATION (GAI FO) The objective of GAIfO [7], [12] is to learn a policy that can reproduce the state-only demonstrations Ddemo using reinforcement learning. GAIfO assumes that the environment is modeled as a Markov decision process (MDP), defined by the tuple M = ( S, A, P, ρ 0, γ ), where S and A denote the state and action spaces, P (st+1 | st, a t) is the transition probability, ρ0 is the initial-state distribution, and γ ∈ [0 , 1) 
+
+is the discount factor. In GAIfO, the policy is trained using a discriminator D
+
+to estimate similarity between its behavior and the demon-stration data. The discriminator D is trained to distinguish between state transitions generated by the policy and those from expert demonstrations. The discriminator is trained using demonstration data and exploration data collected by the policy π as follows: 
+
+max  
+
+> D
+
+Est,s t+1 ∼D demo [log D(st, s t+1 )] +Eπ [log (1 − D(st, s t+1 ))] . (1) The policy π is then optimized using a reinforcement learning algorithm, such as PPO [26], with rewards derived from the discriminator output: 
+
+rt = − log(1 − D(st, s t+1 )) . (2) Feasibility-Aware Policy Learning  
+
+> Environment
+> Feasibility-Weighted Discriminator Policy State Action Experience Buffer
+> Experience-Based Feasibility Estimation
+> Feasibility Estimator State-Transition Reconstruction Model Reward Robot Experience Experienced Transitions Feasibility Weights State-Only Demo Experienced Transition Fig. 2: Overview of EF-GAIfO. Robot experience is used to estimate the feasibility of state-only demonstration transitions, and the estimated feasibil-ity weights are incorporated into discriminator training for feasibility-aware policy learning.
+
+IV. E XPERIENCE -BASED FEASIBILITY -AWARE GAI FOThis section describes Experience-based Feasibility-aware GAIfO (EF-GAIfO), an imitation learning framework for learning from demonstrations that may contain robot-infeasible motions. The overview of EF-GAIfO is shown in Fig. 2. First, we introduce an experience-based feasibility estimation method that evaluates state transitions in demon-strations by their similarity to those experienced by the robot. Next, we incorporate the estimated feasibility into the GAIfO objective to reduce the influence of infeasible demonstrations during discriminator training. Finally, we describe the overall learning procedure that jointly updates the policy, feasibility estimator, and discriminator. 
+
+A. Feasibility Estimation 
+
+Our feasibility estimation is based on the assumption that feasible demonstrations are similar to the state transi-tions experienced by the robot. To estimate feasibility, our method learns a state-transition reconstruction model using the robot’s experience data in GAIfO. The feasibility of each demonstration is then evaluated based on the reconstruction error produced by the model. The reconstruction model learns to reconstruct state-transition sequences generated by the robot during policy learning. Given a transition of states zt = ( st, s t+1 ), the reconstruction model R produces the reconstructed sequence as ˆzt = R(zt), where, ˆzt is predicted state transition. The reconstruction model is trained by minimizing the reconstruction loss LR as: 
+
+LR = 
+
+> T−1
+
+X
+
+> t=1
+
+|| zt − R(zt) || 2, (3) where T denotes the length of the state sequence. The feasibility of demonstrated motions is evaluated using the reconstruction model R based on reconstruction error. For state transition zt, the error e(zt, R (zt)) is calculated: 
+
+e(zt, R (zt)) = 1
+
+DsDsX
+
+> d=1
+
+max  
+
+> h∈{ 0,1}
+
+(st+h,d − ˆst+h,d )2 , (4) where Ds is the number of state dimensions, and h means time step in a state transition, and st,d and ˆst,d denote the original and reconstructed state, respectively, at state dimension d. We use the maximum error over the two 
+
+Algorithm 1 Learning Process of EF-GAIfO  
+
+> 1:
+
+Input: dataset of state-only demonstration data D 
+
+> 2:
+
+Initialize: discriminator D, reconstruction model R,policy π, value function V , and experience buffer Bπ . 
+
+> 3:
+
+for learning iteration i = 1 , 2, . . . , I do  
+
+> 4:
+
+Collect N + H experienced transitions 
+
+(st, a t, s t+1 )t+Nt−H using π 
+
+> 5:
+
+Compute rewards according to Eq. (2)  
+
+> 6:
+
+Sample mini-batch bπ ∼ B π 
+
+> 7:
+
+Update policy π and value func. V using PPO with mini-batch bπ 
+
+> 8:
+
+Update reconstruction model R using bπ by Eq. (3)  
+
+> 9:
+
+Sample mini-batch bE ∼ D  
+
+> 10:
+
+Compute reconstruction error e for bE 
+
+> 11:
+
+Compute feasibility weight fw by Eq. (5)  
+
+> 12:
+
+Update discriminator D using bπ , bE and fw by Eq. (6)  
+
+> 13:
+
+end for 
+
+consecutive states so that a transition receives a large error if either state is poorly reconstructed. The feasibility is computed from the error e as a value between 0 and 1: 
+
+fw(zt, R (zt)) = clip 
+
+ τhigh − e(zt, R (zt)) 
+
+τhigh − τlow 
+
+, 0, 1
+
+
+
+, (5) where, clip( ·, 0, 1) denotes a clipping function that restricts the output value to the range [0 , 1] , τlow and τhigh are the lower and upper thresholds, respectively. 
+
+B. Feasibility-weighted Objective 
+
+The objective of EF-GAIfO uses the estimated feasibility weights to control the contribution of each demonstrated motion to the discriminator training: 
+
+max  
+
+> D
+
+Eπe [fw(zt, R (zt)) log D(st, s t+1 )] +Eπ [log (1 − D(st, s t+1 ))] . (6) By incorporating a feasibility weight into the discriminator’s objective for demonstration data, the policy is trained to prioritize demonstrations with high feasibility. The feasibility weight fw is calculated using Eq. 5, which reduces the effect of expert transitions with low estimated feasibility. 
+
+C. Learning Process 
+
+The EF-GAIfO algorithm updates the reconstruction model, the policy, and the discriminator. The feasibility weights computed using the reconstruction model are then used to update the discriminator. Algorithm 1 summarizes the learning process of EF-GAIfO. At each iteration, the current policy collects experience transitions and is updated using rewards (lines 3–7). The collected experience is also used to update the reconstruction model (line 8). The reconstruction model then evaluates demonstration samples and computes their feasibility weights (lines 9–11). Finally, the discrimina-tor is updated using the feasibility-weighted demonstrations and the robot experience (line 12). The thresholds τhigh and τlow for the feasibility weight are updated based on the reconstruction errors of the demon-stration samples, with the percentile parameter q gradually increased during training. V. E XPERIMENTS 
+
+In this section, we evaluate EF-GAIfO using both con-trolled point-mass experiments and a quadruped robot task with human-collected demonstrations. The research ques-tions addressed in our experiments are as follows: 
+
+RQ1: Can experience-based feasibility estimation distinguish feasible from infeasible demonstration transitions as robot experience accumulates? 
+
+RQ2: Does experience-based feasibility weighting improve imitation performance across different forms of feasi-bility mismatch? 
+
+RQ3: Can EF-GAIfO learn effectively from human-collected state-only demonstrations and enable successful execu-tion on a real robot? We evaluate RQ1 and RQ2 in a point-mass environment in Sec. V.A, and RQ3 in a quadruped robot environment in Sec. V.B. 
+
+A. Point-Mass Environment 1) Settings: We first evaluate EF-GAIfO in a two-dimensional point-mass environment to address RQ1 and RQ2 under controlled conditions. Specifically, we examine how the distinction between feasible and infeasible demon-stration transitions evolves as robot experience accumulates and whether experience-based feasibility weighting improves imitation performance across different forms of feasibil-ity mismatch. In this environment, the feasibility of each demonstrated transition can be explicitly determined from the agent’s velocity limits. The key design of this experiment is to separate two different types of feasibility selection. The multi-speed set-ting evaluates whether EF-GAIfO can select feasible motion speeds when the demonstrated path is fixed. In contrast, the multi-path setting evaluates whether EF-GAIfO can selec-tively imitate feasible trajectory modes when feasible and infeasible paths are mixed in the demonstration dataset. Thus, the two settings test complementary capabilities: feasibility discrimination along the same path and selective imitation among multiple trajectory modes. The objective of the task is for an agent to move from a fixed start position at (0 , 0) m to a goal position at (8 , 0) 
+
+m. The state is defined as the two-dimensional position 
+
+(x, y ), and the action is defined as a two-dimensional velocity command. Each episode contains a maximum of 30 steps. An episode terminates when the maximum episode length is reached or when the policy exceeds the point-mass velocity limit. A trial is considered successful if the point-mass reaches the goal position before termination. The velocity limits (vx, v y ) are set to (±3.9, ±2.5) m/s and (±4.7, ±2.5) 
+
+m/s for the multi-speed and multi-path settings, respectively. In the multi-speed setting, we use two types of demon-strations that follow nearly identical paths but differ in 0 1 2 3 4 5 6 7 8                 
+
+> x [m]
+> 0.5
+> 0.0 0.5 1.0 1.5
+> y [m]
+> vx: 5.4 m/s, vy: 3.3 m/s
+> vx: 3.7 m/s, vy: 2.3 m/s
+> (a) Multi-speed demonstrations 012345678
+> x [m]
+> 1.5
+> 1.0
+> 0.5
+> 0.0 0.5 1.0 1.5 2.0
+> y [m]
+> vx: 7.3 m/s, vy: 0.5 m/s
+> vx: 6.7 m/s, vy: 3.8 m/s
+> vx: 5.5 m/s, vy: 3.3 m/s
+> vx: 4.3 m/s, vy: 1.8 m/s
+> vx: 3.4 m/s, vy: 1.3 m/s
+> (b) Multi-path demonstrations
+> Fig. 3: Demonstration trajectories in the point-mass environment for (a) the multi-speed setting and (b) the multi-path setting. Red and blue trajectories represent infeasible and feasible demonstrations, respectively. Color inten-sity indicates execution speed, with lighter colors denoting slower motions.
+
+execution speed. We collect ten trajectories for each speed, resulting in 20 demonstration trajectories in total. The slower demonstrations satisfy the agent’s velocity limits, whereas the faster demonstrations exceed them. The demonstration trajectories and their velocities are shown in Fig. 3 (a). In the multi-path demonstration, five demonstration paths with varying trajectories and execution speeds are collected. Ten demonstrations are collected for each path, resulting in a total of 50 demonstration trajectories. Regarding the agent’s speed limits, we configure the settings so that two of the five demonstration paths are feasible. The demonstration trajectories and their speeds are shown in Fig. 3 (b). For EF-GAIfO, the policy is trained for 3000 iterations, with 30 interaction steps collected from each environment per iteration. The actor, critic, and discriminator networks are each implemented as a multilayer perceptron with hidden layers of 512 and 256 units. The reconstruction model is implemented as a variational autoencoder [27]. Its encoder and decoder use two hidden layers of 64 and 32 units, and the latent dimension is set to two. All hidden layers use ReLU activation functions, and all networks are optimized using Adam. We compare EF-GAIfO with GAIfO and WGAIfO in both experiments. WGAIfO is an adaptation of WGAIL [22] to the GAIfO setting, where the demonstration weighting mechanism originally proposed for identifying imperfect demonstrations is applied to state-only imitation learning. Each method is trained with 20 random seeds and evaluated over 10 episodes per seed, resulting in 200 trials for each setting. 
+
+2) Results: Table I summarizes the task success rates and Hausdorff distances for the point-mass experiments with multi-speed and multi-path settings. In both the multi-speed and multi-path settings, EF-GAIfO achieved the highest suc-cess rate and the smallest Hausdorff distance, outperforming both WGAIfO and GAIfO. The results indicate that EF-GAIfO can reduce the negative influence of the fast infeasible demonstrations and learn a policy that follows the feasible demonstrations more closely. Specifically for the multi-path TABLE I: Mean task success rates and Hausdorff distances in the point-mass experiment. The Hausdorff distance measures the discrepancy between the trajectories generated by the learned policy and the feasible demonstration trajectories. Values are reported as the mean ± standard deviation of the learned policy over 20 random seeds. Each learned policy is evaluated over ten episodes. Setting Method Success rate ( ↑) Hausdorff distance ( ↓)EF-GAIfO 90 .0 ± 30 .0% 0.884 ± 1.72 
+
+Multi-speed WGAIfO 20 .0 ± 44 .7% 2.629 ± 2.694 
+
+GAIfO 15 .0 ± 35 .7% 4.877 ± 2.396 
+
+EF-GAIfO 100 .0 ± 0.0% 0.163 ± 0.075 
+
+Multi-path WGAIfO 20 .0 ± 41 .0% 1.742 ± 2.343 
+
+GAIfO 50 .0 ± 50 .0% 2.828 ± 2.57 
+
+TABLE II: Mean evaluation values for feasible and infeasible demonstration data across training iterations, assigned using EF-GAIfO and WGAIfO trained with 20 different random seeds in the point-mass experiments. The evaluation values should be high for feasible demonstrations and low for infeasible demonstrations. Setting Demonstration Iter. EF-GAIfO WGAIfO Feasible ( ↑) 100 0.142 ± 0.032 0.450 ± 0.039 Multi- Feasible ( ↑) 3000 0.924 ± 0.105 0.402 ± 0.473 speed Infeasible ( ↓) 100 0.016 ± 0.030 0.023 ± 0.005 Infeasible ( ↓) 3000 0.141 ± 0.166 0.0001 ± 0.0004 Feasible ( ↑) 100 0.152 ± 0.031 0.301 ± 0.068 Multi- Feasible ( ↑) 3000 0.721 ± 0.021 0.298 ± 0.030 path Infeasible ( ↓) 100 0.0035 ± 0.0044 0.007 ± 0.012 Infeasible ( ↓) 3000 0.0707 ± 0.0336 0.001 ± 0.003 
+
+setting, these results suggest that EF-GAIfO can selectively imitate feasible trajectory modes. Table II reports the mean evaluation values assigned to feasible and infeasible demonstrations at different training iterations. In both the multi-speed and multi-path settings, EF-GAIfO assigns relatively low values at 100 iterations due to limited policy experience. As training progresses, the values for feasible demonstrations increase substantially, whereas those for infeasible demonstrations remain low. In contrast, WGAIfO does not show the same progressive separation between feasible and infeasible demonstrations. This trend is consistently observed in both experimental settings. Figure 4 visualizes the feasibility weights estimated by EF-GAIfO at 100 and 3000 training iterations. At 100 iterations, high feasibility weights appear only in a limited region of the demonstrations, reflecting the limited policy experience in the early stage of training. At 3000 iterations, high feasibility weights are assigned over a larger region of the feasible trajectories. In contrast, infeasible demonstrations remain assigned relatively low weights. Taken together, these results answer RQ1 and RQ2. Re-garding RQ1, the feasibility estimates become more discrim-inative as the robot’s experience accumulates: the weights assigned to feasible demonstration transitions increase sub-stantially, whereas those assigned to infeasible transitions remain low. Regarding RQ2, EF-GAIfO achieves higher task success rates and smaller Hausdorff distances than both baselines in the multi-speed and multi-path settings. Thus, experience-based feasibility weighting improves imitation 0 1Feasibility weight 0 2 4 6 8x [m] 2
+
+> 1
+> 012y [m]
+
+(a) Multi-speed setting at 100 iter. 0 2 4 6 8x [m] 2 
+
+> 1
+> 012y [m]
+
+(b) Multi-speed setting at 3000 iter. 0 2 4 6 8x [m] 2
+
+> 1
+> 012y [m]
+
+(c) Multi-path setting at 100 iter. 0 2 4 6 8x [m] 2 
+
+> 1
+> 012y [m]
+
+(d) Multi-path setting at 3000 iter. 
+
+Fig. 4: Feasibility weights estimated by EF-GAIfO in the point-mass experiments. (a) and (b) show the multi-speed setting at 100 and 3000 training iterations, respectively, while (c) and (d) show the multi-path setting. The color of each demonstration trajectory represents its estimated feasibility weight. Initial state      
+
+> Path to target 1
+> Path to target 3
+> Path to Target 2
+
+Fig. 5: Object-reaching-and-picking task setting in the quadruped robot environment. Trigger Gripper Handle Handle 
+
+(a) Robot-free demonstration interface Human demonstrator  
+
+> Object
+
+(b) Demonstration for robot experiment 
+
+Fig. 6: Demonstration for robot experiment 
+
+performance across different forms of feasibility mismatch. 
+
+B. Quadruped Robot Environment 1) Settings: To address RQ3, we evaluate EF-GAIfO with human-collected demonstrations using a Unitree Go2 quadruped robot in the Isaac Sim physics simulator. The task is an object-reaching-and-picking task, in which the robot moves from the initial position toward a target object and picks it up using the gripper (Fig. 5). The robot starts from the initial position (x, y ) = (0 , 0) m. Human demonstrations are collected for three target object positions: (2 .25 , 0.0) m, 
+
+(2 .0, −0.25) m, and (2 .0, 0.25) m. An episode terminates when the maximum episode length is reached or when the robot base contacts the ground. A trial is considered successful if the robot grasps and lifts the target object before termination. The human-collected demonstrations intentionally include challenging motions, such as fast reaching motions and large pitch-angle motions, which may be difficult for the Target 1 Target 2 Target 3 0.0 0.5 1.0 1.5 2.0 
+
+> x [m]
+> 0.5
+> 0.0 0.5
+> y [m]
+
+(a) XY trajectories 0 200 400 600 800 1000  
+
+> Timestep
+> 0.25
+> 0.00 0.25 0.50 0.75
+> Pitch [rad]
+
+(b) Pitch trajectories 
+
+Fig. 7: Human-collected object-reaching-and-picking demonstrations used in the quadruped robot experiment. The demonstrations include variations in planar position and pitch motion. TABLE III: Object-reaching-and-picking task success rates in simulation for three fixed target positions and a random target setting. Each value is the mean success rate over five policies trained with different random seeds, with each policy evaluated over 100 trials. EF-GAIfO WGAIfO GAIfO Target 1 83 .6 ± 9.2% 34 .8 ± 47 .7% 37 .4 ± 14 .2% 
+
+Target 2 88 .0 ± 5.7% 35 .2 ± 47 .8% 36 .8 ± 8.1% 
+
+Target 3 84 .8 ± 10 .0% 39 .0 ± 48 .8% 42 .0 ± 17 .6% 
+
+Random target 85 .8 ± 7.4% 26 .4 ± 44 .1% 35 .4 ± 18 .1% 
+
+robot to reproduce. Figure 6 shows the human demonstration setup used in the robot experiment. The object-reaching-and-picking motion is recorded using a robot-free demonstration interface. The dataset contains 30 trajectories, with 10 trajec-tories collected for each of the three target positions. Each trajectory lasts approximately 10 s and is recorded at 100 Hz .Figure 7 visualizes the collected demonstrations, including planar position and pitch trajectories. We use a hierarchical policy structure consisting of a pretrained low-level locomotion policy and a learned high-level policy. The low-level policy controls the whole-body locomotion of the robot, while the high-level policy generates commands for navigation, body pitch, and gripper motion. The high-level action consists of forward velocity, lateral velocity, yaw rate, pitch command, and gripper open/close command. The observation of the high-level policy consists of the target position relative to the robot frame (x, y ), robot base linear and angular velocities, robot orientation, gripper pitch angle, and gripper open/close state. The high-level policy is trained for 3000 iterations, with 12 interaction steps collected from each environment per iteration. The actor, critic, and discriminator networks are im-plemented as multilayer perceptrons with two hidden layers of 512 and 256 units, respectively. The reconstruction model is implemented as a variational autoencoder. Its encoder and decoder use two hidden layers of 128 and 64 units, and the latent dimension is set to eight. All hidden layers use ReLU activation functions, and all networks are optimized using Adam. We compare EF-GAIfO with GAIfO and WGAIfO under the same policy-learning settings. 
+
+2) Results: We evaluate object-picking performance us-ing human-collected demonstrations in simulation. Table III reports success rates for three fixed target positions and a random target setting, where the target is sampled from x ∈
+
+[2 .0, 2.5] m and y ∈ [−0.25 , 0.25] m. EF-GAIfO achieves higher success rates across all settings, outperforming GAIfO Success 
+
+(a) EF-GAIfO Failure 
+
+(b) WGAIfO Failure (c) GAIfO 
+
+Fig. 8: Execution of the learned policies in the object-reaching-and-picking task using the Go2 robot in simulation. (a) EF-GAIfO successfully com-pletes the task. (b) WGAIfO fails due to excessive pitch motion. (c) GAIfO fails due to misalignment between the gripper and the object. 0 1Feasibility weight 0 100 200 300 400 500 600 700 800 900 1000 Timestep 0.0 0.5 Pitch [rad] 
+
+(a) 100 iter. 0 100 200 300 400 500 600 700 800 900 1000 Timestep 0.0 0.5 Pitch [rad] (b) 3000 iter. 
+
+Fig. 9: Feasibility weights estimated by EF-GAIfO for demonstrated pitch motions in the quadruped robot experiment at (a) 100 and (b) 3000 training iterations. 
+
+and WGAIfO. These results show that EF-GAIfO improves task performance and generalizes to nearby target positions. Figure 8 shows the simulated Go2 robot controlled by the policy learned by each method. The policy learned by EF-GAIfO more reliably approaches the object and completes the pick-up behavior. In contrast, the WGAIfO policy gener-ates large pitch commands, causing strong contact between the gripper and the ground. This gripper-ground contact prevents the gripper from closing and causes object-picking failure. The GAIfO policy shows failure cases where the gripper position is misaligned with the object. Figure 9 shows the estimated feasibility weights for the demonstrated pitch motions. As training progresses, large-pitch transitions receive lower weights, indicating that EF-GAIfO suppresses motions that are difficult for the robot to reproduce. These simulation results address the learning component of RQ3. EF-GAIfO successfully learns an object-picking policy from human-collected state-only demonstrations and consistently achieves higher success rates than GAIfO and WGAIfO across both fixed and random target settings. The following experiment examines whether the learned policy can also be successfully executed on a real robot. 
+
+3) Real-World Experiment: We deploy the policy trained in simulation on the real Unitree Go2 robot to evaluate its real-world executability. We use the same object-picking task and evaluate three fixed target positions and a random target setting, with ten trials per setting. Table IV reports the success rates, and Fig. 10 shows Approaching Grasp success Lifting (a) EF-GAIfO Grasp failure Lifting   
+
+> Object falls over
+> (b) WGAIfO
+
+Grasp failure Lifting                  
+
+> Object falls over (c) GAIfO
+> Fig. 10: Representative real-world execution examples of the learned policies in the object-reaching-and-picking task using the Go2 robot. The snapshots illustrate typical behaviors observed for each method: (a) EF-GAIfO successfully approaches, grasps, and lifts the object; (b) WGAIfO exhibits a grasping failure; and (c) GAIfO exhibits a grasping failure caused by gripper–object misalignment. TABLE IV: Real-world object-reaching-and-picking task success rates for three fixed target positions and a random target setting. Each setting is evaluated over 10 trials. EF-GAIfO WGAIfO GAIfO Target 1 70% 10% 10% Target 2 70% 10% 10% Target 3 80% 10% 20% Random target 80% 30% 20%
+
+representive execution examples of the learned policies on the actual Go2 robot. EF-GAIfO achieves consistently higher success rates across all target settings and success-fully approaches, grasps, and lifts the target object while maintaining stable locomotion. In contrast, WGAIfO and GAIfO frequently fail during the grasping phase, resulting in substantially lower task success rates. These results indicate that the policy learned with EF-GAIfO in simulation can be transferred to the actual robot and can reliably execute the object-reaching-and-picking behavior under both fixed and randomly sampled target positions. Together with the simulation results, the real-world evalua-tion answers RQ3. EF-GAIfO learns effectively from human-collected state-only demonstrations, and the resulting policy can be successfully executed on the real robot, achieving success rates of 70–80% across the fixed and random target settings. These results demonstrate the real-world executabil-ity of the behavior learned using EF-GAIfO. VI. C ONCLUSIONS AND FUTURE WORK 
+
+We proposed EF-GAIfO, an experience-based feasibility-aware framework for imitation from state-only demonstra-tions that may contain robot-infeasible transitions. The ex-periments showed that the feasibility estimates became more discriminative as robot experience accumulated and that EF-GAIfO achieved higher task success rates and closer trajectory matching across different forms of feasibility mismatch. With human-collected demonstrations, EF-GAIfO also achieved high success rates in simulation and suc-cessful execution on a real quadruped robot. These results demonstrate the effectiveness and practical applicability of experience-based feasibility estimation for demonstrations with unknown feasibility. The EF-GAIfO estimates feasibility from robot-experienced state transitions and therefore mainly captures embodiment-related motion feasibility. However, in real-world tasks, whether a transition is feasible can also depend on the surrounding environment, such as terrain, obstacles, object placement, and contact conditions. Addressing such environment-dependent feasibility requires extending the current estimator to condition feasibility not only on robot motion but also on environmental context. Future work will therefore investigate feasibility estimation that jointly represents robot state transitions and environmental observations, including visual, depth, and other sensory information. REFERENCES [1] S. Young, D. Gandhi, S. Tulsiani, A. Gupta, P. Abbeel, and L. Pinto, “Visual imitation made easy,” in Conference on Robot learning .PMLR, 2021, pp. 1992–2005. [2] T. Ohkawa, J. Arima, Y. Noguchi, M. Tateno, M. Sugiura, T. Okubo, K. Ikeuchi, Y. Shin, H. Nishizawa, N. Kanazawa et al. , “Yubi: Yielding universal bidigital interface for bimanual dexterous manipulation at scale,” arXiv preprint arXiv:2606.10244 , 2026. [3] H. Sasaki, N. Komeno, T. Hachimine, K. Takahashi, Y. Ohnishi, T. Sugawara, A. Wakiuchi, M. Hatanaka, T. Miyao, H. Ajiro et al. ,“Robotic system for chemical experiment automation with dual demonstration of end-effector and jig operations,” International Jour-nal of Intelligent Robotics and Applications , vol. 10, no. 1, pp. 84–106, 2026. [4] H. Ha, Y. Gao, Z. Fu, J. Tan, and S. Song, “Umi-on-legs: Making manipulation policies mobile with manipulation-centric whole-body controllers,” in Conference on Robot Learning (CoRL) , 2025, pp. 5254–5270. [5] N. M. M. Shafiullah, A. Rai, H. Etukuru, Y. Liu, I. Misra, S. Chin-tala, and L. Pinto, “On bringing robots home,” arXiv preprint arXiv:2311.16098 , 2023. [6] F. Torabi, G. Warnell, and P. Stone, “Behavioral cloning from ob-servation,” in International Joint Conference on Artificial Intelligence (IJCAI) , 2018, pp. 4950–4957. [7] ——, “Recent advances in imitation learning from observation,” in 
+
+International Joint Conference on Artificial Intelligence (IJCAI) , 2019, pp. 6325–6331. [8] K. Takahashi, H. Sasaki, and T. Matsubara, “Feasibility-aware im-itation learning from observations through a hand-mounted demon-stration interface,” in IEEE International Conference on Robotics and Automation (ICRA) , 2025, pp. 7822–7828. [9] S. Chen, C. Wang, K. Nguyen, L. Fei-Fei, and C. K. Liu, “Arcap: Collecting high-quality human demonstrations for robot learning with augmented reality feedback,” in IEEE International Conference on Robotics and Automation (ICRA) , 2025, pp. 8291–8298. [10] A. Edwards, H. Sahni, Y. Schroecker, and C. Isbell, “Imitating latent policies from observation,” in International Conference on Machine Learning (ICML) , 2019, pp. 1755–1763. [11] Y. Liu, A. Gupta, P. Abbeel, and S. Levine, “Imitation from observa-tion: Learning to imitate behaviors from raw video via context transla-tion,” in IEEE International Conference on Robotics and Automation (ICRA) , 2018, pp. 1118–1125. [12] F. Torabi, G. Warnell, and P. Stone, “Generative adversarial imitation from observation,” in Workshop at the International Conference on Machine Learning (ICML) , 2019. [13] C. Li, M. Vlastelica, S. Blaes, J. Frey, F. Grimminger, and G. Mar-tius, “Learning agile skills via adversarial imitation of rough partial demonstrations,” in Conference on Robot Learning (CoRL) , 2023, pp. 342–352. [14] C. Yang, X. Ma, W. Huang, F. Sun, H. Liu, J. Huang, and C. Gan, “Imitation learning from observations by minimizing inverse dynam-ics disagreement,” in Conference on Neural Information Processing Systems (NeurIPS) , 2019, pp. 239–249. [15] Z. Zhu, K. Lin, B. Dai, and J. Zhou, “Off-policy imitation learning from observations,” in Conference on Neural Information Processing Systems (NeurIPS) , 2020, pp. 12 402–12 413. [16] Y. Wu, N. Charoenphakdee, H. Bao, V. Tangkaratt, and M. Sugiyama, “Imitation learning from imperfect demonstration,” in International Conference on Machine Learning (ICML) , 2019, pp. 6818–6827. [17] Q. Liu, H. Fu, K. Tang, C. Chen, and D. Dong, “PN-GAIL: Leveraging non-optimal information from imperfect demonstrations,” in Inter-national Conference on Learning Representations (ICLR) , 2025, pp. 82 288–82 313. [18] H. Xu, X. Zhan, H. Yin, and H. Qin, “Discriminator-weighted offline imitation learning from suboptimal demonstrations,” in International Conference on Machine Learning (ICML) , 2022, pp. 24 725–24 742. [19] Z. Li, T. Xu, Z. Qin, Y. Yu, and Z.-Q. Luo, “Imitation learning from imperfection: Theoretical justifications and algorithms,” in Conference on Neural Information Processing Systems (NeurIPS) , 2023, pp. 18 404–18 443. [20] D. Brown, W. Goo, P. Nagarajan, and S. Niekum, “Extrapolating beyond suboptimal demonstrations via inverse reinforcement learning from observations,” in International Conference on Machine Learning (ICML) , 2019, pp. 783–792. [21] Z. Shi, X. Zhang, Y. Fang, C. Li, G. Liu, and J. Zhao, “Ranking-based generative adversarial imitation learning,” IEEE Robotics and Automation Letters , vol. 9, no. 10, pp. 8967–8974, 2024. [22] Y. Wang, C. Xu, B. Du, and H. Lee, “Learning to weight imperfect demonstrations,” in International Conference on Machine Learning (ICML) , 2021, pp. 10 961–10 970. [23] Z. Cao, Y. Hao, M. Li, and D. Sadigh, “Learning feasibility to imitate demonstrators with different dynamics,” in Conference on Robot Learning (CoRL) , 2022, pp. 363–372. [24] Y. Lee, E. S. Hu, Z. Yang, and J. J. Lim, “To follow or not to follow: Selective imitation learning from observations,” in Conference on Robot Learning (CoRL) , 2020, pp. 11–23. [25] K. Takahashi, H. Sasaki, and T. Matsubara, “Feasibility-aware im-itation learning from observation with multimodal feedback,” arXiv preprint arXiv:2602.15351 , 2026. [26] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal policy optimization algorithms,” arXiv preprint arXiv:1707.06347 , 2017. [27] D. P. Kingma and M. Welling, “Auto-Encoding Variational Bayes,” in 
+
+International Conference on Learning Representations, ICLR , 2014.

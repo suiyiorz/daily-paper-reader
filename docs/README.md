@@ -6,59 +6,86 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-10-01
-- 运行时间：2026-10-01 23:57:40 UTC
+- 最新运行日期：2026-10-02
+- 运行时间：2026-10-02 22:54:06 UTC
 - 运行状态：成功
-- 本次总论文数：13
-- 精读区：6
-- 速读区：7
+- 本次总论文数：21
+- 精读区：10
+- 速读区：11
 
 ### 今日简报（AI）
-今日精读6篇、速读7篇共13篇，聚焦自动驾驶世界模型与规划器。最值得看的是两篇9.0分精读：S2Planner多尺度语义规划器，以及MomWorld动量感知长时域潜世界模型。普通读者可优先浏览这两篇的摘要与图示，再按兴趣补看速读中的机器人操作与VLA方向。
-- 详情：[/202610/01/README](/202610/01/README)
+- 今日共生成 21 篇推荐（精读 10 篇，速读 11 篇）
+- 精读：《DROM: A Language-Guided Diffusion Framework for Multi-Skill Robotic Manipulation》（9.0/10）, 《Explore, Execute, Evolve: A Skill Acquisition and Reuse Loop for Embodied Agents》（9.0/10）
+- 速读：《Embodied Semantic Communication for Collective Autonomous Agents: A Tutorial on Representation, Wireless Delivery, and Closed-Loop Coordination》（8.0/10）, 《SkillWeaver: Agentic Exploration over Neural Interaction Skills for Scalable Robot Data Generation》（8.0/10）, 《Cooperative Multi-Agent Vision-Language-Action Models via Reinforced Fine Tuning》（8.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202610/02/README](/202610/02/README)
 
 ### 精读区论文标签
-1. [S2Planner: Multi-Scale Semantic Planner for End-to-End Autonomous Driving](/202610/01/2609.29813v1-s2planner-multi-scale-semantic-planner-for-end-to-end-autonomous-driving)  
+1. [DROM: A Language-Guided Diffusion Framework for Multi-Skill Robotic Manipulation](/202610/02/2609.37348v1-drom-a-language-guided-diffusion-framework-for-multi-skill-robotic-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向端到端自动驾驶的多尺度语义轨迹规划器
-2. [MomWorld: Momentum-Aware Latent World Model for Long-Horizon Autonomous Driving](/202610/01/2609.33737v1-momworld-momentum-aware-latent-world-model-for-long-horizon-autonomous-driving)  
+   evidence：面向多技能机器人操作的语言引导扩散策略
+2. [Explore, Execute, Evolve: A Skill Acquisition and Reuse Loop for Embodied Agents](/202610/02/2609.37810v1-explore-execute-evolve-a-skill-acquisition-and-reuse-loop-for-embodied-agents)  
    标签：评分：9.0/10、query:ad
-   evidence：面向长时域自动驾驶规划的动量感知潜在世界模型
-3. [CAR-VLA: Complexity-Aware and Risk-Adaptive Reasoning for Autonomous Driving](/202610/01/2609.34387v1-car-vla-complexity-aware-and-risk-adaptive-reasoning-for-autonomous-driving)  
+   evidence：面向具身智能体的技能获取与复用闭环
+3. [PhysWAM: Physically Consistent World Action Model for Autonomous Driving](/202610/02/2609.37970v1-physwam-physically-consistent-world-action-model-for-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶视觉-语言-动作模型的复杂度与风险自适应推理
-4. [Uni-VLaT: Whole-Body Tactile Adaptation of VLA Policies for Humanoid Loco-Manipulation](/202610/01/2609.35450v1-uni-vlat-whole-body-tactile-adaptation-of-vla-policies-for-humanoid-loco-manipulation)  
+   evidence：面向自动驾驶的统一世界-动作模型，强调几何一致性
+4. [Vision-Language-Action Autonomous Driving Agent with Language-based Memory](/202610/02/2609.38641v1-vision-language-action-autonomous-driving-agent-with-language-based-memory)  
    标签：评分：9.0/10、query:ad
-   evidence：将全身触觉感知融入人形机器人移动操作策略
-5. [X-Reset: Scaling Object-Centric Reinforcement Learning via Cross-Embodiment Resets](/202610/01/2609.35715v1-x-reset-scaling-object-centric-reinforcement-learning-via-cross-embodiment-resets)  
+   evidence：以语言记忆为核心的VLA自动驾驶智能体
+5. [Efficient Multi-Modal Planning with Reward-Guided Preference Optimization for Autonomous Driving](/202610/02/2609.38862v1-efficient-multi-modal-planning-with-reward-guided-preference-optimization-for-autonomous-driving)  
    标签：评分：9.0/10、query:ad
-   evidence：跨具身重置的物体中心强化学习灵巧操作
-6. [AquaWAM: A Dynamics-aware World Action Model for Underwater Embodied Agents](/202610/01/2609.33299v1-aquawam-a-dynamics-aware-world-action-model-for-underwater-embodied-agents)  
-   标签：评分：8.0/10、query:ad
-   evidence：面向水下具身智能体的世界动作模型
+   evidence：面向自动驾驶的多模态轨迹规划
+6. [EmbodiRSI: Recursive Self-Improvement for Data-Efficient Robot Adaptation](/202610/02/2609.38905v2-embodirsi-recursive-self-improvement-for-data-efficient-robot-adaptation)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向数据高效机器人操作自适应的递归自我改进
+7. [ReWAM: Reciprocal World Action Models for Interactive Autonomous Driving](/202610/02/2609.39245v1-rewam-reciprocal-world-action-models-for-interactive-autonomous-driving)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向交互式自动驾驶决策的博弈论世界动作模型
+8. [Tactile Curiosity Drives Robot Interaction](/202610/02/2609.40134v1-tactile-curiosity-drives-robot-interaction)  
+   标签：评分：9.0/10、query:ad
+   evidence：触觉反馈驱动机器人操作强化学习的探索
+9. [TacDyn-WAM: Learning Implicit Tactile Dynamics in a Heterogeneous Visuo-Tactile World Action Model](/202610/02/2610.00638v1-tacdyn-wam-learning-implicit-tactile-dynamics-in-a-heterogeneous-visuo-tactile-world-action-model)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向机器人操作的视触融合感知世界动作模型
+10. [Reconstruct, Practice, Go Real: Guided Self-Improvement for Embodied Agents](/202610/02/2610.02204v1-reconstruct-practice-go-real-guided-self-improvement-for-embodied-agents)  
+   标签：评分：9.0/10、query:ad
+   evidence：面向具身智能体的自主技能改进框架，融合感知与控制
 
 ### 速读区论文标签
-1. [Recursive Harness Distillation across Agents for Robot Manipulation](/202610/01/2609.33378v1-recursive-harness-distillation-across-agents-for-robot-manipulation)  
+1. [Embodied Semantic Communication for Collective Autonomous Agents: A Tutorial on Representation, Wireless Delivery, and Closed-Loop Coordination](/202610/02/2609.35936v1-embodied-semantic-communication-for-collective-autonomous-agents-a-tutorial-on-representation-wireless-delivery-and-closed-loop-coordination)  
    标签：评分：8.0/10、query:ad
-   evidence：基于VLA模型的机器人操作与跨任务自适应
-2. [SLIP-VLA: Single-Step Latent Imagination for Policy Learning in Vision-Language-Action Models](/202610/01/2609.33575v1-slip-vla-single-step-latent-imagination-for-policy-learning-in-vision-language-action-models)  
+   evidence：面向集体自主智能体的居身语义通信
+2. [SkillWeaver: Agentic Exploration over Neural Interaction Skills for Scalable Robot Data Generation](/202610/02/2609.36171v1-skillweaver-agentic-exploration-over-neural-interaction-skills-for-scalable-robot-data-generation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人操作的未来感知策略学习框架
-3. [Hierarchical Multi-agent Reinforcement Learning for Warehouse Robot Coordination under Communication Loss](/202610/01/2609.33637v1-hierarchical-multi-agent-reinforcement-learning-for-warehouse-robot-coordination-under-communication-loss)  
+   evidence：基于可复用操作技能的智能体探索与数据生成
+3. [Cooperative Multi-Agent Vision-Language-Action Models via Reinforced Fine Tuning](/202610/02/2609.36588v1-cooperative-multi-agent-vision-language-action-models-via-reinforced-fine-tuning)  
    标签：评分：8.0/10、query:ad
-   evidence：面向机器人协同的分层多智能体强化学习
-4. [EMPIRIC: Experiment-Driven Learning of Residual World Models for Robot Planning](/202610/01/2609.35047v1-empiric-experiment-driven-learning-of-residual-world-models-for-robot-planning)  
+   evidence：协同多智能体视觉-语言-动作模型的强化微调
+4. [Simple Agentic Memory for Generalist Robot Policies](/202610/02/2609.36595v1-simple-agentic-memory-for-generalist-robot-policies)  
    标签：评分：8.0/10、query:ad
-   evidence：通过实验学习残差世界模型以支持机器人规划
-5. [Self-Evolving Coding Agents: From Digital Programs to Physical-World Intelligence](/202610/01/2609.35432v1-self-evolving-coding-agents-from-digital-programs-to-physical-world-intelligence)  
+   evidence：面向通用具身机器人策略的免训练智能体记忆层
+5. [RobotEQ 3.0: Towards Personalized Social Proactive Intelligence in Embodied Agents](/202610/02/2609.36618v1-roboteq-30-towards-personalized-social-proactive-intelligence-in-embodied-agents)  
    标签：评分：8.0/10、query:ad
-   evidence：从数字程序到物理世界智能的自演化编码智能体
-6. [Where Do Embodied Decisions Come From? Rethinking Latent and Explicit Reasoning](/202610/01/2609.34794v1-where-do-embodied-decisions-come-from-rethinking-latent-and-explicit-reasoning)  
+   evidence：面向具身智能体的个性化社交主动智能基准
+6. [A.D.A.M.O. (Agent for language-Driven Actions with Multimodal Observations): A Visual-Symbolic Framework for Virtual Humans](/202610/02/2609.35463v1-adamo-agent-for-language-driven-actions-with-multimodal-observations-a-visual-symbolic-framework-for-virtual-humans)  
    标签：评分：7.0/10、query:ad
-   evidence：具身VLA智能体中潜在推理与显式推理的对比
-7. [DEAL-Grasp: Decoupled Alignment Representation for Geometry-Aware Dexterous Grasp Generation](/202610/01/2609.28131v1-deal-grasp-decoupled-alignment-representation-for-geometry-aware-dexterous-grasp-generation)  
+   evidence：在交互式三维环境中统一感知、推理与行动的视觉符号智能体
+7. [State Trace Rationale As Auxiliary Task in Reinforcement Learning](/202610/02/2609.36867v1-state-trace-rationale-as-auxiliary-task-in-reinforcement-learning)  
+   标签：评分：7.0/10、query:ad
+   evidence：强化学习智能体以状态轨迹预测为辅助任务
+8. [PrefPI: Preference-Guided Steering into Out-of-Distribution Behaviors](/202610/02/2609.40165v1-prefpi-preference-guided-steering-into-out-of-distribution-behaviors)  
+   标签：评分：7.0/10、query:ad
+   evidence：用偏好引导迭代优化预训练生成式机器人策略
+9. [Experience-Based Feasibility-Aware Generative Adversarial Imitation from Observation under Embodiment Mismatch](/202610/02/2610.01171v1-experience-based-feasibility-aware-generative-adversarial-imitation-from-observation-under-embodiment-mismatch)  
+   标签：评分：7.0/10、query:ad
+   evidence：面向机器人行为学习、处理具身差异的观察模仿方法
+10. [When the Environment Becomes the Interface: Multisensory Environmental Interfaces for Human-AI Interaction in Autonomous Vehicles](/202610/02/2609.32604v1-when-the-environment-becomes-the-interface-multisensory-environmental-interfaces-for-human-ai-interaction-in-autonomous-vehicles)  
    标签：评分：6.0/10、query:ad
-   evidence：面向具身智能的几何感知灵巧抓取生成
+   evidence：自动驾驶座舱中面向人机交互的多感官环境界面
+11. [Simulation for Planetary Robotic Perception and Autonomy: A Concise Survey of Recent Capabilities and Gaps](/202610/02/2609.34743v1-simulation-for-planetary-robotic-perception-and-autonomy-a-concise-survey-of-recent-capabilities-and-gaps)  
+   标签：评分：6.0/10、query:ad
+   evidence：机器人感知与自主性仿真的综述
 
 
 <div class="dpr-home-promo-card">
