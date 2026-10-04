@@ -1,0 +1,775 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-10-04T22:45:46.442470+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 19,
+    "deep_cap": 6,
+    "deep_selected": 7,
+    "quick_candidates": 20,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2609.32681v1",
+      "source": "arxiv",
+      "title": "RCVLA: 4D Radar-Grounded Semantic Reasoning and Trajectory Arbitration for Autonomous Driving",
+      "abstract": "4D radar provides geometric and motion cues that complement visual semantics, but integrating it into vision-language-action (VLA) models requires both radar--language alignment for semantic reasoning and explicit use of radar measurements for trajectory refinement and selection. To support these capabilities, we construct Cap4DR with 86,016 radar-image-text samples for alignment pretraining and OmniHD-QA with 520,161 question-answer pairs for instruction tuning across scene description, key-object reasoning, occupancy understanding, and trajectory planning. Building on these datasets, we propose RCVLA, a radar-camera VLA framework consisting of a radar-grounded semantic reasoning stage (RCVLA-Sem) and a trajectory arbitration stage (RCVLA-Phys). RCVLA-Sem performs gated bidirectional interaction between camera and radar tokens for driving question answering and reference trajectory generation, while auxiliary heads provide object and occupancy queries. RCVLA-Phys refines reference-guided trajectory candidates through truncated diffusion conditioned on these queries and cluster-level radar measurements, then calibrates candidate scores using radar-derived time-to-collision risk. On OmniHD-QA, RCVLA-Sem improves CIDEr by 9.92 points and reduces key-object velocity error by $21.9\\%$ relative to OmniDrive. RCVLA-Phys further reduces average L2 error from $0.348$ to $0.259\\,\\mathrm{m}$ and average open-loop collision rate from $0.576\\%$ to $0.175\\%$ relative to RCVLA-Sem. Ablation studies further show that language-aligned radar tokens improve semantic reasoning, while cluster-level radar measurements and risk calibration improve trajectory arbitration. Code will be released.",
+      "authors": [
+        "Lianqing Zheng",
+        "Xiaokai Bai",
+        "Yixuan Luo",
+        "Runwei Guan",
+        "Minghao Liu",
+        "Zhiqiang Wei",
+        "Hui-liang Shen",
+        "Xichan Zhu",
+        "Zhixiong Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-09-26T14:40:01+00:00",
+      "link": "https://arxiv.org/pdf/2609.32681v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "4D radar-grounded VLA for autonomous driving semantic reasoning and trajectory planning",
+      "llm_evidence_cn": "面向自动驾驶的4D雷达语义推理与轨迹仲裁",
+      "llm_evidence": "面向自动驾驶的4D雷达语义推理与轨迹仲裁",
+      "canonical_evidence": "面向自动驾驶的4D雷达语义推理与轨迹仲裁",
+      "llm_tldr_en": "RCVLA fuses 4D radar with vision-language-action models for autonomous driving, aligning radar with language and arbitrating trajectories.",
+      "llm_tldr_cn": "针对4D雷达几何与运动线索难以融入视觉语言动作模型、缺少雷达-语言对齐与显式轨迹细化的问题，论文提出RCVLA框架。作者构建了含八万余雷达图文样本的Cap4DR对齐预训练集与五十余万问答对的OmniHD-QA指令微调集，覆盖场景描述、关键目标推理、占据理解与轨迹规划。RCVLA包含雷达语义推理与轨迹仲裁两个阶段，实现雷达与语言对齐并显式用雷达测量优化轨迹。实验表明该方法提升自动驾驶语义推理与轨迹选择质量。",
+      "llm_tldr": "针对4D雷达几何与运动线索难以融入视觉语言动作模型、缺少雷达-语言对齐与显式轨迹细化的问题，论文提出RCVLA框架。作者构建了含八万余雷达图文样本的Cap4DR对齐预训练集与五十余万问答对的OmniHD-QA指令微调集，覆盖场景描述、关键目标推理、占据理解与轨迹规划。RCVLA包含雷达语义推理与轨迹仲裁两个阶段，实现雷达与语言对齐并显式用雷达测量优化轨迹。实验表明该方法提升自动驾驶语义推理与轨迹选择质量。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.33882v1",
+      "source": "arxiv",
+      "title": "DexTaG: Tactile-as-Guidance in Reinforcement Learning for Dexterous Manipulation",
+      "abstract": "Glove-based motion capture is emerging as a scalable approach to collecting dexterous-hand demonstration data. However, due to the kinematic gap between the human and robot hand, the recorded human motions cannot be executed directly on the robot, especially for contact-rich tool-use tasks involving in-hand reorientation. Prior work bridges this gap in simulation through reinforcement learning (RL) or trajectory optimization, but the human contact pattern is hard to preserve under such formulations, often producing unnatural manipulation and unstable functional grasps. These methods also train a separate policy or solve a separate optimization for each reference trajectory, which is inefficient. To solve these problems, we propose DexTaG, a tactile-guided RL framework for dexterous manipulation. During training, tactile signals captured by the glove guide policy search toward the measured human contact pattern, reducing reliance on precise reference geometry for contact supervision. To improve efficiency, we train a single generalizable retargeter jointly on all training trajectories of the same object. The retargeter is further distilled into a tactile-free student controller conditioned on the target object trajectory for real-world deployment. On marker-pen and hammer manipulation tasks, DexTaG learns natural, contact-rich behaviors that baselines with distance-based contact heuristics fail to learn, generalizes to held-out trajectories of the same object and task, and outperforms single-trajectory baselines on OakInk2.",
+      "authors": [
+        "Han Yang",
+        "Yian Wang",
+        "Yunlong Song",
+        "Zhenjia Xu",
+        "Chuang Gan"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-27T19:56:41+00:00",
+      "link": "https://arxiv.org/pdf/2609.33882v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "tactile-guided reinforcement learning for dexterous robotic manipulation",
+      "llm_evidence_cn": "面向灵巧机器人操作的触觉引导强化学习",
+      "llm_evidence": "面向灵巧机器人操作的触觉引导强化学习",
+      "canonical_evidence": "面向灵巧机器人操作的触觉引导强化学习",
+      "llm_tldr_en": "Human hand motion capture cannot transfer directly to robot hands, losing contact patterns. DexTaG uses tactile signals as guidance in reinforcement learning for dexterous manipulation, preserving human contact patterns and avoiding per-trajectory policies.",
+      "llm_tldr_cn": "手套式动作捕捉难以直接迁移到机器人手，因人机手部运动学差异导致接触丰富任务中的接触模式丢失。本文提出DexTaG，将触觉信号作为引导融入强化学习，用于灵巧手操作，从而在桥接人机运动学差距的同时保留人类接触模式，避免为每条参考轨迹单独训练策略或求解优化。方法在接触丰富的工具使用与手内重定向任务上产生更自然、更稳定的功能性抓取。该工作为可扩展的灵巧操作数据利用提供了触觉引导的高效方案。",
+      "llm_tldr": "手套式动作捕捉难以直接迁移到机器人手，因人机手部运动学差异导致接触丰富任务中的接触模式丢失。本文提出DexTaG，将触觉信号作为引导融入强化学习，用于灵巧手操作，从而在桥接人机运动学差距的同时保留人类接触模式，避免为每条参考轨迹单独训练策略或求解优化。方法在接触丰富的工具使用与手内重定向任务上产生更自然、更稳定的功能性抓取。该工作为可扩展的灵巧操作数据利用提供了触觉引导的高效方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.36851v2",
+      "source": "arxiv",
+      "title": "RoXDrive: Closed-Loop Reinforcement Learning for End-to-End Autonomous Driving via Action-Faithful Rollouts",
+      "abstract": "End-to-end autonomous driving policies are commonly trained via imitation learning on logged demonstrations without observing the consequences of their own actions, leading to causal confusion in closed-loop real-world deployment. To address this issue, reinforcement learning (RL) post-training offers a promising alternative by leveraging world models as interactive training environments to enable future scene generation for policy improvement. Nevertheless, existing approaches either rely on reconstruction-based simulators, offering limited counterfactual interaction, or adopt synthetic simulators to enable long-horizon closed-loop interaction at the cost of a substantial sim-to-real gap. Recently, video world models have exhibited the ability to generate realistic multi-step future rollouts but may not faithfully reflect action conditions, resulting in action-vision mismatch. In this paper, we introduce RoXDrive, a plug-and-play closed-loop RL framework that enables reliable policy optimization by identifying action-faithful world-model rollouts, consisting of two stages: 1) Model pre-training: In addition to imitation-based policy pre-training, we devise an Action-Vision Faithfulness Evaluator for inverse dynamics estimation with our geometry-aware auxiliary trajectory supervision, enabling long-horizon assessment of whether visual dynamics faithfully reflect the conditioning ego actions. 2) Action-faithful RL post-training: Agents iteratively interact with world models to form long-horizon scene rollouts, retaining only action-faithful ones for dense safety-aware scoring and scene-level closed-loop RL post-training. Extensive experiments on nuScenes and an in-house dataset with over 130K training scenarios demonstrate consistent gains across planners, reducing safety violations by 27.6% with DiffusionDrive on nuScenes and 33.7% with Qwen3-VL on the internal data.",
+      "authors": [
+        "Hongbin Lin",
+        "Chaoda Zheng",
+        "Yiming Yang",
+        "Xiangyu Li",
+        "Shijia Chen",
+        "Jinhao Deng",
+        "Kangjie Chen",
+        "Dongbin Zhang",
+        "Jie Feng",
+        "Yu Zhang",
+        "Xianming Liu",
+        "Shuguang Cui",
+        "Boyang Wang",
+        "Zhen Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-09-29T06:59:50+00:00",
+      "link": "https://arxiv.org/pdf/2609.36851v2",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "closed-loop reinforcement learning for end-to-end autonomous driving with action-faithful rollouts",
+      "llm_evidence_cn": "基于动作忠实回放的端到端自动驾驶闭环强化学习",
+      "llm_evidence": "基于动作忠实回放的端到端自动驾驶闭环强化学习",
+      "canonical_evidence": "基于动作忠实回放的端到端自动驾驶闭环强化学习",
+      "llm_tldr_en": "RoXDrive performs closed-loop reinforcement learning post-training for end-to-end autonomous driving using action-faithful rollouts in a video world model, mitigating causal confusion and improving closed-loop deployment.",
+      "llm_tldr_cn": "端到端自动驾驶策略通常以模仿学习在日志数据上训练，无法观察自身动作的后果，导致闭环部署中的因果混淆。本文提出RoXDrive，利用视频世界模型构建交互式训练环境，通过动作忠实的回放实现闭环强化学习后训练，兼顾反事实交互与长时程训练。实验表明该方法缓解因果混淆，提升闭环驾驶性能并缩小仿真到现实的差距，为端到端自动驾驶提供新训练范式。",
+      "llm_tldr": "端到端自动驾驶策略通常以模仿学习在日志数据上训练，无法观察自身动作的后果，导致闭环部署中的因果混淆。本文提出RoXDrive，利用视频世界模型构建交互式训练环境，通过动作忠实的回放实现闭环强化学习后训练，兼顾反事实交互与长时程训练。实验表明该方法缓解因果混淆，提升闭环驾驶性能并缩小仿真到现实的差距，为端到端自动驾驶提供新训练范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.39507v1",
+      "source": "arxiv",
+      "title": "LIBERO-Agent: Evaluating General-Purpose Agents for Direct Embodied Manipulation",
+      "abstract": "General-purpose agents can plan, use tools, and revise their behavior from feedback, but it remains unclear whether these capabilities transfer from digital environments to embodied manipulation. To investigate this question, we introduce LIBERO-Agent, an agent-native benchmark for evaluating these agents in robot manipulation tasks. Rather than asking agents to submit task-level Python control programs or operate through high-level robot skills, LIBERO-Agent provides an interactive robotic environment where agents can select which observations to inspect, process them with their own tools, and issue native action commands. LIBERO-Agent integrates 200 tasks into a common interaction framework and provides a 30-task primary suite that separates perception, short-horizon execution, and long-horizon composition. Results reveal a pronounced reliability gap: while agents perform well on perception and easy short-horizon tasks, their performance degrades substantially on hard short-horizon and long-horizon tasks. Richer observations improve short-horizon manipulation, while demonstration benefits depend on the agent and format. Among these agents, GPT-6 Astra achieves the strongest overall performance. Further analysis shows its major advantage lies in mechanism interaction, especially when sustained physical contact is needed, while its remaining failures stem from cross-stage interference and geometric errors.",
+      "authors": [
+        "Zijie Diao",
+        "Yitong Chen",
+        "Sicheng Xie",
+        "Tianyi Lu",
+        "Wujian Peng",
+        "Guojin Zhong",
+        "Houze Xu",
+        "Ziyi Ye",
+        "Zuxuan Wu",
+        "Yu-Gang Jiang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T11:10:10+00:00",
+      "link": "https://arxiv.org/pdf/2609.39507v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "benchmark of general-purpose agents for direct embodied manipulation",
+      "llm_evidence_cn": "通用智能体直接具身操作的评测基准",
+      "llm_evidence": "通用智能体直接具身操作的评测基准",
+      "canonical_evidence": "通用智能体直接具身操作的评测基准",
+      "llm_tldr_en": "LIBERO-Agent is an agent-native benchmark testing whether general-purpose agents transfer to embodied manipulation, letting them inspect observations, use tools and issue native action commands across 200 tasks.",
+      "llm_tldr_cn": "通用智能体的规划与工具使用能力能否从数字环境迁移到具身操作尚不明确。本文提出LIBERO-Agent，一个智能体原生基准，让智能体自主选择观测、用自身工具处理并发出底层动作命令。该基准集成200个任务并提供30任务主套件，系统评估通用智能体在机器人操作中的表现，为具身操作智能体评测提供标准化框架。",
+      "llm_tldr": "通用智能体的规划与工具使用能力能否从数字环境迁移到具身操作尚不明确。本文提出LIBERO-Agent，一个智能体原生基准，让智能体自主选择观测、用自身工具处理并发出底层动作命令。该基准集成200个任务并提供30任务主套件，系统评估通用智能体在机器人操作中的表现，为具身操作智能体评测提供标准化框架。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.39570v1",
+      "source": "arxiv",
+      "title": "Sparse Planner: A Hybrid Planner for Efficient Sampling via a Conditional Variational Autoencoder",
+      "abstract": "Trajectory planning is a core component of autonomous driving systems, where real-time performance and solution quality directly affect safety and reliability. Sample-Based Motion Planning (SBMP) is widely adopted for its ability to approximate near-optimal solutions through parameter space sampling. However, achieving high-quality trajectories typically requires dense sampling, leading to substantial computational overhead and significant runtime variability in complex traffic scenarios.   To address this limitation, we propose a Sparse Planner (SP) that improves sampling efficiency by learning the conditional relationship between scene context and effective trajectory parameters using a Conditional Variational Autoencoder (CVAE). By modeling the structure of high-quality sampling distributions, SP directly generates cost-effective samples in the parameter space, significantly reducing the required sampling density while preserving solution quality.   Experimental results show that SP achieves lower trajectory cost than the state-of-the-art FISS+ planner while using only one-eighth of the sampling density. In addition, SP demonstrates improved distance-keeping capability in obstacle-rich scenarios and maintains reduced and more stable runtime characteristics, indicating enhanced computational efficiency and predictable runtime behavior.",
+      "authors": [
+        "Wenguang Xu",
+        "Giovanni Lucente",
+        "Karem Mohamed",
+        "Richard Membarth"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T12:06:09+00:00",
+      "link": "https://arxiv.org/pdf/2609.39570v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "trajectory planning for autonomous driving via learned efficient sampling",
+      "llm_evidence_cn": "自动驾驶轨迹规划与学习式高效采样",
+      "llm_evidence": "自动驾驶轨迹规划与学习式高效采样",
+      "canonical_evidence": "自动驾驶轨迹规划与学习式高效采样",
+      "llm_tldr_en": "Trajectory planning in autonomous driving needs dense sampling for quality, causing high computation and runtime variance. Sparse Planner learns scene-to-trajectory parameter relations via a conditional VAE to sample efficiently while keeping quality.",
+      "llm_tldr_cn": "自动驾驶轨迹规划中，采样型运动规划需密集采样才能获得高质量轨迹，计算开销大且运行时间波动明显。本文提出稀疏规划器，利用条件变分自编码器学习场景上下文与有效轨迹参数之间的条件关系，从而以更稀疏的采样生成轨迹。在复杂交通场景下，该方法在降低计算开销的同时保持轨迹质量并提升实时性能，为自动驾驶规划提供了更高效的采样方案。",
+      "llm_tldr": "自动驾驶轨迹规划中，采样型运动规划需密集采样才能获得高质量轨迹，计算开销大且运行时间波动明显。本文提出稀疏规划器，利用条件变分自编码器学习场景上下文与有效轨迹参数之间的条件关系，从而以更稀疏的采样生成轨迹。在复杂交通场景下，该方法在降低计算开销的同时保持轨迹质量并提升实时性能，为自动驾驶规划提供了更高效的采样方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.39751v1",
+      "source": "arxiv",
+      "title": "Beyond Policy Alignment: Closing the Planning-Learning Loop for Robot Control with Learned World Models",
+      "abstract": "Planning with learned world models combines online trajectory optimization with learned value and policy functions for high-dimensional control. Because the planner determines the experience used for learning, while the learned critic and actor in turn score and propose future plans, planning and learning form a closed feedback loop. TD-MPC is a prominent instance of this design. Recent policy-constrained variants strengthen one part of the loop by aligning the learned policy with planner behavior. We introduce PL-MPC (Planning-Learning MPC), which additionally modifies critic supervision and planner terminal-value estimation. Hybrid multi-step TD targets expose critic updates to more realized rewards before bootstrapping; disagreement-aware terminal estimates reduce the influence of uncertain critic values during MPPI planning; and return-weighted actor distillation emphasizes planner-executed actions from high-return episodes. The world-model architecture and MPPI optimizer are otherwise unchanged. On HumanoidBench, the largest gains occur on \\texttt{balance-hard}, where Total Average Return (TAR) increases from $98\\pm18$ to $387\\pm255$, and \\texttt{hurdle}, from $199\\pm13$ to $466\\pm200$; performance across the broader benchmark remains task dependent, and PL-MPC remains competitive on DMControl. Controlled ablations show different component interactions across the two tasks. We further demonstrate zero-shot sim-to-real transfer on wrench-nut alignment with a 7-DoF KUKA IIWA14, obtaining higher observed success than TD-M(PC)^2 on the training object size and two unseen sizes. Code and data will be available at: https://pl-mpc-humanoid.github.io.",
+      "authors": [
+        "Kowndinya Boyalakuntla",
+        "Yuhan Liu",
+        "Abdeslam Boularias"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T13:50:51+00:00",
+      "link": "https://arxiv.org/pdf/2609.39751v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "closing the planning-learning loop for robot control with learned world models",
+      "llm_evidence_cn": "用学习世界模型闭环规划-学习回路实现机器人控制",
+      "llm_evidence": "用学习世界模型闭环规划-学习回路实现机器人控制",
+      "canonical_evidence": "用学习世界模型闭环规划-学习回路实现机器人控制",
+      "llm_tldr_en": "PL-MPC closes the planning-learning loop for robot control by modifying critic supervision and planner terminal-value estimation with hybrid multi-step TD targets, improving learned world model control.",
+      "llm_tldr_cn": "基于学习世界模型的规划与学习构成闭环：规划器决定学习经验，学习到的评价与策略又指导未来规划，但现有方法多只强化其中一端。本文提出PL-MPC，通过改进评论家监督与规划器终值估计，并采用混合多步时序差分目标，让评论家在自举前接触更多真实回报。该框架在高维控制任务中改善了规划与学习的协同效果。其贡献在于同时调整闭环两端，为基于世界模型的机器人控制提供更稳健的方案。",
+      "llm_tldr": "基于学习世界模型的规划与学习构成闭环：规划器决定学习经验，学习到的评价与策略又指导未来规划，但现有方法多只强化其中一端。本文提出PL-MPC，通过改进评论家监督与规划器终值估计，并采用混合多步时序差分目标，让评论家在自举前接触更多真实回报。该框架在高维控制任务中改善了规划与学习的协同效果。其贡献在于同时调整闭环两端，为基于世界模型的机器人控制提供更稳健的方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.01746v1",
+      "source": "arxiv",
+      "title": "End-to-End Learning vs. Modular Architectures: Comparative Insights into Autonomous Driving Systems",
+      "abstract": "Autonomous driving systems have become a central focus of intelligent transportation research, with End-to-End Learning and Modular Architectures offering two prominent design paradigms for their implementation. E2E Learning uses deep learning algorithms to map raw sensory inputs directly to driving actuators, providing a streamlined and adaptable solution. while Modular Architectures employ a pipeline-based approach, dividing the system into distinct subsystems for perception, cognition, planning, and control. This paper presents a comprehensive comparative analysis of these paradigms, focusing on their strengths, limitations, and trade-offs to provide insights into their suitability for various autonomous driving applications. The study evaluates key factors such as interpretability, scalability, robustness, and real-world applicability. While End-to-End Learning emphasizes simplicity and adaptability in dynamic environments, it lacks transparency and is highly dependent on large datasets. Conversely, Modular Architectures offer superior interpretability and task-specific optimization, but face challenges related to integration complexity and scalability. To address these limitations, hybrid approaches that combine the strengths of both paradigms have emerged, offering a promising direction for overcoming these challenges. Beyond this comparative synthesis, following work proposes a Four-Dimensional Architecture Selection Framework, comprising twelve binary criteria across safety, operating environment, data/computational resources, and deployment context, and validate it against ten published autonomous driving systems, correctly recommending 7/10 deployed architectures. This work synthesizes existing literature to highlight key trade-offs between the paradigms and identifies hybrid architectures as a promising direction for future research.",
+      "authors": [
+        "Kartik B. Kapse"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-10-01T14:15:06+00:00",
+      "link": "https://arxiv.org/pdf/2610.01746v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "comparative analysis of autonomous driving system architectures for perception planning control",
+      "llm_evidence_cn": "自动驾驶系统感知规划控制架构的比较分析",
+      "llm_evidence": "自动驾驶系统感知规划控制架构的比较分析",
+      "canonical_evidence": "自动驾驶系统感知规划控制架构的比较分析",
+      "llm_tldr_en": "This paper compares end-to-end learning and modular architectures for autonomous driving, contrasting their strengths, limitations and trade-offs across perception, planning and control to guide architecture choice.",
+      "llm_tldr_cn": "自动驾驶系统中，端到端学习与模块化架构是两种主流设计范式，但其适用性缺乏系统比较。本文对端到端学习与模块化（感知、认知、规划、控制流水线）架构进行综合对比分析，总结二者在优势、局限与权衡上的差异，并给出不同自动驾驶应用场景的选型建议，为系统架构设计提供比较性参考。",
+      "llm_tldr": "自动驾驶系统中，端到端学习与模块化架构是两种主流设计范式，但其适用性缺乏系统比较。本文对端到端学习与模块化（感知、认知、规划、控制流水线）架构进行综合对比分析，总结二者在优势、局限与权衡上的差异，并给出不同自动驾驶应用场景的选型建议，为系统架构设计提供比较性参考。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.32634v1",
+      "source": "arxiv",
+      "title": "PF-RL: Progress Field Reinforcement Learning via Goal-Conditioned Value Geometry for Vision-Language-Action Models",
+      "abstract": "Reinforcement Fine-Tuning~(RFT) has emerged as a promising paradigm for improving Vision-Language-Action~(VLA) policies, yet sparse task-level outcomes provide limited credit for intermediate transitions, especially in long-horizon manipulation. A natural approach is to model intermediate task progress and use it as dense feedback for policy improvement. Despite their architectural differences, existing progress-aware methods commonly formulate task progress as an explicit scalar prediction, providing limited structure for modeling how intermediate observations relate to the task goal, which may hinder effective transition-level credit assignment. We introduce Progress Field Reinforcement Learning (PF-RL), which learns a structured goal-conditioned progress representation over pretrained VLA features and converts it into dense credit for policy optimization. A lightweight shared Progress Field head maps current and goal representations into a compact progress space, where geometric distance induces goal-conditioned value, while complementary temporal and goal-structure objectives shape the learned geometry. Transition-level value changes naturally yield dense progress advantages, enabling fine-grained credit assignment for both offline policy improvement and online reinforcement fine-tuning. Extensive experiments on LIBERO, RoboTwin2.0, and real-world bimanual manipulation tasks show that PF-RL consistently improves policy performance over strong supervised fine-tuning, reinforcement fine-tuning, and progress-aware baselines.",
+      "authors": [
+        "Yunpeng Qing",
+        "Yilun Kong",
+        "Sixu Lin",
+        "Ming Zhou",
+        "Yiming Fei",
+        "Shuang Luo",
+        "Yixiao Chi",
+        "Haoming Gu",
+        "Jingyuan Liu",
+        "Changxu Wei",
+        "Zhi Hou",
+        "Changqing Zou"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-26T13:53:11+00:00",
+      "link": "https://arxiv.org/pdf/2609.32634v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "RL fine-tuning for long-horizon VLA manipulation with dense progress feedback",
+      "llm_evidence_cn": "面向长时程VLA操作的强化微调与稠密进度反馈",
+      "llm_evidence": "面向长时程VLA操作的强化微调与稠密进度反馈",
+      "canonical_evidence": "面向长时程VLA操作的强化微调与稠密进度反馈",
+      "llm_tldr_en": "PF-RL addresses sparse credit assignment in long-horizon VLA manipulation by modeling task progress as a goal-conditioned value field, providing dense transition-level feedback for reinforcement fine-tuning.",
+      "llm_tldr_cn": "现有强化微调在长时程机器人操作中仅依赖稀疏的任务级反馈，难以对中间转移进行有效信用分配。本文提出进度场强化学习（PF-RL），用目标条件价值几何显式建模中间任务进度，从而提供稠密的过程反馈。在长时程操作任务上，该方法改善了转移级信用分配并提升了策略性能，为视觉-语言-动作模型的强化微调提供了新的稠密奖励范式。",
+      "llm_tldr": "现有强化微调在长时程机器人操作中仅依赖稀疏的任务级反馈，难以对中间转移进行有效信用分配。本文提出进度场强化学习（PF-RL），用目标条件价值几何显式建模中间任务进度，从而提供稠密的过程反馈。在长时程操作任务上，该方法改善了转移级信用分配并提升了策略性能，为视觉-语言-动作模型的强化微调提供了新的稠密奖励范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.33145v1",
+      "source": "arxiv",
+      "title": "Beyond State-as-Action: Exploiting Command-State Discrepancy for Robot Imitation Learning",
+      "abstract": "Constructing action targets from measured robot motion is an established approach in imitation learning. Under interaction constraints, however, command-state discrepancy may reflect control demands that motion alone does not capture. We investigate when this information matters and how to exploit it. Across three real-robot tasks, task and phase analyses reveal larger supervision gaps under constrained interaction, while selective command retention provides evidence of locally useful command information. Building on these findings, we propose Command-State Discrepancy Weighting (CSDW), which accounts for robot response times and combines subsequent progress, persistent unmet demand, and demand changes into continuous weights for command supervision. The method requires no task-phase annotations or changes to policy architecture or inference. CSDW improves over uniform command supervision on constrained tasks, while methods perform similarly in the less constrained task.",
+      "authors": [
+        "Peiyan Li",
+        "Yueran Tao",
+        "Enhao Zhang",
+        "Zhixuan Zhao",
+        "Chenghao Yue",
+        "Hao Wang",
+        "Lei Lv",
+        "Wentao Zhao",
+        "Jiahao Chen",
+        "Xin Liu",
+        "Kangyao Huang",
+        "Yu Luo",
+        "Huaping Liu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-27T03:16:37+00:00",
+      "link": "https://arxiv.org/pdf/2609.33145v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "robot imitation learning for manipulation under interaction constraints",
+      "llm_evidence_cn": "受限交互下的机器人操作模仿学习",
+      "llm_evidence": "受限交互下的机器人操作模仿学习",
+      "canonical_evidence": "受限交互下的机器人操作模仿学习",
+      "llm_tldr_en": "Robot imitation learning builds action targets from measured motion, but under interaction constraints command-state discrepancy carries control demand. CSDW weights commands by response time, progress and unmet demand, improving learning on three real-robot tasks.",
+      "llm_tldr_cn": "现有模仿学习多以实测运动构造动作目标，但在交互受限场景下命令与状态的差异蕴含运动本身无法捕捉的控制需求。作者分析三个真实机器人任务，发现受限交互时监督缺口更大，并提出命令-状态差异加权CSDW，将响应时间、后续进展与持续未满足需求融合为连续权重。实验表明选择性保留命令信息能提供局部有用监督，从而改善策略学习。该工作为受限交互下的机器人模仿学习提供了新的监督信号设计思路。",
+      "llm_tldr": "现有模仿学习多以实测运动构造动作目标，但在交互受限场景下命令与状态的差异蕴含运动本身无法捕捉的控制需求。作者分析三个真实机器人任务，发现受限交互时监督缺口更大，并提出命令-状态差异加权CSDW，将响应时间、后续进展与持续未满足需求融合为连续权重。实验表明选择性保留命令信息能提供局部有用监督，从而改善策略学习。该工作为受限交互下的机器人模仿学习提供了新的监督信号设计思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.33653v1",
+      "source": "arxiv",
+      "title": "Demonstration-Free Success-Probability Reward Learning for Generalist Robot Policies",
+      "abstract": "Reinforcement learning (RL) enables generalist robot policies to improve through trial-and-error interaction, yet its effectiveness is fundamentally constrained by sparse task rewards. Existing general-purpose reward models typically alleviate this issue by learning task progress from expert demonstrations, but introduce a distribution mismatch with the mixed-quality rollouts encountered during policy optimization, making their estimates unreliable on suboptimal and failed behaviors from which the policy must learn. In this work, we introduce a demonstration-free reward learning paradigm where dense reward feedback can be learned directly from sparse task outcomes and policy experience. We theoretically show that terminal task outcomes implicitly define dense success-probability feedback at intermediate timesteps, which can be recursively learned through bootstrapping. Based on this insight, we introduce eVTA$_0$, which learns success probabilities from mixed-quality policy rollouts through temporal-difference-style bootstrapping, without expert demonstrations or intermediate annotations. We further introduce RL with Evolving Rewards (RLER), a closed-loop framework that adapts eVTA$_0$ using newly collected rollouts as the policy evolves. Experiments show that eVTA$_0$ provides more informative rewards than state-of-the-art reward models and achieves the best average policy performance across all LIBERO task suites under the same RL training budget, improving success rates by 5.4%-13.8% over the initial policy. In real-world manipulation, RLER further improves overall success rates by 20%-26%, with 35%-36% gains under out-of-distribution conditions. These results demonstrate the effectiveness of demonstration-free reward learning and adapting rewards as the policy evolves. Project webpage: https://duowuyms.github.io/evta0.",
+      "authors": [
+        "Duo Wu",
+        "Haifeng Wang",
+        "Rongwei Lu",
+        "Jinghe Wang",
+        "Tianyi Xiong",
+        "Zhimin Wang",
+        "Chao Yu",
+        "Shuai Ma",
+        "Zhi Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-09-27T15:18:38+00:00",
+      "link": "https://arxiv.org/pdf/2609.33653v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "demonstration-free reward learning for generalist robot policies",
+      "llm_evidence_cn": "面向通用机器人策略的无演示奖励学习",
+      "llm_evidence": "面向通用机器人策略的无演示奖励学习",
+      "canonical_evidence": "面向通用机器人策略的无演示奖励学习",
+      "llm_tldr_en": "This work introduces a demonstration-free reward learning paradigm that derives dense rewards directly from sparse task outcomes and policy experience, avoiding distribution mismatch in reinforcement learning for generalist robot policies.",
+      "llm_tldr_cn": "强化学习是通用机器人策略自我提升的关键，但稀疏任务奖励限制其效果，而现有奖励模型依赖专家演示，与策略优化中混合质量的轨迹存在分布错配，估计不可靠。本文提出无演示奖励学习范式，直接从稀疏任务结果与策略经验中学习稠密奖励反馈，并从理论上说明终端任务结果可提供有效奖励信号。实验验证了该方法在通用机器人策略优化中的有效性，为无需专家演示的可靠稠密奖励学习提供了新途径。",
+      "llm_tldr": "强化学习是通用机器人策略自我提升的关键，但稀疏任务奖励限制其效果，而现有奖励模型依赖专家演示，与策略优化中混合质量的轨迹存在分布错配，估计不可靠。本文提出无演示奖励学习范式，直接从稀疏任务结果与策略经验中学习稠密奖励反馈，并从理论上说明终端任务结果可提供有效奖励信号。实验验证了该方法在通用机器人策略优化中的有效性，为无需专家演示的可靠稠密奖励学习提供了新途径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.34695v1",
+      "source": "arxiv",
+      "title": "Sufficiency of Zeroth-Order Reward Shaping for Policy Gradient in Stabilization Control",
+      "abstract": "Reward shaping is fundamental to modern robotic control with deep reinforcement learning (RL), yet practitioners still rely heavily on heuristic principles borrowed from classical optimal control and trajectory optimization. Existing methods rarely distinguish reward terms that are intrinsic to the control objective from numerical regularizers, leading to brittle hyperparameter tuning. To determine which quantities a reward must contain, we study the stabilization control problem with a focus on zeroth-order (configuration) and first-order (velocity) information. We theoretically and empirically demonstrate that policy gradient methods can successfully solve stabilization tasks without first-order reward terms, adding such terms can instead introduce severe sensitivity as their scale grows. Conversely, our findings confirm that reward functions must be zeroth-order complete over goal-relevant coordinates, while the first-order state remains necessary in the policy observation under our low-dissipation assumptions. Overall, these results provide actionable and principled guidance for reward design in robotic RL.",
+      "authors": [
+        "Yisheng Zhang",
+        "Tao Wang",
+        "Sicun Gao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-28T09:15:56+00:00",
+      "link": "https://arxiv.org/pdf/2609.34695v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reward shaping for deep RL robotic control",
+      "llm_evidence_cn": "面向机器人深度强化学习的奖励塑形",
+      "llm_evidence": "面向机器人深度强化学习的奖励塑形",
+      "canonical_evidence": "面向机器人深度强化学习的奖励塑形",
+      "llm_tldr_en": "This paper studies whether policy gradient RL for stabilization control needs first-order velocity reward terms, showing zeroth-order configuration rewards suffice and extra terms can hurt.",
+      "llm_tldr_cn": "针对深度强化学习机器人控制中奖励项设计依赖启发式经验、难以区分目标内在项与数值正则项的问题，本文研究稳定控制任务中零阶构型与一阶速度信息的奖励需求。理论与实验表明，策略梯度方法无需一阶速度奖励即可完成稳定任务，而额外加入此类项反而可能损害性能。该结论为机器人控制中的奖励塑形提供了更简洁可靠的指导原则，有助于减少脆弱的超参数调优。",
+      "llm_tldr": "针对深度强化学习机器人控制中奖励项设计依赖启发式经验、难以区分目标内在项与数值正则项的问题，本文研究稳定控制任务中零阶构型与一阶速度信息的奖励需求。理论与实验表明，策略梯度方法无需一阶速度奖励即可完成稳定任务，而额外加入此类项反而可能损害性能。该结论为机器人控制中的奖励塑形提供了更简洁可靠的指导原则，有助于减少脆弱的超参数调优。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.35761v1",
+      "source": "arxiv",
+      "title": "DexRoam: Learning Mobile Bimanual Dexterous Manipulation from Egocentric Whole-Body Human Demonstrations",
+      "abstract": "Mobile bimanual dexterous manipulation requires continuous coordination of locomotion, whole-body motion, and finger-level dexterity within a single trajectory, creating a severe robot demonstration bottleneck. Egocentric human demonstrations offer a scalable alternative, but prior approaches ease the transfer by simplifying human motion, discarding exactly the fine-grained, coupled structure such tasks depend on. We present DexRoam, a complete system for learning mobile bimanual dexterous manipulation from human demonstrations, in which whole-body motion remains continuous and coupled throughout the human-to-robot transfer process. To enable scalable collection of whole-body human manipulation demonstrations, we develop a tracker-free capture system using only a consumer VR headset and a head-mounted stereo camera, without external cameras or motion trackers. We then perform three explicit alignment stages---embodiment, action-semantic, and temporal---to map captured motion into the robot action space, preserving fine-grained whole-body motion and allowing human and robot demonstrations to be jointly learned by standard VLA policies. Real-world experiments with different VLA backbones show that human demonstrations consistently improve policy learning across training paradigms, raising average success from 29% to 56% on GR00T N1.7 and from 32% to 57% on pi0.5, while matching robot-only training with half the robot demonstrations. Ablations confirm that each alignment stage is necessary. These results highlight the potential of human demonstrations for scalable whole-body mobile manipulation with preserved fine-grained motion structure.",
+      "authors": [
+        "Rui Zhou",
+        "Yibo Yuan",
+        "Junkai Zhao",
+        "Fangyuan Zhao",
+        "Xiaoguang Zhao",
+        "Shanghang Zhang",
+        "Sirui Han"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-28T17:59:10+00:00",
+      "link": "https://arxiv.org/pdf/2609.35761v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "mobile bimanual dexterous manipulation with locomotion and whole-body motion",
+      "llm_evidence_cn": "结合移动、全身运动与双手灵巧操作",
+      "llm_evidence": "结合移动、全身运动与双手灵巧操作",
+      "canonical_evidence": "结合移动、全身运动与双手灵巧操作",
+      "llm_tldr_en": "DexRoam learns mobile bimanual dexterous manipulation from egocentric whole-body human demonstrations, preserving continuous coupled motion to overcome the robot demonstration bottleneck.",
+      "llm_tldr_cn": "移动双手灵巧操作需要在同一轨迹中协调移动、全身运动与手指级灵巧性，导致机器人示教数据严重不足。已有方法通过简化人体动作来降低迁移难度，却丢弃了任务所需的细粒度耦合结构。本文提出DexRoam系统，从第一人称全身人类演示中学习，使全身运动在人类到机器人的迁移中保持连续与耦合，并设计了可扩展的演示采集方案。该工作为移动操作提供了更可扩展的学习范式。",
+      "llm_tldr": "移动双手灵巧操作需要在同一轨迹中协调移动、全身运动与手指级灵巧性，导致机器人示教数据严重不足。已有方法通过简化人体动作来降低迁移难度，却丢弃了任务所需的细粒度耦合结构。本文提出DexRoam系统，从第一人称全身人类演示中学习，使全身运动在人类到机器人的迁移中保持连续与耦合，并设计了可扩展的演示采集方案。该工作为移动操作提供了更可扩展的学习范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.36421v1",
+      "source": "arxiv",
+      "title": "Sample Complexity of Equivariant Reinforcement Learning",
+      "abstract": "Reinforcement learning (RL) is a powerful framework for robotic control, yet its practical application is often hindered by high sample complexity. This is particularly restrictive in physical domains where interaction data is costly. While the world often exhibits geometric and physical symmetries, standard RL algorithms typically fail to exploit this structure. In this paper, we demonstrate that exploiting group symmetries significantly reduces the sample complexity of RL. Focusing on finite-horizon Markov decision processes, we find that leveraging homomorphisms induced by group symmetries significantly reduces the theoretical upper and lower bounds on the number of environment interactions required to reach an optimal return. We further extend these bounds to continuous state and action spaces, providing corresponding sample-complexity guarantees under appropriate regularity assumptions. Beyond theory, we validate our findings through controlled experiments and demonstrate the advantages of symmetry-aware policy learning on high-dimensional continuous robotic simulations. Our results show that integrating symmetry into the learning pipeline yields substantial gains in sample efficiency and performance, offering a principled path toward more data-efficient robotics.",
+      "authors": [
+        "Rayan Mazouz",
+        "Haibo Zhao",
+        "Chris Hillar",
+        "Christian Shewmake"
+      ],
+      "primary_category": "cs.CC",
+      "categories": [
+        "cs.CC",
+        "cs.LG",
+        "math.GR"
+      ],
+      "published": "2026-09-29T00:25:02+00:00",
+      "link": "https://arxiv.org/pdf/2609.36421v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "sample complexity of reinforcement learning for robotic control",
+      "llm_evidence_cn": "面向机器人控制的强化学习样本复杂度",
+      "llm_evidence": "面向机器人控制的强化学习样本复杂度",
+      "canonical_evidence": "面向机器人控制的强化学习样本复杂度",
+      "llm_tldr_en": "This paper shows that exploiting group symmetries significantly reduces the sample complexity of reinforcement learning for robotic control, tightening both upper and lower bounds on interactions needed to reach optimal return.",
+      "llm_tldr_cn": "强化学习是机器人控制的有力框架，但高样本复杂度限制了其在交互数据昂贵的物理场景中的应用，标准算法也未能利用世界的几何与物理对称性。本文针对有限时域马尔可夫决策过程，证明利用群对称性诱导的同态可显著降低达到最优回报所需环境交互次数的上下界。该结果为对称性驱动的样本高效机器人强化学习提供了理论支撑。",
+      "llm_tldr": "强化学习是机器人控制的有力框架，但高样本复杂度限制了其在交互数据昂贵的物理场景中的应用，标准算法也未能利用世界的几何与物理对称性。本文针对有限时域马尔可夫决策过程，证明利用群对称性诱导的同态可显著降低达到最优回报所需环境交互次数的上下界。该结果为对称性驱动的样本高效机器人强化学习提供了理论支撑。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.36250v1",
+      "source": "arxiv",
+      "title": "Action Chunking Proximal Policy Optimization with Feedback Correction",
+      "abstract": "Action chunking provides temporal abstraction in reinforcement learning by selecting short action sequences instead of individual actions, but many existing approaches face two limitations in high-dimensional robotic control. First, many rely on value functions over action chunks, which can be difficult to learn as action dimensionality and chunk length grow. Second, executing chunks open-loop removes within-chunk feedback, limiting reactivity in contact-rich tasks. We present Action Chunking PPO (ACPPO), a PPO extension that uses a chunked actor while retaining a standard state-value critic, thereby avoiding chunked Q-functions. We further propose ACPPO-Corr, which augments the chunk planner with a stepwise feedback corrector that adjusts planned actions online within each chunk. Across 25 simulated robotics tasks from IsaacGym and Bi-DexHands, spanning locomotion, arm manipulation, and dexterous hand-object interaction, ACPPO-Corr achieves the strongest aggregate performance among evaluated methods and performs best on both decision-frequency-sensitive and decision-frequency-neutral task subsets. Ablations show that moderate chunk lengths work best and that corrector regularization is important for balancing chunk-level planning with local feedback. These results suggest that action chunking can be effective in online PPO when chunk-level planning is paired with closed-loop correction. The code is available at: https://github.com/hshhahn/ACPPO.",
+      "authors": [
+        "Sanghyun Hahn",
+        "Jonghyun Choi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.RO"
+      ],
+      "published": "2026-09-28T20:43:07+00:00",
+      "link": "https://arxiv.org/pdf/2609.36250v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "action chunking PPO for high-dimensional robotic control",
+      "llm_evidence_cn": "面向高维机器人控制的动作分块PPO",
+      "llm_evidence": "面向高维机器人控制的动作分块PPO",
+      "canonical_evidence": "面向高维机器人控制的动作分块PPO",
+      "llm_tldr_en": "ACPPO extends PPO with a chunked actor while keeping a standard state-value critic to avoid hard-to-learn chunked Q-functions, and adds ACPPO-Corr with a stepwise feedback corrector for reactive contact-rich control.",
+      "llm_tldr_cn": "动作分块通过选择短动作序列为强化学习提供时间抽象，但现有方法在高维机器人控制中依赖难以学习的动作块价值函数，且开环执行动作块缺乏块内反馈，限制了接触丰富任务中的反应性。本文提出ACPPO，使用分块执行器同时保留标准状态价值评论家，避免动作块Q函数；进一步提出ACPPO-Corr，用逐步反馈校正器调整规划动作。该方法提升了高维机器人控制的稳定性与反应性。",
+      "llm_tldr": "动作分块通过选择短动作序列为强化学习提供时间抽象，但现有方法在高维机器人控制中依赖难以学习的动作块价值函数，且开环执行动作块缺乏块内反馈，限制了接触丰富任务中的反应性。本文提出ACPPO，使用分块执行器同时保留标准状态价值评论家，避免动作块Q函数；进一步提出ACPPO-Corr，用逐步反馈校正器调整规划动作。该方法提升了高维机器人控制的稳定性与反应性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.36928v1",
+      "source": "arxiv",
+      "title": "ComManip: Overfitting Manipulation Policies to Comfortable Regions",
+      "abstract": "Training robot manipulation policies relies on costly robot demonstrations, making large-scale data collection impractical. Meanwhile, to improve policy generalization, existing approaches seek greater diversity in visual observations by varying object placements, viewpoints, and robot configurations during data collection. However, under a limited demonstration budget, this strategy forces the policy to model diverse visual observations, providing insufficient supervision to learn reliable observation-action correspondences under similar local conditions. Our study reveals that policies trained under this strategy achieve lower task success rates than those trained within a compact, visually and kinematically stable region. We refer to these stable regions as comfortable manipulation regions. To exploit this finding, we propose ComManip, a learning paradigm that specializes manipulation policies to comfortable manipulation regions. During inference, ComManip repositions the mobile base until the detected target center enters the familiar image-space range estimated from comfortable-region demonstrations. It then executes the same manipulation policy, enabling effective manipulation across diverse target locations. We conduct extensive experiments across multiple manipulation tasks, demonstration budgets, and policy families including ACT, $π_{0.5}$, RDT, OpenVLA-OFT, and SmolVLA. The results demonstrate that ComManip improves task success by roughly 20 percentage points or more across different policy architectures in large workspaces under limited demonstration budgets, suggesting that specializing manipulation policies to comfortable regions provides a more data-efficient learning paradigm for manipulation.",
+      "authors": [
+        "Yidan Lai",
+        "Xinyi Chen",
+        "Shuquan Man",
+        "Huiping Zhuang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-29T07:44:32+00:00",
+      "link": "https://arxiv.org/pdf/2609.36928v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "overfitting manipulation policies to stable comfortable regions",
+      "llm_evidence_cn": "将操控策略过拟合到稳定舒适区域",
+      "llm_evidence": "将操控策略过拟合到稳定舒适区域",
+      "canonical_evidence": "将操控策略过拟合到稳定舒适区域",
+      "llm_tldr_en": "ComManip studies how demonstration diversity affects robot manipulation policies and finds that training within a compact, visually and kinematically stable comfortable region yields higher success than forcing policies to model diverse observations.",
+      "llm_tldr_cn": "机器人操控策略训练依赖昂贵演示数据，为提升泛化常通过变化物体位置、视角与机器人构型来增加视觉多样性。ComManip发现有限演示预算下这种策略反而导致成功率下降，并提出将策略约束在视觉与运动学稳定的舒适区域内训练。实验表明紧凑稳定区域训练的策略任务成功率更高，为有限数据下的操控学习提供新思路。",
+      "llm_tldr": "机器人操控策略训练依赖昂贵演示数据，为提升泛化常通过变化物体位置、视角与机器人构型来增加视觉多样性。ComManip发现有限演示预算下这种策略反而导致成功率下降，并提出将策略约束在视觉与运动学稳定的舒适区域内训练。实验表明紧凑稳定区域训练的策略任务成功率更高，为有限数据下的操控学习提供新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.36870v1",
+      "source": "arxiv",
+      "title": "VidAct: Learning Manipulation from In-the-Wild Videos with Object-Centric 3D Awareness",
+      "abstract": "Video demonstrations offer a scalable alternative to costly robot data for learning manipulation, yet existing reconstruction-based approaches often rely on constrained camera viewpoints or human-to-robot retargeting, while the reconstructed trajectories are difficult to adapt to new objects configurations without distorting the trajectory shape. Another key limitation is that the resulting policies often lack precise object-level 3D geometry awareness, limiting object grounding and object shape awareness critical for precise manipulation. To bridge these gaps, we propose VidAct, an efficient video-to-robot framework that learns object-centric, 3D-aware manipulation policies from a single monocular video per task and enables zero-shot real-world deployment. VidAct consists of three key components. First, VidAct reconstructs object meshes and motion from arbitrary demo videos and canonicalizes the motion in the static object frame, avoiding embodiment-specific retargeting and accommodating diverse camera viewpoints. Second, VidAct employ residual trajectory transfer for adapting the reconstructed motion to novel object configurations while preserving its motion shape. Finally, as the key policy-learning component, VidAct predicts simulation-provided privileged complete-object point clouds at each frame as an auxiliary task while retaining RGB-only deployment, providing dense object-centric supervision over both object pose and 3D geometry. Experiments on human, robot, generated, and internet videos demonstrate broad video applicability and zero-shot deployment. Per-frame complete-object 3D supervision improves policy generalization and sim-to-real success, while residual trajectory transfer enables reliable trajectory adaptation with better shape preservation.",
+      "authors": [
+        "Hang Li",
+        "Mingxin Zhang",
+        "Zihan Wu",
+        "Yang Tian",
+        "Dong Chen",
+        "Fengyi Shen",
+        "Yuan Meng",
+        "Xiangtong Yao",
+        "Heng Zhang",
+        "Ziyuan Liu",
+        "Zhenshan Bing",
+        "Alois Knoll"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-29T07:08:36+00:00",
+      "link": "https://arxiv.org/pdf/2609.36870v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "video-to-robot manipulation with object-centric 3D awareness",
+      "llm_evidence_cn": "从单目视频学习物体中心三维操控策略",
+      "llm_evidence": "从单目视频学习物体中心三维操控策略",
+      "canonical_evidence": "从单目视频学习物体中心三维操控策略",
+      "llm_tldr_en": "VidAct learns object-centric 3D-aware manipulation policies from a single monocular video per task, avoiding constrained viewpoints and human-to-robot retargeting, enabling zero-shot transfer to new object configurations.",
+      "llm_tldr_cn": "现有从视频学习机器人操控的方法多依赖受限视角或人到手重定向，重建轨迹难以适应新物体构型，且缺乏物体级三维几何感知。VidAct提出高效视频到机器人框架，仅用单任务单目视频即可学习物体中心、三维感知的操控策略，实现零样本迁移。该方法缓解了对昂贵机器人数据的依赖，提升了精确操控中的物体定位与形状理解能力。",
+      "llm_tldr": "现有从视频学习机器人操控的方法多依赖受限视角或人到手重定向，重建轨迹难以适应新物体构型，且缺乏物体级三维几何感知。VidAct提出高效视频到机器人框架，仅用单任务单目视频即可学习物体中心、三维感知的操控策略，实现零样本迁移。该方法缓解了对昂贵机器人数据的依赖，提升了精确操控中的物体定位与形状理解能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.39403v1",
+      "source": "arxiv",
+      "title": "IronMind: Scaling Humanoid Dexterous Manipulation via Camera-Space Ego-Centric Pretraining",
+      "abstract": "Egocentric human video offers a scalable data source for dexterous manipulation, yet using it to train humanoid robots presents two challenges: (1) an embodiment gap, as human hands differ structurally from robot end-effectors and low-cost egocentric recordings lack the torso kinematics required by conventional retargeting; and (2) heterogeneous data quality, including noisy hand-pose tracking and weakly aligned text annotations. We introduce IronMind, a vision-language-action (VLA) model that uses egocentric human video and heterogeneous robot data to pretrain policies for humanoid dexterous manipulation. To bridge the embodiment gap, IronMind bypasses explicit body-retargeting by using a camera-space action representation, the native reference space of egocentric video, and semantically aligning robot and human action dimensions. Across total pretraining budgets from 250 to 10,000 hours, validation loss decreases approximately log-linearly with data scale. Larger pretraining budgets also improve out-of-distribution real-robot manipulation after post-training: across six challenging tasks with unseen objects, affordances, and reasoning prompts, the 10,000-hour model achieves a 55.0% success rate, compared with at most 11.7% for every pretraining budget up to 5,000 hours and 5.0% without pretraining. At the same pretraining budget, the camera-space action representation also outperforms the torso-frame baseline. Together, these findings support pretraining with a camera-space action representation on large-scale human egocentric data as a scalable foundation for humanoid robot manipulation.",
+      "authors": [
+        "Huimin Pan",
+        "Yufan Ren",
+        "Kunpeng Song",
+        "Siyang Wang",
+        "Xiwen Zhang",
+        "Xiaoyun Hu",
+        "Zhuoxu Duan",
+        "Hanrui Zheng",
+        "Jialeng Ni",
+        "Nathan Zhao",
+        "Sibo Ma",
+        "Zhenxuan Fan",
+        "Zhongyang Che",
+        "Danny Bao",
+        "Jiacheng Wei",
+        "Jerry Bai",
+        "Xiaoyu Yue",
+        "Xiaoyang Guo",
+        "Chenyi Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T09:45:59+00:00",
+      "link": "https://arxiv.org/pdf/2609.39403v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "VLA model for humanoid dexterous manipulation pretraining",
+      "llm_evidence_cn": "面向人形灵巧操作预训练的VLA模型",
+      "llm_evidence": "面向人形灵巧操作预训练的VLA模型",
+      "canonical_evidence": "面向人形灵巧操作预训练的VLA模型",
+      "llm_tldr_en": "Egocentric human video is a scalable source for dexterous manipulation but suffers an embodiment gap and noisy data; IronMind uses camera-space action representation to pretrain humanoid manipulation policies without explicit retargeting.",
+      "llm_tldr_cn": "自我中心人类视频是灵巧操作的规模化数据来源，但训练人形机器人面临人体与机械末端执行器的具身差异，以及低成本录制缺乏躯干运动学、数据质量参差的问题。本文提出IronMind视觉-语言-动作模型，采用相机空间动作表示绕过显式身体重定向，利用自我中心视频与异构机器人数据预训练人形灵巧操作策略。该方法缓解了具身鸿沟，推动了人形操作的可扩展学习。",
+      "llm_tldr": "自我中心人类视频是灵巧操作的规模化数据来源，但训练人形机器人面临人体与机械末端执行器的具身差异，以及低成本录制缺乏躯干运动学、数据质量参差的问题。本文提出IronMind视觉-语言-动作模型，采用相机空间动作表示绕过显式身体重定向，利用自我中心视频与异构机器人数据预训练人形灵巧操作策略。该方法缓解了具身鸿沟，推动了人形操作的可扩展学习。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.39870v1",
+      "source": "arxiv",
+      "title": "Magic-W0: A Structured World-Action Foundation Model for Physical Intelligence",
+      "abstract": "World-action models (WAMs) augment robot policies with action-conditioned environment dynamics, yet existing approaches largely rely on future observation reconstruction or generic latent prediction and lack structured, control-oriented world representations tightly coupled with action generation. We introduce Magic-W0, a world-action foundation model that jointly models structured physical state evolution and continuous actions. Magic-W0 represents interaction as a Structured World Transition consisting of Current State, Transition, and Future State. Current State combines vision-language context with Current 3D Geometry; Transition is represented by 3D Motion capturing action-induced three-dimensional changes; and Future State is represented by Future Semantics describing task-relevant outcomes. To couple prediction and control, we propose a layer-aligned world-action interaction architecture in which evolving action hypotheses condition world-transition prediction, while predicted world representations continuously inform action generation. Magic-W0 is pre-trained on large-scale egocentric human manipulation, UMI, real-robot, and simulation data, with latent supervision for geometry, 3D motion, and future semantics from pre-trained visual models. Inference-time interventions show that structured world representations respond systematically to changes in candidate actions and that action-related information propagates through shared 3D representations into future semantic predictions. On RoboDojo-Sim, Magic-W0 achieves an average Score of 27.10, the highest among the compared WAMs. Across multiple real-robot tasks, it also demonstrates strong downstream performance after fine-tuning with limited downstream data, supporting generalization and rapid adaptation.",
+      "authors": [
+        "Xuhua Chen",
+        "Zhenhan Yin",
+        "Yuan Zhang",
+        "Lingfeng Zhang",
+        "He Zheng",
+        "Tong Mu",
+        "Shun Zuo",
+        "Dian Zhou",
+        "Di Wu",
+        "Xuan Zhou",
+        "Shaojie Wan",
+        "Rongtian Shen",
+        "Qiulong Xu",
+        "Yiduo Li",
+        "Yinglong Wang",
+        "Yanqian Wang",
+        "Kun Wang",
+        "Tao Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T14:49:55+00:00",
+      "link": "https://arxiv.org/pdf/2609.39870v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "world-action foundation model tightly coupling structured state and action generation",
+      "llm_evidence_cn": "紧耦合结构化状态与动作生成的世界-动作基础模型",
+      "llm_evidence": "紧耦合结构化状态与动作生成的世界-动作基础模型",
+      "canonical_evidence": "紧耦合结构化状态与动作生成的世界-动作基础模型",
+      "llm_tldr_en": "Magic-W0 is a world-action foundation model that jointly models structured physical state transitions and continuous robot actions, adding control-oriented 3D representations to improve robot policy learning.",
+      "llm_tldr_cn": "现有世界-动作模型多依赖未来观测重建或通用隐变量预测，缺乏与动作生成紧耦合的结构化控制导向表示。本文提出Magic-W0，将交互建模为包含当前状态、转移与未来状态的结构化世界转移，用视觉语言上下文与三维几何表示当前状态，用三维运动刻画动作引发的空间变化。该模型联合建模物理状态演化与连续动作，为机器人策略学习提供了更具结构性的世界表示，推动了物理智能。",
+      "llm_tldr": "现有世界-动作模型多依赖未来观测重建或通用隐变量预测，缺乏与动作生成紧耦合的结构化控制导向表示。本文提出Magic-W0，将交互建模为包含当前状态、转移与未来状态的结构化世界转移，用视觉语言上下文与三维几何表示当前状态，用三维运动刻画动作引发的空间变化。该模型联合建模物理状态演化与连续动作，为机器人策略学习提供了更具结构性的世界表示，推动了物理智能。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}
