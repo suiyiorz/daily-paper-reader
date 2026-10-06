@@ -1,0 +1,488 @@
+Title: Towards Safer Autonomous Driving in an Open World: A Dual-Process Approach
+
+URL Source: https://arxiv.org/pdf/2610.04088v1
+
+Published Time: Tue, 06 Oct 2026 00:27:11 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Towards Safer Autonomous Driving in an Open World: A Dual-Process Approach 
+
+Simon Janssen, Michiel Braat 1, Chris van der Ploeg 1,3, Serge Thill 2, Jan-Pieter Paardekooper 1,2
+
+Abstract — Before autonomous driving systems can be de-ployed on public roads, it is vital that these systems comply with safety standards, traffic rules, and social norms. Although neural networks trained on large amounts of driving data perform well in routine driving tasks, these models often struggle in novel situations that are not well-represented in the data. In this work, we propose a novel framework that combines a neural network for intuitive, learning-based plan-ning in routine driving tasks with model predictive control for reasoning-based planning in unfamiliar situations, inspired by Dual Process Theory. A meta-cognitive component is designed to switch between the two, using a knowledge graph to reason about contextual risk based on explicit perceptual information and relevant traffic rules and social norms. Contextual risk is represented through risk fields, guiding both the switching mechanism in the meta-cognitive component and compliance with safety standards, traffic rules, and social norms in the reasoning-based planner. The effectiveness of our framework is tested in CARLA for variations of a typical out-of-distribution situations involving (emergency) vehicles running a red light. We show that the novel architecture reduces the number of collisions in the scenarios by 89% and improves compliance with the special right-of-way rules, compared to the NN-only planner. 
+
+I. I NTRODUCTION 
+
+To fully automate driving, Autonomous Driving Systems (ADSs) need to be able to navigate complex and dynamic environments while also ensuring safe and collision-free be-havior, obeying traffic rules, and taking into account driving requirements such as passenger comfort and route progres-sion. Advances in machine learning have enabled signifi-cant progress in addressing these challenges. While Neural Networks (NNs) have been used extensively in perception [1], they are also increasingly being explored for planning [2]. NN-based planners can potentially learn more complex and human-like driving behaviors that are difficult to capture directly through hand-crafted rules or objective functions [3]. Moreover, NNs enable end-to-end architectures, which unify perception, motion prediction, and planning [4], [5] , making them less prone to error propagation and misalignment issues arising from inconsistencies between different modules. Despite the large potential of NNs for planning, important challenges remain. One of these challenges is how to im-prove generalization performance and robustness in out-of-
+
+> 1Netherlands Organisation for Applied Scientific Research, Integrated Vehicle Safety Group, 5700 AT Helmond, The Netherlands.
+> 2Radboud University, Donders Institute for Brain, Cognition and Be-haviour, P.O.Box 9010, 6500 GL, Nijmegen, The Netherlands
+> 3Eindhoven University of Technology, Dynamics and Control Group, Mechanical Engineering Dept., P.O. Box 513, 5600 MB, Eindhoven, The Netherlands
+
+distribution situations. ADSs will inevitably encounter novel situations due to the complexity and unpredictability of the real world. To prevent serious accidents and fatalities in these situations, safe and predictable behavior is essential. Whereas NNs excel at finding statistical patterns between input and output, they often struggle to learn the deeper semantic meaning behind this input-output mapping. Hence, when faced with novel inputs, these networks may generalize learned patterns based on semantically irrelevant factors, leading to over-confident or incorrect predictions as a result. To facilitate adaptivity in the open world and improve safety, we propose a hybrid framework that combines the strengths of NNs and traditional planners. Specifically, an end-to-end network is used to generate complex and human-like trajectories in familiar situations, while an Model Pre-dictive Control (MPC)-based planner is used to explicitly take into account contextual information encoded in risk fields to comply with safety standards, legal constraints, and human values in out-of-distribution situations. The integra-tion of the two systems is guided by principles from Dual Process Theory [6], which similarly suggests that human intelligence arises from an intuitive system (System I) relying on prior experience, and a reasoning-based system (System II) engaging in more elaborate logical reasoning. To decide when to switch between System I and System II, a Meta-Cognitive Component (MCC) is designed that uses the same risk fields as the MPC-based planner to determine the safety and social desirability of the trajectory predicted by the end-to-end network. The main contributions of this work are as follows:  
+
+> •
+
+A hybrid architecture is proposed that combines neural networks and symbolic reasoning to improve general-ization and robustness in out-of-distribution situations.  
+
+> •
+
+A meta-cognitive component capable of evaluating the safety and social desirability of an end-to-end neural network prediction and decide when to switch to a reasoning-based system.  
+
+> •
+
+The effectiveness of our approach is demonstrated through simulation experiments in the CARLA simu-lator. II. R ELATED WORK 
+
+A. End-to-End Autonomous Driving 
+
+End-to-end autonomous driving methods have recently emerged as a promising alternative to traditional modular pipelines, which separate perception, planning, and control. The two most prominent end-to-end approaches are imitation arXiv:2610.04088v1 [cs.AI] 2 Oct 2026 learning [4], [7] and reinforcement learning [5], [8]. Sev-eral methods directly optimize the planning task, omitting intermediate perception and motion prediction steps [9]. For example, CIL [4] uses a conditional imitation learning architecture to directly map an input image, input measure-ments, and a high-level control command to a corresponding output action. Other methods improve interpretability and robustness by learning auxiliary tasks such as object de-tection, semantic segmentation, depth estimation, and future occupancy prediction [7], [10]. 
+
+B. Safety in Autonomous Driving 
+
+A popular approach to improve the interpretability and safety of ADSs is to design explicit rules or cost functions that penalize collisions, deviations from the lane center, and violations of basic traffic rules, as well as other factors related to comfort and progress. Rules or cost functions can be integrated into the model architecture itself, such as in modular end-to-end architectures [11], [12]. They can also be applied externally as a separate safety system [13]. For example, SafetyNet employs a simple rule-based fallback layer that can modify the predicted trajectory of an end-to-end network when it is dynamically infeasible, violates traffic rules, or has a high likelihood of collision [3]. FusionAssurance determines the final safe trajectory using an MPC with a cost function that aims to follow the trajectory predicted by an end-to-end neural network, achieve the desired speed, improve comfort, and avoid obstacles modeled with risk functions [14]. Recently, Vision Language Models (VLMs) have been explored to act as a safety layer [15]. Unlike other meth-ods, VLMs can leverage their advanced world knowledge and reasoning capabilities to provide more context-aware interpretations of situations [16], which can subsequently be used to refine the trajectories generated by an end-to-end or modular architecture [17]. In this work, we also employ a reasoning-based system to act as a safety layer. However, we do not rely on VLMs, as these may be slow to respond and may suffer from hallucinations [16]. Instead, we follow the work in [18] and use an MPC-based planner and a knowledge graph to generate context-aware trajectories. Although this may result in less human-like behavior, this shortcoming is acceptable when used as a safety system, where the main objective is to ensure safe and socially desirable behavior. 
+
+C. Trajectory Evaluation 
+
+A vital aspect of the dual system architecture is the decision when to switch between the NN-based planner and MPC-based planner. This ties into the concept of meta-cognition, as it requires knowing when the NN-based planner cannot make a reliable decision [19]. Previous work has explored approaches that switch control when a trajectory scoring function exceeds a pre-defined threshold value [13]. A key advantage of using a trajectory scoring function is that individual predictions can be evaluated on actual measures of risk or reward, rather than approximate measures such as novelty or uncertainty [20]. Approximate measures often implicitly assume that end-to-end networks always perform reliably or poorly in certain situations, which may not hold in practice. In this work, we design an MCC that uses risk fields in the trajectory scoring function to decide when to switch to the MPC-based planner. Unlike other trajectory scoring functions [11], [12], [13], contextual information derived from a knowledge graph is used to shape these risk fields. This allows us to detect not only potential collisions, but also applications of more complex traffic rules and social norms. The proposed trajectory scoring function intentionally excludes comfort and route progression measures, as these factors are not directly relevant to determining the safety of a trajectory and in this work not important enough to switch system. III. M ETHOD 
+
+The proposed dual-process framework consists of three main components, as illustrated in Fig. 1. A NN-based planner is used to predict an initial solution to the plan-ning problem based on available input data from camera, LiDAR, and GPS sensors. This solution is then passed to a MCC, which evaluates its safety and desirability and decides whether to initiate a switch to a MPC-based planner. When engaged, the MPC-based planner can explicitly take into account safety, traffic rules, and social norms encompassed in the risk fields to produce a safer and more socially desirable trajectory at the expense of the ability to generate human-like trajectories. 
+
+A. System I (Neural Network) 
+
+In this work, we adopt TransFuser++ as the end-to-end planner, using the codebase and pre-trained model weights made publicly available by the authors [7]. The model uses a multi-modal fusion transformer to integrate information from a front-facing high-resolution RGB camera (3 x 384 x 1024) and 360 ◦ field of view LiDAR (voxelized into a 256 x 256 grid). Subsequently, it predicts a target speed and ten future path positions with a fixed distance of one meter between them, conditioned on a goal location (GPS coordinates) provided by a global planner and the current speed. A Proportional Integral Derivative (PID) controller converts this information to low-level driving commands (steering, throttle, brake). The model learns four auxiliary tasks to improve robustness: semantic segmentation, Bird’s Eye View (BEV) semantic segmentation, depth estimation, and bounding-box object detection. We refer the reader to [7] and [21] for more details on the architecture and training procedure. 
+
+B. Meta-Cognitive Component 
+
+The main contribution of this research is the addition of an MCC that can determine the safety, legality, and social desirability of the path predicted by the NN-based planner, based on contextual information derived from a knowledge graph. Meta-cognitive component   
+
+> Query
+> TransFuser++
+> LiDAR BEV
+> RGB image
+> Path
+> Bounding boxes
+> Goal location
+> Target speed
+> Map Object Information
+> Speed
+> Lane
+> Veh. class
+> BEV segmentation
+> Depth estimation
+> Sem. segmentation
+> Model Predictive Control
+> Control output
+> Optimize
+> Risk fields
+> Context
+> Time-based trajectory
+> Evaluate
+> Predictions
+> Subject to:
+> Decide
+> N
+> PID controller
+> PID controller
+> Knowledge graph
+
+Fig. 1: The overall structure of the proposed framework. 
+
+1) Input Description: Designing a separate perception module that provides perceptual information to the MCC is outside the scope of this research. Instead, a combi-nation of stochastic object bounding-box predictions from TransFuser++ and supplementary ground-truth data from perfect sensors in the simulation is used. All perceptual information is expressed in an ego-centric coordinate system, relative to the initial planar state of the ego vehicle given by (x0, y 0, θ 0) = 0 , where (xk, y k) represents the center position of the vehicle and θk represents the heading at time step k. Objects o(j)
+
+k can be represented by their kinematic state (ˆ x(j)
+
+k , ˆy(j)
+
+k , ˆθ(j)
+
+k , v (j)
+
+k , ˆδ(j)
+
+k ) for all detected objects j.
+
+(ˆ x(j)
+
+k , ˆy(j)
+
+k ) represents the object’s predicted position, ˆθ(j)
+
+k
+
+represents its predicted heading, v(j)
+
+k represents its ground-truth velocity, and ˆδ(j)
+
+k represents its estimated steering angle (based on the difference between heading and velocity direction). Objects additionally have an associated predicted classification c(j) (where the distinction between regular ve-hicles and emergency vehicles is based on ground-truth data) and a ground-truth lane assignment λ(j)
+
+k . Map information is obtained directly from the simulator and covers 32 meters in front and behind the ego vehicle, as well as 32 meters to the left and right. When the ego vehicle moves, the map translates accordingly. 
+
+2) Knowledge Graph: To model contextual understand-ing, relevant information about the current driving situation is organized and linked using a knowledge graph. First, percep-tual information is added to the knowledge graph, including object states o(j)0 , object classifications c(j), infrastructure information, and relations between them. Next, reasoning rules are used to add implicit information about traffic rules and social norms. Specifically, rules are used to infer the acceptability of crossing lane markings, the risk levels of objects, the permissibility to drive in a particular lane, and the precedence at intersections. The knowledge graph and reasoning rules are imple-mented using TypeDB 3.0. An ontology defines the semantic relationship between concepts through entities, relations, and attributes. Entities represent independent concepts, like detected objects, lanes, or traffic signs. Relations describe interactions between entities by assigning them roles. For instance, the ‘in front’ relation links a subject (ego entity) and an object (actor entity). Attributes assign values to entities or relations, representing properties such as speed or position. Fig. 2 shows the complete entity type hierarchy defined in the ontology. Fig. 3 and Fig. 4 show the most important relation types. Entity       
+
+> Physical
+> Actor
+> Ego
+> Object Type
+> Vehicle
+> Car Emergency Vehicle
+> VRU
+> Pedestrian
+> Infrastructure
+> Lanelet Lane Marking Intersection
+> Regulatory Element
+> Traffic Light Stop Sign Line Type
+> Solid Line Dashed Line Road Edge
+
+Fig. 2: Entity hierarchy. Actor  
+
+> in front/
+> behind/
+> next to
+> Perception Certainty
+> lateral location
+> has object type
+> Ego
+> Object Type
+> Distance
+> Velocity Size
+> = Entity
+> = Relation
+> = Attribute
+
+Fig. 3: Most important relations for physical entities. Lanelet  
+
+> part of Intersection
+> Lane Marking
+> left/right border
+> has line type
+> Line Type
+> has regulatory element
+> Regulatory Element
+> Physical
+> is on
+> Distance
+> Traffic Light
+> State
+> = Entity
+> = Relation
+> = Attribute
+
+Fig. 4: Most important relations for infrastructure entities. One of the advantages of using a knowledge graph is that it allows us to derive implicit contextual information based on perceptual information through logical inference. In TypeDB 3.0, this is achieved using functions, which can match patterns in the data to infer additional knowledge. Following the work of Van der Ploeg et al. (2023), functions are used to implement traffic rules and social norms. Table I lists the rules specifying the acceptability to cross lane markings, Table II the rules specifying object risk levels, Table III the rules specifying the permissibility to drive on a particular lane, and Table IV the rules specifying the intersection precedence, based on right-of-way rules. TABLE I: Natural language descriptions and priorities of rules that specify line crossing acceptability. 
+
+Priority Natural Language Rule 
+
+0 When a line is dashed, it is acceptable to cross 0 When a line is solid, it is not acceptable to cross 0 When a line is a road edge, it is not acceptable to cross 1 When a line is dashed, it is on the left side of the road and connected to a lane in the opposite direction, it is not acceptable to cross 2 When a line is a left or right border of a lane that is itself part of an intersection, it is acceptable to cross 3 When a line is a left or right border of a lane that is itself part of an intersection, and the ego vehicle is on that lane, it is not acceptable to cross 
+
+TABLE II: Natural language descriptions and priorities of rules that specify object risk levels. 
+
+Priority Natural Language Rule 
+
+0 An object has medium risk. 1 When an object is behind the ego vehicle, it has low risk 2 When an object is in front of the ego vehicle,and the object is not on a lane in the opposite direction or a lane that is in the opposite direction of another lane that the ego vehicle can reach by following its current lane, and the ego vehicle could reach the object in less than 2 seconds (assuming constant ego velocity), it has high risk. 3 When an object has an object type emergency vehicle, it has high risk. 
+
+TABLE III: Natural language descriptions and priorities of rules that specify driving permissibility. 
+
+Priority Natural Language Rule 
+
+0 It is permissible to drive on a lane. 1 When a lane is in the opposite direction of the lane that the ego vehicle is currently on, or a lane is in the opposite direction of another lane that the ego vehicle can reach by following its current lane, it is not permissible to drive on. 
+
+While the first two rules expand on those provided in [18], the latter two rules are introduced for our specific use case. Since rules may conflict with each other, give rise to exceptions, and have to deal with incomplete knowledge in the open world, they are implemented as default rules with priorities, similar to earlier work [18]. At inference time, the rule with the highest priority is selected. 
+
+3) Populating Risk Fields: When querying the knowledge graph, the MCC obtains implicit contextual information that is used to populate risk potential fields. Two sources of risk are considered in this work: object-imposed risk and TABLE IV: Natural language descriptions and priorities of right of way rules. 
+
+Priority Natural Language Rule 
+
+0 The ego vehicle has the right of way at an intersection. 1 When an intersection is managed by traffic lights, the traffic light is turned red, and this is the first intersection that the ego vehicle approaches by following its current lane, the ego vehicle does not have the right of way. 1 When an intersection is not managed by traffic lights, it is the first intersection that the ego vehicle approaches by following its current lane, it is the first intersection that another physical entity approaches by following its current lane, the physical entity comes from the right, and either the physical entity is expected to enter the intersection within 5 seconds, or its distance to the intersection is less than 10 meters, the ego vehicle does not have right of way. 2 When an intersection is the first intersection that the ego vehicle approaches by following its current lane, and it is the first intersection that another physical entity approaches, the physical entity has object type emergency vehicle, and either the physical entity is expected to enter the intersection within 10 seconds, or the distance to the intersection is less than 20 meters, the ego vehicle does not have right of way. 3 When the ego vehicle is on a lane that is part of an intersection, the ego vehicle has right of way. 
+
+TABLE V: Risk parameters for objects, based on classifica-tion, dimensions, and risk level. 
+
+Object Class Risk Level AO σx σy
+
+Car Low 2 1.5lO + 0 .05 1.1wO + 0 .05 
+
+Car Medium 3 1.5lO + 0 .1 1.1wO + 0 .1
+
+Car High 4 1.5lO + 0 .3 1.1wO + 0 .3
+
+Pedestrian Low 2 1.5lO + 1 .2 1.1wO + 1 .2
+
+Pedestrian Medium 4 1.5lO + 1 .7 1.1wO + 1 .7
+
+Pedestrian High 7 1.5lO + 2 .2 1.1wO + 2 .2
+
+Em. vehicle Low 2 1.5lO + 0 .05 1.1wO + 0 .05 
+
+Em. vehicle Medium 3 1.5lO + 0 .1 1.1wO + 0 .1
+
+Em. vehicle High 4 1.5lO + 0 .3 1.1wO + 0 .3
+
+infrastructural risk. Similar to [18] and [22], object-imposed risk is described by a bivariate Gaussian distribution: 
+
+˜UOk (x, y ) = 
+
+> No
+
+X
+
+> n=1
+
+A(n) 
+
+> O
+
+e− f (n)   
+
+> o(x,y, ok)2
+
+(1) 
+
+f (n) 
+
+> o
+
+=
+
+h
+
+x − ˆx(n) 
+
+> k
+
+y − ˆy(n)
+
+> k
+
+i
+
+RΣ−1RT
+
+"
+
+x − ˆx(n)
+
+> k
+
+y − ˆy(n)
+
+> k
+
+#
+
+Σ = 
+
+"
+
+(σ(n) 
+
+> x
+
+)2 00 (σ(n) 
+
+> y
+
+)2
+
+#
+
+, R =
+
+"
+
+cos ˆθ(n) 
+
+> k
+
+− sin ˆθ(n)
+
+> k
+
+sin ˆθ(n) 
+
+> k
+
+cos ˆθ(n)
+
+> k
+
+#
+
+where (x, y ) represents the evaluation position, 
+
+(ˆ x(n) 
+
+> k
+
+, ˆy(n) 
+
+> k
+
+) represents the position of the n-th object and ˆθ(n) 
+
+> k
+
+represents its heading. No represents the total number of objects detected in the environment. The parameters A(n) 
+
+> O
+
+, σ(n) 
+
+> x
+
+, and σ(n) 
+
+> y
+
+represent the amplitude and standard deviation of the n-th object, which are listed in Table V and are based on those used in [18]. Infrastructural risk is obtained by either directly mapping the relative positions of infrastructure elements to risk using a binary mask for lanes and off-road risk, or similar to [23], TABLE VI: Risk parameters for lane markings based on the lane type and line crossing acceptability.                
+
+> Lane Type Acceptability ALσ
+> Regular Acceptable 1.5 0.6
+> Regular Not acceptable 40.6
+> Intersection Acceptable 00.6
+> Intersection Not acceptable 0.65 0.6
+
+TABLE VII: Risk parameters for intersections based on right of way.       
+
+> Precedence AIσ
+> Right of way 01.5 No right of way 41.5
+
+by convolving this mask with a 2D Gaussian convolution for lane boundaries and intersections to create a smooth risk map. Each category of infrastructure element c is encoded as a binary mask M (c)(x, y ) ∈ { 0, 1} over the environmental map, indicating its locations relative to the ego vehicle. Using the binary masks, the risk fields are described as follows: 
+
+˜ULk (x, y ) = 
+
+> Nl
+
+X
+
+> l=1
+
+A(l) 
+
+> L
+
+(M (l) ∗ Gσ(l)
+
+)( x, y ) (2) 
+
+˜UIk (x, y ) = 
+
+> Ni
+
+X
+
+> i=1
+
+A(i) 
+
+> I
+
+(M (i) ∗ Gσ(i)
+
+)( x, y ) (3) 
+
+˜UDk (x, y ) = 
+
+> Nd
+
+X
+
+> d=1
+
+A(d) 
+
+> D
+
+M (d)(x, y ) (4) 
+
+˜URk (x, y ) = 4 · M R(x, y ) (5) 
+
+Gσ(c)
+
+(x, y ) = 12π(σ(c))2 e− (x2+y2)2( σ(c))2
+
+where ˜ULk represents the risk of crossing the boundaries of the lane, ˜UIk represents the risk of driving at intersections, 
+
+˜UDk represents the risk of driving in a particular lane and ˜URk
+
+represents the risk of driving off-road. The sign ∗ denotes the 2D convolution with the Gaussian kernel Gσ(c)
+
+. The values Nl, Ni, and Nd represent the number of distinct categories defined for lane markings, intersections, and lanes, respectively. These match the number of entries in Table VI, Table VII, and Table VIII. The terms A(l) 
+
+> L
+
+, σ(l), A(i) 
+
+> I
+
+, σ(i),and A(d) 
+
+> D
+
+correspond to the amplitude and standard deviation of the risk fields, which are listed in the same tables for each category and are based on those used in [18]. Since lanes and off-road regions are always separated by smoothed lane TABLE VIII: Risk parameters for lanes based on driving permissibility.    
+
+> Permissibility AD
+> Permissible 0Not permissible 3
+
+boundaries or intersections, these infrastructural elements do not require smoothing themselves. Therefore, the convolution with a Gaussian kernel is omitted. 
+
+4) Evaluating Predicted Path: To evaluate risk along the path predicted by TransFuser++, it is converted into a time-based trajectory that encodes the position of the ego vehicle at each time step k for each k ∈ [0 ...N ], where N is the prediction horizon. Cubic spline interpolation is used to cre-ate a smooth curve between the predicted path points. Next, the ego vehicle motion is simulated using a longitudinal PID controller (to predict throttle and brake inputs) and a learned polynomial model (to estimate future velocities). Since the ten predicted future path positions only cover 12.5 meters in front of the ego vehicle, the maximum prediction horizon 
+
+N dynamically reduces when the ego vehicle is moving fast, such that the final position remains within the predicted 12.5-meter path. Trajectories of surrounding objects are predicted using the Constant Velocity model for pedestrians and the Constant Steering Angle and Velocity model for vehicles [24]. The risk values of the time-based trajectory prediction of the NN model can be obtained by adding the relevant risks from the risk fields: 
+
+risk k(x, y ) = ˜UOk (xk, y k) + ˜ULk (xk, y k) + ˜UIk (xk, y k)+ ˜UDk (xk, y k) + ˜URk (xk, y k) (6) To decide whether to intervene, the maximum risk value along the trajectory is determined (i.e., max k risk k(x, y )). When this value exceeds an empirically determined threshold value T , the MCC initiates a switch to the MPC-based planner. 
+
+C. System II (Model Predictive Control) 
+
+The MPC-based planner follows the implementation of [22] and [18], optimising a path of minimal risk towards the goal point. The planner uses a non-linear kinematic bicycle model, suitable for urban driving, and input bounds based on the properties of the ego vehicle. The optimization objective of the MPC combines this model, the current state, the risk fields (1), (2), (3), (4), and (5), and a reference state rN ,similar to Eq. 12 in [18]. The planar position of rN is provided by the global planner (i.e., the same global planner as is used by TransFuser++). Having the risk fields as basis for the optimization objective ensures that the planner takes into account the traffic rules and social norms that form the basis for the risk fields. The planner is implemented using the CasADi [25] op-timization framework together with the IPOPT non-linear solver [26]. The planner optimizes trajectories over the max-imum prediction horizon N . For low-level vehicle control, two PID controllers are used, identical to the controllers used in [7]. IV. R ESULTS 
+
+A. Experimental Setup 
+
+To determine the effectiveness of our proposed framework, it is implemented in Python and simulated in CARLA TABLE IX: Simulation parameters.                                                 
+
+> Par. Description Value Unit
+> tsSampling time 0.15 s
+> NMaximum trajectory horizon 20 -
+> TDecision threshold MCC 0.7 -
+> ℓuInput weights [0.001, 1] -
+> mTerminal weights [0.1, 0.01, 0, 0, 0] -
+> x, ¯xPosition x-coordinate [−∞ ,∞]m
+> y, ¯yPosition y-coordinate [−∞ ,∞]m
+> θ, ¯θHeading [−π, π ]rad
+> a, ¯aLong. acceleration bounds [-8, 1.89] ms −2
+> δ, ¯δFront wheel angle bounds [-1, 1] rad
+> v, ¯vLong. velocity bounds [0, 15] ms −1
+> ω, ¯ωSteering rate bounds [-1.5, 1.5] rads −1
+
+TABLE X: Scenario parameters.      
+
+> Parameter range
+> Scenario trigger distance [20, 23, 27, 30] (m) Adversary speed [35, 40, 45, 50, 55] (km/h) Adversary vehicle model [ambulance, car] Intersection [A, C, B, D]
+
+[27]. The simulation parameters are listed in Table IX. The risk parameters are listed in Tables V, VI, VII, and VIII. Risk fields are represented in a 1024x1024 pixel grid map, corresponding to a 64m x 64m area centered on the ego vehicle. For the calculations of the MPC in the CasADi optimizer, the grid map is downscaled by a factor of eight and smoothed using cubic spline interpolation to allow continuous evaluation. Due to the computational demands of the MCC component and the MPC optimization, the effective simulation timestep is dictated by execution time of the framework, which lead to a rate slower than real time. One out-of-distribution scenario category was used in the experiments: an adversary vehicle running a red light at an intersection. This scenario was tested for both a normal car and an emergency vehicle running the red light. In these scenarios, the following parameters were varied: the distance of the ego vehicle to the middle of the intersection (which triggers the start of the scenario), the speed of the adversary vehicle, and the specific intersection at which the scenario occurs. Table X shows the parameters that were used in the scenarios. Fig. 5 shows the different intersections that were used. Scenarios are designed so that the ego vehicle is likely to collide with the adversary vehicle when it does not take any preventive action. Although NNs are often trained on scenarios where vehicles run a red light, it is a scenario that does not occur frequently, and most existing end-to-end networks do not distinguish regular vehicles from emergency vehicles. All parameter combinations were tested, resulting in 160 test scenarios for both the TransFuser++ model with and without the MCC. In addition, the TransFuser v6 (TFv6) resnet34 model [28] is included in the experiments as a state-of-the-art baseline for comparison. All scenarios were evaluated based on whether the system could avoid a collision with the adversary vehicle on the crossing. 
+
+Fig. 5: For different intersection setups were used in the simulations. TABLE XI: Number of scenarios with infraction.             
+
+> Infraction Type TF++ TF++ & MCC TFv6
+> Collisions with Vehicle 48 58Collisions with Road Layout 070Outside lane 010
+
+B. Results 
+
+Collisions that occur in the simulations are shown in Table XI. The TransFuser++ model without the MCC collides with the adversary vehicle in 48 out of 160 simulations, while the system with the MCC results in only 5 collisions. This is similar to the state-of-the-art TFv6 model which had 8 collisions. Fig. 6 shows the number of vehicle-to-vehicle collisions per scenario parameter. As expected, the model with the MCC produces fewer collisions with the adversary vehicle. With the MCC active, the risk of entering the intersection when an ambulance is approaching or when the adversary vehicle is crossing exceeds the threshold, which makes the MPC take over control and stop the vehicle. An example of this is shown in Fig. 7. The MCC also enables System II to intervene in near-collision situations, as the risk around nearby road users becomes sufficiently high. An example of this behavior is shown in Fig. 8. These examples illustrate the benefit of integrating the MCC and reasoning-based System II: the system explicitly recognizes high-risk situations or potential violations of traffic rules and, even in out-of-distribution cases, prevents unnecessary collisions. Both the TransFuser++ model with and without the MCC perform worst at intersection D. This is likely because, in this configuration, the adversary vehicle approaches from the front rather than from the left or right, making it more difficult for both systems to anticipate and react to the hazard. Furthermore, all road-layout collisions for the model with the MCC occur in Scenario 4. These collisions happen specifically when the MCC intervenes by steering the vehicle Fig. 6: Collisions with vehicle per scenario parameter. 
+
+Fig. 7: Snapshot where the MCC risk is above the threshold and the MPC is activated, stopping the vehicle. away from the adversary. While this intervention avoids a collision with the adversary vehicle, it causes the MPC-generated trajectory to require a larger rotation angle than the ego vehicle can feasibly follow at that moment. As a result, the vehicle is unable to adhere to these larger rotation angles, drifts outside the lane, and ends up colliding with the tree or fences located on the curb. Figure 9 shows a timestamp when the MPC intervenes in one of the 7 layout collision simulations. The cause of the mismatch in the intended steering angle by the MPC and the actual angle executed by the PID controller shows the challenge in correctly tuning the MPC. V. C ONCLUSIONS 
+
+In this work, we propose a novel dual-process approach that combines an NN-based planner and a context-aware MPC-based planner. We designed an MCC that uses risk fields shaped by perceptual information, traffic rules, social norms, and predicts trajectories of surrounding objects to evaluate the safety and social desirability of a trajectory generated by an end-to-end neural network. When the risk 
+
+Fig. 8: Snapshot where the MCC risk is above the threshold and the MPC is activated adjusting the system I trajectory. 
+
+Fig. 9: Snapshot where the MPC engages but only is able to calculate a path that collides with a roadside fence. associated with this trajectory exceeds an empirically de-termined threshold value, a switch is initiated to an MPC-based planner, which explicitly uses the risk fields to generate a safer, although less human-like, alternative trajectory. We tested our method in CARLA through simulations involving an adversary vehicle running a red light at intersections. We show that our method improves the safety and adaptivity of the ADS by reducing the amount of vehicle-to-vehicle collisions in the simulations by 89%. Future work will be di-rected towards integrating more advanced motion prediction models, adopting a more principled approach to derive the decision threshold in the MCC, improving the computational time and scaling the method to other traffic scenarios. 
+
+A. Acknowledgment 
+
+This work was partly funded by the Horizon Europe programme of the European Union, under grant agreement 101202457 (project AIGGREGATE). Views and opinions expressed here are however those of the author(s) only and do not necessarily reflect those of the European Union or CINEA. Neither the European Union nor the granting authority can be held responsible for them. REFERENCES 
+
+[1] A. Pravallika, M. F. Hashmi, and A. Gupta, “Deep learning frontiers in 3D object detection: A compre-hensive review for autonomous driving,” IEEE Access ,vol. 12, pp. 173 936–173 980, 2024. [2] L. Chen et al., “End-to-end autonomous driving: Chal-lenges and frontiers,” IEEE Transactions on Pattern Analysis and Machine Intelligence , vol. 46, no. 12, pp. 10 164–10 183, 2024. [3] M. Vitelli et al., “SafetyNet: Safe planning for real-world self-driving vehicles using machine-learned policies,” in 2022 International Conference on Robotics and Automation (ICRA) , Philadelphia, PA, USA, 2022, pp. 897–904. [4] F. Codevilla et al., “End-to-end driving via conditional imitation learning,” in 2018 IEEE International Con-ference on Robotics and Automation (ICRA) , 2018, pp. 4693–4700. [5] M. Toromanoff, E. Wirbel, and F. Moutarde, “End-to-end model-free reinforcement learning for urban driving using implicit affordances,” in 2020 IEEE/CVF Conference on Computer Vision and Pattern Recogni-tion (CVPR) , Seattle, WA, USA, 2020, pp. 7151–7160. [6] D. Kahneman, Thinking, fast and slow . Farrar, Straus and Giroux, 2011. [7] B. Jaeger, K. Chitta, and A. Geiger, “Hidden biases of end-to-end driving models,” in 2023 IEEE/CVF International Conference on Computer Vision (ICCV) ,Paris, France, 2023, pp. 8206–8215. [8] J. Chen, S. E. Li, and M. Tomizuka, “Interpretable end-to-end urban autonomous driving with latent deep reinforcement learning,” IEEE Transactions on Intelli-gent Transportation Systems , vol. 23, no. 6, pp. 5068– 5078, 2022. [9] Z. Zhang et al., “End-to-end urban driving by imitating a reinforcement learning coach,” in 2021 IEEE/CVF International Conference on Computer Vision (ICCV) ,Montreal, QC, Canada, 2021, pp. 15 202–15 212. [10] A. Prakash, K. Chitta, and A. Geiger, “Multi-modal fusion transformer for end-to-end autonomous driv-ing,” in 2021 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , Nashville, TN, USA, 2021, pp. 7073–7083. [11] Y. Hu et al., “Planning-oriented autonomous driving,” in 2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , Vancouver, BC, Canada, 2023, pp. 17 853–17 862. [12] B. Jiang et al., “Vad: Vectorized scene representation for efficient autonomous driving,” in 2023 IEEE/CVF International Conference on Computer Vision (ICCV) ,Paris, France, 2023, pp. 8306–8316. [13] C. A. J. Hanselaar et al., “The safety shell: An architecture to handle functional insufficiencies in automated driving,” IEEE Transactions on Intelligent Transportation Systems , vol. 25, no. 7, pp. 7522–7540, 2024. [14] H. Zhou et al., “Enhance planning with physics-informed safety controller for end-to-end autonomous driving,” arXiv preprint, 2024. [15] J. Mei et al., “Continuously learning, adapting, and improving: A dual-process approach to autonomous driving,” in Advances in Neural Information Process-ing Systems , vol. 37, 2024, pp. 123 261–123 290. [16] H. Gao et al., “A survey for foundation models in autonomous driving,” arXiv preprint, 2024. arXiv: 
+
+2402.01105 [cs.LG] .[17] X. Tian et al., “DriveVLM: The convergence of au-tonomous driving and large vision-language models,” arXiv preprint, 2024. [18] C. Van der Ploeg et al., “Connecting the dots: Context-driven motion planning using symbolic reasoning,” in 2023 IEEE Intelligent Vehicles Symposium (IV) ,Anchorage, AK, USA, 2023, pp. 1–8. [19] I. Posner, “Robots thinking fast and slow: On dual process theory and metacognition in embodied AI,” 2020. [20] K. Menda, K. Driggs-Campbell, and M. J. Kochender-fer, “EnsembleDAgger: A Bayesian approach to safe imitation learning,” in 2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) ,Macau, China, 2019, pp. 5041–5048. [21] K. Chitta et al., “TransFuser: Imitation with transformer-based sensor fusion for autonomous driv-ing,” IEEE Transactions on Pattern Analysis and Ma-chine Intelligence , vol. 45, no. 11, pp. 12 878–12 895, 2023. [22] C. Van der Ploeg et al., “Long horizon risk-averse motion planning: A model-predictive approach,” in 
+
+2022 IEEE 25th International Conference on Intel-ligent Transportation Systems (ITSC) , Macau, China, 2022, pp. 1141–1148. [23] C. van der Ploeg et al., “Overcoming fear of the unknown: Occlusion-aware model-predictive planning for automated vehicles using risk fields,” IEEE Trans-actions on Intelligent Transportation Systems , vol. 25, no. 9, pp. 12 591–12 604, 2024. [24] R. Schubert, E. Richter, and G. Wanielik, “Compar-ison and evaluation of advanced motion models for vehicle tracking,” in 2008 11th International Confer-ence on Information Fusion , 2008, pp. 1–6. [25] J. A. E. Andersson et al., “CasADi: A software frame-work for nonlinear optimization and optimal control,” en, Mathematical Programming Computation , vol. 11, no. 1, pp. 1–36, 2019. [26] A. Wächter and L. T. Biegler, “On the implemen-tation of an interior-point filter line-search algorithm for large-scale nonlinear programming,” Mathematical Programming , vol. 106, no. 1, pp. 25–57, 2006. [27] A. Dosovitskiy et al., “CARLA: An open urban driv-ing simulator,” in Proceedings of the 1st Annual Con-ference on Robot Learning , S. Levine, V. Vanhoucke, and K. Goldberg, Eds., ser. Proceedings of Machine Learning Research, vol. 78, PMLR, 2017, pp. 1–16. [28] L. Nguyen et al., “Lead: Minimizing learner-expert asymmetry in end-to-end driving,” in Conference on Computer Vision and Pattern Recognition (CVPR) ,2026.
