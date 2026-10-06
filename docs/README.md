@@ -6,74 +6,72 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-10-04
-- 运行时间：2026-10-04 22:58:51 UTC
+- 最新运行日期：2026-10-06
+- 运行时间：2026-10-06 00:56:29 UTC
 - 运行状态：成功
-- 本次总论文数：18
-- 精读区：7
-- 速读区：11
+- 本次总论文数：16
+- 精读区：6
+- 速读区：10
 
 ### 今日简报（AI）
-2026-10-04 日报精选 18 篇，精读 7 篇、速读 11 篇，聚焦具身智能与自动驾驶前沿。最值得看的是满分精读 RCVLA 的 4D 雷达语义推理与轨迹仲裁，以及 DexTaG 用触觉引导强化学习做灵巧操作。建议普通读者优先从这两篇精读入手，再按兴趣扫读 VLA 奖励学习与移动双臂操作方向。
-- 详情：[/202610/04/README](/202610/04/README)
+今日扫读16篇具身智能与机器人论文，精读6篇、速读10篇，重点落在零样本操作与统一具身模型两条主线。
+
+最值得看的是两篇9.0分精读：MotorMind用通用视觉语言模型支撑零样本机器人操作，EWAM则探索统一具身模型从语义理解、视觉前瞻到动作的深度分层特化。
+
+普通读者可先读这两篇9分精读建立框架，再按兴趣扫8分的4D场景图、安全导航与视觉语言导航速读，快速把握从感知到规划的应用脉络。
+- 详情：[/202610/06/README](/202610/06/README)
 
 ### 精读区论文标签
-1. [RCVLA: 4D Radar-Grounded Semantic Reasoning and Trajectory Arbitration for Autonomous Driving](/202610/04/2609.32681v1-rcvla-4d-radar-grounded-semantic-reasoning-and-trajectory-arbitration-for-autonomous-driving)  
+1. [MotorMind: Scaffolding General Vision Language Models for Zero-Shot Robot Manipulation](/202610/06/2609.38078v1-motormind-scaffolding-general-vision-language-models-for-zero-shot-robot-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：面向自动驾驶的4D雷达语义推理与轨迹仲裁
-2. [DexTaG: Tactile-as-Guidance in Reinforcement Learning for Dexterous Manipulation](/202610/04/2609.33882v1-dextag-tactile-as-guidance-in-reinforcement-learning-for-dexterous-manipulation)  
+   evidence：用通用视觉语言模型实现零样本机器人操作
+2. [EWAM: Emergent Depth-Wise Specialization in a Unified Embodied Model -- From Semantic Understanding through Visual Foresight to Action](/202610/06/2609.39973v1-ewam-emergent-depth-wise-specialization-in-a-unified-embodied-model----from-semantic-understanding-through-visual-foresight-to-action)  
    标签：评分：9.0/10、query:ad
-   evidence：面向灵巧机器人操作的触觉引导强化学习
-3. [RoXDrive: Closed-Loop Reinforcement Learning for End-to-End Autonomous Driving via Action-Faithful Rollouts](/202610/04/2609.36851v2-roxdrive-closed-loop-reinforcement-learning-for-end-to-end-autonomous-driving-via-action-faithful-rollouts)  
+   evidence：融合视觉-语言-动作与世界动作表示的统一具身模型
+3. [Skill2Real: Agentic Skill Learning for Zero-Shot Sim-to-Real Robot Manipulation](/202610/06/2610.02788v1-skill2real-agentic-skill-learning-for-zero-shot-sim-to-real-robot-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：基于动作忠实回放的端到端自动驾驶闭环强化学习
-4. [LIBERO-Agent: Evaluating General-Purpose Agents for Direct Embodied Manipulation](/202610/04/2609.39507v1-libero-agent-evaluating-general-purpose-agents-for-direct-embodied-manipulation)  
+   evidence：面向零样本仿真到现实机器人操作的智能体技能学习
+4. [Equivariant Visual-Tactile Diffusion Policy for Contact-Rich Manipulation](/202610/06/2610.03333v1-equivariant-visual-tactile-diffusion-policy-for-contact-rich-manipulation)  
    标签：评分：9.0/10、query:ad
-   evidence：通用智能体直接具身操作的评测基准
-5. [Sparse Planner: A Hybrid Planner for Efficient Sampling via a Conditional Variational Autoencoder](/202610/04/2609.39570v1-sparse-planner-a-hybrid-planner-for-efficient-sampling-via-a-conditional-variational-autoencoder)  
-   标签：评分：9.0/10、query:ad
-   evidence：自动驾驶轨迹规划与学习式高效采样
-6. [Beyond Policy Alignment: Closing the Planning-Learning Loop for Robot Control with Learned World Models](/202610/04/2609.39751v1-beyond-policy-alignment-closing-the-planning-learning-loop-for-robot-control-with-learned-world-models)  
-   标签：评分：9.0/10、query:ad
-   evidence：用学习世界模型闭环规划-学习回路实现机器人控制
-7. [End-to-End Learning vs. Modular Architectures: Comparative Insights into Autonomous Driving Systems](/202610/04/2610.01746v1-end-to-end-learning-vs-modular-architectures-comparative-insights-into-autonomous-driving-systems)  
-   标签：评分：9.0/10、query:ad
-   evidence：自动驾驶系统感知规划控制架构的比较分析
+   evidence：面向接触丰富操作的等变视觉-触觉扩散策略
+5. [Cue the Flow: Steering Flow-Matching Policies for Open-World Delivery Manipulation](/202610/06/2609.38989v1-cue-the-flow-steering-flow-matching-policies-for-open-world-delivery-manipulation)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向开放世界移动操作的流匹配视觉-语言-动作策略引导
+6. [NarrativeFlow: Flow-Based Vision-Language-Action Model Using Robot Velocity Fields](/202610/06/2610.00981v1-narrativeflow-flow-based-vision-language-action-model-using-robot-velocity-fields)  
+   标签：评分：8.0/10、query:ad
+   evidence：基于流的视觉-语言-动作操控模型
 
 ### 速读区论文标签
-1. [PF-RL: Progress Field Reinforcement Learning via Goal-Conditioned Value Geometry for Vision-Language-Action Models](/202610/04/2609.32634v1-pf-rl-progress-field-reinforcement-learning-via-goal-conditioned-value-geometry-for-vision-language-action-models)  
+1. [ChronoGraph: Functional 4D Scene Graphs with Vision-Language Models for Interaction Understanding and Grounded Planning](/202610/06/2609.39665v1-chronograph-functional-4d-scene-graphs-with-vision-language-models-for-interaction-understanding-and-grounded-planning)  
    标签：评分：8.0/10、query:ad
-   evidence：面向长时程VLA操作的强化微调与稠密进度反馈
-2. [Demonstration-Free Success-Probability Reward Learning for Generalist Robot Policies](/202610/04/2609.33653v1-demonstration-free-success-probability-reward-learning-for-generalist-robot-policies)  
+   evidence：面向具身交互理解与落地规划的4D场景图
+2. [RL-Guided PAC-NMPC for Probabilistically-Safe Perception-Based Navigation in Unknown Environments](/202610/06/2609.39854v1-rl-guided-pac-nmpc-for-probabilistically-safe-perception-based-navigation-in-unknown-environments)  
    标签：评分：8.0/10、query:ad
-   evidence：面向通用机器人策略的无演示奖励学习
-3. [DexRoam: Learning Mobile Bimanual Dexterous Manipulation from Egocentric Whole-Body Human Demonstrations](/202610/04/2609.35761v1-dexroam-learning-mobile-bimanual-dexterous-manipulation-from-egocentric-whole-body-human-demonstrations)  
+   evidence：强化学习结合随机NMPC实现安全的感知导航
+3. [NavHarness: Adaptive Goals for Agentic Vision-Language Navigation](/202610/06/2609.39915v1-navharness-adaptive-goals-for-agentic-vision-language-navigation)  
    标签：评分：8.0/10、query:ad
-   evidence：结合移动、全身运动与双手灵巧操作
-4. [Action Chunking Proximal Policy Optimization with Feedback Correction](/202610/04/2609.36250v1-action-chunking-proximal-policy-optimization-with-feedback-correction)  
+   evidence：面向视觉语言导航的具身智能体
+4. [Are Frontier VLM Agents Ready to Be Robot Generalists? An Empirical Study with the Embodied Agent Arena](/202610/06/2610.00854v1-are-frontier-vlm-agents-ready-to-be-robot-generalists-an-empirical-study-with-the-embodied-agent-arena)  
    标签：评分：8.0/10、query:ad
-   evidence：面向高维机器人控制的动作分块PPO
-5. [VidAct: Learning Manipulation from In-the-Wild Videos with Object-Centric 3D Awareness](/202610/04/2609.36870v1-vidact-learning-manipulation-from-in-the-wild-videos-with-object-centric-3d-awareness)  
+   evidence：评估具身VLM智能体作为机器人通才的能力
+5. [DuoMind: Enabling Distributed Multi-Robot Coordination with Semantic Communication](/202610/06/2610.02161v1-duomind-enabling-distributed-multi-robot-coordination-with-semantic-communication)  
    标签：评分：8.0/10、query:ad
-   evidence：从单目视频学习物体中心三维操控策略
-6. [IronMind: Scaling Humanoid Dexterous Manipulation via Camera-Space Ego-Centric Pretraining](/202610/04/2609.39403v1-ironmind-scaling-humanoid-dexterous-manipulation-via-camera-space-ego-centric-pretraining)  
+   evidence：基于VLM/VLA的多机器人分布式协同
+6. [Rethinking World-Action Model for Compositional and In-Context Robotic Manipulation](/202610/06/2610.02368v1-rethinking-world-action-model-for-compositional-and-in-context-robotic-manipulation)  
    标签：评分：8.0/10、query:ad
-   evidence：面向人形灵巧操作预训练的VLA模型
-7. [Magic-W0: A Structured World-Action Foundation Model for Physical Intelligence](/202610/04/2609.39870v1-magic-w0-a-structured-world-action-foundation-model-for-physical-intelligence)  
+   evidence：面向组合式机器人操作的分层世界-动作模型
+7. [RoboBridge: A Self-Evolving Embodied Agent Framework for Sim-to-Real Transfer](/202610/06/2610.02717v1-robobridge-a-self-evolving-embodied-agent-framework-for-sim-to-real-transfer)  
    标签：评分：8.0/10、query:ad
-   evidence：紧耦合结构化状态与动作生成的世界-动作基础模型
-8. [Beyond State-as-Action: Exploiting Command-State Discrepancy for Robot Imitation Learning](/202610/04/2609.33145v1-beyond-state-as-action-exploiting-command-state-discrepancy-for-robot-imitation-learning)  
+   evidence：面向仿真到现实迁移与持续适应的自演化具身智能体框架
+8. [MobiAgent: Dual-Loop Recursive Policy Self-Improvement for Long-Horizon Mobile Manipulation](/202610/06/2610.03476v1-mobiagent-dual-loop-recursive-policy-self-improvement-for-long-horizon-mobile-manipulation)  
+   标签：评分：8.0/10、query:ad
+   evidence：面向长时程移动操作的双环智能体框架
+9. [World Action Learning via Interaction-Centric Spectral Latent Guidance](/202610/06/2610.03607v1-world-action-learning-via-interaction-centric-spectral-latent-guidance)  
+   标签：评分：8.0/10、query:ad
+   evidence：将第一人称人类交互迁移到机器人操作策略
+10. [Token Communication-Assisted Collaborative Embodied Artificial Intelligence: Concepts, Framework, and Opportunities](/202610/06/2610.01826v1-token-communication-assisted-collaborative-embodied-artificial-intelligence-concepts-framework-and-opportunities)  
    标签：评分：7.0/10、query:ad
-   evidence：受限交互下的机器人操作模仿学习
-9. [Sufficiency of Zeroth-Order Reward Shaping for Policy Gradient in Stabilization Control](/202610/04/2609.34695v1-sufficiency-of-zeroth-order-reward-shaping-for-policy-gradient-in-stabilization-control)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向机器人深度强化学习的奖励塑形
-10. [Sample Complexity of Equivariant Reinforcement Learning](/202610/04/2609.36421v1-sample-complexity-of-equivariant-reinforcement-learning)  
-   标签：评分：7.0/10、query:ad
-   evidence：面向机器人控制的强化学习样本复杂度
-11. [ComManip: Overfitting Manipulation Policies to Comfortable Regions](/202610/04/2609.36928v1-commanip-overfitting-manipulation-policies-to-comfortable-regions)  
-   标签：评分：7.0/10、query:ad
-   evidence：将操控策略过拟合到稳定舒适区域
+   evidence：通过令牌通信协作的具身智能体
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,707 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-10-06T00:41:00.737035+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 15,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 10,
+    "quick_skim_target": 11,
+    "quick_selected": 10
+  },
+  "deep_dive": [
+    {
+      "id": "2609.38078v1",
+      "source": "arxiv",
+      "title": "MotorMind: Scaffolding General Vision Language Models for Zero-Shot Robot Manipulation",
+      "abstract": "Vision-language-action (VLA) models have advanced robotic manipulation, but their zero-shot generalization in new tasks and environments remains limited, and their reliance on specialized training keeps them from benefiting directly from rapidly advancing general-purpose vision-language models (VLMs). In parallel, recent agentic robotic systems leverage VLMs for high-level reasoning or coding agents for robot control, but often depend on extensive external models and tools, introducing additional complexity and cost. This motivates us to ask: Can a general-purpose VLM itself operate a robot more like the human teleoperator by reasoning directly from observations, issuing actions, and continuously adapting to execution feedback, without relying on external models such as learned action experts, coding agents or grounding tools like SAM3? In this work, we introduce MotorMind, a robot manipulation harness that connects VLM-proposed mid-level actions to deterministic robot control and feedback, with asynchronous monitoring and background memory updates. Without task-specific policy training, coding agents, or additional grounding tools such as SAM3, MotorMind achieves 66.7% success on the base LIBERO-PRO suites and 53.8% under perturbations, compared with at most 13.3% and 19.2%, respectively, for the prior zero-shot methods we evaluate. The same interface reaches 95% average success on a real xArm6 robot across direct manipulation and human-perturbation settings. Replacing the backbone with a stronger VLM further improves performance, while the remaining failures - primarily due to visual grounding, embodied reasoning, and action knowledge - decrease as VLM capability improves. These results show that a general-purpose VLM, when equipped with an appropriate mid-level action representation and asynchronous execution harness, can perform effective zero-shot robotic manipulation.",
+      "authors": [
+        "Bingxuan Li",
+        "Siqi Song",
+        "Yizhuo Wu",
+        "Jiarui Yao",
+        "Tong Zhang",
+        "Huan Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-29T17:36:40+00:00",
+      "link": "https://arxiv.org/pdf/2609.38078v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "zero-shot robot manipulation with general vision-language models",
+      "llm_evidence_cn": "用通用视觉语言模型实现零样本机器人操作",
+      "llm_evidence": "用通用视觉语言模型实现零样本机器人操作",
+      "canonical_evidence": "用通用视觉语言模型实现零样本机器人操作",
+      "llm_tldr_en": "MotorMind scaffolds general vision-language models for zero-shot robot manipulation, letting a VLM reason from observations, issue actions and adapt to feedback like a human teleoperator without heavy external tools.",
+      "llm_tldr_cn": "视觉语言动作模型在机器人操作上取得进展，但在新任务与新环境中的零样本泛化仍有限，且依赖专门训练而无法直接受益于快速发展的通用视觉语言模型。本文提出MotorMind，尝试让通用VLM像人类遥操作者一样直接从观测推理、输出动作并持续适应执行反馈，而无需大量外部模型与工具。该框架为机器人零样本操作提供了更简洁可扩展的路径。",
+      "llm_tldr": "视觉语言动作模型在机器人操作上取得进展，但在新任务与新环境中的零样本泛化仍有限，且依赖专门训练而无法直接受益于快速发展的通用视觉语言模型。本文提出MotorMind，尝试让通用VLM像人类遥操作者一样直接从观测推理、输出动作并持续适应执行反馈，而无需大量外部模型与工具。该框架为机器人零样本操作提供了更简洁可扩展的路径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.39973v1",
+      "source": "arxiv",
+      "title": "EWAM: Emergent Depth-Wise Specialization in a Unified Embodied Model -- From Semantic Understanding through Visual Foresight to Action",
+      "abstract": "Vision-language-action (VLA) policies emphasize semantic understanding, whereas world-action models (WAMs) learn predictive representations of environment dynamics. Systems that expose a policy to both sources often still concentrate action computation on a single expert. We present EWAM, an action-centric unified embodied model whose asymmetric joint attention lets action tokens read semantic, current-visual, predicted-future, and action information at every layer while the perceptual experts retain their distinct roles. Without layer-wise supervision, EWAM develops an emergent depth-wise specialization: action queries attend mainly to vision-language features in shallow layers, to predicted future frames in intermediate layers, and to action tokens themselves in deep layers. This handoff replicates across tasks and is stable across denoising steps. Checkpoint tracking and causal interventions show that it is learned and that action generation depends on it. EWAM is pretrained in two separate regimes, one on cross-embodiment robot trajectories and one on human egocentric video. In simulation and real-robot experiments, it surpasses existing VLA, WAM, and hybrid baselines. Human egocentric data improve both cross-embodiment transfer and real-robot robustness, and subtask-phase supervision improves long-horizon completion. Together, these results suggest that unified embodied learning can induce an ordered internal progression from semantic understanding, through visual foresight, to action formation.",
+      "authors": [
+        "Hao Wang",
+        "Jiajun Wen",
+        "Jingzhi Liu",
+        "Shuoshuo Xue",
+        "Zhiliang Chen",
+        "Min Lin",
+        "Yicheng Chang",
+        "Xiaoyu Guo",
+        "Yukang Zhuo",
+        "Zheng Chong",
+        "Yunshuang Nie",
+        "Jian Zhang",
+        "Weijia Liufu",
+        "Qingman Wu",
+        "Heming Xu",
+        "Bingchang Song",
+        "Dantong Wu",
+        "Zhiyuan Wang",
+        "Hang Xu",
+        "Jianhua Han",
+        "Bokui Chen",
+        "Shen Zhao",
+        "Rui Li",
+        "Xiaodan Liang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T15:35:53+00:00",
+      "link": "https://arxiv.org/pdf/2609.39973v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "unified embodied model combining vision-language-action and world-action representations",
+      "llm_evidence_cn": "融合视觉-语言-动作与世界动作表示的统一具身模型",
+      "llm_evidence": "融合视觉-语言-动作与世界动作表示的统一具身模型",
+      "canonical_evidence": "融合视觉-语言-动作与世界动作表示的统一具身模型",
+      "llm_tldr_en": "EWAM is an action-centric unified embodied model whose asymmetric joint attention lets action tokens read semantic, visual, predicted-future and action information, yielding emergent depth-wise specialization without layer supervision.",
+      "llm_tldr_cn": "视觉-语言-动作策略偏重语义理解，世界动作模型侧重环境动力学预测，二者结合时动作计算常集中于单一专家。作者提出EWAM，一种以动作为中心的统一具身模型，通过非对称联合注意力让动作令牌在每层读取语义、当前视觉、预测未来与动作信息。无需逐层监督，模型自发形成深度方向的分工，浅层关注视觉语言特征、深层关注预测信息，为具身智能体的统一建模提供新范式。",
+      "llm_tldr": "视觉-语言-动作策略偏重语义理解，世界动作模型侧重环境动力学预测，二者结合时动作计算常集中于单一专家。作者提出EWAM，一种以动作为中心的统一具身模型，通过非对称联合注意力让动作令牌在每层读取语义、当前视觉、预测未来与动作信息。无需逐层监督，模型自发形成深度方向的分工，浅层关注视觉语言特征、深层关注预测信息，为具身智能体的统一建模提供新范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.02788v1",
+      "source": "arxiv",
+      "title": "Skill2Real: Agentic Skill Learning for Zero-Shot Sim-to-Real Robot Manipulation",
+      "abstract": "Transferring robotic skills from simulation to reality requires task knowledge that remains usable across differences in perception, dynamics, and embodiment. We introduce Skill2Real, an agentic policy framework that learns executable skills through a shared application programming interface (API). A Proposer-Verifier-Governor (PVG) loop uses privileged simulation evidence to diagnose outcomes and validate updates, while keeping learned skills grounded in public observations and API semantics. The Cerebellum first acquires local manipulation skills; the Brain then learns task-level composition with the Cerebellum frozen. Both memories transfer to the real robot without task-policy fine-tuning or skill-memory updates. As GPT-5.6 Sol learns skills on LIBERO-90, evaluating each frozen checkpoint with GPT-6 Astra raises LIBERO-Pro Long success from 2.0% to 56.3%, without training on Pro Long. Independent Robosuite training reaches 85.1% and 89.4% mean success with Sol and Opus 5 across seven tasks, respectively. Frozen Sol-trained LIBERO-90 skills achieve 78.75% mean completion across four real-world manipulation tasks with Astra. Removing the Verifier or Governor during LIBERO-90 training lowers final Pro Long success by 17.3 and 13.3 percentage points, respectively. These results support learning and transferring a hierarchy of executable skills through a common robot interface.",
+      "authors": [
+        "Xincheng He",
+        "Siyu Ma",
+        "Chang Yu",
+        "Yunuo Chen",
+        "Yanjia Huang",
+        "Ying Nian Wu",
+        "Yin Yang",
+        "Chenfanfu Jiang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-02T04:25:12+00:00",
+      "link": "https://arxiv.org/pdf/2610.02788v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "agentic skill learning for zero-shot sim-to-real robot manipulation",
+      "llm_evidence_cn": "面向零样本仿真到现实机器人操作的智能体技能学习",
+      "llm_evidence": "面向零样本仿真到现实机器人操作的智能体技能学习",
+      "canonical_evidence": "面向零样本仿真到现实机器人操作的智能体技能学习",
+      "llm_tldr_en": "Skill2Real is an agentic policy framework that learns executable robot skills through a shared API, using a Proposer-Verifier-Governor loop and Brain-Cerebellum decomposition to transfer skills to real robots without fine-tuning.",
+      "llm_tldr_cn": "将机器人技能从仿真迁移到现实，需要任务知识在感知、动力学与本体差异下依然可用。作者提出Skill2Real，通过共享API学习可执行技能，用提议-验证-治理循环借助仿真特权信息诊断结果并校验更新，同时以大脑-小脑结构先学局部操作再学任务级组合。学到的技能记忆无需任务策略微调即可迁移到真实机器人，为零样本仿真到现实操作提供了新框架。",
+      "llm_tldr": "将机器人技能从仿真迁移到现实，需要任务知识在感知、动力学与本体差异下依然可用。作者提出Skill2Real，通过共享API学习可执行技能，用提议-验证-治理循环借助仿真特权信息诊断结果并校验更新，同时以大脑-小脑结构先学局部操作再学任务级组合。学到的技能记忆无需任务策略微调即可迁移到真实机器人，为零样本仿真到现实操作提供了新框架。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.03333v1",
+      "source": "arxiv",
+      "title": "Equivariant Visual-Tactile Diffusion Policy for Contact-Rich Manipulation",
+      "abstract": "Imitation learning for contact-rich manipulation requires high-quality expert data that is expensive to obtain. This makes learning a sample-efficient policy a key issue. To address this, we propose VISTA, a workspace-level equivariant visuotactile diffusion policy for data-efficient contact-rich imitation learning. VISTA projects visual and tactile observations into spherical tokens, injects tactile contact cues into visual spherical directions through permutation-equivariant spherical fusion, and rotates the fused harmonic representation using the end-effector orientation. The resulting representation conditions an equivariant diffusion policy to predict spatially consistent actions. Extensive experiments in both simulation and real-world robotic settings show that VISTA substantially improves data efficiency over strong visuotactile imitation learning baselines. Project website: https://vista-paper.github.io/",
+      "authors": [
+        "Lik Hang Kenny Wong",
+        "Yiyao Ma",
+        "Xiu-Shen Wei",
+        "Zelong Tan",
+        "Zhuheng Song",
+        "Dongsheng Xie",
+        "Kai Chen",
+        "Qi Dou"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-10-02T14:04:41+00:00",
+      "link": "https://arxiv.org/pdf/2610.03333v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "equivariant visual-tactile diffusion policy for contact-rich robot manipulation",
+      "llm_evidence_cn": "面向接触丰富操作的等变视觉-触觉扩散策略",
+      "llm_evidence": "面向接触丰富操作的等变视觉-触觉扩散策略",
+      "canonical_evidence": "面向接触丰富操作的等变视觉-触觉扩散策略",
+      "llm_tldr_en": "Contact-rich manipulation imitation learning needs costly expert data, making sample efficiency key. VISTA projects visual and tactile observations into spherical tokens, fuses tactile cues into visual directions equivariantly, and conditions an equivariant diffusion policy, improving data efficiency in simulation and real robots.",
+      "llm_tldr_cn": "接触丰富操作中的模仿学习依赖昂贵专家数据，样本效率成为关键问题。本文提出VISTA，一种工作空间级等变视觉-触觉扩散策略，将视觉与触觉观测投影为球面令牌，通过置换等变球面融合把触觉接触线索注入视觉方向，并依末端执行器姿态旋转融合后的调和表示。在仿真与真实机器人实验中，该方法以更高数据效率学习到空间一致的接触丰富操作策略。该工作推动了多模态等变表示在操作中的应用。",
+      "llm_tldr": "接触丰富操作中的模仿学习依赖昂贵专家数据，样本效率成为关键问题。本文提出VISTA，一种工作空间级等变视觉-触觉扩散策略，将视觉与触觉观测投影为球面令牌，通过置换等变球面融合把触觉接触线索注入视觉方向，并依末端执行器姿态旋转融合后的调和表示。在仿真与真实机器人实验中，该方法以更高数据效率学习到空间一致的接触丰富操作策略。该工作推动了多模态等变表示在操作中的应用。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2609.38989v1",
+      "source": "arxiv",
+      "title": "Cue the Flow: Steering Flow-Matching Policies for Open-World Delivery Manipulation",
+      "abstract": "Open-world goods delivery requires mobile manipulators to follow free-form user instructions and manipulate potentially novel objects. Existing dual-system approaches use high-level grounding models to convert language into grounded visual prompts, but their low-level controllers can remain brittle under noisy perception, dynamic scenes, and contact-rich interactions. We instead use a pretrained flow-matching vision-language-action model as the low-level control interface, leveraging its reactivity and robustness to environmental changes while treating the grounding output as a spatial cue for policy steering. Our key insight is that the pretrained VLA already provides a strong manipulation prior, while the spatial cue supplies the missing target information needed to guide actions under novel language--object mappings. Concretely, we introduce a lightweight cue-conditioned adapter. The adapter is first trained with contrastive objectives to produce salient and spatially discriminative cue representations, and is then supervised to predict a diagonal affine transformation over the generated action chunk, aligning policy steering with the cued target. Across tabletop and mobile-base settings, our method improves instruction following and manipulation success on both in-domain and out-of-domain objects, achieving up to near $2\\times$ improvement in average task success rate with negligible inference overhead.",
+      "authors": [
+        "Haoxuan Wang",
+        "Griffin Galimi",
+        "Junhua Huang",
+        "Selina Song",
+        "Wayne Wu",
+        "Yan Yan",
+        "Bolei Zhou"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T05:04:33+00:00",
+      "link": "https://arxiv.org/pdf/2609.38989v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "flow-matching vision-language-action policy steering for open-world mobile manipulation",
+      "llm_evidence_cn": "面向开放世界移动操作的流匹配视觉-语言-动作策略引导",
+      "llm_evidence": "面向开放世界移动操作的流匹配视觉-语言-动作策略引导",
+      "canonical_evidence": "面向开放世界移动操作的流匹配视觉-语言-动作策略引导",
+      "llm_tldr_en": "Open-world delivery needs mobile manipulators to follow free-form instructions on novel objects, but dual-system low-level controllers are brittle. This work uses a pretrained flow-matching VLA as the low-level control interface and treats grounding output as a spatial cue to steer the policy, improving robustness.",
+      "llm_tldr_cn": "开放世界货物配送要求移动操作机器人遵循自由形式指令并操作新物体，现有双系统方法的高层接地模型会把语言转为视觉提示，但低层控制器在噪声感知、动态场景与接触丰富交互下仍然脆弱。本文改用预训练流匹配视觉-语言-动作模型作为低层控制接口，将接地输出仅作为空间线索来引导策略。实验显示该方式提升了环境变化下的鲁棒性与反应性。该工作为开放世界移动操作提供了更稳健的控制范式。",
+      "llm_tldr": "开放世界货物配送要求移动操作机器人遵循自由形式指令并操作新物体，现有双系统方法的高层接地模型会把语言转为视觉提示，但低层控制器在噪声感知、动态场景与接触丰富交互下仍然脆弱。本文改用预训练流匹配视觉-语言-动作模型作为低层控制接口，将接地输出仅作为空间线索来引导策略。实验显示该方式提升了环境变化下的鲁棒性与反应性。该工作为开放世界移动操作提供了更稳健的控制范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.00981v1",
+      "source": "arxiv",
+      "title": "NarrativeFlow: Flow-Based Vision-Language-Action Model Using Robot Velocity Fields",
+      "abstract": "We focus on language-conditioned flow-based manipulation, where robot flows (robot velocity fields) serve as embodiment-agnostic, motion-centric representations for leveraging data collected from multiple robot platforms. This task is crucial because language-conditioned manipulation is essential for practical robotic systems, yet scaling robot foundation models remains limited by the labor-intensive collection of embodiment-specific data. Existing methods either coarsely approximate robot flows with sparse keypoint displacements, or cannot handle language-conditioned manipulation. To address this limitation, we propose NarrativeFlow, which models robot flows as continuous velocity fields using a flow-matching formulation conditioned on language. Accordingly, NarrativeFlow generates robot flows that are physically consistent with real-world manipulation. To validate NarrativeFlow, we have conducted experiments on standard datasets for language-conditioned manipulation. The experimental results show that NarrativeFlow outperforms representative baseline methods on standard evaluation metrics. Furthermore, through real-world experiments, we show that NarrativeFlow achieves higher success rates than baseline methods across multiple manipulation tasks. The project page is available at https://shota0520.github.io/NarrativeFlow-project-page/",
+      "authors": [
+        "Shota Kobayashi",
+        "Koki Seno",
+        "Daichi Yashima",
+        "Komei Sugiura"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-10-01T03:18:18+00:00",
+      "link": "https://arxiv.org/pdf/2610.00981v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "flow-based vision-language-action model for manipulation",
+      "llm_evidence_cn": "基于流的视觉-语言-动作操控模型",
+      "llm_evidence": "基于流的视觉-语言-动作操控模型",
+      "canonical_evidence": "基于流的视觉-语言-动作操控模型",
+      "llm_tldr_en": "NarrativeFlow models robot flows as continuous velocity fields via flow matching conditioned on language, providing embodiment-agnostic motion-centric representations that leverage data from multiple robot platforms.",
+      "llm_tldr_cn": "语言条件操控对实用机器人系统至关重要，但机器人基础模型受限于针对特定本体的数据采集成本。现有方法或用稀疏关键点位移粗略近似机器人流，或无法处理语言条件操控。NarrativeFlow将机器人流建模为连续速度场，用流匹配形式并以语言为条件，实现跨机器人本体的运动中心表示。该表示可复用多平台数据，推动可扩展的语言条件操控。",
+      "llm_tldr": "语言条件操控对实用机器人系统至关重要，但机器人基础模型受限于针对特定本体的数据采集成本。现有方法或用稀疏关键点位移粗略近似机器人流，或无法处理语言条件操控。NarrativeFlow将机器人流建模为连续速度场，用流匹配形式并以语言为条件，实现跨机器人本体的运动中心表示。该表示可复用多平台数据，推动可扩展的语言条件操控。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "carryover_cache",
+      "paper_id": "2610.00981v1"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.39665v1",
+      "source": "arxiv",
+      "title": "ChronoGraph: Functional 4D Scene Graphs with Vision-Language Models for Interaction Understanding and Grounded Planning",
+      "abstract": "Embodied agents must determine where to act, anticipate the resulting scene changes, and interpret observed outcomes to guide subsequent actions. This requires connecting 4D interaction understanding, which explains how past actions changed the scene, with spatially grounded planning, which determines how and where to act toward a goal and anticipates the resulting scene changes. We introduce ChronoGraph, a functional 4D scene graph that links actions on affordance parts to semantic and geometric state changes. By representing observed and anticipated transitions in the same form, it provides a shared basis for understanding and planning. We construct ChronoGraphBench through an automatic data engine that converts human-interaction videos and simulated robot trajectories into graph-annotated questions for training and evaluating Vision-Language Models (VLMs) on both tasks. Using these annotations, we train ChronoGraphVLM by adapting pretrained VLMs in two stages. Graph-as-Chain-of-Thought supervised fine-tuning teaches the models to reconstruct observed transitions and predict future ones as graph traces before answering. Subsequent joint 4D graph reinforcement learning directly rewards graph properties and answer correctness. Experiments across model scales show improvements over the corresponding pretrained baselines and zero-shot transfer to VLM4D. Real-world demonstrations further show that graph-based planning and affordance grounding support mobile manipulation through existing robot skills without additional fine-tuning.",
+      "authors": [
+        "Chenyangguang Zhang",
+        "Malgorzata Gwiazda",
+        "Guanlong Jiao",
+        "Yuanchen Ju",
+        "Federico Tombari",
+        "Koushil Sreenath",
+        "Marc Pollefeys",
+        "Sunghwan Hong"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-30T13:03:45+00:00",
+      "link": "https://arxiv.org/pdf/2609.39665v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "4D scene graphs with VLMs for embodied interaction understanding and grounded planning",
+      "llm_evidence_cn": "面向具身交互理解与落地规划的4D场景图",
+      "llm_evidence": "面向具身交互理解与落地规划的4D场景图",
+      "canonical_evidence": "面向具身交互理解与落地规划的4D场景图",
+      "llm_tldr_en": "Introduces ChronoGraph, a functional 4D scene graph linking actions on affordance parts to semantic and geometric state changes, supporting embodied interaction understanding and grounded planning.",
+      "llm_tldr_cn": "具身智能体需判断在哪里行动、预期场景变化并解释结果以指导后续动作，这要求将解释过去动作如何改变场景的4D交互理解与确定如何行动的落地规划相连接。本文提出ChronoGraph，一种功能性4D场景图，将可操作部件上的动作与语义及几何状态变化关联，并以统一形式表示已观测与预期转变，为理解与规划提供共享基础。作者还通过自动数据引擎构建ChronoGraphBench，推动具身智能体的交互理解与规划研究。",
+      "llm_tldr": "具身智能体需判断在哪里行动、预期场景变化并解释结果以指导后续动作，这要求将解释过去动作如何改变场景的4D交互理解与确定如何行动的落地规划相连接。本文提出ChronoGraph，一种功能性4D场景图，将可操作部件上的动作与语义及几何状态变化关联，并以统一形式表示已观测与预期转变，为理解与规划提供共享基础。作者还通过自动数据引擎构建ChronoGraphBench，推动具身智能体的交互理解与规划研究。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.01826v1",
+      "source": "arxiv",
+      "title": "Token Communication-Assisted Collaborative Embodied Artificial Intelligence: Concepts, Framework, and Opportunities",
+      "abstract": "Collaborative embodied artificial intelligence (CEAI) enables multiple physical agents to perceive, reason, and act cooperatively in dynamic environments. Effective communication is essential for CEAI, yet CEAI agents must exchange not only large multimodal observations but also task-relevant insights, intents, and interactive information over long horizons. This article investigates token communication (TokCom) as a native intelligence interface for CEAI, in which tokens serve jointly as compact semantic carriers for communication and fundamental inference units for generative foundation models (GFMs). We first discuss how TokCom supports insight sharing, intent alignment, and interactive control among embodied agents. We then propose a TokCom-assisted CEAI framework driven by a task-adaptive communication protocol. Comprising a compact codebook, syntax rules, and contextual examples, this protocol guides GFM-based transceivers to distill messages into compact tokens and reconstruct them after wireless transmission. A case study on collaborative object transport demonstrates that the proposed TokCom framework substantially reduces the source payload bit consumption while preserving task efficiency and showing robustness under noisy channels. Finally, we outline future research directions.",
+      "authors": [
+        "Peng Yi",
+        "Ying-Chang Liang"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-10-01T15:01:50+00:00",
+      "link": "https://arxiv.org/pdf/2610.01826v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "collaborative embodied AI agents communicating via tokens",
+      "llm_evidence_cn": "通过令牌通信协作的具身智能体",
+      "llm_evidence": "通过令牌通信协作的具身智能体",
+      "canonical_evidence": "通过令牌通信协作的具身智能体",
+      "llm_tldr_en": "This article proposes token communication as a native interface for collaborative embodied AI, letting tokens serve as both compact semantic carriers and inference units for generative foundation models.",
+      "llm_tldr_cn": "协作具身人工智能要求多智能体在动态环境中协同感知、推理与行动，而高效通信是关键瓶颈。本文将令牌通信作为协作具身智能的原生智能接口，让令牌同时充当紧凑语义载体与生成式基础模型的推理单元，支持洞见共享、意图对齐与交互控制。文章给出概念、框架与机会分析，为多智能体具身协作提供通信范式。",
+      "llm_tldr": "协作具身人工智能要求多智能体在动态环境中协同感知、推理与行动，而高效通信是关键瓶颈。本文将令牌通信作为协作具身智能的原生智能接口，让令牌同时充当紧凑语义载体与生成式基础模型的推理单元，支持洞见共享、意图对齐与交互控制。文章给出概念、框架与机会分析，为多智能体具身协作提供通信范式。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.39854v1",
+      "source": "arxiv",
+      "title": "RL-Guided PAC-NMPC for Probabilistically-Safe Perception-Based Navigation in Unknown Environments",
+      "abstract": "In this paper, we present an approach for combining stochastic nonlinear model predictive control (SNMPC) and reinforcement learning (RL) to enable probabilistically-safe perception-based navigation in unknown environments. Our method first uses RL to train probabilistic actor-critic and sensor prediction models. We then leverage these probabilistic models in a sampling-based SNMPC framework known as Probably Approximately Correct (PAC)-NMPC, which uses hard constraints to enforce finite-time statistical guarantees on the probability of collision and value function improvement. By ensuring that our finite-horizon SNMPC policies decrease the value function in expectation, we can approach the long-horizon performance of the RL approach while satisfying probabilistic safety constraints. Through simulation experiments, we show that our approach can improve the safety of perception-based RL navigation policies and scale to high dimensional systems with large sensor input spaces and complex nonlinear dynamics. We also demonstrate our approach through hardware experiments, showing improved performance for vision-based navigation with an agile fixed-wing aerial vehicle in unknown environments.",
+      "authors": [
+        "Adam Polevoy",
+        "Dillon Capalongo",
+        "Katherine Tang",
+        "Mark Gonzales",
+        "Marin Kobilarov",
+        "Joseph Moore"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-30T14:43:18+00:00",
+      "link": "https://arxiv.org/pdf/2609.39854v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "reinforcement learning combined with stochastic NMPC for safe perception-based navigation",
+      "llm_evidence_cn": "强化学习结合随机NMPC实现安全的感知导航",
+      "llm_evidence": "强化学习结合随机NMPC实现安全的感知导航",
+      "canonical_evidence": "强化学习结合随机NMPC实现安全的感知导航",
+      "llm_tldr_en": "The method trains probabilistic actor-critic and sensor models with RL, then embeds them in PAC-NMPC to give finite-time statistical safety guarantees for navigation.",
+      "llm_tldr_cn": "未知环境中的感知导航需要兼顾安全与长时程性能，单纯强化学习难以提供概率安全保证。论文提出将随机非线性模型预测控制与强化学习结合的方法：先用强化学习训练概率型演员评论家与传感器预测模型，再将其嵌入采样式的PAC-NMPC框架，以硬约束保证碰撞概率与值函数改进的有限时间统计保证。通过让有限时程控制策略在期望上降低值函数，方法可逼近强化学习的长时程性能并保持安全。",
+      "llm_tldr": "未知环境中的感知导航需要兼顾安全与长时程性能，单纯强化学习难以提供概率安全保证。论文提出将随机非线性模型预测控制与强化学习结合的方法：先用强化学习训练概率型演员评论家与传感器预测模型，再将其嵌入采样式的PAC-NMPC框架，以硬约束保证碰撞概率与值函数改进的有限时间统计保证。通过让有限时程控制策略在期望上降低值函数，方法可逼近强化学习的长时程性能并保持安全。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2609.39915v1",
+      "source": "arxiv",
+      "title": "NavHarness: Adaptive Goals for Agentic Vision-Language Navigation",
+      "abstract": "Vision-Language Navigation (VLN) requires embodied agents to generate actions based on instructions and observations. General-purpose multimodal agents offer a promising basis for this task, but selecting plausible local actions does not ensure that execution remains consistent with the intended route, particularly in long-horizon tasks. Moreover, the accumulated interaction history increases the input required for subsequent decisions, resulting in a significant inference overhead. To this end, we introduce \\method, an Agentic VLN framework that includes a Goal Agent that sets adaptive goals for local actions, a Verify Agent that dynamically verifies whether a goal has been completed, a Memory Agent for multimodal context compression, and a Visuomotor Agent to execute adaptive goals. Specifically, the Goal Agent formulates adaptive goals based on the instruction, current observation, and execution history. Then the Visuomotor Agent executes navigation actions to achieve each goal, while the Verify Agent uses a goal-specific verification question to dynamically assess whether the observed outcomes satisfy the intended completion condition. Verified goal completion then marks a boundary for the Memory Agent to compress the corresponding multimodal interaction history while preserving information needed for subsequent navigation. We evaluate navigation on R2R-CE and RxR-CE, examine framework variants across three model backbones, and study context evolution during execution. For Real-World evaluation, \\method achieves 83.3\\% success and 1.51\\,m navigation error across eight challenging routes evaluated three times each.",
+      "authors": [
+        "Haoxiang Shi",
+        "Zaijing Li",
+        "Muhe Ding",
+        "Xiang Deng",
+        "Yaowei Wang",
+        "Liqiang Nie"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.RO"
+      ],
+      "published": "2026-09-30T15:06:45+00:00",
+      "link": "https://arxiv.org/pdf/2609.39915v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "embodied agents for vision-language navigation",
+      "llm_evidence_cn": "面向视觉语言导航的具身智能体",
+      "llm_evidence": "面向视觉语言导航的具身智能体",
+      "canonical_evidence": "面向视觉语言导航的具身智能体",
+      "llm_tldr_en": "NavHarness is an agentic vision-language navigation framework combining goal, verify, memory and visuomotor agents to keep long-horizon execution consistent with the intended route while cutting inference overhead.",
+      "llm_tldr_cn": "视觉语言导航要求具身智能体依据指令与观测生成动作，但仅选取局部合理动作难以保证长程任务路线一致，且交互历史累积带来推理开销。本文提出NavHarness智能体框架，包含设定自适应目标的目标智能体、动态验证目标完成度的验证智能体、压缩多模态上下文的记忆智能体以及视觉运动智能体。该方法提升长程导航一致性并降低推理开销，为具身导航智能体提供了模块化方案。",
+      "llm_tldr": "视觉语言导航要求具身智能体依据指令与观测生成动作，但仅选取局部合理动作难以保证长程任务路线一致，且交互历史累积带来推理开销。本文提出NavHarness智能体框架，包含设定自适应目标的目标智能体、动态验证目标完成度的验证智能体、压缩多模态上下文的记忆智能体以及视觉运动智能体。该方法提升长程导航一致性并降低推理开销，为具身导航智能体提供了模块化方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.00854v1",
+      "source": "arxiv",
+      "title": "Are Frontier VLM Agents Ready to Be Robot Generalists? An Empirical Study with the Embodied Agent Arena",
+      "abstract": "Frontier vision-language models (VLMs) combine scene estimation, interaction grounding, and executable actions. Understanding how these abilities support complete robotic tasks is central to evaluating their readiness as robot generalists. We introduce Embodied Agent Arena to examine where local competence supports, or falls short of, complete task success across Geometry, Spatial Reasoning, Affordance, Task Planning, and Manipulation. The arena contains 1,000 cases drawn from 32 established sources and GeoProbe, our new benchmark for geometric estimation on Blender renders and real-scene images. A minimal harness preserves source observations and operations while separating metric precision, functional grounding, and native goal completion. We evaluate seven VLMs, analyze Astra's task-specific advantages, and compare richer-observation execution protocols and multi-round review. Across the arena, Astra's advantage is strongest in precise estimation and usable-contact localization; completing coordinated, goal-directed actions remains the key gap to robot generalism.",
+      "authors": [
+        "Haojian Huang",
+        "Pukun Zhao",
+        "Zexi Li",
+        "Yehang Zhang",
+        "Yangkai Wei",
+        "Wenqian Li",
+        "Han Yang",
+        "Kaiwen Zhou",
+        "Ying-Cong Chen",
+        "Yinchuan Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-01T00:14:50+00:00",
+      "link": "https://arxiv.org/pdf/2610.00854v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "embodied VLM agents evaluated as robot generalists",
+      "llm_evidence_cn": "评估具身VLM智能体作为机器人通才的能力",
+      "llm_evidence": "评估具身VLM智能体作为机器人通才的能力",
+      "canonical_evidence": "评估具身VLM智能体作为机器人通才的能力",
+      "llm_tldr_en": "The Embodied Agent Arena evaluates frontier VLM agents as robot generalists across geometry, spatial reasoning, affordance, planning and manipulation, revealing gaps between local competence and full task success.",
+      "llm_tldr_cn": "前沿视觉语言模型兼具场景估计、交互定位与可执行动作能力，但尚不清楚这些局部能力能否支撑完整机器人任务。本文提出具身智能体竞技场，覆盖几何、空间推理、可供性、任务规划与操作五个维度，包含来自32个来源的1000个案例以及新基准GeoProbe。该研究系统评估了VLM智能体作为机器人通才的就绪程度，揭示了局部能力与整体任务成功之间的差距。",
+      "llm_tldr": "前沿视觉语言模型兼具场景估计、交互定位与可执行动作能力，但尚不清楚这些局部能力能否支撑完整机器人任务。本文提出具身智能体竞技场，覆盖几何、空间推理、可供性、任务规划与操作五个维度，包含来自32个来源的1000个案例以及新基准GeoProbe。该研究系统评估了VLM智能体作为机器人通才的就绪程度，揭示了局部能力与整体任务成功之间的差距。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.02161v1",
+      "source": "arxiv",
+      "title": "DuoMind: Enabling Distributed Multi-Robot Coordination with Semantic Communication",
+      "abstract": "Vision-language models (VLMs) and vision-language-action models (VLAs) have recently driven rapid progress in general-purpose robots, yet most progress has focused on single-robot settings. Extending these capabilities to multi-robot systems remains challenging because robots must coordinate long-horizon behaviors while maintaining reliable, fine-grained execution. We introduce DuoMind, a distributed hierarchical framework for multi-robot coordination through semantic communication. Each robot uses a VLA-based action model for low-level execution and a VLM-based orchestrator for high-level reasoning and inter-agent coordination. At each planning step, the orchestrator at each robot reasons over the task instruction, local observations, and messages received from other robots. It then generates low-level instructions for the action model and semantic messages for peer robots. This architecture exploits the complementary strengths of pretrained models by combining the semantic reasoning capabilities of VLMs with the precise action-generation capabilities of VLAs. To address the scarcity of benchmarks for multi-robot coordination, we further develop RoboPoly, a benchmark comprising long-horizon manipulation tasks that require coordinated, closed-loop execution under distributed control. Experiments on RoboPoly and RoboTwin demonstrate that DuoMind improves multi-robot task performance, while ablation studies confirm the contributions of hierarchical orchestration and semantic communication. More details are available on our project page.",
+      "authors": [
+        "Hanchu Zhou",
+        "Dechen Gao",
+        "Hang Wang",
+        "Brendan Lynch",
+        "Boqi Zhao",
+        "Qiyao Ma",
+        "Raman Goyal",
+        "Junshan Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-10-01T17:53:09+00:00",
+      "link": "https://arxiv.org/pdf/2610.02161v1",
+      "tags": [
+        "keyword:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "distributed multi-robot coordination with VLM/VLA agents",
+      "llm_evidence_cn": "基于VLM/VLA的多机器人分布式协同",
+      "llm_evidence": "基于VLM/VLA的多机器人分布式协同",
+      "canonical_evidence": "基于VLM/VLA的多机器人分布式协同",
+      "llm_tldr_en": "VLM and VLA progress has mostly focused on single robots; DuoMind is a distributed hierarchical framework where each robot uses a VLA for low-level execution and a VLM orchestrator for high-level coordination via semantic communication.",
+      "llm_tldr_cn": "视觉语言与视觉语言动作模型推动了通用机器人进展，但多局限于单机器人，扩展到多机器人需兼顾长时程协调与精细执行。本文提出DuoMind分布式分层框架，通过语义通信协同：各机器人以VLA动作模型执行低层动作，以VLM编排器进行高层推理与智能体间协调。该框架提升了多机器人长时程任务的可靠协同能力，推动了多机具身智能的发展。",
+      "llm_tldr": "视觉语言与视觉语言动作模型推动了通用机器人进展，但多局限于单机器人，扩展到多机器人需兼顾长时程协调与精细执行。本文提出DuoMind分布式分层框架，通过语义通信协同：各机器人以VLA动作模型执行低层动作，以VLM编排器进行高层推理与智能体间协调。该框架提升了多机器人长时程任务的可靠协同能力，推动了多机具身智能的发展。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "carryover_cache",
+      "paper_id": "2610.02161v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.02368v1",
+      "source": "arxiv",
+      "title": "Rethinking World-Action Model for Compositional and In-Context Robotic Manipulation",
+      "abstract": "Long-horizon compositional manipulation has become increasingly important for real-world robot deployment, where a single task involves multiple coordinated subtasks. Existing world-action models (WAMs) jointly predict short-horizon visual futures and actions, but typically lack explicit subtask-level reasoning. We propose Visual Goal-conditioned Action Reasoning (ViGAR), a hierarchical framework that factorizes manipulation into a visual subgoal planner and a subgoal executor. Given the current observation and global instruction, the subgoal planner predicts a visual subgoal for the next subtask. The subgoal executor then jointly generates future visual trajectories and actions conditioned on the predicted subgoal. Both components share a pretrained world-model representation, enabling task-level planning and action generation to benefit from common physical knowledge. Moreover, our framework naturally supports in-context learning: using a global goal image as context can induce different subtask decompositions and behaviors without parameter updates. On the RoboTwin Clean2Random benchmark, ViGAR achieves 82.00% and 67.02% success rates under the Clean and Random settings, respectively, surpassing the strongest baseline by 12.86 percentage points in average success rate. Real-world robot experiments on five compositional and two in-context learning tasks further confirm the effectiveness of ViGAR.",
+      "authors": [
+        "Shukai Gong",
+        "Xuanran Zhai",
+        "Yintianrun Zhang",
+        "Ruopeng Cui",
+        "Ye Huang",
+        "Yiyang Fu",
+        "Dexuan Lyu",
+        "Chaojie Li",
+        "Xinyi Song",
+        "Peiwen Lin",
+        "Chuang Wang",
+        "Mingyuan Jia",
+        "Yufan Deng",
+        "Jiaxin Fang",
+        "Bo Liang",
+        "Jiaxin Li",
+        "Yuxiang Gao",
+        "Hao Liu",
+        "Daquan Zhou"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-01T18:45:04+00:00",
+      "link": "https://arxiv.org/pdf/2610.02368v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "hierarchical world-action model for compositional robotic manipulation",
+      "llm_evidence_cn": "面向组合式机器人操作的分层世界-动作模型",
+      "llm_evidence": "面向组合式机器人操作的分层世界-动作模型",
+      "canonical_evidence": "面向组合式机器人操作的分层世界-动作模型",
+      "llm_tldr_en": "ViGAR factorizes robotic manipulation into a visual subgoal planner and a subgoal executor, generating future visual trajectories and actions for long-horizon compositional tasks.",
+      "llm_tldr_cn": "长程组合操作要求机器人协调多个子任务，而现有世界-动作模型缺乏显式子任务级推理。ViGAR提出分层框架，将操作分解为视觉子目标规划器与子目标执行器：规划器根据当前观测与全局指令预测下一子任务视觉目标，执行器在目标条件下联合生成未来视觉轨迹与动作。实验表明该框架提升了组合与上下文操作能力。",
+      "llm_tldr": "长程组合操作要求机器人协调多个子任务，而现有世界-动作模型缺乏显式子任务级推理。ViGAR提出分层框架，将操作分解为视觉子目标规划器与子目标执行器：规划器根据当前观测与全局指令预测下一子任务视觉目标，执行器在目标条件下联合生成未来视觉轨迹与动作。实验表明该框架提升了组合与上下文操作能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.02717v1",
+      "source": "arxiv",
+      "title": "RoboBridge: A Self-Evolving Embodied Agent Framework for Sim-to-Real Transfer",
+      "abstract": "A key challenge in bringing embodied intelligence into the real world is transferring capabilities from simulation to reality and enabling agents to continually adapt after deployment. End-to-end vision-language-action policies provide strong manipulation capabilities, but their transfer to physical environments typically relies on calibrating simulated visual and dynamical conditions, collecting additional target-domain demonstrations, and optimizing the policy through further training. Tool-using embodied agents offer flexible task orchestration, yet existing systems primarily emphasize task execution and experience reuse within a given environment, with limited support for transferring procedural knowledge and continuously adapting it across simulation and reality. We propose RoboBridge, a framework that treats sim-to-real transfer as the continued adaptation of executable task skills. The agent represents task knowledge as procedures connecting task intent, observations, tool operations, and outcome verification. Interaction feedback is used to generate candidate skill revisions, which are evaluated before being persisted or rejected. A pretrained vision-language-action policy is exposed as a reusable action tool and enhanced with inference-time guidance, enabling fine-grained execution without retraining the underlying policy. RoboBridge grounds transferable skills in task semantics and interaction interfaces shared across simulation and reality. This representation preserves reusable task structure while allowing environment-dependent operations to be selectively revised through real-world execution feedback. We evaluate the framework on LIBERO-PRO and corresponding physical tasks, studying both skill evolution and post-transfer adaptation. Our framework provides a route from one-shot policy deployment to continual procedural learning across environments.",
+      "authors": [
+        "Chenxi Li",
+        "Zhangrui Zhao",
+        "Rui Li",
+        "Yuan Gao",
+        "Kehui Liu",
+        "Jiarui Li",
+        "Dong Wang",
+        "Tong Si",
+        "Minting Pan",
+        "Wanli Ouyang",
+        "Dongzhan Zhou"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-02T02:53:57+00:00",
+      "link": "https://arxiv.org/pdf/2610.02717v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "self-evolving embodied agent framework for sim-to-real transfer and continual adaptation",
+      "llm_evidence_cn": "面向仿真到现实迁移与持续适应的自演化具身智能体框架",
+      "llm_evidence": "面向仿真到现实迁移与持续适应的自演化具身智能体框架",
+      "canonical_evidence": "面向仿真到现实迁移与持续适应的自演化具身智能体框架",
+      "llm_tldr_en": "RoboBridge is a self-evolving embodied agent framework that transfers procedural knowledge from simulation to reality and enables continual post-deployment adaptation for vision-language-action policies.",
+      "llm_tldr_cn": "将具身智能能力迁移到真实世界并持续适应是核心挑战，端到端视觉-语言-动作策略迁移依赖视觉与动力学校准及额外目标域演示。本文提出RoboBridge自演化具身智能体框架，通过工具使用式任务编排，支持程序性知识的跨环境迁移与持续适应。该框架在仿真到现实迁移中提升了策略的复用与自适应能力，为具身智能体在物理环境中的长期部署提供了新方案。",
+      "llm_tldr": "将具身智能能力迁移到真实世界并持续适应是核心挑战，端到端视觉-语言-动作策略迁移依赖视觉与动力学校准及额外目标域演示。本文提出RoboBridge自演化具身智能体框架，通过工具使用式任务编排，支持程序性知识的跨环境迁移与持续适应。该框架在仿真到现实迁移中提升了策略的复用与自适应能力，为具身智能体在物理环境中的长期部署提供了新方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.03476v1",
+      "source": "arxiv",
+      "title": "MobiAgent: Dual-Loop Recursive Policy Self-Improvement for Long-Horizon Mobile Manipulation",
+      "abstract": "Long-horizon mobile manipulation presents significant challenges due to compounding execution errors and capacity interference between locomotion and arm control. While recent Vision-Language-Action models excel at short-horizon tasks, they lack the hierarchical reasoning required for multi-stage objectives. Furthermore, existing hierarchical agents suffer from rigid sub-task mapping, inflexible replanning, and a lack of continuous learning. To address these limitations, we introduce MobiAgent, a dual-loop agentic framework that bridges robust deployment execution and recursive policy self-improvement. During deployment, the Inner Loop decouples high-level reasoning from low-level control through highly composable atomic skills. It employs Vision-Language models for receding-horizon planning and visual reflection, dynamically composing skills to ensure robust error recovery. These skills are executed by specialized flow-matching experts that share a unified VLM backbone, maximizing reusability while mitigating capacity interference. Concurrently, the Outer Loop drives automated lifelong learning by autonomously segmenting and verifying deployment rollouts, clustering them to discover atomic skills, and continuously fine-tuning the skill library without human annotations. Evaluations on RoboCasa, BEHAVIOR-1K, and real-world tasks demonstrate the effectiveness of MobiAgent. It outperforms $π_{0.5}$-TA by 22.5 percentage points on BEHAVIOR-1K and enables robust recovery from execution failures. Through autonomous data recycling, success improves from 7.50% to 27.50% on RoboCasa and from 32.5% to 57.5% on Astribot S1.",
+      "authors": [
+        "Chenzhi Liu",
+        "Yue Zhang",
+        "Jiehong Lin",
+        "Jianan Wang",
+        "Bo Wang",
+        "Zhongrui Wang",
+        "Xiaojuan Qi"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-10-02T15:48:23+00:00",
+      "link": "https://arxiv.org/pdf/2610.03476v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dual-loop agentic framework for long-horizon mobile manipulation",
+      "llm_evidence_cn": "面向长时程移动操作的双环智能体框架",
+      "llm_evidence": "面向长时程移动操作的双环智能体框架",
+      "canonical_evidence": "面向长时程移动操作的双环智能体框架",
+      "llm_tldr_en": "Introduces MobiAgent, a dual-loop agentic framework that decouples high-level reasoning from low-level control and enables recursive policy self-improvement for long-horizon mobile manipulation.",
+      "llm_tldr_cn": "长时程移动操作面临误差累积与移动和机械臂控制之间的能力干扰，现有视觉语言动作模型擅长短时程任务却缺乏多阶段目标所需的层级推理。已有层级智能体还存在子任务映射僵化、重规划不灵活与缺乏持续学习等问题。本文提出MobiAgent，一种双环智能体框架，在部署时内环通过高度可组合的原子技能解耦高层推理与底层控制，并结合递归策略自改进。该方法提升了长时程移动操作的鲁棒性与持续学习能力。",
+      "llm_tldr": "长时程移动操作面临误差累积与移动和机械臂控制之间的能力干扰，现有视觉语言动作模型擅长短时程任务却缺乏多阶段目标所需的层级推理。已有层级智能体还存在子任务映射僵化、重规划不灵活与缺乏持续学习等问题。本文提出MobiAgent，一种双环智能体框架，在部署时内环通过高度可组合的原子技能解耦高层推理与底层控制，并结合递归策略自改进。该方法提升了长时程移动操作的鲁棒性与持续学习能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.03607v1",
+      "source": "arxiv",
+      "title": "World Action Learning via Interaction-Centric Spectral Latent Guidance",
+      "abstract": "Learning general-purpose robot policies requires large-scale real-world interaction data, yet collecting robot demonstrations remains expensive and difficult to scale. Egocentric videos offer abundant human interaction experience with task-relevant semantics for robotic manipulation, but direct transfer is challenging for two reasons: latent actions inferred from frame reconstruction can be dominated by nuisance variation such as ego-camera motion, and human and robot behaviors often exhibit different temporal dynamics. We propose WING (World Action Learning via INteraction-Centric Spectral Latent Guidance), a framework for transferring interaction knowledge from egocentric videos to robot policies. WING first separates observer-induced motion from hand-object interaction and distills the interaction-centric component into latent actions. It then exploits the observation that cross-embodiment task semantics are concentrated in slowly varying temporal structures, identifying shared low-frequency components between egocentric latent actions and robot behaviors in the spectral domain and using them to guide action generation. WING achieves average success rates of 99.20% on LIBERO, 93.80% on RoboTwin 2.0, and 57.7% on RoboCasa-GR1, and also performs strongly across four real-world manipulation tasks under diverse generalization settings. These results show that interaction-centric spectral guidance provides an effective and scalable way to transfer physical interaction knowledge from human egocentric video to robot control. Project page: https://mikuz12.github.io/wing/",
+      "authors": [
+        "Zhiming Liu",
+        "Yikun Miao",
+        "Ying Chen",
+        "Hongrui Yin",
+        "Fangqi Zhu",
+        "Xiaoyi Pang",
+        "Quanxin Shou",
+        "Zhengyang Yan",
+        "Haodong Wang",
+        "Song Guo"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-02T17:08:12+00:00",
+      "link": "https://arxiv.org/pdf/2610.03607v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "transferring egocentric human interaction to robot manipulation policies",
+      "llm_evidence_cn": "将第一人称人类交互迁移到机器人操作策略",
+      "llm_evidence": "将第一人称人类交互迁移到机器人操作策略",
+      "canonical_evidence": "将第一人称人类交互迁移到机器人操作策略",
+      "llm_tldr_en": "WING transfers interaction knowledge from egocentric human videos to robot policies by separating observer-induced motion and using interaction-centric spectral latent guidance to bridge human-robot dynamics.",
+      "llm_tldr_cn": "学习通用机器人策略依赖大规模交互数据，但机器人演示采集成本高昂。WING框架从第一人称人类视频中迁移交互知识到机器人策略，先分离观察者运动与手部动作以去除干扰，再通过交互中心谱潜变量引导对齐人机时序动态。实验表明该方法提升了机器人操作策略的泛化能力，为利用海量人类视频训练机器人提供了新思路。",
+      "llm_tldr": "学习通用机器人策略依赖大规模交互数据，但机器人演示采集成本高昂。WING框架从第一人称人类视频中迁移交互知识到机器人策略，先分离观察者运动与手部动作以去除干扰，再通过交互中心谱潜变量引导对齐人机时序动态。实验表明该方法提升了机器人操作策略的泛化能力，为利用海量人类视频训练机器人提供了新思路。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}
