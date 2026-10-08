@@ -1,88 +1,48 @@
 {
-  "generated_at": "2026-10-06T23:22:20.749747+00:00",
-  "updated_date": "20261006",
+  "generated_at": "2026-10-08T00:04:11.498592+00:00",
+  "updated_date": "20261008",
   "carryover_days": 9,
   "tag_states": {
     "ad": {
-      "updated_date": "20261006",
+      "updated_date": "20261008",
       "carryover_days": 9,
       "items": [
         {
-          "id": "2610.05331v1",
+          "id": "2610.08726v1",
           "source": "arxiv",
-          "title": "VAMPS: Visual and Motor Policies from Sampling-Based Planning",
-          "abstract": "Learning robot policies directly on physical systems remains difficult because data collection is costly and policy exploration can be unsafe. We introduce Visual and Motor Policies from Sampling-Based Planning (VAMPS), a framework that uses Model Predictive Path Integral (MPPI) control to train reusable policies without human demonstrations. VAMPS supports two training modes. For one-step proprioceptive policies, it operates iteratively in simulation: the policy warm-starts MPPI, and the refined trajectories provide new supervision as the policy changes. A learned terminal value improves short-horizon planning, while an Implicit Q-Learning (IQL) critic guides the policy update. Iterative refinement outperforms training once on frozen MPPI data, and we transfer the learned locomotion policy to a Unitree Go2. For visuomotor policies, VAMPS operates directly from real-robot data. MPPI uses task-specific state estimates to plan and execute trajectories while recording RGB and sensor observations on a Flexiv Rizon 10S. Action Chunking with Transformers predicts action chunks, reducing the effective prediction horizon, and is trained offline on this fixed dataset. We demonstrate visuomotor pick-and-place and force-aware whiteboard erasing. In the latter task, the policy additionally observes the measured $6$-D wrench and desired normal force. These results show that VAMPS can learn policies either in simulation followed by hardware transfer or directly from autonomously collected real-robot data.",
+          "title": "EgoLAP: Learning from Egocentric Human Data through Language-Action Reasoning",
+          "abstract": "Egocentric human data offer a path to scaling robot learning beyond costly robot demonstrations, yet the embodiment gap makes raw human trajectories a poor supervisory target for control. Our key insight is that, although low-level actions are embodiment-specific, their underlying motion intent can capture task-relevant structure that transfers across humans and robots. We introduce EgoLAP, a VLA pre-training framework that jointly learns from human and robot trajectories through a shared language-based action chain-of-thought. EgoLAP expresses motion intent as structured, temporally abstracted language actions and pairs them with motion-level reasoning grounded in scene geometry, physics, and object affordances. Across extensive real-world and simulated experiments, EgoLAP transfers human experience to robot control more effectively than alternative action representations and reaches 80.1% mean real-world task progress, a 2.3x performance gain over alternative action representations. Motion-level reasoning also outperforms a composite reasoning format that combines subtask, object-box, and visual-trace reasoning.",
           "authors": [
-            "Mohamed Yassine Kabouri",
-            "Pietro Noah Crestaz",
-            "Quang-Nam Nguyen",
-            "Qilong Cheng",
-            "Ludovic Righetti",
-            "Nicolas Mansard"
+            "Lihan Zha",
+            "Shresth Grover",
+            "Tenny Yin",
+            "Samuel M. Bateman",
+            "Hengkai Pan",
+            "Mengchao Zhang",
+            "Aykut Onol",
+            "Allen Z. Ren",
+            "Dhruv Shah",
+            "Anirudha Majumdar"
           ],
           "primary_category": "cs.RO",
           "categories": [
             "cs.RO",
-            "cs.AI",
-            "cs.LG"
+            "cs.AI"
           ],
-          "published": "2026-10-04T15:54:35+00:00",
-          "link": "https://arxiv.org/pdf/2610.05331v1",
+          "published": "2026-10-06T17:30:33+00:00",
+          "link": "https://arxiv.org/pdf/2610.08726v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "training reusable robot policies via MPPI control and RL critics",
-          "llm_evidence_cn": "基于MPPI控制与强化学习评论器训练可复用机器人策略",
-          "llm_evidence": "基于MPPI控制与强化学习评论器训练可复用机器人策略",
-          "canonical_evidence": "基于MPPI控制与强化学习评论器训练可复用机器人策略",
-          "llm_tldr_en": "VAMPS tackles costly and unsafe robot policy learning on physical systems by training reusable visual and motor policies from sampling-based MPPI planning without human demonstrations.",
-          "llm_tldr_cn": "在真实物理系统上直接学习机器人策略面临数据采集昂贵与探索不安全的问题。本文提出VAMPS框架，利用模型预测路径积分MPPI控制生成轨迹来训练可复用策略，无需人类示教。方法通过策略热启动MPPI并迭代精炼，结合学习到的终端价值函数与隐式Q学习评论器指导策略更新。实验表明迭代精炼优于在冻结MPPI数据上的一次性训练，并可将策略迁移到真实机器人，为安全的机器人智能控制提供了新途径。",
-          "llm_tldr": "在真实物理系统上直接学习机器人策略面临数据采集昂贵与探索不安全的问题。本文提出VAMPS框架，利用模型预测路径积分MPPI控制生成轨迹来训练可复用策略，无需人类示教。方法通过策略热启动MPPI并迭代精炼，结合学习到的终端价值函数与隐式Q学习评论器指导策略更新。实验表明迭代精炼优于在冻结MPPI数据上的一次性训练，并可将策略迁移到真实机器人，为安全的机器人智能控制提供了新途径。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "intelligent control reinforcement learning for robots",
-          "matched_requirement_id": "req-6",
-          "selection_source": "carryover_cache",
-          "paper_id": "2610.05331v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2610.05964v1",
-          "source": "arxiv",
-          "title": "From Social Reasoning to Embodied Interaction: An Agentic Framework for Social Robots",
-          "abstract": "Natural face-to-face human--robot interaction requires a robot to understand an evolving social situation, decide when to engage, and express its intent through coordinated physical behavior. Yet existing approaches rarely close this loop: foundation-model agents provide increasingly capable multimodal reasoning and memory but remain largely disembodied, while expressive virtual agents do not face the physical constraints of real robots, and physical social robots typically address social reasoning and embodied expression only partially. We present ARISE, a unified framework that bridges Agentic Reasoning and Interactive Social Embodiment on the Sophia humanoid robot. ARISE integrates multimodal context understanding, long-term memory, and reactive and proactive interaction to determine when and what to communicate, and translates social intent into robot-native gestures coordinated with speech and mechanical facial expressions through streaming execution. Extensive evaluations on Sophia demonstrate strong perceived interaction quality, expressive and well-coordinated embodied behavior, and substantial latency reductions through streaming execution. These results highlight the importance of jointly reasoning about what to communicate, when to engage, and how to physically express social intent for natural interaction with humanoid robots. Project Page: https://robosocial.github.io/",
-          "authors": [
-            "Ziyu Cheng",
-            "Yuewen Guo",
-            "Zhirui Liu",
-            "Dong Zhang",
-            "Haotao Lu",
-            "Jingyi Yu",
-            "Ye Shi",
-            "Jingya Wang"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-10-05T08:15:21+00:00",
-          "link": "https://arxiv.org/pdf/2610.05964v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "agentic framework for social robots with embodied interaction",
-          "llm_evidence_cn": "面向社交机器人具身交互的智能体框架",
-          "llm_evidence": "面向社交机器人具身交互的智能体框架",
-          "canonical_evidence": "面向社交机器人具身交互的智能体框架",
-          "llm_tldr_en": "ARISE closes the loop between social reasoning and embodied expression by integrating multimodal understanding, memory and physical behavior on the Sophia humanoid for human-robot interaction.",
-          "llm_tldr_cn": "自然人机面对面交互要求机器人理解不断演变的社会情境、决定介入时机并以协调的物理行为表达意图。现有方法难以闭环：基础模型智能体具备多模态推理与记忆却缺乏身体，虚拟智能体不受真实机器人物理约束，物理社交机器人又只部分解决推理与表达。本文提出ARISE统一框架，在Sophia人形机器人上融合多模态情境理解、长期记忆与具身表达，打通智能体推理与交互式社会具身，为社交机器人人机交互提供了完整方案。",
-          "llm_tldr": "自然人机面对面交互要求机器人理解不断演变的社会情境、决定介入时机并以协调的物理行为表达意图。现有方法难以闭环：基础模型智能体具备多模态推理与记忆却缺乏身体，虚拟智能体不受真实机器人物理约束，物理社交机器人又只部分解决推理与表达。本文提出ARISE统一框架，在Sophia人形机器人上融合多模态情境理解、长期记忆与具身表达，打通智能体推理与交互式社会具身，为社交机器人人机交互提供了完整方案。",
+          "llm_evidence_en": "VLA pretraining from egocentric human data via language-action reasoning",
+          "llm_evidence_cn": "利用语言-动作推理从第一人称人类数据预训练VLA",
+          "llm_evidence": "利用语言-动作推理从第一人称人类数据预训练VLA",
+          "canonical_evidence": "利用语言-动作推理从第一人称人类数据预训练VLA",
+          "llm_tldr_en": "Egocentric human data can scale robot learning, but the embodiment gap limits raw trajectory supervision. EgoLAP is a VLA pretraining framework that represents motion intent as language actions, transferring structure across humans and robots in real-world experiments.",
+          "llm_tldr_cn": "第一人称人类数据可扩展机器人学习，但具身差异使原始人类轨迹难以直接作为控制监督目标。本文提出EgoLAP，一种视觉-语言-动作预训练框架，将运动意图表示为结构化、时间抽象的语言动作，并结合几何、物理与物体可供性的运动级推理，联合学习人类与机器人轨迹。大量真实与仿真实验表明该方法有效缩小具身差异，提升跨具身任务迁移能力。",
+          "llm_tldr": "第一人称人类数据可扩展机器人学习，但具身差异使原始人类轨迹难以直接作为控制监督目标。本文提出EgoLAP，一种视觉-语言-动作预训练框架，将运动意图表示为结构化、时间抽象的语言动作，并结合几何、物理与物体可供性的运动级推理，联合学习人类与机器人轨迹。大量真实与仿真实验表明该方法有效缩小具身差异，提升跨具身任务迁移能力。",
           "llm_tags": [
             "query:ad"
           ],
@@ -90,78 +50,40 @@
           "matched_query_text": "robotics manipulation locomotion human-robot interaction",
           "matched_requirement_id": "req-2",
           "selection_source": "carryover_cache",
-          "paper_id": "2610.05964v1",
+          "paper_id": "2610.08726v1",
           "carry_days": 1
         },
         {
-          "id": "2610.05733v1",
+          "id": "2610.08432v1",
           "source": "arxiv",
-          "title": "End-to-End Safe Social Navigation via Multi-Task Reinforcement Learning and Probabilistic Perception",
-          "abstract": "Autonomous social navigation requires balancing efficiency, physical safety, and social compliance. Reinforcement Learning (RL) methods provide a viable and effective solution but often rely on unrealistic assumptions, such as the knowledge of humans' position and velocity. In this paper, we introduce JESSI (JAX-based E2E Safe Social Interpretable navigation), a lightweight end-to-end RL framework that maps raw LiDAR scans directly to kinematically feasible control commands. JESSI enhances safety via Dirichlet-parameterized continuous action spaces and deterministic bounding, while an integrated attention-based perception module extracts probabilistic human states for interpretable, socially aware decision-making. Through extensive simulations and real-world deployment on a differential-drive robot, we demonstrate that jointly optimizing the RL policy with a supervised perception signal in a multi-task paradigm enhances social behavior. Ultimately, JESSI is able to balance high navigation success rates and superior social behaviors compared to state-of-the-art baselines.",
+          "title": "EMHO: EMbodied Agent Harness Optimization via Experience Traces",
+          "abstract": "Improving embodied agents often focuses on optimizing the underlying model through training, while the surrounding agent harness that controls planning, context, and tool use is typically engineered. We ask whether this harness can instead improve itself directly from experience traces under sparse environmental feedback. We propose EMbodied Agent Harness Optimization (EMHO), a self-evolving framework that keeps the embodied model frozen and iteratively revises its harness by analyzing execution trajectories and prior harness history. EMHO optimizes beyond skills or recovery prompts, modifying how the agent monitors progress, uses vision tools, grounds observations, and responds to failures. To support multiple subtasks with a single harness, we introduce EMHO-Merge, which addresses trade-offs in jointly optimizing a single shared harness across subtasks by using episode-level gains and losses to guide evidence-supported refinement of when and how revised behaviors are applied. We evaluate EMHO on EmbodiedBench across navigation and manipulation tasks, and EMHO consistently improves task success for both Qwen 9B and 27B models. Qualitative analysis shows that EMHO goes beyond recovering from failures and unproductive actions to reshape how the embodied agent interprets and interacts with its environment.",
           "authors": [
-            "Tommaso Van Der Meer Andrea Garulli",
-            "Antonio Giannitrapani",
-            "Renato Quartullo",
-            "Alberto Vaglio",
-            "Alexandre Alahi"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO",
-            "cs.HC"
-          ],
-          "published": "2026-10-05T03:32:03+00:00",
-          "link": "https://arxiv.org/pdf/2610.05733v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "end-to-end RL social navigation mapping LiDAR to control with probabilistic perception",
-          "llm_evidence_cn": "将激光雷达直接映射到控制的端到端强化学习社交导航",
-          "llm_evidence": "将激光雷达直接映射到控制的端到端强化学习社交导航",
-          "canonical_evidence": "将激光雷达直接映射到控制的端到端强化学习社交导航",
-          "llm_tldr_en": "JESSI is a lightweight end-to-end RL framework that maps raw LiDAR to control commands for safe social navigation, adding probabilistic human-state perception for interpretability.",
-          "llm_tldr_cn": "自主社交导航需在效率、物理安全与社交规范间取得平衡，而强化学习方法常依赖已知人类位置速度等不切实际假设。本文提出JESSI端到端强化学习框架，将原始激光雷达扫描直接映射为运动学可行的控制指令。框架通过Dirichlet参数化连续动作空间与确定性边界增强安全，并引入基于注意力的感知模块提取概率化人体状态以支持可解释的社会性决策。实验表明该方法在安全与社交合规上表现良好，为机器人导航的感知-决策一体化提供了方案。",
-          "llm_tldr": "自主社交导航需在效率、物理安全与社交规范间取得平衡，而强化学习方法常依赖已知人类位置速度等不切实际假设。本文提出JESSI端到端强化学习框架，将原始激光雷达扫描直接映射为运动学可行的控制指令。框架通过Dirichlet参数化连续动作空间与确定性边界增强安全，并引入基于注意力的感知模块提取概率化人体状态以支持可解释的社会性决策。实验表明该方法在安全与社交合规上表现良好，为机器人导航的感知-决策一体化提供了方案。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
-          "matched_requirement_id": "req-8",
-          "selection_source": "carryover_cache",
-          "paper_id": "2610.05733v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2610.04301v1",
-          "source": "arxiv",
-          "title": "EnvDreamer: Large-Scale Multimodal-to-Environment Generation for Embodied AI",
-          "abstract": "Large datasets and high capacity models have accelerated progress in vision and language. This work introduces a platform aimed at bringing comparable gains to embodied learning, world models, and robotics. We present EnvDreamer, a framework that uses large language and vision language models to generate Unreal Engine 5 environments for embodied AI and robot training. EnvDreamer enables sampling of large, diverse, interactive, customizable, and validator passed virtual environments for training and evaluation across navigation, interaction, and manipulation. We illustrate the platform with a large set of generated scenes and simple baselines. Policies trained on EnvDreamer generated environments, without explicit mapping or human task supervision, achieve competitive results on multiple embodied benchmarks spanning navigation, rearrangement, and manipulation. EnvDreamer also supports image-conditioned reconstruction for real-to-sim studies. Finally, we release EnvDreamer-20k, a dataset of 20,000 validator passed environments with task programs, scene graphs, trajectories, and metadata to support reproducible benchmarking.",
-          "authors": [
-            "Kabir Swain",
-            "Sijie Han",
-            "Antonio Torralba"
+            "Hyun Jung Lee",
+            "Jungtaek Kim",
+            "Jongwon Jeong",
+            "Tae-Eui Kam",
+            "Donghyun Kim",
+            "Yong Jae Lee"
           ],
           "primary_category": "cs.AI",
           "categories": [
             "cs.AI"
           ],
-          "published": "2026-10-03T05:28:33+00:00",
-          "link": "https://arxiv.org/pdf/2610.04301v1",
+          "published": "2026-10-06T14:30:42+00:00",
+          "link": "https://arxiv.org/pdf/2610.08432v1",
           "tags": [
             "keyword:ad",
             "query:ad"
           ],
           "llm_score": 8.0,
-          "llm_evidence_en": "Generates UE5 virtual environments for embodied AI and robot training",
-          "llm_evidence_cn": "为具身智能与机器人训练生成虚拟环境",
-          "llm_evidence": "为具身智能与机器人训练生成虚拟环境",
-          "canonical_evidence": "为具身智能与机器人训练生成虚拟环境",
-          "llm_tldr_en": "EnvDreamer uses LLMs and VLMs to generate large-scale Unreal Engine 5 environments for embodied AI and robot training across navigation, interaction, and manipulation tasks.",
-          "llm_tldr_cn": "面向具身智能训练数据匮乏的问题，本文提出 EnvDreamer 平台，利用大语言模型与视觉语言模型自动生成 Unreal Engine 5 虚拟环境，覆盖导航、交互与操作等任务。平台可采样大规模、多样、可交互且通过校验的场景，并给出简单基线。在该环境中训练的策略无需显式建图或人工任务监督即可学习，为具身智能与世界模型研究提供了可扩展的环境生成工具。",
-          "llm_tldr": "面向具身智能训练数据匮乏的问题，本文提出 EnvDreamer 平台，利用大语言模型与视觉语言模型自动生成 Unreal Engine 5 虚拟环境，覆盖导航、交互与操作等任务。平台可采样大规模、多样、可交互且通过校验的场景，并给出简单基线。在该环境中训练的策略无需显式建图或人工任务监督即可学习，为具身智能与世界模型研究提供了可扩展的环境生成工具。",
+          "llm_evidence_en": "Self-evolving optimization of embodied agent harness from experience traces",
+          "llm_evidence_cn": "利用经验轨迹自演化优化具身智能体框架",
+          "llm_evidence": "利用经验轨迹自演化优化具身智能体框架",
+          "canonical_evidence": "利用经验轨迹自演化优化具身智能体框架",
+          "llm_tldr_en": "Improving embodied agents usually means training the model, while the surrounding harness is hand-engineered. EMHO freezes the model and self-evolves the harness from experience traces, improving progress monitoring, vision-tool use and failure recovery under sparse feedback.",
+          "llm_tldr_cn": "提升具身智能体通常聚焦于模型训练，而控制规划、上下文与工具使用的智能体框架多靠人工设计。本文提出EMHO自演化框架，冻结具身模型，通过分析执行轨迹与历史框架记录迭代改进智能体如何监控进度、使用视觉工具、落地观测并应对失败。在稀疏环境反馈下，该方法能自动优化框架并支持多子任务共用，为具身智能体优化提供新范式。",
+          "llm_tldr": "提升具身智能体通常聚焦于模型训练，而控制规划、上下文与工具使用的智能体框架多靠人工设计。本文提出EMHO自演化框架，冻结具身模型，通过分析执行轨迹与历史框架记录迭代改进智能体如何监控进度、使用视觉工具、落地观测并应对失败。在稀疏环境反馈下，该方法能自动优化框架并支持多子任务共用，为具身智能体优化提供新范式。",
           "llm_tags": [
             "query:ad"
           ],
@@ -169,134 +91,7 @@
           "matched_query_text": "embodied intelligence agents in physical environments",
           "matched_requirement_id": "req-3",
           "selection_source": "carryover_cache",
-          "paper_id": "2610.04301v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2610.03607v1",
-          "source": "arxiv",
-          "title": "World Action Learning via Interaction-Centric Spectral Latent Guidance",
-          "abstract": "Learning general-purpose robot policies requires large-scale real-world interaction data, yet collecting robot demonstrations remains expensive and difficult to scale. Egocentric videos offer abundant human interaction experience with task-relevant semantics for robotic manipulation, but direct transfer is challenging for two reasons: latent actions inferred from frame reconstruction can be dominated by nuisance variation such as ego-camera motion, and human and robot behaviors often exhibit different temporal dynamics. We propose WING (World Action Learning via INteraction-Centric Spectral Latent Guidance), a framework for transferring interaction knowledge from egocentric videos to robot policies. WING first separates observer-induced motion from hand-object interaction and distills the interaction-centric component into latent actions. It then exploits the observation that cross-embodiment task semantics are concentrated in slowly varying temporal structures, identifying shared low-frequency components between egocentric latent actions and robot behaviors in the spectral domain and using them to guide action generation. WING achieves average success rates of 99.20% on LIBERO, 93.80% on RoboTwin 2.0, and 57.7% on RoboCasa-GR1, and also performs strongly across four real-world manipulation tasks under diverse generalization settings. These results show that interaction-centric spectral guidance provides an effective and scalable way to transfer physical interaction knowledge from human egocentric video to robot control. Project page: https://mikuz12.github.io/wing/",
-          "authors": [
-            "Zhiming Liu",
-            "Yikun Miao",
-            "Ying Chen",
-            "Hongrui Yin",
-            "Fangqi Zhu",
-            "Xiaoyi Pang",
-            "Quanxin Shou",
-            "Zhengyang Yan",
-            "Haodong Wang",
-            "Song Guo"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-10-02T17:08:12+00:00",
-          "link": "https://arxiv.org/pdf/2610.03607v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "Transferring egocentric video interaction knowledge to robot manipulation policies",
-          "llm_evidence_cn": "将自我中心视频交互知识迁移到机器人操作策略",
-          "llm_evidence": "将自我中心视频交互知识迁移到机器人操作策略",
-          "canonical_evidence": "将自我中心视频交互知识迁移到机器人操作策略",
-          "llm_tldr_en": "WING transfers interaction knowledge from egocentric human videos to robot policies by separating observer-induced motion from hand motion and using interaction-centric spectral latent guidance, addressing nuisance variation and human-robot dynamics gaps.",
-          "llm_tldr_cn": "学习通用机器人策略需大规模真实交互数据，但机器人演示采集昂贵且难扩展；自我中心视频虽富含人类交互经验，直接迁移却受两个问题阻碍：从帧重建推断的潜在动作易被摄像机自运动等干扰主导，且人与机器人行为的时间动态不同。本文提出 WING，将观察者引起的运动与手部运动分离，并以交互中心的谱潜在引导迁移知识，提升机器人操作策略学习。",
-          "llm_tldr": "学习通用机器人策略需大规模真实交互数据，但机器人演示采集昂贵且难扩展；自我中心视频虽富含人类交互经验，直接迁移却受两个问题阻碍：从帧重建推断的潜在动作易被摄像机自运动等干扰主导，且人与机器人行为的时间动态不同。本文提出 WING，将观察者引起的运动与手部运动分离，并以交互中心的谱潜在引导迁移知识，提升机器人操作策略学习。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
-          "matched_requirement_id": "req-8",
-          "selection_source": "carryover_cache",
-          "paper_id": "2610.03607v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2610.05414v1",
-          "source": "arxiv",
-          "title": "RMMBench: A Comprehensive Benchmark for Robotic Mobile Manipulation",
-          "abstract": "Although the advancement of vision-language models (VLMs) has endowed robots with enhanced environmental understanding and task reasoning, a comprehensive evaluation methodology is important to advance the integration of VLMs in robotic navigation and manipulation. However, current benchmarks lack a comprehensive method to evaluate diverse robotic tasks, and evaluation metrics remain relatively constrained, making it difficult to assess the embodied capabilities of VLMs in a thorough and fine-grained manner. To address this issue, we propose RMMBench, an evaluation benchmark that requires robots to understand language instructions and perform long-horizon tasks in continuous spaces. RMMBench seamlessly integrates high- and low-level embodied tasks into a unified framework, constructing a \"navigation-manipulation\" task suite comprising 70 canonical task scenarios that range from localized manipulation to long-horizon composite navigation. The results reveal that leading VLMs still face major challenges in spatial localization when performing mobile manipulation tasks, and also highlight the necessity of enhancing the spatial perception capability of robots during long-horizon interactions. RMMBench can be accessed at https://mxxq-stack.github.io/rmmbench-project/",
-          "authors": [
-            "Huapeng Li",
-            "Fuxiang Feng",
-            "Jinqiu Fan",
-            "Shuo Yang",
-            "Fengjiao Chen",
-            "Xuezhi Cao",
-            "Ran Song",
-            "Wei Zhang"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-10-04T17:55:26+00:00",
-          "link": "https://arxiv.org/pdf/2610.05414v1",
-          "tags": [
-            "keyword:ad",
-            "query:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "benchmark for robotic mobile manipulation and embodied VLM capabilities",
-          "llm_evidence_cn": "机器人移动操作与具身能力评测基准",
-          "llm_evidence": "机器人移动操作与具身能力评测基准",
-          "canonical_evidence": "机器人移动操作与具身能力评测基准",
-          "llm_tldr_en": "RMMBench is a benchmark requiring robots to follow language instructions and perform long-horizon tasks in continuous space, evaluating VLM-driven navigation and manipulation capabilities.",
-          "llm_tldr_cn": "针对现有基准难以全面、细粒度评估视觉-语言模型在机器人任务中具身能力的问题，本文提出RMMBench评测基准。该基准要求机器人理解语言指令并在连续空间中完成长时程任务，将高层与低层具身任务无缝整合，并采用更丰富的评价指标。工作为视觉-语言模型在导航与操作中的集成提供了系统化评测方法，有助于推动机器人在真实场景中的具身能力研究。",
-          "llm_tldr": "针对现有基准难以全面、细粒度评估视觉-语言模型在机器人任务中具身能力的问题，本文提出RMMBench评测基准。该基准要求机器人理解语言指令并在连续空间中完成长时程任务，将高层与低层具身任务无缝整合，并采用更丰富的评价指标。工作为视觉-语言模型在导航与操作中的集成提供了系统化评测方法，有助于推动机器人在真实场景中的具身能力研究。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "robotics manipulation locomotion human-robot interaction",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2610.05414v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2610.04187v1",
-          "source": "arxiv",
-          "title": "Autoware in Construction: Gap Analysis and LiDAR Perception Toward Off-Road Autonomous Driving",
-          "abstract": "Autoware is an open-source autonomous driving software platform widely adopted by researchers and industry developers. Originally developed primarily for public-road applications, including passenger vehicles, taxis, and buses, Autoware is increasingly being extended to off-road environments such as construction and agricultural sites. Construction sites, however, differ fundamentally from public roads and challenge many assumptions underlying conventional autonomous driving systems. They are characterized by unstructured terrain, airborne dust, continuously evolving site conditions, and construction-specific objects. This paper presents lessons learned from ongoing efforts to extend an Autoware-based autonomous driving system to large dump trucks operating at construction sites. We identify gaps between public-road and off-road construction applications across the sensing, mapping, localization, perception, planning, and control modules of the Autoware stack. We then discuss potential solutions for addressing these gaps, with particular emphasis on ongoing LiDAR-based perception pipeline development and findings from field testing. Finally, we propose a roadmap toward end-to-end autonomous driving for construction vehicles.",
-          "authors": [
-            "Yu Otsuki",
-            "Teja Emmey",
-            "Sena Matsushita",
-            "Akiro Harada",
-            "Takeshi Miura"
-          ],
-          "primary_category": "cs.RO",
-          "categories": [
-            "cs.RO"
-          ],
-          "published": "2026-10-03T00:56:04+00:00",
-          "link": "https://arxiv.org/pdf/2610.04187v1",
-          "tags": [
-            "keyword:ad"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "extending Autoware autonomous driving system to off-road construction with LiDAR perception",
-          "llm_evidence_cn": "将Autoware自动驾驶系统扩展至越野建筑场景并改进LiDAR感知",
-          "llm_evidence": "将Autoware自动驾驶系统扩展至越野建筑场景并改进LiDAR感知",
-          "canonical_evidence": "将Autoware自动驾驶系统扩展至越野建筑场景并改进LiDAR感知",
-          "llm_tldr_en": "This paper analyzes gaps in extending the Autoware autonomous driving platform to off-road construction sites and improves LiDAR perception for unstructured terrain, dust, and site-specific objects.",
-          "llm_tldr_cn": "Autoware是广泛使用的开源自动驾驶平台，但主要面向公开道路，向建筑、农业等非结构化越野场景扩展时，其核心假设面临严峻挑战。论文对基于Autoware的自动驾驶系统进行差距分析，并针对扬尘、非结构化地形与建筑特有目标改进LiDAR感知。研究总结了越野部署的经验教训，为自动驾驶系统从道路走向越野场景提供实践指导。",
-          "llm_tldr": "Autoware是广泛使用的开源自动驾驶平台，但主要面向公开道路，向建筑、农业等非结构化越野场景扩展时，其核心假设面临严峻挑战。论文对基于Autoware的自动驾驶系统进行差距分析，并针对扬尘、非结构化地形与建筑特有目标改进LiDAR感知。研究总结了越野部署的经验教训，为自动驾驶系统从道路走向越野场景提供实践指导。",
-          "llm_tags": [
-            "query:ad"
-          ],
-          "matched_query_tag": "query:ad",
-          "matched_query_text": "autonomous driving systems perception planning control",
-          "matched_requirement_id": "req-1",
-          "selection_source": "carryover_cache",
-          "paper_id": "2610.04187v1",
+          "paper_id": "2610.08432v1",
           "carry_days": 1
         }
       ]
