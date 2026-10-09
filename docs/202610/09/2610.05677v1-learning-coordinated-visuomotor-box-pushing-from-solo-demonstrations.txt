@@ -1,0 +1,267 @@
+Title: Learning Coordinated Visuomotor Box-Pushing from Solo Demonstrations
+
+URL Source: https://arxiv.org/pdf/2610.05677v1
+
+Published Time: Tue, 06 Oct 2026 02:10:33 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Learning Coordinated Visuomotor Box-Pushing from Solo Demonstrations 
+
+Ryusei Matsumoto 1,2, Mei Kinjo 1,3, Yoko Sasaki 1, Keisuke Okumura 11National Institute of Advanced Industrial Science and Technology (AIST), Japan 
+
+> 2
+
+Institute of Science Tokyo, Japan 
+
+> 3
+
+The University of Tokyo, Japan 
+
+{matsumoto.ryusei,y-sasaki,okumura.k }@aist.go.jp 
+
+Abstract: Multi-robot imitation learning, particularly in settings where visuo-motor policies are deployed in a communication-free, onboard decentralised style, represents an attractive paradigm. However, its realisation remains insuf-ficiently understood, largely due to the difficulty of collecting collective demon-strations, since a single operator cannot control many robots simultaneously. Meanwhile, unlike coupled collaborative manipulation, many coordinated tasks achieve system-wide efficiency primarily through minimising inter-robot interfer-ence. This structure motivates us to study whether data collected by a teleoper-ated single-robot can be leveraged for large-scale coordinated box-pushing as a testbed. We systematically investigate dataset creation strategies and lightweight policy architectures. In particular, experiments with up to 40 robots highlight the difficulty of acquiring effective coordination solely through passive observation of other operating robots, revealing a concrete bottleneck for multi-robot research. Solo demonstrations 
+
+> Onboard camera image Ground-truth velocity
+
+Multi-robot deployment 
+
+> Visual encoder
+
+Training       
+
+> Router
+> Expert 1 Expert 2
+> Weighted sum Raspberry Pi 4 k-frame sequence t= 0 s
+> t= 35 s
+> t= 120 s
+> Expert m ...
+
+Figure 1: We learn coordinated box-pushing policies from solo demonstrations ( left ). A lightweight mixture-of-experts architecture captures diverse skills under onboard resource constraints ( middle ). The resulting policy enables a multi-robot team to clean up scattered objects ( right ). The video is available at https://youtu.be/J9KfPI-hJX4 .
+
+## 1 Introduction 
+
+Robotic learning from human demonstrations has become a powerful paradigm for acquiring capable visuomotor policies, ranging from autonomous driving to dexterous manipulation [1, 2, 3]. How-ever, extending imitation learning to the multi-robot domain remains substantially more challenging. This is because, in addition to multi-robot-specific challenges such as task decomposition [4] and arXiv:2610.05677v1 [cs.RO] 5 Oct 2026 interaction modelling [5], learning coordinated multi-robot policies suffers from the difficulty of collecting high-quality demonstration data for collective motions. 
+
+More concretely, a closer look at modern robotic learning systems reveals that teleoperation has become the dominant paradigm for collecting high-quality robot demonstrations [6]. Although a human operator may be able to control a small number of robots simultaneously, obtaining demon-strations for large-scale collective behaviours rapidly becomes impractical due to the increasing cognitive and operational burden. One possible solution is to employ multiple expert operators to jointly generate demonstrations; however, such an approach scales poorly as the number of robots increases. Consequently, scalable multi-robot imitation learning has remained underdeveloped. While a few recent studies have explored multi-robot imitation learning [7, 8], they typically rely on external infrastructure such as motion capture systems for globally consistent state estimation, limiting real-world deployment. In contrast, modern single-robot systems increasingly achieve ro-bust operation using only onboard sensing and computation [9, 10]. In a similar spirit, we argue that multi-robot coordination should likewise be achievable using compact onboard visuomotor policies that directly map pixels to actions under resource constraints. Communication-free and fully de-centralised approaches are further attractive for scalable deployment, avoiding bottlenecks such as latency, packet loss, and communication infrastructure dependencies. These observations motivate the development of onboard, communication-free visuomotor poli-cies for scalable multi-robot coordination learned from solo demonstrations . We use “solo demonstrations” to mean demonstrations in which only a single robot is directly controlled by a hu-man and only that robot’s observation-action pairs are recorded, even when other robots are present as static or autonomous context. Our central question is then how such policies can be effectively attained. Focusing on a coordinated box-pushing task in which multiple mobile robots collect scat-tered objects into a designated region to clean up a workspace (Fig. 1), this study aims to provide empirical insights into the aforementioned challenge using large-scale deployments. 
+
+We specifically chose this task because it goes beyond mere multi-robot navigation while remaining closely connected to practical multi-robot applications such as collective construction [11]. Al-though prior works have explored vision-based multi-robot tasks such as collision avoidance [12] and flocking [13, 14], our setting differs substantially in both task complexity with physical in-teraction and system scale, up to 40 robots. Through this setup, our contribution is a systematic real-robot study of what kinds of solo demonstrations actually induce effective coordination, reveal-ing a nuanced picture. Surprisingly, data collected with static peer robots provides a strong and data-efficient signal, outperforming data collected among actively moving policy-controlled robots. However, throughput does not scale linearly with robot count, suggesting that dynamic-agent data collection remains an unresolved bottleneck. These findings highlight scalable multi-robot learning as a worthwhile open challenge. 
+
+## 2 Problem Setting 
+
+The task setup is illustrated in Fig. 1. A team of differential-drive robots [15] collects boxes (28 in the experiments) scattered throughout the white-walled workspace and transports them to a target bin located at the centre. The bin is marked by a tower with coloured blocks for visual recognition, and the robots dispose of the collected boxes by dropping them into a hole at the base of the bin. The workspace layout is available in the appendix. Each robot operates solely on a Raspberry Pi running ROS 2, without GPU acceleration, and is equipped with a front-facing camera that pro-vides ego-centric observations with a field of view of 120 ◦. At each control step ( 5 Hz ), robots receive RGB image observations and output velocity commands. Crucially, the robots operate in a communication-free, onboard decentralised manner, without relying on external infrastructure such as localisation systems. The markers mounted on top of the robots are used solely for measuring task completion progress. 2We refer to this task as “coordinated” box pushing to deliberately distinguish it from “collaborative” counterparts (e.g., [16, 17, 18]), which require tightly coupled problem solving that cannot be ac-complished by a single robot alone. Coordinated tasks can be completed by a single robot, while deploying multiple robots can improve task throughput through concurrent operation [19]. Yet, inter-robot interference can significantly degrade performance. For example, in our setup, robots may collide head-on and become stuck, steal boxes being transported by other robots, or even push other robots into the disposal hole; all of which were observed in practice. In particular, the densely populated workspace often leads to congestion, making such coordination failures ubiquitous. This distinction between coordinated and collaborative settings is fundamental to this study, as it enables us to train multi-robot policies from solo demonstrations. 
+
+## 3 Related Work 
+
+Box-pushing is a fundamental robotic task combining navigation and object manipulation, and has been studied extensively from analytical to learning-based perspectives [20]. Recent advances in robot learning have further enabled robust visuomotor manipulation policies [21, 2], although pri-marily in stationary single-robot settings. Likewise, collaborative box-pushing by multiple mo-bile robots has long been studied [22], typically with only a few interacting agents. In con-trast, our coordinated setting enables large-scale interactions involving tens of robots together with end-to-end visuomotor learning. While vision-based multi-robot coordination has recently emerged [13, 12, 14, 23], these studies generally avoid physical object interaction. Our setting is also related to swarm robotics [24], studying how large robot teams achieve collective behavior through simple local interactions, while our focus is not on hand-designed interaction rules. Our work broadly falls within multi-agent imitation learning (MAIL) , where policies are learned from demonstrations while incorporating architectural inductive biases for coordinated or collabo-rative task execution. When well-structured problem formulations and reliable expert policies are available, MAIL can be implemented via simple behaviour cloning and indeed provides a powerful framework, as demonstrated in domains such as multi-agent pathfinding [25, 26]. However, deriving such abstractions becomes considerably more difficult in real-world unstructured settings involving object manipulation without access to ground-truth external state information. Another powerful paradigm is multi-agent reinforcement learning (MARL) [27]. Indeed, MARL has demonstrated collaborative box-pushing behaviours for small robot teams [18, 28], but relies on nontrivial reward engineering that explicitly encodes desired collective behaviours. Besides, MARL relies on large amounts of interaction in physics-aware simulation environments, which are costly to develop for visuomotor collectives [12]. Consequently, learning visuomotor MAIL policies directly from solo demonstrations becomes an attractive alternative. Although relatively sparse compared to MARL, several advanced MAIL methods beyond behaviour cloning have been proposed [29, 30, 31, 32, 33]. In practice, however, the primary bottleneck often lies not in policy learning itself, but in collecting coordinated demonstrations, which constitutes a central challenge in this study. Closer to our motivation, round-robin behaviour cloning (R2BC) [7] learns heterogeneous multi-agent policies from single-agent demonstrations via sequential on-policy training, albeit only for teams of up to three agents. Similarly, [8] enables multi-agent hide-and-seek coordination by fine-tuning policies from single-human guidance collected during multi-robot deployments while the remaining robots are controlled by pre-trained coordination-agnostic policies. Our work follows a similar direction but targets large-scale ego-centric visuomotor policy learning from noisy high-dimensional observations. Furthermore, these studies rely on top-down cameras and centrally coordinated physical robot deployments. Given these considerations, our objective is not to provide yet another highly engineered coordi-nation mechanism, but rather to provide systematic empirical insights into how current learning techniques perform under large-scale, decentralised visuomotor robot deployments, which has been missing in the literature, stepping towards out-of-the-box multi-robot learning. 34 Policy Design 
+
+As discussed, coordinated box-pushing is fundamentally solvable by a single robot, while multiple robots primarily improve throughput through concurrent operation. Our objective is then to ac-quire robust box-pushing skills—such as finding, pushing, and releasing boxes—while minimising inter-robot interference such as collisions and livelocks. The challenges include policy architecture design under resource-constrained onboard environments and interaction-aware data collection. The following sections describe these design choices, while empirical analyses are provided in Sec. 5. 
+
+4.1 Model Architecture and Training Loss 
+
+We adopt a standard encoder–decoder architecture for visuomotor learning (Fig. 1; middle). Specif-ically, MobileNetV2 [34] encodes a 96 × 72 × 3 RGB image into a latent embedding zt (36 -dimensional in our setup). An LSTM [35] then integrates the embedding history ⟨zt−k, . . . , zt⟩
+
+to predict velocity commands y, where we use k=5 . This lightweight design balances model ca-pacity and computational efficiency while retaining history-dependent robot behaviours. Although transformer-based [36] and diffusion-based [2] policies were also considered, their inference over-head and latency were incompatible with real-time onboard control on Raspberry Pi-class hardware. We further enhance the policy capacity using a mixture-of-experts (MoE) design [37]. Instead of a single decoder, we employ m LSTM expert decoders together with a lightweight router network. The router applies mean pooling over the embedding history ⟨zt−k, . . . , zt⟩, followed by a small MLP producing expert weights w1, . . . , w m through softmax normalisation. The final command is computed as Pmi=1 wiyi, where yi denotes the output of the i-th expert. The policy contains approximately 2.4M parameters for m=2 , of which 2.2M belong to the MobileNetV2 encoder. The MoE design is motivated by the diversity of behaviours required even in single-robot box-pushing, including box searching, transportation, and recovery from collisions or wall-contact states. Such multi-expert strategies have been shown to promote behavioural diversity and robust skill ac-quisition in robotics [38, 39, 10]. While prior studies often pre-train individual skills before learning higher-level routing functions, our approach jointly trains the router and expert decoders end-to-end without manually decomposing behaviours into predefined skills. To mitigate expert collapse [40, 41], where only a small subset of experts is activated frequently dur-ing training, we employ entropy regularisation over the routing weights: Lrouting = Pmi=1 wi log wi.Together with the behaviour cloning loss LBC between the target command ˆyt and prediction yt,the training objective becomes L = LBC + λLrouting , where λ is a balancing hyperparameter. For 
+
+LBC , we use the Huber loss [42] due to its robustness against occasional large control errors. These design choices are empirically evaluated in Sec. 5.6. 
+
+4.2 Dataset Creation Single Static Dynamic Recovery             
+
+> πstatic 6K 12K 02K
+> πdynamic 6K 012K 2K
+> πmixed 6K 6K 6K 2K
+
+Figure 2: Training dataset breakdowns (# of observation-action pairs) for each policy. Using a joystick controller, a well-practised operator teleoperates a sin-gle robot in the workspace to collect paired observation-action demonstra-tions. The challenge here is to deter-mine which dataset types are required and how they should be prepared. To reduce inter-operator variability, all demonstrations for the same task were collected by a single operator. Furthermore, for all datasets, the operator directly observes the entire setup during data collection unless otherwise speci-fied. This choice was intended to facilitate high-quality demonstrations, following common practice in imitation learning for robotic manipulation. In Sec. 5.2, we additionally evaluate policies trained on demonstrations collected while the operator relies solely on the live stream from the robot’s onboard camera. 4Our starting point is the Single dataset, collected using a single robot in a workspace with many randomly distributed boxes. The operator moves the robot clockwise through the workspace to clean the environment as efficiently as possible. Each run ends once all boxes have been cleaned up, and this procedure is repeated until the target number of paired observation-action samples is collected (Fig. 2). Training on this dataset alone yields a naive IL policy that is entirely agnostic to the presence of other robots. When deployed, however, such policies frequently exhibit failure modes such as becoming stuck near walls or trapped by neighbouring robots in multi-robot settings. To address these cases, rather than relying on dataset aggregation techniques [43], we additionally construct a Recovery dataset containing recovery behaviours from such failure situations. Together, 
+
+Single and Recovery provide the minimal behavioural primitives for robust single-robot box-pushing. Training coordinated policies, however, requires data that explicitly reflects the presence of other robots. The simplest approach is therefore to place static robots in the workspace during data col-lection. Specifically, we collect solo demonstrations while additional non-controlled robots remain stationary throughout the environment, resulting in the Static dataset. As demonstrated later in the experiments, somewhat unexpectedly, even this highly simplified dataset proves sufficient to learn high-performance policies for coordination tasks .Motivated by prior studies on learning coordination from solo demonstrations [7, 8], we further construct a dataset termed Dynamic , where observations include other robots actively operating in the workspace. To obtain this dataset, we adopt a simple bootstrap procedure. First, we train a stable policy, termed πstatic , using Single , Recovery , and Static . We then deploy multiple robots controlled by πstatic while an operator teleoperates an additional robot in the same environment, re-sulting in Dynamic . Compared to Static , this dataset naturally contains richer interaction patterns, including behaviours for avoiding and navigating around moving robots. In summary, we construct four datasets: Single , Static , Dynamic , and Recovery (Fig. 2). These categories and preparation strategies are designed to remain intuitive yet informative for training MAIL policies, while preserving transferability beyond box-pushing. Indeed, as demonstrated later in Sec. 5.7, the same strategy can be directly applied to a different coordination task. 
+
+4.3 Auxiliary Future Prediction 
+
+Effective multi-agent coordination likely requires agents to anticipate the future behaviours of sur-rounding robots, especially in communication-free settings. Such predictive reasoning is closely related to the broader concept of world models [44], which have shown strong performance in se-quential decision-making [45]. Inspired by this perspective, we incorporate a lightweight world-model-style future prediction objective into policy learning. Our approach is intentionally simple: predicting future latent embeddings ⟨zt+1 , . . . , zt+l⟩ from past observations ⟨zt−k, . . . , zt⟩, where l=2 in the experiments; an auxiliary LSTM predictor is initialised from the last hidden state of the decoder and recursively rolls out future embeddings in an auto-regressive manner. We define Lworld as the MSE between predicted and ground-truth em-beddings. With this auxiliary objective, the final training loss becomes LBC + λ1Lrouting + λ2Lworld ,encouraging the policy to capture environment dynamics and anticipate surrounding agents. 
+
+## 5 Experiments 
+
+We systematically investigate learning strategies and further examine whether the same tendencies generalise to a different task. All results are obtained from real-world robot deployments rather than simulations, with each score averaged over three runs, which we believe provides sufficiently meaningful observations given the substantial deployment effort. Policy training was conducted on an NVIDIA GeForce RTX 3090. Most experiments use 20K training samples, corresponding to approximately 1 h of robot operation. The Static and Dynamic datasets were collected using 10 robots in the workspace, where one robot was teleoperated while the remaining robots were 5either stationary or autonomously controlled by πstatic . Detailed hyperparameters are provided in the appendix. 
+
+5.1 Dataset and Loss Design 
+
+Our first question is which dataset types and loss designs are essential for coordinated box-pushing, as well as how learned policies behave under larger robot populations (e.g., training with 10 robots but deploying with 20). To this end, we prepare six policies: (i) πstatic , trained mainly on Static ;
+
+(ii) πdynamic , trained on Dynamic ; (iii) πmixed , trained on both datasets; and (iv)-(vi) their future-aware counterparts with Lworld . Figure 2 shows the dataset composition, while Fig. 3 reports throughput and task progress for both the 10-robot in-distribution and 20-robot out-of-distribution settings. 10 20 10 20 10 20 10 20 10 20 10 20     
+
+> # Robots
+> 0510 15 20 25
+> Objects / min
+> w/ World w/ World w/ World
+> Static Dynamic Mixed 02
+> Time (min)
+> 0510 15 20 25 30
+> Objects carried 10 robots
+> w/o World w/ World
+> 02
+> Time (min) 20 robots
+> Static Dynamic Mixed
+
+(a) (b) 
+
+Figure 3: Policy performance across datasets and loss designs. (a) Task throughput, measured as the number of transported objects per unit time. (b) Task progress over time. Our primary observation is that, somewhat unexpectedly, πstatic outperforms πdynamic (10 robots; Welch’s t-test, p = 0 .027 ). Inspection of deployment videos suggests that congestion is a major failure mode: robots interfere with one another and fail to engage in efficient task execution. In particular, πdynamic often fails to avoid nearby robots appropriately, causing cascading traffic jams once robots become stuck. This behavior is also reflected in the average travel distance at the end of the task ( πstatic : (10 .5 ± 2.3) m , πdynamic : (8 .0 ± 0.5) m ) . We speculate that this degradation arises because Dynamic is substantially noisier than Static ,since surrounding robots operate simultaneously during data collection, resulting in less consistent supervision signals. In contrast, Static provides more consistent supervision for avoiding others, leading to better interference-minimising policies. The intermediate performance of πmixed further supports the difficulty of learning from Dynamic . Note that, albeit trivial, removing Static from the training drops the policy performance; see the appendix. Meanwhile, πstatic exhibits a throughput drop in the 20-robot setting, highlighting the difficulty of translating larger robot populations into proportional performance gains. We conjecture that densely populated situations are underrepre-sented in the 20K dataset, limiting generalisation to crowded deployments. Another notable observation is that adding Lworld improves performance when Dynamic is included in training. While these policies still underperform the best πstatic policy, predicting future states— including surrounding robot behaviours—appears beneficial for coordination. In contrast, adding 
+
+Lworld to πstatic degrades performance, likely because future robot behaviours are absent from the underlying demonstrations, rendering the auxiliary prediction task largely noisy. 
+
+5.2 Effect of Operator Observability 
+
+The previous setting relies on privileged observations, where the operator can control the robots based on visual information unavailable to the policy at deployment. Given this gap between data collection and deployment, we examine how the operator’s view during data collection affects policy performance. Specifically, we collect 20K demonstration samples while restricting the operator to the live stream from the robot’s onboard camera, maintaining the dataset proportions in Fig. 2. 610 20 10 20 10 20 10 20   
+
+> # Robots
+> 0510 15 20 25
+> Objects / min  w/ World w/ World
+> Static Dynamic
+
+Figure 4: Policy performance with data col-lected via the onboard camera stream. ⋄ mark-ers indicate the reference performance obtained with direct operator observation (Fig. 3). Figure 4 shows that all evaluated policies sub-stantially outperform their counterparts trained on demonstrations collected with privileged ob-servations. This indicates that, although demon-strations collected solely from the onboard cam-era may contain behaviours that are suboptimal from a global perspective, reducing the obser-vation gap between data collection and deploy-ment is crucial for learning effective mobile robot policies. Nevertheless, the main trends remain unchanged: πstatic still outperforms πdynamic (10 robots; Welch’s t-test, p = 0 .005 ), while Lworld 
+
+continues to improve πdynamic . These results sug-gest that effectively leveraging dynamic observa-tions remains challenging even when the operator is restricted to the robot’s onboard view. 
+
+5.3 Scaling Training Data 
+
+Following the previous results, we next ask: What happens if we simply increase the amount of data? 
+
+With the priviledged data-collection setting, we repeat the same experiments using three times more training data (60K samples) while keeping the dataset composition unchanged. Figure 5a shows the throughput improvement from the 20K setting in Fig. 3a. An improvement is achieved for πstatic in the 20-robot case, mitigating the previously observed dense-population issue. Meanwhile, scaling the dataset provides only limited gains for πdynamic , suggesting that data scale alone is insufficient for mastering coordination. Although larger datasets and models may eventually benefit πdynamic through scaling laws, such approaches remain costly in terms of both data collection and onboard computation. Under these practical constraints, improving data collection, as suggested by the live-stream results, may be a more promising direction for leveraging Dynamic . Compared to introducing Lworld , increasing dataset size generally yields larger performance gains, although the required real-world data collection effort remains substantial. 10 20 10 20 10 20 10 20 10 20 10 20       
+
+> # Robots
+> 0510 15 20 25
+> Objects / min  w/ World w/ World w/ World
+> Static Dynamic Mixed 10 20
+> # Robots Objects / min
+> # Experts
+> 142610 20 40
+> # Robots Objects / min
+> Static-10 Static-20 10 20
+> # Robots
+> 0510 15 20 25 30
+> Objects / min
+> w/o Recovery w/o Single Full
+
+(a) (b) (c) (d) 
+
+Figure 5: (a) Effect of dataset scaling to 60K samples, evaluated in terms of task throughput. White diagonal markers indicate the reference performance obtained with 20K-sample training. (b) Dataset ablation results, (c) sensitivity to the robot population in the Static training dataset, and (d) inves-tigation of the MoE architecture using πstatic .
+
+5.4 Dataset Ablation 
+
+We next investigate the importance of the Single and Recovery datasets in our best πstatic policy. These datasets provide solo skills rather than coordination capabilities. Using 60K samples while keeping the dataset composition unchanged, Fig. 5b compares πstatic with its dataset-ablated variants. In the 10-robot setting, Recovery appears less critical due to relatively sparse robot interactions. In contrast, it becomes essential in the 20-robot setting, where robots frequently need to recover from congested situations. Meanwhile, removing Single still yields functional policies; however, 7t = 0 s t = 30 s t = 240 s 0.0 0.5 1.0 1.5    
+
+> Time (min)
+> 0246810
+> Correctly colored objects  3 robots
+> Static Mixed 0.0 0.5 1.0 1.5
+> Time (min) 6 robots
+
+Figure 6: Snapshots of the colour classification task (left) and the policy performance (right) .the best 20-robot performance benefits from its inclusion, likely because stronger fundamental box-pushing skills reduce redundant motions and unnecessary interference. 
+
+5.5 Sensitivity to Training Robot Population 
+
+Thus far, we have evaluated policies trained in the 10-robot setting, including out-of-distribution de-ployment with 20 robots. Although these settings share the same task structure, denser environments introduce substantially greater coordination difficulty, as commonly observed in coordinated naviga-tion problems [46, 26]. Motivated by this, we further investigate πstatic under in-distribution 20-robot training and deployment settings. We prepare two policies trained with 20K samples, where Static 
+
+is collected using either 10-robot or 20-robot placement configurations. Figure 5c shows a natural trade-off: the policy trained with 10-robot data performs better in the 10-robot setting, whereas the policy trained with 20-robot data performs better in the 20-robot setting. This indicates clear degradation under out-of-distribution deployment. We additionally evaluate both policies in an extreme 40-robot scenario, where slight throughput improvements are observed; however, achieving highly efficient coordination remains an open challenge. 
+
+5.6 Importance of Mixture-of-Experts 
+
+Our backbone policy adopts a mixture-of-experts (MoE) architecture, and we evaluate its effec-tiveness while varying the number of expert decoders. Figure 5d presents this comparison using 
+
+πstatic trained on the 20K dataset. We first confirm that the MoE design is essential for coordinated box-pushing, as using only a single decoder substantially degrades performance. While the opti-mal number of experts likely depends on the amount of available training data, we generally find that a small number of experts, such as two, is already sufficient. Additional analyses of routing regularisation are provided in the appendix. 
+
+5.7 Colour Classification Task 
+
+A recurring observation thus far is that leveraging the Dynamic dataset remains nontrivial. In-deed, Fig. 3 to 5 consistently show that πstatic outperforms both πdynamic and πmixed . We therefore ask whether this tendency extends beyond the box-pushing task. To this end, we design a new task termed colour classification , where red and yellow boxes are scattered throughout the workspace and must be transported to colour-specific corners. Task snapshots are shown in Fig. 6 (left). Compared to box-pushing, this task additionally requires colour recognition and transport toward non-unique goal locations, increasing both perception and coordination complexity. Crucially, the task still con-stitutes a coordination problem, where efficient concurrent execution improves overall throughput. Figure 6 (right) compares the task completion counts of πstatic and πmixed , trained using approxi-mately 15K samples collected with 5-robot deployments and a dataset composition similar to Fig. 2. We observe the same trend: πmixed does not outperform πstatic in either the 3-robot or 6-robot case. This further supports our earlier finding that, for certain coordination tasks, data containing actively operating robots—at least when generated using πstatic as a proxy—is not necessarily beneficial for improving communication-free coordination policies. 86 Discussions 
+
+Focusing on coordinated box-pushing, we investigated learning coordination from solo demonstra-tions for communication-free visuomotor policies deployable onboard under resource constraints. A distinctive aspect is its large-scale real-world deployment study. While detailed empirical analyses have already been presented in Sec. 5, several broader observations are highlighted below. First, increasing the number of deployed robots does not automatically translate into proportional performance gains due to congestion effects, as commonly discussed in large-scale multi-robot nav-igation [46, 26]. Our findings, therefore, suggest that one of the central challenges for visuomotor multi-robot policies is achieving (sub-)linear throughput gains under increasing robot populations. Achieving this likely requires robots to anticipate others’ behaviours and act in ways that maximise overall social welfare. This naturally raises two questions: (i) how such data should be collected, and (ii) how such behaviours should be learned. For the latter, our experiments suggest that future latent-state prediction via Lworld provides useful supervision. Meanwhile, for the former, our results suggest that the bottleneck lies not merely in data quantity, but in the quality of interaction distribu-tions: while considerably easier to collect, static-agent demonstrations provide a surprisingly strong policy, whereas bootstrapped dynamic-agent demonstrations often amplify congestion effects. We note that our preliminary investigations additionally involved more complicated training proce-dures, including multi-round bootstrapping where previously trained policies are deployed as prox-ies akin to R2BC [7], fine-tuning πstatic using the Dynamic dataset, task transfer with more diverse data, and combinations thereof. However, these attempts did not substantially change the overall findings reported throughout this paper. To conclude, we believe that leveraging dynamic observa-tions of other robots will ultimately be important for achieving linear performance scaling, which constitutes a key challenge in multi-robot research .
+
+## 7 Limitations 
+
+This study does not target tightly coupled collaborative tasks requiring strongly interdependent multi-robot behaviours. Instead, our focus is on scalable coordination under realistic onboard re-source constraints. While richer computation and larger models may alter some of the conclusions, such extensions would inevitably introduce non-negligible infrastructural costs. Likewise, intro-ducing inter-robot communication is not addressed in this study. Although potentially attractive, it would require substantial additional engineering effort, particularly at the scale considered here. 
+
+## Acknowledgments 
+
+The authors would like to thank the anonymous reviewers and the area chair for their insightful comments, and Mizuki Yamaguchi for his assistance with the robot deployment. This study was partially supported by JST PRESTO (JPMJPR2513). 
+
+## References 
+
+[1] M. Bojarski, D. Del Testa, D. Dworakowski, B. Firner, B. Flepp, P. Goyal, L. D. Jackel, M. Monfort, U. Muller, J. Zhang, et al. End to end learning for self-driving cars. arXiv preprint arXiv:1604.07316 , 2016. [2] C. Chi, Z. Xu, S. Feng, E. Cousineau, Y. Du, B. Burchfiel, R. Tedrake, and S. Song. Diffusion policy: Visuomotor policy learning via action diffusion. International Journal of Robotics Research (IJRR) , 2025. [3] K. Black, N. Brown, D. Driess, A. Esmail, M. Equi, C. Finn, N. Fusai, L. Groom, K. Haus-man, B. Ichter, et al. π 0: A vision-language-action flow model for general robot control. In 
+
+Proceedings of Robotics: Science and Systems (RSS) , 2026. 9[4] B. P. Gerkey and M. J. Matari´ c. A formal analysis and taxonomy of task allocation in multi-robot systems. International Journal of Robotics Research (IJRR) , 2004. [5] J. Gielis, A. Shankar, and A. Prorok. A critical review of communications in multi-robot systems. Current robotics reports , 2022. [6] Z. Fu, T. Z. Zhao, and C. Finn. Mobile aloha: Learning bimanual mobile manipulation us-ing low-cost whole-body teleoperation. In Proceedings of the Annual Conference on Robot Learning (CoRL) , 2024. [7] C. Mattson, V. Raveendra, E. Novoseller, N. Waytowich, V. J. Lawhern, and D. S. Brown. R2bc: Multi-agent imitation learning from single-agent demonstrations. In Proceedings of IEEE International Conference on Robotics and Automation (ICRA) , 2026. [8] Z. Ji, L. Zhang, P. Sajda, and B. Chen. Enabling multi-robot collaboration from single-human guidance. In Proceedings of IEEE International Conference on Robotics and Automation (ICRA) , 2025. [9] E. Kaufmann, L. Bauersfeld, A. Loquercio, M. M¨ uller, V. Koltun, and D. Scaramuzza. Champion-level drone racing using deep reinforcement learning. Nature , 2023. [10] D. Hoeller, N. Rudin, D. Sako, and M. Hutter. Anymal parkour: Learning agile navigation for quadrupedal robots. Science Robotics , 2024. [11] K. H. Petersen, N. Napp, R. Stuart-Smith, D. Rus, and M. Kovac. A review of collective robotic construction. Science Robotics , 2019. [12] Y. Zhang, Y. Hu, Y. Song, D. Zou, and W. Lin. Learning vision-based agile flight via differen-tiable physics. Nature Machine Intelligence , 2025. [13] T.-K. Hu, F. Gama, T. Chen, Z. Wang, A. Ribeiro, and B. M. Sadler. Vgai: End-to-end learning of vision-based decentralized controllers for robot swarms. In IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , 2021. [14] D. Mezey, R. Bastien, Y. Zheng, N. McKee, D. Stoll, H. Hamann, and P. Romanczuk. Purely vision-based collective movement of robots. npj Robotics , 2025. [15] S. Yamamoto, R. Matsumoto, Y. Sasaki, and K. Okumura. 100-mouse system: Scalable multi-robot testbed with state management user interface. Journal of Robotics and Mechatronics ,2025. [16] O. Nachum, M. Ahn, H. Ponte, S. Gu, and V. Kumar. Multi-agent manipulation via locomotion using hierarchical sim2real. In Proceedings of the Annual Conference on Robot Learning (CoRL) , 2020. [17] Z. Tang, Y. Feng, and M. Guo. Collaborative planar pushing of polytopic objects with multiple robots in complex scenes. In Proceedings of Robotics: Science and Systems (RSS) , 2024. [18] Y. Feng, C. Hong, Y. Niu, S. Liu, Y. Yang, and D. Zhao. Learning multi-agent loco-manipulation for long-horizon quadrupedal pushing. In Proceedings of IEEE International Conference on Robotics and Automation (ICRA) , 2025. [19] A. Prorok, M. Malencia, L. Carlone, G. S. Sukhatme, B. M. Sadler, and V. Kumar. Beyond robustness: A taxonomy of approaches towards resilient multi-robot systems. arXiv preprint arXiv:2109.12343 , 2021. [20] J. St¨ uber, C. Zito, and R. Stolkin. Let’s push things forward: A survey on robot pushing. 
+
+Frontiers in Robotics and AI , 2020. 10 [21] P. Agrawal, A. V. Nair, P. Abbeel, J. Malik, and S. Levine. Learning to poke by poking: Expe-riential learning of intuitive physics. In Proceedings of the Conference on Neural Information Processing Systems (NeurIPS) , 2016. [22] M. J. Mataric, M. Nilsson, and K. T. Simsarin. Cooperative multi-robot box-pushing. In 
+
+Proceedings of IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) ,1995. [23] J. Blumenkamp, S. Morad, J. Gielis, and A. Prorok. Covis-net: A cooperative visual spatial foundation model for multi-robot applications. In Proceedings of the Annual Conference on Robot Learning (CoRL) , 2024. [24] M. Dorigo, G. Theraulaz, and V. Trianni. Swarm robotics: Past, present, and future [point of view]. Proceedings of the IEEE , 2021. [25] J.-M. Alkazzi and K. Okumura. A comprehensive review on leveraging machine learning for multi-agent path finding. IEEE Access , 2024. [26] R. Jain, K. Okumura, M. Amir, and A. Prorok. Graph attention-guided search for dense multi-agent pathfinding. In Proceedings of AAAI Conference on Artificial Intelligence (AAAI) , 2026. [27] S. V. Albrecht, F. Christianos, and L. Sch¨ afer. Multi-agent reinforcement learning: Founda-tions and modern approaches . MIT Press, 2024. [28] Z. Zhao, H. Guo, S. Chen, K. Xu, B. Jiang, Y. Zhu, and D. Zhao. Empowering multi-robot cooperation via sequential world models. In Proceedings of the International Conference on Learning Representation (ICLR) , 2026. [29] H. M. Le, Y. Yue, P. Carr, and P. Lucey. Coordinated multi-agent imitation learning. In 
+
+Proceedings of the International Conference on Machine Learning (ICML) , 2017. [30] J. Song, H. Ren, D. Sadigh, and S. Ermon. Multi-agent generative adversarial imitation learn-ing. In Proceedings of the Conference on Neural Information Processing Systems (NeurIPS) ,2018. [31] R. P. Bhattacharyya, D. J. Phillips, B. Wulfe, J. Morton, A. Kuefler, and M. J. Kochenderfer. Multi-agent imitation learning for driving simulation. In Proceedings of IEEE/RSJ Interna-tional Conference on Intelligent Robots and Systems (IROS) , 2018. [32] T. V. Bui, T. Mai, and T. Nguyen. Inverse factorized soft q-learning for cooperative multi-agent imitation learning. In Proceedings of the Conference on Neural Information Processing Systems (NeurIPS) , 2024. [33] A. Agaskar, S. Siva, W. Pickering, K. O’Brien, C. Kekeh, A. Li, B. G. Sarker, A. Chua, M. Ne-made, C. Thattai, et al. Deepfleet: Multi-agent foundation models for mobile robots. arXiv preprint , 2025. [34] M. Sandler, A. Howard, M. Zhu, A. Zhmoginov, and L.-C. Chen. Mobilenetv2: Inverted residuals and linear bottlenecks. In Proceedings of IEEE/CVF Computer Vision and Pattern Recognition Conference (CVPR) , 2018. [35] S. Hochreiter and J. Schmidhuber. Long short-term memory. Neural Computation , 1997. [36] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, and I. Polo-sukhin. Attention is all you need. In Proceedings of the Conference on Neural Information Processing Systems (NeurIPS) , 2017. [37] R. A. Jacobs, M. I. Jordan, S. J. Nowlan, and G. E. Hinton. Adaptive mixtures of local experts. 
+
+Neural computation , 1991. 11 [38] J. Merel, A. Ahuja, V. Pham, S. Tunyasuvunakool, S. Liu, D. Tirumala, N. Heess, and G. Wayne. Hierarchical visuomotor control of humanoids. In Proceedings of the International Conference on Learning Representation (ICLR) , 2019. [39] C. Yang, K. Yuan, Q. Zhu, W. Yu, and Z. Li. Multi-expert learning of adaptive legged locomo-tion. Science Robotics , 2020. [40] N. Shazeer, A. Mirhoseini, K. Maziarz, A. Davis, Q. Le, G. Hinton, and J. Dean. Outrageously large neural networks: The sparsely-gated mixture-of-experts layer. In Proceedings of the International Conference on Learning Representation (ICLR) , 2017. [41] W. Fedus, B. Zoph, and N. Shazeer. Switch transformers: Scaling to trillion parameter models with simple and efficient sparsity. Journal of Machine Learning Research (JMLR) , 2022. [42] P. J. Huber. Robust estimation of a location parameter. Annals of Mathematical Statistics ,1964. [43] S. Ross, G. Gordon, and D. Bagnell. A reduction of imitation learning and structured predic-tion to no-regret online learning. In Proceedings of the International Conference on Artificial Intelligence and Statistics (AISTATS) , 2011. [44] D. Ha and J. Schmidhuber. World models. In Proceedings of the Conference on Neural Infor-mation Processing Systems (NeurIPS) , 2018. [45] D. Hafner, J. Pasukonis, J. Ba, and T. Lillicrap. Mastering diverse control tasks through world models. Nature , 2025. [46] T. Kato, K. Okumura, Y. Sasaki, and N. Yokomachi. Congestion mitigation path planning for large-scale multi-agent navigation in dense environments. IEEE Robotics and Automation Letters (RA-L) , 2025. 12 Appendix A Experimental Setups 
+
+Mobile Robot The robots used in the experiments are based on Raspberry Pi Mouse V3 equipped with Raspberry Pi Camera Module 3 [15]. Each robot has a width of approximately 14 cm .
+
+Box Collection Task Robots transport coloured blocks toward a target hole located at the centre of the workspace. Figure 7 (left) shows the workspace layout. The experimental area consists of a 
+
+3.5 m × 3.5 m indoor space surrounded by white walls. At the centre of the workspace, a 1 m × 1 m 
+
+black carpet region is placed, with a 0.5 m × 0.5 m hole of depth 14 .5 cm located at its centre. A tower constructed from coloured blocks is positioned at the centre of the hole for visual recognition. The tower consists of yellow, blue, and red layers from top to bottom, and is placed such that the distance between the tower and the edge of the hole is 13 cm . The transported objects are 28 orange blocks with dimensions of 8 cm × 8 cm × 10 cm . Task completion is measured using an overhead camera installed above the workspace. A transported block is regarded as successfully delivered if it either falls into the hole or if the centre of the block reaches the black carpet region surrounding the hole. 
+
+Colour Classification Task Robots transport each block to a corner goal with the corresponding colour. The experimental area consists of a 2 m × 2 m indoor space surrounded by white walls, with a black carpet covering the floor (Fig. 7; right). At the four corners of the workspace, red and yellow blocks with dimensions of 16 cm × 24 cm × 10 cm are alternately placed. These blocks serve as colour-specific corner goals in the task. Red and yellow blocks are scattered throughout the workspace. The transported objects consist of five red blocks with dimensions of 8 cm × 12 cm ×
+
+10 cm and five yellow blocks with dimensions of 8 cm ×8 cm ×10 cm . Task completion is measured using a USB camera mounted on a tripod. The number of blocks successfully delivered to the correct corner goals is manually counted every 10 s .3.5 m 1.0 m  
+
+> 50 cm 13 cm 8 cm 14 cm 2.0 m
+
+Figure 7: Workspace layouts for the box collection task (left) and the colour classification task 
+
+(right) .
+
+## B Hyperparameters 
+
+Table 1 summarises hyperparameters used for the model architecture and training loss described in Sec. 4.1, as well as the auxiliary future prediction module introduced in Sec. 4.3. For the experiments with auxiliary future prediction, the auxiliary world-model loss was enabled after an initial warm-up phase and linearly increased to the final coefficient λ2. The warm-up schedule depended on the dataset size: for datasets with 20K samples, the world-model loss was enabled from epoch 10 and ramped over 10 epochs, whereas for datasets with 60K samples, it was enabled from epoch 3 and ramped over 10 epochs. These were adjusted following the pilot studies. 13 Table 1: Model and training hyperparameters                                
+
+> Input Configuration
+> Sequence length 5Image resolution 96 ×72
+> Backbone and Encoder
+> Backbone MobileNetV2 Encoder output dimension 36
+> Mixture-of-Experts
+> Number of experts m2Expert type LSTM LSTM hidden dimension 128 LSTM layers 1Router MLP hidden dimension 64
+> Training
+> Optimizer AdamW Batch size 128 Learning rate 1×10 −4
+> Weight decay 1×10 −4
+> Epochs 30
+> Loss Function
+> Behaviour cloning loss LBC Huber loss Huber δ1.0
+> λ1(routing loss coefficient) 0.005
+> λ2(world loss coefficient) 0.0005 Future prediction horizon l2
+
+## C Effect of Routing Regularisation 
+
+To evaluate the effect of the routing regularization term Lrouting in the loss function, we trained a two-expert MoE model without this term (i.e., using only LBC ). The ablated model was trained on the 20K dataset used for training πstatic . Without Lrouting , the routing entropy on the validation dataset did not decrease during training, whereas the model trained with Lrouting exhibited decreasing routing entropy. We further evaluated whether this difference affected real-world performance by deploying both models to a system consisting of 10 robots. The model trained without Lrouting exhibited lower task performance compared to the model trained with Lrouting (Fig. 8a, MoE models). 
+
+## D Parameter-Matched Comparison between LSTM and MoE Policies 
+
+The results in Sec. 5.6 support the effectiveness of the MoE architecture. However, increasing the number of experts also increases the total number of parameters. To control for this effect, we compared the two-expert MoE policy with a parameter-matched single-LSTM policy whose hidden dimension was adjusted ( hidden =191) to achieve a comparable parameter count. The parameter-matched LSTM policy was trained on the 20K dataset for πstatic and evaluated on the 10-robot de-ployment. Although the parameter-matched LSTM slightly improved performance compared to the original single-LSTM model, it still underperformed relative to the two-expert MoE policy (Fig. 8a). 
+
+## E Effect of Removing Static Data 
+
+To evaluate the contribution of Static data, we trained a policy, denoted as πsingle , using a dataset consisting only of 15K Single samples and 5K Recovery samples. As expected, Fig. 8b shows that πsingle achieved lower performance than πstatic in the 10-robot evaluation. In contrast, little performance difference was observed between the two policies in the 20-robot evaluation. This suggests that, while Static data are beneficial under conditions similar to those represented in the 14 MoE 2 (w/ Lrouting )MoE 2 (w/o Lrouting )LSTM LSTM (Param-matched) 
+
+Model 
+
+0510 15 20 
+
+> Objects / min
+
+10 20 
+
+# Robots 
+
+0510 15 20 
+
+> Objects / min
+> Single Static
+
+(a) (b) 
+
+Figure 8: (a) Further evaluation of the MoE architecture. (b) Contribution of Static data to policy performance. training data, their effect becomes limited in the denser 20-robot environment. As discussed in Sec. 5.3, this trend may also depend on the amount of training data available. 15

@@ -1,0 +1,385 @@
+Title: Contact-Aware Imitation Learning Through Contact Factorization
+
+URL Source: https://arxiv.org/pdf/2610.09533v1
+
+Published Time: Thu, 08 Oct 2026 01:02:55 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Contact-Aware Imitation Learning Through Contact Factorization 
+
+Jiho Hong 1, Daeun Song 2∗, Sanghyun Kim 1∗, Mingyo Seo 3∗
+
+Abstract — Generalizable contact-rich manipulation requires robots to preserve intended task behavior while adapting its physical realization to changing contact conditions. However, interaction forces can vary substantially with small changes in surface geometry, orientation, and friction, making policies trained directly on raw force measurements difficult to trans-fer beyond demonstrated conditions. We introduce FACE, a contact-factorized imitation learning framework that separates intended task behavior from environment-dependent contact factors. Our representation expresses interaction forces in nor-malized, contact-relative coordinates, while a learned contact-normal estimator and an online friction estimator infer the local contact normal and effective friction scale. Together, these estimators enable force observations to be encoded and policy outputs to be decoded into physical motion and force commands during execution. In this way, FACE adapts execution to current contact conditions while preserving the intended task behavior, without updating the policy parameters. We evaluate FACE on real-robot contact-rich manipulation under unseen variations in surface properties and geometry, demonstrating robust generalization across contact conditions through con-trolled comparisons with variants that adapt prior approaches to our setting. Videos and additional materials can be found on the project page: https://rcilab.khu.ac.kr/face .
+
+I. I NTRODUCTION 
+
+Recent advances in robot learning have enabled robots to acquire complex manipulation behaviors from scalable human demonstrations [1–4]. This progress has been strong for tasks in which visual observations provide much of the information needed to choose an action. However, contact-rich manipulation also depends on physical properties of the environment that may not be known before interaction. The same intended behavior can require different forces across surfaces or objects, and those forces may need to be applied along different directions as the contact geometry changes. Consequently, directly imitating raw force measurements can tie a learned policy to the conditions seen during demonstra-tion rather than the interaction required by the task. Force/torque and tactile feedback have enabled force-aware imitation learning, tactile-guided control, adaptive compliance, and multimodal policy learning for contact-rich manipulation [5–11]. These methods substantially improve contact awareness and robustness, but they generally repre-sent forces in physical quantities whose scale and orientation depend on the environment. During sliding, the required tan-gential force varies with friction and normal loading, while force directions vary with surface orientation. Consequently, generalization across contact conditions can depend heavily         
+
+> 1Kyung Hee University, 2Ewha Womans University, 3University of Central Florida.
+> ∗Correspondence:
+
+songd@ewha.ac.kr , kim87@khu.ac.kr ,
+
+mingyo.seo@ucf.edu Visuomotor Policy Contact-Factorized Representation     
+
+> friction contact direction demo data on nominal instances no adaptation
+> contact-aware adaptation robot deployment across unseen contact conditions
+> OO
+> wrong
+> direction
+> XX
+> insufficient
+> force
+> wrinkled wet
+> Fig. 1: Overview of FACE. FACE addresses contact-rich manipulation un-der uncertain physical conditions by separating the demonstrated interaction from contact-dependent force magnitude and direction. A contact-normal estimator trained through interactions with nominal object instances is combined with an online friction estimator during execution. This adaptation adjusts interaction forces online while preserving the intended behavior.
+
+on demonstration coverage or adaptation learned implicitly by the policy. Our key idea is to separate what is task-specific from what changes with the contact environment. The intended task behavior should be preserved, while its physical motion and force commands adapt to the current contact conditions. We realize this idea with normalized force coordinates defined in the local contact frame: normal loading is expressed relative to prescribed operating bounds, while tangential loading is expressed relative to friction-scaled normal loading. The same contact factorization is used for observations and actions, while friction scale and contact orientation are esti-mated separately and used both to encode force observations and to map the learned output back to physical commands. To capture the intended task behavior, we collect demon-strations with a handheld gripper equipped with force/torque sensing and visual-inertial tracking. The handheld form allows the demonstrator to physically perform contact-rich interactions while synchronized end-effector motion and in-teraction wrench are recorded. At deployment, the friction scale and local contact normal are estimated online and used to map normalized policy outputs back to physical motion and force commands. The policy itself remains fixed, allowing the demonstrated behavior to be preserved across surfaces with different frictional properties and curvatures. In summary, our contributions are threefold:  
+
+> •
+
+A contact-factorized representation of force observations and actions, using bounded normal loading and friction-relative tangential loading in the local contact frame.  
+
+> •
+
+An online reparameterization framework that converts out-puts of a fixed policy into motion and force commands using the estimated friction scale and contact normal.  
+
+> •
+
+A force-sensing handheld demonstration interface and real-arXiv:2610.09533v1 [cs.RO] 7 Oct 2026 Image Observation Pose Observation Wrench Observation Contact Estimator Contact Activation Online Friction Estimator Compliance Controller Normalized Interaction Policy      
+
+> Encoder Remove contact dependence Decoding Step
+> ❶Decode force coordinates ❷Restore friction scale ❸Resolve contact directions
+> Contact-Aware Rollout
+> Decoder Restore contact dependence Normalized force action Pose action Contact-aware pose reference Contact-aware force reference
+> 30Hz
+> 500Hz
+
+- +  
+
+> Contact Dependence Contact Normal Estimator
+> 30Hz
+> Normalized force obs.
+> Egg Cup Fig. 2: Model architecture and contact-aware online adaptation. Visual and wrench observations are encoded into normalized interaction coordinates that remove contact-dependent force variation. The policy predicts normalized pose and force actions, which are decoded using online estimates of contact activation, surface normal, and friction to restore the appropriate force scale and direction. The resulting contact-aware references are tracked by a compliance controller, enabling robust execution across varying contact conditions.
+
+robot evaluation under variations in friction, surface geom-etry, and their combination. II. R ELATED WORK 
+
+A. Force-Aware Demonstration and Imitation Learning 
+
+Recent work has increasingly incorporated physical inter-action signals into imitation learning. One common approach acquires force-aware demonstrations through teleoperation and enables policies to attend explicitly to interaction feed-back [8]. While effective, such systems require an instru-mented human-robot interface and closed-loop robot execu-tion during demonstration, and the recorded force signals remain tied to the physical conditions under which they are collected. Complementary to teleoperation-based collection, robot-free and human-centered interfaces enable demonstration collection through handheld tools and direct human interac-tion [5, 12–16]. More recent systems extend this paradigm to capture interaction forces during demonstration and learn force-aware manipulation policies [6, 7]. These approaches facilitate natural acquisition of coupled motion and force information and improve contact regulation. Their learned force and compliance targets can nevertheless remain de-pendent on the contact conditions represented in the demon-strations. Beyond data collection, recent visuomotor policies incor-porate force or tactile sensing through reactive architectures, multimodal fusion, and slow-fast policy structures [17–19]. Concurrent work also analyzes characteristic failure modes of force-aware vision-language-action policies in contact-rich tasks [20]. Together, these works establish the importance of physical interaction feedback. Our focus is on how that interaction is represented across changing contact conditions. 
+
+B. Contact-Aware Action Representation 
+
+Beyond force-aware observation and demonstration, an-other key question is how contact-rich actions should be rep-resented and executed. Classical force-control methods struc-ture contact-rich actions by separating force- and motion-controlled directions in task-related coordinates [21, 22], while later learning-based approaches infer changing con-straint frames from demonstrations [23]. Learning-based work has also explored action representations that expose physically meaningful control variables, such as end-effector motion together with variable impedance, to improve learn-ing in contact-rich tasks [24]. More recent policies learn task-dependent compliance or force regulation [25, 26], and combine learned visuomotor policies with interaction-frame estimation or hybrid force-position execution [27, 28]. These approaches improve contact stability and force regulation through learned compliance and contact-aware execution. We focus on normalizing tangential loading by friction-scaled normal loading to represent interaction across changing con-tact conditions. Other methods use physical feedback at inference time to calibrate predicted states or steer generated actions toward safer or more feasible interactions [29–31]. Concurrent work further explores fast force reflexes, asynchronous vision-force policy composition, and object-centric contact-wrench guidance [32–34]. Our approach uses the estimated contact normal and friction scale to encode force observations in contact-factorized coordinates and decode the outputs of a fixed policy into physical motion and force commands. III. M ETHOD 
+
+We introduce FACE (Force Adaptation through Contact-Factor Estimation), an imitation-learning framework for contact-rich manipulation using a contact-factorized rep-resentation. The key idea is to represent environment-dependent physical interaction through a compact contact factor, separating it from the task behavior demonstrated by the user, as illustrated in Fig. 1. A visuomotor policy there-fore learns receding-horizon actions in contact-factorized coordinates, while the contact factor is estimated by aseparate module that requires no task-specific supervision. At deployment, online contact-factor estimates transform the outputs of a fixed policy into pose and force references consistent with the current contact condition. 
+
+A. Problem Formulation 
+
+We formulate contact-rich manipulation of objects and surfaces with unknown physical properties and local contact geometry as a partially observed Markov decision process 
+
+M = ( S, O, A, P, R, γ ), where S is the state space, O is the observation space, A is the action space, P(·| s, a ) is the transition probability, R(s, a, s ′) is the reward function, and 
+
+γ ∈ [0 , 1) is the discount factor. At time t, we decompose the latent state as st = (xt, z t), with the contact factor 
+
+zt = ( nt, μ t), where xt denotes the task state, nt the local contact normal, and μt > 0 the effective friction scale. The contact factor is generally unknown before interaction and may vary across objects, surfaces, and contact locations. The robot receives the observation yt = ( It, pt, wt) ∈O, where It, pt, and wt denote the RGB observation, end-effector pose, and measured interaction wrench, respectively. Although zt is not directly observed, its effect is reflected in the history of tool motion and interaction wrench. We therefore estimate the contact factor as ˆzt = ϕ(yt−L:t) and use it to factorize the interaction quantities, separating the demonstrated behavior from its contact-dependent physical realization. Given ˆzt, the raw interaction observation is mapped to the factorized coordinate ˜wt = E(wt; ˆ zt). The visuo-motor policy then predicts the receding-horizon sequence 
+
+at:t+H−1 = π(It, pt, ˜wt), with each action represented as 
+
+at = (∆ xt, ∆Rt, ˜fnor ,t , c t). The policy output is trans-formed using the current contact-factor estimate to obtain physical motion and force references. 
+
+B. Contact Factorization for Interaction Representation 
+
+Following UMI [14], we express pose observations and motion actions relative to the current end-effector pose. This removes dependence on the absolute robot configuration and world frame, allowing the policy to represent motion locally with respect to the task. All force quantities and the contact normal nt are expressed in the current end-effector frame. Resolving the measured force with respect to nt then expresses interaction relative to the local surface rather than fixed end-effector axes. We use a unit contact normal oriented so that compressive normal loading is positive, and obtain normal and tangential forces by projecting the measured force onto this normal and its orthogonal plane. We treat normal loading as a task-level target specifying the intended level of contact. We normalize it by a prescribed operating limit, 
+
+˜fnor ,t = Π [0 ,1] 
+
+ fnor ,t 
+
+fnor ,max 
+
+
+
+, (1) where fnor ,max denotes the prescribed maximum normal loading and Π denotes clipping to the indicated interval. The resulting coordinate is dimensionless and bounded, with zero corresponding to no normal loading and one to loading at or above the prescribed maximum. Tangential loading, in contrast, depends strongly on the frictional properties of the contact and on the applied normal force. For an effective friction scale μ > 0, we therefore factorize the tangential force magnitude as 
+
+ftan ,t = μf nor ,t ρt(μ), (2) where ρt(μ) = ftan ,t /(μf nor ,t ) denotes the multiplica-tive residual after factoring out the contact-dependent scale 
+
+μf nor ,t . The residual is evaluated only when fnor ,t > f ϵ,where fϵ > 0 avoids ill-conditioned normalization near zero normal loading. Under steady Coulomb sliding, ρt(μ)
+
+approaches unity when μ matches the effective friction scale. Thus, ρt represents the demonstrated tangential loading relative to the friction-scaled normal loading. For the interaction component of the action, we represent this multiplicative residual in bounded log coordinates as 
+
+ct(μ) = log Π [ρmin ,ρ max ] (ρt(μ)) . (3) The logarithm converts multiplicative deviations around the nominal value ρt = 1 into additive deviations around ct = 0 ,providing a more convenient coordinate for policy learning. Here, ρmin and ρmax denote prescribed bounds used for action generation, satisfying 0 < ρ min ≤ 1 ≤ ρmax . Samples with fnor ,t ≤ fϵ are excluded from supervision of the tangential action coordinate. The interaction observation uses the same physical fac-torization so that sensed and commanded interaction are represented consistently. Using the online friction estimate 
+
+ˆμt and contact activation αt ∈ [0 , 1] , we define 
+
+˜wt =
+
+
+
+αt ˜fnor ,t , α tρt(ˆ μt), α t
+
+
+
+. (4) When fnor ,t ≤ fϵ, the tangential component is set to zero. The activation suppresses interaction channels outside contact while explicitly indicating the current contact state. Unlike the action coordinate, the observed tangential residual remains linear and unclipped so that measured variations in the interaction are retained. The contact activation αt
+
+and friction estimate ˆμt are obtained online as described in Section III-D. Relative poses remove global-frame dependence, while the contact normal and friction scale account for local surface orientation and the dominant scaling of tangential force. 
+
+C. Policy Learning 
+
+The policy learns to reproduce the demonstrated motion and interaction in contact-factorized coordinates, decoupling the learned behavior from the contact factors governing its physical realization, as illustrated in Fig. 2. To construct consistent interaction targets, we associate each training contact condition κ, defined by its material and contact configuration, with a nominal friction reference ¯μκ. We compute ¯μκ as the median tangential-to-normal force ratio over valid sliding samples and keep it fixed throughout each demonstration. This removes the nominal friction scale while preserving temporal variation in the demonstrated interac-tion. Accordingly, the interaction targets are cGT  
+
+> t
+
+= ct(¯ μκ)and ˜f GT nor ,t from (1). Normal loading is supervised over the full trajectory, including zero loading in free space. Interaction observations instead use the causal friction estimate ˆμt available at deployment through (4). Using this time-varying estimate to construct action targets could absorb part of the demonstrated interaction variation into the estimated contact factor. We therefore use the fixed reference 
+
+¯μκ to define the interaction behavior to be learned, while ˆμt
+
+is reserved for causal observation and execution adaptation. For a prediction horizon H, the demonstrated action sequence is y1 = {aGT 
+
+> t+h
+
+}H−1 
+
+> h=0
+
+, where each action combines the demonstrated relative motion with the corresponding factorized interaction target. We train a conditional flow-matching policy vθ to generate this sequence from the current policy observation. Following standard flow matching [35], we sample y0 ∼ N (0, I) and interpolate between y0 and 
+
+y1, with target velocity y1 − y0. Let epose  
+
+> t,h
+
+, e ˜ft,h , and ect,h 
+
+denote the pose, normal-loading, and tangential-interaction components of the flow prediction error. We optimize 
+
+L(θ) = E
+
+h 1
+
+> HH−1
+
+X
+
+> h=0
+
+ ∥epose  
+
+> t,h
+
+∥22 + λint 
+
+ |e ˜ft,h |2 + αt+h|ect,h |2 i
+
+.
+
+(5) Pose and normal loading are supervised throughout the trajectory, while tangential interaction is supervised only during valid contact. The tangential term is evaluated when 
+
+fnor ,t +h > f ϵ, and padded steps at episode boundaries are excluded. 
+
+D. Online Contact Estimation & Execution Adaptation 
+
+At deployment, we estimate zt = (nt, μ t) online to convert outputs of a fixed policy into motion and force references for the hybrid controller under unseen contact conditions. We first estimate the contact state and local geometry. The contact activation αt ∈ [0 , 1] is computed by applying a smoothstep function to the measured force magnitude between prescribed lower and upper thresholds. Because force magnitude is independent of the contact frame, 
+
+αt can be obtained before estimating the local contact normal. The local normal ˆnt is estimated from recent pose, rotation relative to the initial state, and wrench history using a separately trained estimator. The estimator is trained using the same demonstrations as the task policy, with an activation-weighted cosine loss against normals obtained from registered training geometry. This unit normal then defines the normal direction and tangent plane used for friction estimation. During active contact with fnor ,t > fϵ and sufficient tangential motion, μmeas  
+
+> t
+
+= ∥ftan ,t ∥ 
+
+> fnor ,t
+
+≈ μt. A scalar Kalman filter tracks μt and provides the online estimate ˆμt, initialized from a condition-independent prior μ0.Given the estimated contact factor, the predicted interaction is converted into physical force references, 
+
+f des nor ,t = fnor ,max Π[0 ,1] 
+
+ ˜f des nor ,t 
+
+
+
+,f des tan ,t = ˆ μtf des nor ,t Π[ρmin ,ρ max ]
+
+
+
+ecdes 
+
+> t
+
+
+
+.
+
+(6) Here, ˆμt restores the friction-dependent scale of the tangen-tial interaction. The estimated normal similarly adapts the predicted mo-tion to the local contact geometry, 
+
+∆xtan ,t =  I − ˆnt ˆn⊤
+
+> t
+
+ ∆xt,gt = smoothstep f des nor ,t − fg, 0
+
+fg, 1 − fg, 0
+
+!
+
+,
+
+∆xdes  
+
+> t
+
+= (1 − gt)∆ xt + gt∆xtan ,t .
+
+(7) Here, fg, 0 and fg, 1 are the lower and upper normal-loading thresholds for blending the original and tangential motions. As the desired normal loading approaches zero, the original translational motion is recovered. The relative orientation is preserved as ∆Rdes  
+
+> t
+
+= ∆ Rt. The desired tangential force is applied as a feedforward term, while normal force is regu-lated through feedback along the estimated contact normal. The resulting motion and force references are executed by a velocity-based hybrid position-force controller [21]. Each committed action is reparameterized using the latest ˆnt and 
+
+ˆμt, enabling continuous adaptation without additional policy inference within the committed action chunk. IV. E XPERIMENTS 
+
+The proposed method is then evaluated on a real-robot drawing task using an FR3 manipulator (Franka Robotics GmbH) [36]. The evaluation considers unseen objects with different contact geometries and frictional properties to test generalization under changing physical contact conditions. Demonstrations are collected with the handheld tool, provid-ing an intuitive interface for acquiring contact-rich behavior while allowing force-domain interaction to be learned despite differences in physical realization between demonstration and robot execution. Our experiments address three research questions: 1) Can the contact factor be estimated reliably on unseen objects and surfaces? 2) Can contact factorization effectively decouple learned behavior from contact-dependent physical realization? 3) Does this factorization improve object generalization across changes in contact geometry and frictional prop-erties, and how does each component contribute? 
+
+A. Experimental Setup 
+
+We design the following task to enable systematic com-parison with the baselines and isolate the contributions of individual components under controlled contact variations. Additional contact-rich manipulation tasks demonstrating broader applicability are provided on the project page. 
+
+a) Task Design: We consider controlled contact interac-tions and a real-robot target task of marking an “S” on fragile objects. We use two objects with complementary physical properties: 1) Paper Cup: a lightweight and compliant object that can deform under small contact forces. We vary its geometry using pre-deformed, folded, or wrinkled cups. iPhone 13 Pro       
+
+> Gripper Mechanism
+> Handle
+> Parallel-Jaw
+> Fingers
+> Force/Torque
+> Sensor
+> Actuator
+> (a) (c) (b) Fig. 3: Hardware setup. (a) The handheld demonstration interface integrates an actuated parallel-jaw gripper, a wrist-mounted force/torque sensor, and an iPhone for visual-inertial tracking. ( b) During data collection, the human demonstrator directly operates the interface, enabling intuitive demonstration of contact-rich interactions while synchronously recording motion, visual observations, and contact forces. ( c) During robot deployment, the handle is removed and the same gripper and sensing assembly is mounted on the robot, reducing end-effector mismatch between human demonstration and execution. Success Insufficient Force Excessive Force Contact Loss
+> Fig. 4: Success and failure modes in the marking task. Representative outcomes of the marking task. A successful trial produces a continuous tar-get trajectory, while failures arise from insufficient contact force, excessive contact force, or loss of contact during execution.
+
+2) Egg: a rigid and brittle object with a continuously curved surface. We vary its geometry using different-sized eggs. For the paper cup, we additionally vary the contact surface to introduce different frictional conditions: 1) PVC Tape: the contact region is covered with PVC tape to create a relatively higher-friction surface. 2) Plastic Shell: a smooth plastic layer is placed over the cup to create a lower-friction contact surface. 3) Wet Plastic Shell: the plastic surface is wetted to fur-ther reduce friction and create a more slippery contact condition. Demonstrations are collected on a nominal instance of each object, while these geometric and surface variations are introduced only at deployment. The marking task requires sustained sliding contact under limited force while contin-uously adapting to changes in local surface orientation and contact conditions. 
+
+b) Data Collection: Demonstrations are collected us-ing the handheld sensing interface in Fig. 3. The device integrates an actuated parallel-jaw gripper, a wrist-mounted six-axis force/torque sensor (AFT200, Aidin Robotics), and an iPhone 13 Pro providing RGB images and six-degree-of-freedom (DoF) pose estimation through ARKit (Apple Inc.). Electronic gripper actuation prevents the operator’s grasping force from contaminating the wrist wrench. RGB, pose, and gripper state are recorded at 30 Hz, while the wrist wrench is sampled at 500 Hz. All measurements are transformed into a calibrated tool frame using fixed extrinsics, and the wrench is bias-corrected and gravity-compensated using the onboard IMU. 
+
+c) Robot Deployment: The handheld tool is mounted to the robot through a dedicated adapter, preserving the sensing configuration and tool-frame convention used during demonstration. For policy inference, wrench measurements are aligned with the 30 Hz RGB and pose streams, and pose trajectories are converted to the relative representation in Section III-B. The 500 Hz wrench stream is retained for online contact processing and contact-factor estimation as described in Section III-D. The same calibration and wrench preprocessing are used during demonstration and deployment. 
+
+d) Evaluation Protocol and Metrics: The contact-normal estimator is trained using the same demonstrations as the corresponding policy. For each object category, all methods are trained on the same set of 200 human demon-strations collected using a nominal instance and evaluated under unseen deployment conditions. For surface variations, we evaluate three unseen conditions on paper cups, with 10 trials per method per condition. For geometric variations, we evaluate four unseen deformation conditions on paper cups, with 5 trials per method per condition, and five unseen egg instances, with 5 trials per method per instance. We report the task success rate as the primary metric. To further characterize unsuccessful trials, we categorize failures into four modes. The three contact-related failure modes are illustrated in Fig. 4. We additionally consider failures caused by incorrect motions generated by the visuomotor policy:  
+
+> •
+
+Insufficient Force. The marker remains in contact with the object, but the applied force is too small to produce a consistent visible mark, resulting in faint or incomplete trajectories.  
+
+> •
+
+Excessive Force. The applied force is too large, causing substantial deformation or damage to the fragile object during marking.  
+
+> •
+
+Contact Loss. The marker loses contact with the object surface during execution, producing gaps or discontinuities in the marked trajectory.  
+
+> •
+
+Incorrect Motion. The visuomotor policy generates mo-tion that substantially deviates from the intended marking trajectory, preventing successful task completion. (a) Effect of contact factorization                       
+
+> Tangential loading Log residual tangential loading
+> 65432103210-1 -2 -3
+> 0.09 0.06 0.03 0.00 -0.03
+> Materials
+> Paper PTFE Cotton Flat Convex A (uphill) Convex A (downhill) Convex B Concave
+> Geometries
+> Cotton & convex B
+> Both unseen case
+> Across geometries
+> 210-1 3Initial contact Steady sliding Escape
+> (b) Log residual tangential loading (c) Contact normal error (d) Normalized friction scale
+> Across materials
+> 210-1 3Initial contact Steady sliding Escape
+> Seen geometries
+> 0.09 0.06 0.03 0.00 -0.03 Initial contact Steady sliding Escape
+> 0.030 0.026 0.028 0.037
+> Unseen geometries
+> Initial contact Steady sliding Escape
+> 0.042 0.047
+> Seen materials
+> 84210.5
+> Initial contact Steady sliding Escape
+> 1.00 0.88
+> Unseen materials
+> 84210.5
+> Initial contact Steady sliding Escape
+> 0.98 1.20
+
+Fig. 5: Contact factorization and online contact factor estimation. (a) Tangential loading |ftan | varies across contact conditions, while the factorized coordinate c = log ρ, with ρ = ftan /(¯ μf nor ), remains centered near zero during steady sliding. For each material, the four violins correspond, from left to right, to flat, convex A (uphill), convex A (downhill), and convex B. ( b) The residual c exhibits a consistent temporal structure across geometries and materials, with larger deviations during initial contact and escape. ( c) Online contact-normal estimation remains accurate on both seen and unseen geometries. ( d) The normalized friction estimate ˆμ/ ¯μ converges toward unity during steady sliding for seen and unseen materials. Cotton and convex B are excluded from estimator training; lines show per-condition medians and shaded regions indicate interquartile ranges. 
+
+B. Surface Estimation and Interaction Representation 
+
+We first evaluate the adaptation module in a separate controlled-sliding experiment, distinct from the task-level evaluation in Sec IV-C. These experiments assess whether contact-dependent factors can be accurately estimated under seen and unseen surface conditions and whether the proposed interaction representation separates contact-dependent force scaling while retaining the temporal structure of measured interactions. We collect controlled sliding interactions with line contact on a small set of surface geometries and materials. The contact normal estimator is trained using paper and PTFE over flat, convex uphill, convex downhill, and concave uphill configurations, with 100 training episodes per material and configuration combination. The contact-factor estimator first computes force-based contact activation and estimates the contact normal from motion and wrench histories using a GRU. The estimated normal is then used to decompose the measured force and update the friction estimate with a scalar Kalman filter during steady sliding. Additional implementa-tion and data-collection details are provided on the project page. For evaluation, we consider both seen conditions and held-out conditions containing unseen geometries, unseen materials, or both. Cotton serves as the unseen material, and an unseen convex geometry is evaluated with paper, PTFE, and cotton. More details are available on the project page. Fig. 5 summarizes the results. Raw tangential loading varies across materials and geometries, whereas factorized residuals are centered near zero during steady sliding (a). The residuals retain phase-dependent variation, and departures from ρ = 1 outside steady sliding support learning ρ rather than fixing it to unity (b). Contact-normal errors average 
+
+0.030 rad on seen geometries and 0.045 rad on unseen ge-ometries (c). Initialized from a condition-independent prior, friction estimates approach their reference scales during steady sliding (d). With cotton and convex B both unseen, the normal error is 0.047 rad and the steady-sliding median friction ratio is 1.20 . These results validate the contact factorization and demonstrate that the adaptation module can estimate contact factors online under unseen contact conditions (Research Question 1). 
+
+C. Quantitative Evaluation 
+
+We evaluate whether our method enables robust transfer from demonstrations collected under nominal conditions to robot deployment under varying physical conditions, as presented in Fig. 6. To characterize the contribution of its individual design choices, we jointly compare against prior approaches adapted to our setting and controlled variants of our method, where individual components are modified or removed:  
+
+> •
+
+Visual Observation Only: We design a vision-based imitation learning baseline that predicts end-effector mo-tion without explicitly representing physical interaction. Inspired by UMI [14], a representative approach in this category, the baseline retains our flow-matching archi-tecture but removes the contact-adaptation encoder and decoder. This controlled comparison evaluates the benefit of explicitly modeling physical interaction under varying contact conditions.  
+
+> •
+
+Force as Observation: This variant provides the raw mea-sured interaction force directly to the visuomotor policy TABLE I: Quantitative results across contact geometry variations. We vary the local surface geometry using folds and wrinkles with different orientations (horizontal or vertical) and deformation severities (mild or severe) across paper cups and eggs. Success rates and failure-mode breakdowns are reported as percentages over 5 trials for each method and condition. Higher success rates are better. Failure rates are shown in parentheses in the following order: Insufficient Force (purple), Excessive Force (orange), Contact Loss (green), and Incorrect Motion (red); lower values are better.                                           
+
+> Method Paper Cup Egg Normal Horizontal (mild) Horizontal (severe) Vertical (mild) Vertical (severe) Visual Observation Only 0% (0%, 80%, 20%, 0%) 0% (0%, 0%, 100%, 0%) 0% (40%, 0%, 60%, 0%) 0% (40%, 0%, 60%, 0%) 0% (20%, 20%, 60%, 0%) 0% (0%, 0%, 96%, 4%) Force as Observation 0% (80%, 0%, 20%, 0%) 20% (40%, 0%, 20%, 20%) 0% (0%, 0%, 100%, 0%) 0% (100%, 0%, 0%, 0%) 0% (100%, 0%, 0%, 0%) 0% (0%, 0%, 0%, 100%) No Force-Factorization 80% (0%, 0%, 0%, 20%) 60% (40%, 0%, 0%, 0%) 0% (0%, 0%, 100%, 0%) 80% (20%, 0%, 0%, 0%) 40% (40%, 0%, 20%, 0%) 0% (0%, 0%, 0%, 100%) No Learned Contact-Normal Estimation 40% (40%, 0%, 20%, 0%) 0% (100%, 0%, 0%, 0%) 0% (100%, 0%, 0%, 0%) 0% (0%, 0%, 100%, 0%) 0% (0%, 0%, 100%, 0%) 4% (0%, 56%, 0%, 40%)
+> Full Method 100% (0%, 0%, 0%, 0%) 80% (0%, 0%, 20%, 0%) 60% (0%, 0%, 40%, 0%) 60% (40%, 0%, 0%, 0%) 60% (0%, 0%, 40%, 0%) 68% (24%, 8%, 0%, 0%)
+
+TABLE II: Quantitative results across contact surface variations. We vary the contact material from the nominal surface (Normal) to PVC tape and a smooth plastic shell, with the wet plastic shell introducing an additional low-friction surface condition. Success rates and failure-mode breakdowns are reported as percentages over 10 trials for each method and condition. Higher success rates are better. Failure rates are shown in parentheses in the following order: Insufficient Force (purple), Excessive Force (orange), Contact Loss (green), and Incorrect Motion (red); lower values are better.                             
+
+> Method Normal PVC Tape Plastic Shell Wet Plastic Shell
+> Visual Observation Only 0% (0%, 80%, 20%, 0%) 0% (50%, 10%, 40%, 0%) 10% (30%, 0%, 60%, 0%) 20% (10%, 0%, 70%, 0%) Force as Observation 0% (80%, 0%, 20%, 0%) 0% (30%, 0%, 0%, 70%) 10% (90%, 0%, 0%, 0%) 0% (100%, 0%, 0%, 0%) No Force-Factorization 80% (0%, 0%, 0%, 20%) 40% (0%, 60%, 0%, 0%) 50% (0%, 50%, 0%, 0%) 60% (0%, 0%, 0%, 40%) No Learned Contact-Normal Estimation 30% (50%, 0%, 20%, 0%) 30% (30%, 10%, 10%, 20%) 10% (20%, 0%, 70%, 0%) 10% (20%, 0%, 70%, 0%)
+> Full Method 100% (0%, 0%, 0%, 0%) 100% (0%, 0%, 0%, 0%) 100% (0%, 0%, 0%, 0%) 90% (10%, 0%, 0%, 0%)
+
+Nominal Surface 
+
+Wrinkled Surface 
+
+PVC Tape 
+
+Plastic Shell 
+
+Wet Plastic Shell 
+
+End 
+
+End 
+
+End 
+
+End 
+
+End 
+
+End 
+
+Egg 
+
+Fig. 6: Timelapse of deploying FACE across unseen objects. Despite substantial variations in surface geometry, material properties, and contact conditions, FACE adapts the interaction online and consistently executes the intended marking trajectory, demonstrating robust generalization beyond the conditions observed during training. 
+
+as an additional observation, without contact factorization. Comparison with the full method evaluates whether factor-izing interaction from contact-dependent effects provides benefits beyond simply conditioning the policy on force feedback. 
+
+• No Force-Factorization: Inspired by the direct force prediction in ForceMimic [6], this variant represents force observations and actions in physical units rather than fac-torized coordinates. For a controlled comparison, we retain our policy backbone and hybrid execution, constructing force directions from the estimated contact normal and pre-dicted motion rather than directly predicting force vectors. Comparison with the full method evaluates the benefit of contact factorization in separating learned interaction from its contact-dependent physical execution. 
+
+• No Learned Contact-Normal Estimation: This variant replaces the learned contact-normal estimator with an analytic estimator based on measured motion and force, while retaining the same policy and remaining compo-nents. Comparison with the full method evaluates the role of learned contact-normal estimation in transferring across varying surface geometries. Table I shows that FACE achieves 65% success (13/20) across unseen paper cup deformations, compared with 0% for the analytic contact-normal variant. On unseen eggs, the corresponding rates are 68% and 4%. Excessive-force fail-ures on eggs decrease from 56% with the analytic estimator to 8% with FACE, although insufficient-force failures remain at 24%. Visual Observation Only exhibits contact loss in 96% of egg trials, whereas no such failures are observed with FACE. No Force-Factorization achieves 45% across cup de-formations and exceeds FACE in Vertical (mild) by one trial. These results highlight the contribution of learned contact-normal estimation, although gains vary across conditions. Table II shows that FACE succeeds in 29/30 trials (96.7%) across the three unseen surface conditions, compared with 15/30 (50%) for No Force-Factorization. Of its 15 failures, 11 are excessive-force failures on PVC tape and the plastic shell, while 4 are incorrect-motion failures on the wet plastic shell. The excessive-force failures are consistent with the sensitivity of direct physical force targets to changes in contact-dependent force scale, whereas FACE’s only failure is insufficient force on the wet plastic shell. The analytic contact-normal variant succeeds in 5/30 trials, further sup-porting the role of learned contact-normal estimation in translating factorized interaction into physical commands. Visual Observation Only and Force as Observation succeed in 3/30 and 1/30 trials, respectively, indicating that neither omitting physical interaction nor simply conditioning on raw force is sufficient under surface changes. Together, these results support separating learned interac-tion from its contact-dependent physical execution to im-prove task generalization under unseen geometry and sur-face conditions (Research Question 2). The ablations high-light contributions from both force factorization and learned contact-normal estimation, while remaining insufficient-force and contact-loss failures indicate limitations in contact reg-ulation (Research Question 3). V. C ONCLUSION 
+
+We present FACE, a contact-factorized imitation learn-ing framework that separates intended task behavior from environment-dependent contact factors. Force observations and actions are represented in normalized coordinates defined by the local contact frame and friction scale. A learned contact-normal estimator and an online friction filter enable execution to adapt to current contact conditions without updating the task policy. Using demonstrations collected with a force-sensing handheld interface, our real-robot ex-periments show improved transfer to unseen surface proper-ties and geometries. Controlled comparisons highlight the complementary roles of force factorization and contact-normal adaptation in maintaining the intended interaction. These results support separating task behavior from contact-dependent force scale and direction as a means of improving generalization in contact-rich imitation learning. As a poten-tial limitation, friction estimation remains challenging when sliding is limited. Integrating visual cues provides a concrete path toward resolving this partial observability and extending the framework to deformable and multi-contact interactions. 
+
+Acknowledgements This work was supported by the Ministry of Trade, Industry and Energy (MOTIE) (RS-2024-00419641, RS-2025-25449039) and the Ministry of Science and ICT through the Korea Basic Science Institute (RS-2025-00564593), Republic of Korea. 
+
+REFERENCES 
+
+[1] A. Mandlekar et al., “What matters in learning from offline human demon-strations for robot manipulation,” in Conference on Robot Learning , 2021. [2] Y. Zhu, A. Joshi, P. Stone, and Y. Zhu, “VIOLA: Imitation learning for vision-based manipulation with object proposal priors,” in Conference on Robot Learning , 2022. [3] C. Chi et al., “Diffusion policy: Visuomotor policy learning via action diffusion,” The International Journal of Robotics Research , 2024. [4] Y. Ze, G. Zhang, K. Zhang, C. Hu, M. Wang, and H. Xu, “3d diffusion policy: Generalizable visuomotor policy learning via simple 3d representations,” in 
+
+Proceedings of Robotics: Science and Systems , 2024. [5] K. Yu, Y. Han, Q. Wang, V. Saxena, D. Xu, and Y. Zhao, “MimicTouch: Leveraging multi-modal human tactile demonstrations for contact-rich ma-nipulation,” in Conference on Robot Learning , 2024. [6] W. Liu, J. Wang, Y. Wang, W. Wang, and C. Lu, “ForceMimic: Force-centric imitation learning with force-motion capture system for contact-rich manipulation,” in IEEE International Conference on Robotics and Automation ,2025. [7] H. Choi et al., “In-the-wild compliant manipulation with UMI-FT,” in IEEE International Conference on Robotics and Automation , 2026. [8] J. J. Liu, Y. Li, K. Shaw, T. Tao, R. Salakhutdinov, and D. Pathak, “FACTR: Force-attending curriculum training for contact-rich policy learning,” in 
+
+Robotics: Science and Systems , 2025. [9] J. Jones, O. Mees, C. Sferrazza, K. Stachowicz, P. Abbeel, and S. Levine, “Beyond sight: Finetuning generalist robot policies with heterogeneous sen-sors via language grounding,” in IEEE International Conference on Robotics and Automation , 2025. [10] J. Yu et al., “ForceVLA: Enhancing VLA models with a force-aware MoE for contact-rich manipulation,” in Advances in Neural Information Processing Systems , 2025. [11] X. Li et al., “AT-VLA: Adaptive tactile injection for enhanced feedback reaction in vision-language-action models,” in IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2026. [12] S. Song, A. Zeng, J. Lee, and T. Funkhouser, “Grasping in the wild: Learning 6DoF closed-loop grasping from low-cost demonstrations,” IEEE Robotics and Automation Letters , 2020. [13] S. Young, D. Gandhi, S. Tulsiani, A. Gupta, P. Abbeel, and L. Pinto, “Visual imitation made easy,” in Conference on Robot Learning , 2021. [14] C. Chi et al., “UMI: Universal manipulation interface: In-the-wild robot teaching without in-the-wild robots,” in Robotics: Science and Systems , 2024. [15] M. Seo, H. A. Park, S. Yuan, Y. Zhu, and L. Sentis, “LEGATO: Cross-embodiment imitation using a grasping tool,” IEEE Robotics and Automation Letters , 2025. [16] N. M. M. Shafiullah et al., “On bringing robots home,” arXiv preprint arXiv:2311.16098 , 2023. [17] Z. He, H. Fang, J. Chen, H.-S. Fang, and C. Lu, “FoAR: Force-aware reactive policy for contact-rich robotic manipulation,” IEEE Robotics and Automation Letters , 2025. [18] H. Xue et al., “Reactive diffusion policy: Slow-fast visual-tactile policy learning for contact-rich manipulation,” in Robotics: Science and Systems ,2025. [19] W. Chen et al., “ImplicitRDP: An end-to-end visual-force diffusion policy with structural slow-fast learning,” IEEE Robotics and Automation Letters ,2026. [20] C. Par´ es-Morlans, N. Kuhn, I. Liu, A. Longhini, and J. Bohg, “Demystifying when and why VLAs fail in contact-rich tasks and how to fix them,” arXiv preprint arXiv:2608.01402 , 2026. [21] M. H. Raibert and J. J. Craig, “Hybrid position/force control of manipulators,” 
+
+Journal of Dynamic Systems, Measurement, and Control , 1981. [22] H. Bruyninckx and J. De Schutter, “Specification of force-controlled actions in the “task frame formalism”—a synthesis,” IEEE Transactions on Robotics and Automation , 1996. [23] A. Conkey and T. Hermans, “Learning task constraints from demonstration for hybrid force/position control,” in IEEE-RAS International Conference on Humanoid Robots , 2019. [24] R. Mart´ ın-Mart´ ın, M. A. Lee, R. Gardner, S. Savarese, J. Bohg, and A. Garg, “Variable impedance control in end-effector space: An action space for reinforcement learning in contact-rich tasks,” in IEEE/RSJ International Conference on Intelligent Robots and Systems , 2019. [25] Y. Hou et al., “Adaptive compliance policy: Learning approximate compliance for diffusion guided control,” in IEEE International Conference on Robotics and Automation , 2025. [26] X. Xu, Y. Hou, Z. Liu, and S. Song, “Compliant residual DAgger: Improving real-world contact-rich manipulation with human corrections,” in Advances in Neural Information Processing Systems , 2025. [27] H. Fang et al., “Force policy: Learning hybrid force-position control policy under interaction frame for contact-rich manipulation,” in Robotics: Science and Systems , 2026. [28] Y. Li et al., “ForceVLA2: Unleashing hybrid force-position control with force awareness for contact-rich manipulation,” in IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2026. [29] L. Wei, J. Ma, Y. Hu, and R. Zhang, “Ensuring force safety in vision-guided robotic manipulation via implicit tactile calibration,” in Conference on Robot Learning , 2025. [30] Z. Zhang et al., “TouchGuide: Inference-time steering of visuomotor policies via touch guidance,” in Robotics: Science and Systems , 2026. [31] Y. Wu, Z. Si, Z. Temel, O. Kroemer, and A. Bajcsy, “Inference-time policy steering via vision and touch,” in Conference on Robot Learning , 2026. [32] Y. Huang, S. Li, Z. Song, and W. Ding, “UniReflex: Plug-and-play force control for pretrained generative policies via fast-slow reflex,” arXiv preprint arXiv:2608.17432 , 2026. [33] Z. He, H. Fang, S. Tang, C. Lu, and H. Fang, “LAG-Fusion: Asynchronous multimodal diffusion policy composition via latency-aware guidance fusion,” 
+
+arXiv preprint arXiv:2607.17257 , 2026. [34] X. Zhu et al., “Learning dexterous manipulation using contact wrench guid-ance from human demonstration,” arXiv preprint arXiv:2607.00033 , 2026. [35] Y. Lipman, R. T. Chen, H. Ben-Hamu, M. Nickel, and M. Le, “Flow matching for generative modeling,” in International Conference on Learning Representations , 2023. [36] S. Haddadin et al., “The Franka Emika robot: A reference platform for robotics research and education,” IEEE Robotics & Automation Magazine , 2022.

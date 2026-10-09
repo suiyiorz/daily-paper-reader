@@ -1,0 +1,719 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-10-09T00:13:12.597659+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 19,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 21,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2610.09520v1",
+      "source": "arxiv",
+      "title": "Not All Uncertainty Matters: Simulation-in-the-Loop Fast-Slow Reasoning for Decision-Critical Autonomous Driving System",
+      "abstract": "Large vision-language models (VLMs) provide powerful open-world perception and reasoning for autonomous driving, but their high computational cost and inference latency make continuous cloud-side use impractical. This motivates fast--slow collaboration, where efficient onboard modules handle real-time perception and control while cloud models provide high-level reasoning only when needed. The key challenge is deciding when cloud reasoning should influence time-critical driving decisions. Existing methods often rely on perception uncertainty, heuristic triggers, or resource-driven policies, without assessing whether resolving an uncertainty will improve planning. We propose \\textbf{SIGMA}, a simulation-in-the-loop framework for task-oriented fast--slow collaboration. SIGMA embeds the planner into uncertainty assessment and evaluates how plausible scene realizations under semantic and geometric uncertainty affect feasible trajectories and planning cost. Based on these outcomes, it estimates the expected reduction in planning cost from resolving uncertainty. We further introduce expected planning gain (EPG), a decision-level metric for cloud invocation, cloud-guidance integration, and request prioritization under deadline and resource constraints. Experiments in CARLA show that SIGMA reduces unnecessary cloud interactions while improving planning, efficiency, and navigation success in static and dynamic obstacle scenarios. Compared with fixed-period collaboration, SIGMA reduces unnecessary cloud interactions by 50\\%, improves navigation success by more than 6\\%, and cuts finish time by up to 26.2\\% in dynamic scenarios.",
+      "authors": [
+        "Jiayi Chen",
+        "Shuai Wang",
+        "Guangxu Zhu",
+        "Derrick Wing Kwan Ng",
+        "Chengzhong Xu",
+        "Kaibin Huang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-10-07T06:15:44+00:00",
+      "link": "https://arxiv.org/pdf/2610.09520v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "simulation-in-the-loop fast-slow reasoning for decision-critical autonomous driving",
+      "llm_evidence_cn": "面向决策关键自动驾驶的仿真在环快慢推理",
+      "llm_evidence": "面向决策关键自动驾驶的仿真在环快慢推理",
+      "canonical_evidence": "面向决策关键自动驾驶的仿真在环快慢推理",
+      "llm_tldr_en": "Large VLMs aid autonomous driving perception and reasoning but are too costly for continuous cloud use; SIGMA uses simulation-in-the-loop fast-slow reasoning to decide when cloud reasoning should influence time-critical driving decisions.",
+      "llm_tldr_cn": "大型视觉语言模型为自动驾驶提供了强大的开放世界感知与推理能力，但其高昂计算成本与推理延迟使云端持续调用不切实际，因而需要快慢协同：车载模块负责实时感知与控制，云端模型仅在需要时提供高层推理。关键难题在于判断何时应让云端推理影响时间敏感的驾驶决策，现有方法多依赖感知不确定性、启发式触发或资源驱动策略，却未评估解决某不确定性是否真能改善规划。本文提出SIGMA，通过仿真在环的快慢推理来甄别决策关键的不确定性，提升了自动驾驶决策的效率与安全性。",
+      "llm_tldr": "大型视觉语言模型为自动驾驶提供了强大的开放世界感知与推理能力，但其高昂计算成本与推理延迟使云端持续调用不切实际，因而需要快慢协同：车载模块负责实时感知与控制，云端模型仅在需要时提供高层推理。关键难题在于判断何时应让云端推理影响时间敏感的驾驶决策，现有方法多依赖感知不确定性、启发式触发或资源驱动策略，却未评估解决某不确定性是否真能改善规划。本文提出SIGMA，通过仿真在环的快慢推理来甄别决策关键的不确定性，提升了自动驾驶决策的效率与安全性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.09695v1",
+      "source": "arxiv",
+      "title": "Do Better Visual Representations Always Lead to Better End-to-End Autonomous Driving?",
+      "abstract": "Visual foundation models (VFMs) are increasingly integrated into end-to-end autonomous driving for their powerful representations, yet it remains unclear when these representations improve driving performance. To investigate this question, we introduce ViRA, a planner-agnostic visual representation alignment framework that keeps the planner architecture and inference cost unchanged. Our study reveals three findings: (1) VFM-guided visual representations consistently improve driving performance across diverse end-to-end planners, with gains extending to zero-shot closed-loop evaluation. (2) The choice of VFM target matters for planning performance, and alignment to a different VFM can further benefit planners with pre-trained VFM encoders. (3) Auxiliary perception supervision reduces sensitivity to VFM target selection, narrowing the EPDMS spread across five targets from 2.7 to 0.5 points and potentially compensating for less effective VFM targets. Guided by these findings, we develop ViRA-Diffusion, a diffusion-based planner trained without auxiliary perception supervision, which achieves 92.3 EPDMS on NAVSIM v2 navtest, outperforming recent methods in our comparison by at least 1.9 points. The results motivate jointly considering target selection and planner supervision when integrating VFMs into end-to-end autonomous driving. The results and demo are available at https://github.com/OpenDriveLab/ViRA.",
+      "authors": [
+        "Zihao Zhang",
+        "Haochen Tian",
+        "Tianyu Li",
+        "Changhui Jing",
+        "Jingliang He",
+        "Naisheng Ye",
+        "Ziyuan Pu",
+        "Zhenjie Yang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-10-07T08:54:13+00:00",
+      "link": "https://arxiv.org/pdf/2610.09695v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "visual representation alignment for end-to-end autonomous driving planning",
+      "llm_evidence_cn": "面向端到端自动驾驶规划的视觉表征对齐",
+      "llm_evidence": "面向端到端自动驾驶规划的视觉表征对齐",
+      "canonical_evidence": "面向端到端自动驾驶规划的视觉表征对齐",
+      "llm_tldr_en": "This paper studies when visual foundation model representations improve end-to-end autonomous driving, introducing ViRA, a planner-agnostic visual representation alignment framework that leaves planner architecture and inference cost unchanged.",
+      "llm_tldr_cn": "针对视觉基础模型被广泛引入端到端自动驾驶、但其表征何时真正提升驾驶性能尚不明确这一问题，本文提出ViRA，一个与规划器无关的视觉表征对齐框架，保持规划器结构和推理开销不变。研究给出三点发现：视觉基础模型引导的表征在多种端到端规划器上一致提升驾驶性能并延伸至零样本闭环评测；对齐目标的选择影响规划表现，对齐到不同视觉基础模型甚至能进一步提升已有编码器的规划器。该工作为自动驾驶感知与规划的表征设计提供了实证指导。",
+      "llm_tldr": "针对视觉基础模型被广泛引入端到端自动驾驶、但其表征何时真正提升驾驶性能尚不明确这一问题，本文提出ViRA，一个与规划器无关的视觉表征对齐框架，保持规划器结构和推理开销不变。研究给出三点发现：视觉基础模型引导的表征在多种端到端规划器上一致提升驾驶性能并延伸至零样本闭环评测；对齐目标的选择影响规划表现，对齐到不同视觉基础模型甚至能进一步提升已有编码器的规划器。该工作为自动驾驶感知与规划的表征设计提供了实证指导。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.09763v1",
+      "source": "arxiv",
+      "title": "Beyond Policy Support: Interaction Constrained Offline Reinforcement Learning for Autonomous Driving",
+      "abstract": "Offline reinforcement learning enables reward-driven policy improvement from fixed datasets without requiring online exploration, making it particularly attractive in safety-critical domains. A central challenge, however, is distribution shift: policy optimization may favor actions that are weakly supported by the offline data, rendering value estimates unreliable. Existing approaches primarily control this shift in the policy's own action space. In interactive environments such as autonomous driving, this can be insufficient: a candidate ego trajectory may remain well supported under the marginal behavior distribution while being poorly supported jointly with the surrounding-agent behavior observed in the logged interaction. We refer to this degradation in interaction support as \\emph{interaction distribution shift} (IDS), and introduce \\emph{Interaction-Constrained Drive Policy} (ICDP), an offline reinforcement learning framework that explicitly controls interaction-level distribution shift. Starting from the joint data distribution over ego and surrounding-agent futures, we show that joint-support degradation decomposes exactly into an ego-support component and a residual interaction-support component. We recover the latter through contrastive density-ratio estimation, isolating interaction compatibility without explicit joint-density modeling, surrounding-agent prediction, or rollouts in reactive simulators or learned world models during policy optimization. Closed-loop evaluations on nuPlan, Interplan and real-world truck experiments show that ICDP suppresses high-value yet interaction-unsupported trajectory selections and improves performance in interaction-critical driving scenarios. Project webpage: https://mahmoud-selim.github.io/ICDP/",
+      "authors": [
+        "Mahmoud Selim",
+        "Cristina Cipriani",
+        "Karl Henrik Johansson"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-10-07T09:48:53+00:00",
+      "link": "https://arxiv.org/pdf/2610.09763v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "interaction-constrained offline reinforcement learning for autonomous driving",
+      "llm_evidence_cn": "面向自动驾驶的交互约束离线强化学习",
+      "llm_evidence": "面向自动驾驶的交互约束离线强化学习",
+      "canonical_evidence": "面向自动驾驶的交互约束离线强化学习",
+      "llm_tldr_en": "This work addresses distribution shift in offline RL for autonomous driving by constraining ego trajectories jointly with surrounding-agent behavior, going beyond marginal policy support in interactive settings.",
+      "llm_tldr_cn": "离线强化学习可在安全关键的自动驾驶中从固定数据提升策略，但分布偏移使价值估计不可靠，现有方法主要在自身动作空间控制偏移。该工作指出在交互环境中，候选自车轨迹可能在边缘行为分布下支撑良好，却与周围智能体行为联合支撑不足。论文提出交互约束的离线强化学习方法，从联合交互分布层面约束策略优化，提升了自动驾驶决策的安全性与可靠性。",
+      "llm_tldr": "离线强化学习可在安全关键的自动驾驶中从固定数据提升策略，但分布偏移使价值估计不可靠，现有方法主要在自身动作空间控制偏移。该工作指出在交互环境中，候选自车轨迹可能在边缘行为分布下支撑良好，却与周围智能体行为联合支撑不足。论文提出交互约束的离线强化学习方法，从联合交互分布层面约束策略优化，提升了自动驾驶决策的安全性与可靠性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.10384v1",
+      "source": "arxiv",
+      "title": "OpenViTac: Learning and Benchmarking Visuo-Tactile Policies in a Unified Sim-and-Real Framework",
+      "abstract": "Tactile feedback provides embodied agents with physical information beyond visual observations, enabling more reliable interaction with the real world. However, despite the rapid progress of vision-tactile-language-action (VTLA) policies, there remains a lack of unified benchmarks for evaluating tactile-enabled robot manipulation across simulation and the real world. To address this gap, we introduce OpenViTac, a visuo-tactile manipulation benchmark for evaluating robot policies across simulation and the real world. OpenViTac organizes contact-rich manipulation into four tactile-relevant capability dimensions and provides paired simulation-real-world settings for consistent evaluation of VLA, WAM, and VTLA policies. Building upon this benchmark, we investigate how different tactile representations and integration strategies affect the performance of pretrained VLA models. Correspondingly, we introduce OpenVTLA, a tactile augmentation framework that combines the best-performing representation and integration strategy. Furthermore, we leverage the paired benchmark setting to study sim-real co-training and analyze factors affecting cross-domain policy learning. Together, OpenViTac provides a unified platform for evaluating and advancing visuo-tactile robot manipulation.",
+      "authors": [
+        "Yifan Wu",
+        "Qin Li",
+        "Nan Min",
+        "Guojin Zhong",
+        "Haoyu Zhao",
+        "Zhiyuan Li",
+        "Houze Xu",
+        "Shengqi Xu",
+        "Xingyao Lin",
+        "Zijie Diao",
+        "Zhaoxiang Liu",
+        "Shiguo Lian",
+        "Shunlin Lu",
+        "Shihao Zhao",
+        "Ziyi Ye",
+        "Zuxuan Wu",
+        "Yu-Gang Jiang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-07T16:43:29+00:00",
+      "link": "https://arxiv.org/pdf/2610.10384v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "visuo-tactile manipulation benchmark for robot policies",
+      "llm_evidence_cn": "面向机器人策略的视触觉操作基准",
+      "llm_evidence": "面向机器人策略的视触觉操作基准",
+      "canonical_evidence": "面向机器人策略的视触觉操作基准",
+      "llm_tldr_en": "OpenViTac introduces a unified visuo-tactile manipulation benchmark spanning simulation and the real world, organizing contact-rich manipulation into four tactile capability dimensions to consistently evaluate VLA, WAM and VTLA policies.",
+      "llm_tldr_cn": "针对触觉反馈虽能提供视觉之外的物理信息，但缺乏跨仿真与真实世界的统一评测基准这一问题，本文提出OpenViTac，一个视触觉操作基准。它把富接触操作划分为四个与触觉相关的能力维度，并提供配对的仿真-真机设置，用于一致地评测视觉-语言-动作、世界-动作及视觉-触觉-语言-动作等策略。该基准为触觉赋能机器人操作的可复现评估与能力诊断提供了标准化平台。",
+      "llm_tldr": "针对触觉反馈虽能提供视觉之外的物理信息，但缺乏跨仿真与真实世界的统一评测基准这一问题，本文提出OpenViTac，一个视触觉操作基准。它把富接触操作划分为四个与触觉相关的能力维度，并提供配对的仿真-真机设置，用于一致地评测视觉-语言-动作、世界-动作及视觉-触觉-语言-动作等策略。该基准为触觉赋能机器人操作的可复现评估与能力诊断提供了标准化平台。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.10390v1",
+      "source": "arxiv",
+      "title": "Explicit Geometric Chain-of-Thought for Vision-Language-Action in Autonomous Driving",
+      "abstract": "Vision-language-action~(VLA) models have emerged as a promising paradigm for autonomous driving. However, existing VLA models still suffer from a fundamental mismatch: driving actions require precise 3D geometric cues, while visual-language understanding and reasoning are largely conducted in a 2D semantic space. In this paper, we propose GeoCoTDrive, an explicit geometric chain-of-thought framework that grounds geometry in a planning-oriented manner. GeoCoTDrive follows a think with 2D first, drive with dedicated 3D priors paradigm. It first grounds 2D regions corresponding to decision-critical cues, and then retrieves localized 3D priors by sampling features from a geometric foundation model within the grounded regions. These localized geometric features are interleaved into the autoregressive context to support the trajectory generation. To supervise this process, we introduce planning-relevant grounding, a new region-level grounding task that focuses on local spatial cues directly affecting ego planning decisions, and construct the PlanningGrounding dataset to endow VLAs with planning-oriented grounding capability. Experiments across multiple end-to-end autonomous driving benchmarks show that GeoCoTDrive consistently improves safety-critical planning performance, demonstrating the effectiveness of the explicit geometric chain-of-thought process for VLA-based planning.",
+      "authors": [
+        "Xingtai Gui",
+        "Yucheng Zhou",
+        "Dongqian Guo",
+        "Jiahao Gong",
+        "Feiyang Tan",
+        "Jianbing Shen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-10-07T16:47:17+00:00",
+      "link": "https://arxiv.org/pdf/2610.10390v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "geometric chain-of-thought vision-language-action for autonomous driving",
+      "llm_evidence_cn": "面向自动驾驶的几何思维链视觉-语言-动作",
+      "llm_evidence": "面向自动驾驶的几何思维链视觉-语言-动作",
+      "canonical_evidence": "面向自动驾驶的几何思维链视觉-语言-动作",
+      "llm_tldr_en": "VLA models for autonomous driving mismatch 2D semantic reasoning with 3D geometric action needs; GeoCoTDrive grounds 2D decision-critical cues then retrieves localized 3D priors from a geometric foundation model, improving planning-oriented driving.",
+      "llm_tldr_cn": "视觉-语言-动作模型已成为自动驾驶的有前景范式，但存在根本性错配：驾驶动作需要精确的三维几何线索，而视觉语言理解与推理多停留在二维语义空间。本文提出GeoCoTDrive，一种面向规划的显式几何思维链框架，遵循先以二维思考、再以专用三维先验驾驶的范式：先定位决策关键的二维区域，再从几何基础模型中采样局部三维先验。该方法将几何信息与驾驶规划紧密结合，提升了自动驾驶决策的几何一致性与准确性。",
+      "llm_tldr": "视觉-语言-动作模型已成为自动驾驶的有前景范式，但存在根本性错配：驾驶动作需要精确的三维几何线索，而视觉语言理解与推理多停留在二维语义空间。本文提出GeoCoTDrive，一种面向规划的显式几何思维链框架，遵循先以二维思考、再以专用三维先验驾驶的范式：先定位决策关键的二维区域，再从几何基础模型中采样局部三维先验。该方法将几何信息与驾驶规划紧密结合，提升了自动驾驶决策的几何一致性与准确性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "autonomous driving systems perception planning control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2610.01698v1",
+      "source": "arxiv",
+      "title": "ActiveWAM: Evidence-Aware Active Vision for World-Action Models",
+      "abstract": "Active vision manipulation requires a policy to control both its camera and its end-effectors, yet camera motion determines which evidence remains visible within finite observation windows. Acquiring a new view can displace task-critical cues, while retaining a view forgoes potentially useful observations. We formulate this as an evidence-aware retain--acquire problem and present ActiveWAM, a unified world--action model that learns observation and manipulation jointly. To this end, we propose training-time inversion which constrains a frozen video prior by task-bearing source evidence and visible temporal changes, eliminating the need for test-time inversion or candidate ranking. At deployment, the policy generates bimanual and pan/tilt actions-including stay and reacquisition behaviors-from view-aware history, and updates context from newly measured RGB observations. Future-video prediction serves as a co-training signal, while action generation requires neither future-video decoding nor optimal viewpoint annotations. We introduce RoboTwin-AV, a 50-task benchmark with executable pan/tilt control and automatically generated demonstrations. ActiveWAM improves TAVIS out-of-distribution success by up to 17.0 percentage points over the strongest baselines, achieves 20.0 additional points over Fast-WAM on RoboTwin-AV, and outperforms it by 26.7 points on real-world physical kitchen tasks.",
+      "authors": [
+        "Renjun Wu",
+        "Luzhou Ge",
+        "Xuesong Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-01T13:48:29+00:00",
+      "link": "https://arxiv.org/pdf/2610.01698v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "active vision world-action model for robotic manipulation with visual evidence",
+      "llm_evidence_cn": "面向机器人操作的主动视觉世界-动作模型",
+      "llm_evidence": "面向机器人操作的主动视觉世界-动作模型",
+      "canonical_evidence": "面向机器人操作的主动视觉世界-动作模型",
+      "llm_tldr_en": "Active vision manipulation must control both camera and end-effectors while deciding which evidence to retain or acquire; ActiveWAM is a unified world-action model with training-time inversion that jointly learns observation and manipulation.",
+      "llm_tldr_cn": "主动视觉操作要求策略同时控制相机与末端执行器，而相机运动决定有限观测窗口内哪些证据可见：获取新视角可能移走任务关键线索，保留旧视角又会错失有用观测。本文将其形式化为证据感知的保留-获取问题，提出ActiveWAM统一世界-动作模型，通过训练时反演约束冻结的视频先验，无需测试时反演或候选排序。部署时策略可生成双臂与云台动作，实现观测与操作的联合学习，提升了机器人操作的主动感知能力。",
+      "llm_tldr": "主动视觉操作要求策略同时控制相机与末端执行器，而相机运动决定有限观测窗口内哪些证据可见：获取新视角可能移走任务关键线索，保留旧视角又会错失有用观测。本文将其形式化为证据感知的保留-获取问题，提出ActiveWAM统一世界-动作模型，通过训练时反演约束冻结的视频先验，无需测试时反演或候选排序。部署时策略可生成双臂与云台动作，实现观测与操作的联合学习，提升了机器人操作的主动感知能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2610.02161v1",
+      "source": "arxiv",
+      "title": "DuoMind: Enabling Distributed Multi-Robot Coordination with Semantic Communication",
+      "abstract": "Vision-language models (VLMs) and vision-language-action models (VLAs) have recently driven rapid progress in general-purpose robots, yet most progress has focused on single-robot settings. Extending these capabilities to multi-robot systems remains challenging because robots must coordinate long-horizon behaviors while maintaining reliable, fine-grained execution. We introduce DuoMind, a distributed hierarchical framework for multi-robot coordination through semantic communication. Each robot uses a VLA-based action model for low-level execution and a VLM-based orchestrator for high-level reasoning and inter-agent coordination. At each planning step, the orchestrator at each robot reasons over the task instruction, local observations, and messages received from other robots. It then generates low-level instructions for the action model and semantic messages for peer robots. This architecture exploits the complementary strengths of pretrained models by combining the semantic reasoning capabilities of VLMs with the precise action-generation capabilities of VLAs. To address the scarcity of benchmarks for multi-robot coordination, we further develop RoboPoly, a benchmark comprising long-horizon manipulation tasks that require coordinated, closed-loop execution under distributed control. Experiments on RoboPoly and RoboTwin demonstrate that DuoMind improves multi-robot task performance, while ablation studies confirm the contributions of hierarchical orchestration and semantic communication. More details are available on our project page.",
+      "authors": [
+        "Hanchu Zhou",
+        "Dechen Gao",
+        "Hang Wang",
+        "Brendan Lynch",
+        "Boqi Zhao",
+        "Qiyao Ma",
+        "Raman Goyal",
+        "Junshan Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-10-01T17:53:09+00:00",
+      "link": "https://arxiv.org/pdf/2610.02161v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "distributed multi-robot coordination with VLA and VLM agents",
+      "llm_evidence_cn": "基于VLA与VLM的多机器人分布式协同",
+      "llm_evidence": "基于VLA与VLM的多机器人分布式协同",
+      "canonical_evidence": "基于VLA与VLM的多机器人分布式协同",
+      "llm_tldr_en": "Most general-purpose robot progress is single-robot; DuoMind is a distributed hierarchical framework where each robot uses a VLA action model for execution and a VLM orchestrator for high-level reasoning and semantic communication, enabling coordinated long-horizon multi-robot behavior.",
+      "llm_tldr_cn": "视觉语言模型与视觉语言动作模型推动了通用机器人的快速发展，但多数进展局限于单机器人场景，多机器人系统需在长时程行为协调的同时保持可靠的细粒度执行。本文提出DuoMind，一种通过语义通信实现多机器人协调的分布式分层框架：每个机器人以VLA动作模型负责底层执行，以VLM编排器负责高层推理与智能体间协调。该方法在规划步中融合任务指令、局部观测与通信信息，实现了长时程多机器人协作，为通用机器人从单体走向群体提供了可行方案。",
+      "llm_tldr": "视觉语言模型与视觉语言动作模型推动了通用机器人的快速发展，但多数进展局限于单机器人场景，多机器人系统需在长时程行为协调的同时保持可靠的细粒度执行。本文提出DuoMind，一种通过语义通信实现多机器人协调的分布式分层框架：每个机器人以VLA动作模型负责底层执行，以VLM编排器负责高层推理与智能体间协调。该方法在规划步中融合任务指令、局部观测与通信信息，实现了长时程多机器人协作，为通用机器人从单体走向群体提供了可行方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.08761v1",
+      "source": "arxiv",
+      "title": "VeriFine: Scaling Verification for Self-Improvement in Embodied Reasoning",
+      "abstract": "Self-improving policies continually expose new failure patterns, changing what their judges must be able to verify. However, current fixed judges constrain both optimization feedback and the discovery of useful training examples, limiting further self-improvement. This challenge is even more acute in embodied reasoning, where reliable evaluation must account for spatial grounding, causal reasoning, and safety-aware decision-making. We introduce VeriFine, an agent harness framework that scales verification through the co-evolution of the policy, training curriculum, and judge. The Policy Improvement Loop uses a rubric judge to diagnose recurring failures, construct an adaptive curriculum, and optimize the policy. When progress plateaus and verification becomes a bottleneck, the Judge Improvement Loop selectively queries human guidance on informative failure cases and refines the judge through coactive calibration, in which humans and agents resolve disagreements and converge toward the objective rubric of physical reasoning. The revised judge then guides the next stage of data selection and policy optimization. Experiments on driving and robot navigation tasks demonstrate continuous self-improvement in both policy and judge capability across reinforcement and supervised fine-tuning. These results show how scaling verification supports continuous self-improvement as policy failure patterns evolve.",
+      "authors": [
+        "Zewei Zhou",
+        "Rachel Luo",
+        "Yulong Cao",
+        "Chaowei Xiao",
+        "Chensheng Peng",
+        "Boyi Li",
+        "Thomas Tian",
+        "Zheng Lian",
+        "Yan Wang",
+        "Jiaqi Ma",
+        "Boris Ivanovic",
+        "Marco Pavone",
+        "Wenhao Ding"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-10-06T17:50:29+00:00",
+      "link": "https://arxiv.org/pdf/2610.08761v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "scaling verification for self-improvement in embodied reasoning agents",
+      "llm_evidence_cn": "面向具身推理的验证扩展与自我改进",
+      "llm_evidence": "面向具身推理的验证扩展与自我改进",
+      "canonical_evidence": "面向具身推理的验证扩展与自我改进",
+      "llm_tldr_en": "VeriFine co-evolves policy, curriculum and judge to scale verification for self-improving embodied reasoning, where evaluation must handle spatial grounding and safety-aware decisions.",
+      "llm_tldr_cn": "自改进策略不断暴露新的失败模式，但固定评判器限制了优化反馈与有用训练样本的发现，在需要空间接地、因果推理与安全决策的具身推理中尤为突出。VeriFine提出代理框架，通过策略、训练课程与评判器共同演化来扩展验证：策略改进循环用评分准则诊断反复出现的失败，构建自适应课程并优化策略。该方法提升了具身推理自我改进的可持续性，为可靠评估与策略进化提供了新机制。",
+      "llm_tldr": "自改进策略不断暴露新的失败模式，但固定评判器限制了优化反馈与有用训练样本的发现，在需要空间接地、因果推理与安全决策的具身推理中尤为突出。VeriFine提出代理框架，通过策略、训练课程与评判器共同演化来扩展验证：策略改进循环用评分准则诊断反复出现的失败，构建自适应课程并优化策略。该方法提升了具身推理自我改进的可持续性，为可靠评估与策略进化提供了新机制。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2610.07382v1",
+      "source": "arxiv",
+      "title": "Toward Trustworthy Physical AI for Human Interaction",
+      "abstract": "Robots are entering human spaces faster than we can establish when they deserve trust. We propose a framework for trustworthy physical AI that integrates Safety, Behavioral Intelligibility, and Perceptual Alignment across embodiment, control, cognition, and design. Trustworthiness emerges from aligning physical capabilities, observable behavior, and expectations people form during interaction.",
+      "authors": [
+        "Niccolò Pagliarani",
+        "Maximilian Stölzle",
+        "Cosima du Pasquier",
+        "Jeff Lui",
+        "Andrew Sabelhaus",
+        "Cecilia Laschi",
+        "Gentiane Venture",
+        "Daniela Rus",
+        "Matteo Cianchetti"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-05T20:53:59+00:00",
+      "link": "https://arxiv.org/pdf/2610.07382v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "trustworthy physical AI framework for human-robot interaction and safety",
+      "llm_evidence_cn": "面向人机交互与安全的可信物理人工智能框架",
+      "llm_evidence": "面向人机交互与安全的可信物理人工智能框架",
+      "canonical_evidence": "面向人机交互与安全的可信物理人工智能框架",
+      "llm_tldr_en": "This position paper proposes a framework for trustworthy physical AI integrating safety, behavioral intelligibility, and perceptual alignment across embodiment, control, cognition, and design for human-robot interaction.",
+      "llm_tldr_cn": "机器人正快速进入人类生活空间，但人们尚不清楚何时应当信任它们。本文提出面向可信物理人工智能的框架，在具身、控制、认知与设计四个层面整合安全性、行为可理解性与感知对齐。作者认为信任源于物理能力、可观测行为与人在交互中形成期望之间的对齐，为机器人在人类环境中的可信部署提供了概念性指导。",
+      "llm_tldr": "机器人正快速进入人类生活空间，但人们尚不清楚何时应当信任它们。本文提出面向可信物理人工智能的框架，在具身、控制、认知与设计四个层面整合安全性、行为可理解性与感知对齐。作者认为信任源于物理能力、可观测行为与人在交互中形成期望之间的对齐，为机器人在人类环境中的可信部署提供了概念性指导。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2610.04681v2",
+      "source": "arxiv",
+      "title": "RoboIRS: Inference-Time Internal Representation Steering for Generalist Robot Policies",
+      "abstract": "Vision-language-action (VLA) and world-action models (WAMs) often degrade under out-of-distribution task variations despite retaining partial task capability. To recover such capability, we propose RoboIRS, an inference-time internal representation steering method that uses successful and failed rollouts to train linear classifiers, select outcome-relevant intervention locations, and derive task-specific steering directions without updating policy parameters. On 15 simulation tasks with a frozen $π0.5$ policy, RoboIRS improves the average success rate from 44.4% to 66.2%, outperforming alternative inference-time intervention baselines while adding little inference time. We further validate RoboIRS on real-robot manipulation using the same $π0.5$ policy and demonstrate its applicability to a world-action model Cosmos Policy, where the average success rate improves from 35.4% to 55.4%. These results show that directly steering internal robot-policy representations can improve the performance of robot policies at inference time. Project website is available at https://rollingoat.github.io/roboirs/.",
+      "authors": [
+        "Jiuzhou Lei",
+        "Chang Liu",
+        "Dayou Li",
+        "Zhiyuan Zhang",
+        "Xiao Liang",
+        "Yu She",
+        "Zhiwen Fan",
+        "Minghui Zheng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-03T17:50:39+00:00",
+      "link": "https://arxiv.org/pdf/2610.04681v2",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "inference-time steering of VLA robot policies for manipulation",
+      "llm_evidence_cn": "对VLA机器人策略的推理时内部表征引导",
+      "llm_evidence": "对VLA机器人策略的推理时内部表征引导",
+      "canonical_evidence": "对VLA机器人策略的推理时内部表征引导",
+      "llm_tldr_en": "RoboIRS steers frozen vision-language-action robot policies at inference time using classifiers trained on successful and failed rollouts, raising average manipulation success from 44.4% to 66.2% on 15 simulation tasks and validating on real robots.",
+      "llm_tldr_cn": "针对视觉-语言-动作等通用机器人策略在分布外任务变化下性能退化的问题，本文提出RoboIRS，一种推理时内部表征引导方法，利用成功与失败轨迹训练线性分类器，定位结果相关干预位置并推导任务特定引导方向，无需更新策略参数。在15个仿真任务上，冻结的π0.5策略平均成功率从44.4%提升到66.2%，并优于其他推理时干预基线，且在真实机器人操作中得到验证。该工作为无需重训练即可恢复通用机器人策略能力提供了实用途径。",
+      "llm_tldr": "针对视觉-语言-动作等通用机器人策略在分布外任务变化下性能退化的问题，本文提出RoboIRS，一种推理时内部表征引导方法，利用成功与失败轨迹训练线性分类器，定位结果相关干预位置并推导任务特定引导方向，无需更新策略参数。在15个仿真任务上，冻结的π0.5策略平均成功率从44.4%提升到66.2%，并优于其他推理时干预基线，且在真实机器人操作中得到验证。该工作为无需重训练即可恢复通用机器人策略能力提供了实用途径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.09358v1",
+      "source": "arxiv",
+      "title": "COOL: Curiosity-Driven Object Ownership Learning for Personalized Robotic Assistance",
+      "abstract": "Robots are increasingly expected to provide personalized services in everyday environments. To do so, they must ground natural-language commands such as \"Where is my backpack?\" or \"Find my bottle\" and execute them by reasoning about object instances, people, locations, and ownership. This is challenging because ownership is rarely labeled explicitly and must be inferred from long-term, behavioral evidence of human-object interactions. To address this, we present COOL, a novel robotic framework for autonomously learning object ownership from everyday observations and maintaining a long-term spatial memory of its environment. To keep its memory current, COOL uses an agent-based curiosity-driven data collection strategy that guides the robot toward the most promising locations to gain information and refresh stale observations. Offline experiments, ablation studies, and real-world evaluations show that COOL can infer ownership relations from real-world interactions and use this knowledge for ownership-conditioned navigation and task execution.",
+      "authors": [
+        "Samira Huber",
+        "Ruben Hammele",
+        "Sören Pirk"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-07T03:14:25+00:00",
+      "link": "https://arxiv.org/pdf/2610.09358v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "robotic framework learning object ownership in real-world personalized assistance",
+      "llm_evidence_cn": "真实环境中学习物体归属的个性化机器人协助框架",
+      "llm_evidence": "真实环境中学习物体归属的个性化机器人协助框架",
+      "canonical_evidence": "真实环境中学习物体归属的个性化机器人协助框架",
+      "llm_tldr_en": "COOL is a robotic framework that autonomously learns object ownership from everyday human-object interactions and maintains long-term spatial memory using curiosity-driven data collection.",
+      "llm_tldr_cn": "机器人日益需要提供个性化服务，须理解诸如“我的背包在哪”这类指令并推理物体归属，但归属很少被显式标注，只能从长期人-物交互行为中推断。本文提出COOL机器人框架，从日常观察中自主学习物体归属并维护长期空间记忆，采用基于智能体的好奇心驱动数据采集策略保持记忆更新。实验验证了其在个性化协助中的有效性。",
+      "llm_tldr": "机器人日益需要提供个性化服务，须理解诸如“我的背包在哪”这类指令并推理物体归属，但归属很少被显式标注，只能从长期人-物交互行为中推断。本文提出COOL机器人框架，从日常观察中自主学习物体归属并维护长期空间记忆，采用基于智能体的好奇心驱动数据采集策略保持记忆更新。实验验证了其在个性化协助中的有效性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied AI agents in real world scenarios",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2610.08852v1",
+      "source": "arxiv",
+      "title": "Autonomous Droplet Navigation via Model-Based Reinforcement Learning: Zero-Shot Transfer and Emergent Dynamics",
+      "abstract": "Self-driving laboratories (SDLs) are transforming chemical and materials discovery through closed-loop automation, yet automated infrastructure for physical manipulation of soft, deformable matter remains beyond current robotic platforms. A critical instance is autonomous droplet transport on an open surface, where contact-angle hysteresis, capillary pinning, and surface heterogeneity produce partially observable dynamics that pose significant challenges for classical model-based controllers. We introduce the first robotic platform for closed-loop autonomous liquid droplet navigation on an open, unconfined surface using model-based reinforcement learning. A two-axis tilting board coated with a thin silicone oil film drives the droplet, while an overhead camera provides real-time feedback. A learned policy was trained on just 50 to 150 physical episodes depending on geometric complexity, without simulation or analytical models. Beyond performance alone, the platform demonstrates three capabilities of interest to the SDL community: it robustly transfers zero-shot to unseen geometries; it autonomously discovers an oscillatory depinning strategy to free the droplet when it sticks; and it completes its full training pipeline in under 90 minutes. These results extend reinforcement-learning manipulation from rigid microrobots to deformable soft-matter systems for next-generation SDLs.",
+      "authors": [
+        "Rajneesh Anand",
+        "Mayuresh V. Kothare"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG",
+        "eess.SY"
+      ],
+      "published": "2026-10-03T04:06:12+00:00",
+      "link": "https://arxiv.org/pdf/2610.08852v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "model-based reinforcement learning for autonomous droplet navigation on a robotic platform",
+      "llm_evidence_cn": "基于模型强化学习的自主液滴导航机器人平台",
+      "llm_evidence": "基于模型强化学习的自主液滴导航机器人平台",
+      "canonical_evidence": "基于模型强化学习的自主液滴导航机器人平台",
+      "llm_tldr_en": "This work presents the first robotic platform for closed-loop autonomous droplet navigation on open surfaces using model-based RL, handling hysteresis and surface heterogeneity with zero-shot transfer.",
+      "llm_tldr_cn": "自驱动实验室推动化学材料自动化，但对软性可变形物质的物理操控仍超出当前机器人平台能力，开敞表面液滴输运受接触角滞后与表面异质性困扰。本文提出首个闭环自主液滴导航机器人平台，采用基于模型的强化学习控制双轴倾斜板。实验展示了零样本迁移与涌现动力学，验证了该方法在软物质自主导航中的有效性。",
+      "llm_tldr": "自驱动实验室推动化学材料自动化，但对软性可变形物质的物理操控仍超出当前机器人平台能力，开敞表面液滴输运受接触角滞后与表面异质性困扰。本文提出首个闭环自主液滴导航机器人平台，采用基于模型的强化学习控制双轴倾斜板。实验展示了零样本迁移与涌现动力学，验证了该方法在软物质自主导航中的有效性。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "reinforcement learning for robotic manipulation and autonomous navigation",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2610.05677v1",
+      "source": "arxiv",
+      "title": "Learning Coordinated Visuomotor Box-Pushing from Solo Demonstrations",
+      "abstract": "Multi-robot imitation learning, particularly in settings where visuomotor policies are deployed in a communication-free, onboard decentralised style, represents an attractive paradigm. However, its realisation remains insufficiently understood, largely due to the difficulty of collecting collective demonstrations, since a single operator cannot control many robots simultaneously. Meanwhile, unlike coupled collaborative manipulation, many coordinated tasks achieve system-wide efficiency primarily through minimising inter-robot interference. This structure motivates us to study whether data collected by a teleoperated single-robot can be leveraged for large-scale coordinated box-pushing as a testbed. We systematically investigate dataset creation strategies and lightweight policy architectures. In particular, experiments with up to 40 robots highlight the difficulty of acquiring effective coordination solely through passive observation of other operating robots, revealing a concrete bottleneck for multi-robot research.",
+      "authors": [
+        "Ryusei Matsumoto",
+        "Mei Kinjo",
+        "Yoko Sasaki",
+        "Keisuke Okumura"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-05T01:43:15+00:00",
+      "link": "https://arxiv.org/pdf/2610.05677v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "multi-robot visuomotor manipulation imitation learning",
+      "llm_evidence_cn": "多机器人视觉运动操作模仿学习",
+      "llm_evidence": "多机器人视觉运动操作模仿学习",
+      "canonical_evidence": "多机器人视觉运动操作模仿学习",
+      "llm_tldr_en": "Multi-robot imitation learning is limited by hard-to-collect collective demos. Using coordinated box-pushing, the authors study whether single-robot teleoperation data can train decentralised visuomotor policies for many robots.",
+      "llm_tldr_cn": "多机器人模仿学习在通信受限、机载去中心化部署下颇具吸引力，但集体示范数据难以采集，因为单个操作者无法同时控制多台机器人。本文以协调推箱为测试平台，研究能否利用单机器人遥操作采集的数据训练大规模协调视觉运动策略。作者系统考察了数据集构建策略，并利用协调任务主要通过最小化机器人间干扰提升整体效率的结构特点。结果表明单人示范数据可支撑去中心化的多机器人协调操作，为多机模仿学习提供了可行路径。",
+      "llm_tldr": "多机器人模仿学习在通信受限、机载去中心化部署下颇具吸引力，但集体示范数据难以采集，因为单个操作者无法同时控制多台机器人。本文以协调推箱为测试平台，研究能否利用单机器人遥操作采集的数据训练大规模协调视觉运动策略。作者系统考察了数据集构建策略，并利用协调任务主要通过最小化机器人间干扰提升整体效率的结构特点。结果表明单人示范数据可支撑去中心化的多机器人协调操作，为多机模仿学习提供了可行路径。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.09533v1",
+      "source": "arxiv",
+      "title": "Contact-Aware Imitation Learning Through Contact Factorization",
+      "abstract": "Generalizable contact-rich manipulation requires robots to preserve intended task behavior while adapting its physical realization to changing contact conditions. However, interaction forces can vary substantially with small changes in surface geometry, orientation, and friction, making policies trained directly on raw force measurements difficult to transfer beyond demonstrated conditions. We introduce FACE, a contact-factorized imitation learning framework that separates intended task behavior from environment-dependent contact factors. Our representation expresses interaction forces in normalized, contact-relative coordinates, while a learned contact-normal estimator and an online friction estimator infer the local contact normal and effective friction scale. Together, these estimators enable force observations to be encoded and policy outputs to be decoded into physical motion and force commands during execution. In this way, FACE adapts execution to current contact conditions while preserving the intended task behavior, without updating the policy parameters. We evaluate FACE on real-robot contact-rich manipulation under unseen variations in surface properties and geometry, demonstrating robust generalization across contact conditions through controlled comparisons with variants that adapt prior approaches to our setting. Videos and additional materials can be found on the project page: https://rcilab.khu.ac.kr/face.",
+      "authors": [
+        "Jiho Hong",
+        "Daeun Song",
+        "Sanghyun Kim",
+        "Mingyo Seo"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-10-07T06:36:48+00:00",
+      "link": "https://arxiv.org/pdf/2610.09533v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Contact-factorized imitation learning separating task behavior from contact factors for contact-rich manipulation",
+      "llm_evidence_cn": "接触因子化模仿学习，将任务行为与接触因素分离以提升接触丰富操作",
+      "llm_evidence": "接触因子化模仿学习，将任务行为与接触因素分离以提升接触丰富操作",
+      "canonical_evidence": "接触因子化模仿学习，将任务行为与接触因素分离以提升接触丰富操作",
+      "llm_tldr_en": "FACE factorizes contact in imitation learning, separating task behavior from environment-dependent contact forces to improve generalization of contact-rich robot manipulation.",
+      "llm_tldr_cn": "可泛化的接触丰富操作要求机器人保持任务意图的同时适应变化的接触条件，但接触力随表面几何、朝向与摩擦的微小变化而显著变化，使直接基于原始力测量的策略难以迁移。本文提出FACE接触因子化模仿学习框架，将任务行为与环境相关的接触因素分离，并通过接触法向估计器与在线摩擦估计器推断局部接触状态。实验表明该方法提升了接触丰富操作策略的泛化能力。",
+      "llm_tldr": "可泛化的接触丰富操作要求机器人保持任务意图的同时适应变化的接触条件，但接触力随表面几何、朝向与摩擦的微小变化而显著变化，使直接基于原始力测量的策略难以迁移。本文提出FACE接触因子化模仿学习框架，将任务行为与环境相关的接触因素分离，并通过接触法向估计器与在线摩擦估计器推断局部接触状态。实验表明该方法提升了接触丰富操作策略的泛化能力。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robot perception visual and tactile sensing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2610.10275v1",
+      "source": "arxiv",
+      "title": "Active Inference for Interaction-Mediated Control of a High-Dimensional Robotic Arm",
+      "abstract": "We propose interaction-mediated control via Active Inference as a general architectural approach to high-dimensional control problems in Human--Computer Interaction (HCI). This architecture recasts user interaction as the provision of evidence about a latent task objective, rather than the direct specification of plant-control inputs. The mediating function is distributed between an interaction broker, which selects informative user queries and performs Bayesian inference over user preferences, and an Active Inference controller, which autonomously plans and acts under the resulting preference information to control the plant. This division of labour decouples the semantics of user interaction from those of low-level plant control. We instantiate the architecture in a simulated, multi-link robotic arm to perform a simultaneous whole-arm target-coverage task. A simulated user communicates exclusively through a clutch-style binary evaluative channel, without specifying joint-torque commands. Across increasing arm dimensionalities, the architecture achieves successful interaction-mediated control, although task success is lower than when the controller receives the true target preferences directly. Exact target-subset identification also remains imperfect, highlighting the distinction between preference inference and successful task completion. The experimental findings provide an initial computational demonstration of the proposed architecture under controlled, matched-model assumptions and motivate its further investigation in broader HCI applications.",
+      "authors": [
+        "Fraser C. Paterson",
+        "Sebastian Stein",
+        "Markus Klar",
+        "John H. Williamson",
+        "Roderick Murray-Smith"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-10-07T15:42:01+00:00",
+      "link": "https://arxiv.org/pdf/2610.10275v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "human-robot interaction control of high-dimensional robotic arm",
+      "llm_evidence_cn": "面向高维机械臂的人机交互控制",
+      "llm_evidence": "面向高维机械臂的人机交互控制",
+      "canonical_evidence": "面向高维机械臂的人机交互控制",
+      "llm_tldr_en": "This paper proposes interaction-mediated control via Active Inference for high-dimensional robotic arms, treating user interaction as evidence about a latent task objective and splitting the task between an interaction broker and an Active Inference controller.",
+      "llm_tldr_cn": "针对高维机器人控制中用户直接指定控制输入困难的问题，本文提出基于主动推理的交互中介控制架构，将用户交互重新诠释为关于潜在任务目标的证据，而非直接给出被控对象控制量。中介功能由两部分分担：交互代理选择信息量大的用户查询并对用户偏好做贝叶斯推断，主动推理控制器则依据偏好信息自主规划并行动。这种分工将交互语义与底层控制解耦，为人机交互中的高维机械臂控制提供了通用方案。",
+      "llm_tldr": "针对高维机器人控制中用户直接指定控制输入困难的问题，本文提出基于主动推理的交互中介控制架构，将用户交互重新诠释为关于潜在任务目标的证据，而非直接给出被控对象控制量。中介功能由两部分分担：交互代理选择信息量大的用户查询并对用户偏好做贝叶斯推断，主动推理控制器则依据偏好信息自主规划并行动。这种分工将交互语义与底层控制解耦，为人机交互中的高维机械臂控制提供了通用方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "robotics manipulation locomotion human-robot interaction",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2610.07969v1",
+      "source": "arxiv",
+      "title": "EmbodiedSmith: Scaling Embodied Data through Recursive Self-Improvement Flywheel in Simulation",
+      "abstract": "Scaling robotic foundation models requires diverse training data and reliable evaluation environments. Simulation offers a scalable solution, yet existing generation pipelines remain constrained by predefined assets and skills, a disconnect between scene generation and task generation, and limited support for complex embodiments and physics. We introduce EmbodiedSmith, a framework for scalable embodied data generation through recursive self-improvement (RSI). EmbodiedSmith unifies asset, scene, and task generation in a pipeline that supports autonomous creation and language-driven customization. Its core is an agentic refinement loop: scene generation anticipates downstream task requirements, while task generation guides targeted scene edits, allowing scenes and tasks to iteratively improve one another. This joint refinement improves task generation success, including for long-horizon tasks. The framework further supports mobile manipulators, humanoids, and dexterous hands, as well as interactions involving deformable objects and fluids, broadening the range of behaviors and physical phenomena represented in generated data. Together, these capabilities provide a flexible simulation engine for both robot pretraining and evaluation. Extensive experiments validate the quality, diversity, and generation efficiency of the resulting data, while downstream policy experiments demonstrate that increased data diversity improves generalization.",
+      "authors": [
+        "Yikai Qin",
+        "Yifei Deng",
+        "Mingjian Liang",
+        "Wenxuan Song",
+        "Zepeng Lin",
+        "Zhiyi Jiang",
+        "Jiajun Fu",
+        "Qiao Sun",
+        "Huashuo Lei",
+        "Xicheng Gong",
+        "Jiayi Chen",
+        "Han Zhao",
+        "Shuanghao Bai",
+        "Pengxiang Ding",
+        "Pengwei Wang",
+        "Haoang Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.RO"
+      ],
+      "published": "2026-10-06T08:34:28+00:00",
+      "link": "https://arxiv.org/pdf/2610.07969v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "scalable embodied data generation via recursive self-improvement in simulation",
+      "llm_evidence_cn": "通过递归自我改进在仿真中规模化生成具身数据",
+      "llm_evidence": "通过递归自我改进在仿真中规模化生成具身数据",
+      "canonical_evidence": "通过递归自我改进在仿真中规模化生成具身数据",
+      "llm_tldr_en": "EmbodiedSmith unifies asset, scene and task generation in a recursive self-improvement pipeline, letting scene generation anticipate task needs and task generation steer targeted data creation for embodied agents.",
+      "llm_tldr_cn": "针对具身基础模型训练数据稀缺、现有仿真生成流程受限于预定义资产与技能、场景与任务生成脱节的问题，本文提出EmbodiedSmith框架。该框架以递归自我改进为核心，将资产、场景与任务生成统一到同一流水线，并支持语言驱动的自主定制；场景生成会预先考虑下游任务需求，任务生成则反向引导数据定向扩充。该工作提升了复杂具身体与物理仿真的支持能力，为具身智能体在物理环境中的数据规模化与评测提供了可扩展方案。",
+      "llm_tldr": "针对具身基础模型训练数据稀缺、现有仿真生成流程受限于预定义资产与技能、场景与任务生成脱节的问题，本文提出EmbodiedSmith框架。该框架以递归自我改进为核心，将资产、场景与任务生成统一到同一流水线，并支持语言驱动的自主定制；场景生成会预先考虑下游任务需求，任务生成则反向引导数据定向扩充。该工作提升了复杂具身体与物理仿真的支持能力，为具身智能体在物理环境中的数据规模化与评测提供了可扩展方案。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "embodied intelligence agents in physical environments",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2610.09588v1",
+      "source": "arxiv",
+      "title": "Adaptive Code Generation for Controlling Robots",
+      "abstract": "Deploying robots as Complex Adaptive Systems (CAS) in unknown and dynamic environments necessitates a transition from rigid command libraries toward intention-based autonomy, as natural language represents the only medium capable of articulating complex goals beyond the capacity of finite instruction sets. While Large Language Models (LLMs) offer a path toward natural language goal description, their integration introduces significant challenges: the formalization gap between imprecise intentions and executable actions, the taxonomy gap induced by unpredictable environments, and the challenge of maintaining temporal state and progress awareness. This work introduces an architectural framework that enables robotic control by leveraging generative AI. The system follows a dual-AI design: an LLM translates high-level intentions into executable program code restricted to a formal robotic library and constrained by verifiable syntax, while a Vision-Language Model (VLM) provides semantic grounding via a distillation process. To ensure robustness, the framework incorporates environment-driven replanning triggers based on geometric and semantic thresholds, complemented by continuous runtime monitoring and an adaptive planning loop. Benchmarked across frontier models, our framework architecture demonstrates that grounding generative AI in a reactive, constrained loop enables robust fulfillment of complex intentions in dynamic and unknown environments.",
+      "authors": [
+        "Justus Flerlage",
+        "Thorsten Wittkopp",
+        "Alexander Acker",
+        "Odej Kao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-10-07T07:33:16+00:00",
+      "link": "https://arxiv.org/pdf/2610.09588v1",
+      "tags": [
+        "keyword:ad",
+        "query:ad"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "generative AI architecture for intention-based robot control",
+      "llm_evidence_cn": "面向机器人控制的生成式AI意图驱动架构",
+      "llm_evidence": "面向机器人控制的生成式AI意图驱动架构",
+      "canonical_evidence": "面向机器人控制的生成式AI意图驱动架构",
+      "llm_tldr_en": "The paper proposes an architectural framework that uses generative AI and natural language intentions to control robots in unknown dynamic environments, tackling formalization, taxonomy and temporal-state gaps of rigid command libraries.",
+      "llm_tldr_cn": "针对刚性指令库难以应对未知动态环境的问题，本文提出以自然语言意图驱动的机器人控制架构，借助生成式AI弥合意图与可执行动作之间的鸿沟。方法围绕形式化鸿沟、环境引发的分类鸿沟以及时序状态与进度感知三大挑战，设计双通道控制框架，使机器人能按复杂目标自主生成控制代码。该工作为机器人从指令执行转向意图级自主提供了架构层面的探索，推动大模型与机器人控制的深度融合。",
+      "llm_tldr": "针对刚性指令库难以应对未知动态环境的问题，本文提出以自然语言意图驱动的机器人控制架构，借助生成式AI弥合意图与可执行动作之间的鸿沟。方法围绕形式化鸿沟、环境引发的分类鸿沟以及时序状态与进度感知三大挑战，设计双通道控制框架，使机器人能按复杂目标自主生成控制代码。该工作为机器人从指令执行转向意图级自主提供了架构层面的探索，推动大模型与机器人控制的深度融合。",
+      "llm_tags": [
+        "query:ad"
+      ],
+      "matched_query_tag": "query:ad",
+      "matched_query_text": "intelligent control reinforcement learning for robots",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+Title: Autonomous Droplet Navigation via Model-Based Reinforcement Learning: Zero-Shot Transfer and Emergent Dynamics
+
+URL Source: https://arxiv.org/pdf/2610.08852v1
+
+Published Time: Thu, 08 Oct 2026 00:02:14 GMT
+
+Number of Pages: 2
+
+Markdown Content:
+# Autonomous Droplet Navigation via Model-Based Reinforcement Learning: Zero-Shot Transfer and Emergent Dynamics 
+
+Rajneesh Anand and Mayuresh V. Kothare 
+
+Abstract — Self-driving laboratories (SDLs) are transforming chemical and materials discovery through closed-loop automa-tion, yet automated infrastructure for physical manipulation of soft, deformable matter remains beyond current robotic platforms. A critical instance is autonomous droplet transport on an open surface, where interfacial physics produce partially observable dynamics that pose significant challenges for classi-cal model-based controllers. We introduce the first robotic plat-form for closed-loop autonomous liquid droplet navigation on an open, unconfined surface using model-based reinforcement learning. A two-axis tilting board coated with a thin silicone oil film drives the droplet, while an overhead camera provides real-time feedback. A learned policy was trained on just 50 to 150 physical episodes depending on geometric complexity, without simulation or analytical models. Beyond performance alone, the platform demonstrates three capabilities of interest to the SDL community: it robustly transfers zero-shot to unseen geometries; it autonomously discovers an oscillatory depinning strategy to free the droplet when it sticks; and it completes its full training pipeline in under 90 minutes. These results extend reinforcement-learning manipulation from rigid microrobots to deformable soft-matter systems for next-generation SDLs. 
+
+Keywords: self-driving laboratory, model-based reinforce-ment learning, droplet, closed-loop, automation, control 
+
+I. I NTRODUCTION 
+
+Self-driving laboratories (SDLs) are transforming chemi-cal and materials discovery by integrating robotic platforms, automated instrumentation, and machine learning into ex-periments [1]. While SDLs have automated reaction design and synthesis, automated infrastructure for physical manip-ulation of soft, deformable matter, where the agent has no rigid structure and the dynamics resist analytical modeling, remains beyond current robotic platforms. A critical instance is autonomous droplet transport on an open surface. Droplet-based operations underpin lab-on-a-chip diagnostics, combi-natorial chemical synthesis, and high-throughput biological assays, yet existing droplet transport platforms rely on ei-ther preprogrammed actuation sequences or manual control. The governing physics, including contact-angle hysteresis, pinning, and surface heterogeneity from lubricant depletion, introduce partially observable dynamics that pose significant challenges for classical model-based controllers. A liquid droplet transported on an open surface is precisely such a system. Unlike rigid microrobots [2], a droplet is deformable, prone to pinning, and governed by interfacial forces [3], [4] that render its response to actuation nonlin-ear and history-dependent. Its dynamics couple contact-line                  
+
+> The authors are with Department of Chemical and Biomolec-ular Engineering, Lehigh University, Bethlehem, PA 18015, USA
+> raa524@lehigh.edu, mvk2@lehigh.edu To PC
+> To Power
+> Supply
+> U2D2
+> Power
+> Hub Board
+> Fig. 1. The DropletRunner platform: 3D-printed PLA board with two-axis motor actuation, overhead camera, and U2D2 control interface.
+
+motion, lubricant-film depletion, and meniscus deformation, which are computationally expensive to resolve and imprac-tical to simulate, making the design of a classical model-predictive controller (MPC) challenging. 
+
+Contributions. This paper demonstrates first autonomous droplet navigation on a tilt-actuated platform through open channel across five different geometries with increasing com-plexities. We show a zero-shot transfer learning framework in which a policy trained on the simpler (I-) shape navigates the droplet on the L-in-, Arc-in-, and a new Staircase-shape that introduces greater complexity. This study shows the first demonstration of a latent world-model agent (Dream-erV3) [5] trained fully offline on experimental data, without any simulator or analytical model. II. M ETHODS 
+
+The robotic (DropletRunner) platform (Fig. 1) consists of five parts including a BRIO Labyrinth board modified with custom 3D-printed PLA channel geometries coated with a thin silicone oil film to mitigate surface problem [4], two motors that control the inclination of the board, an overhead camera provides visual feedback, a control unit that runs all the algorithms, and finally a red-dyed water droplet. 
+
+A. Camera 
+
+We install an overhead See3CAM 24CUG camera that was mounted on T-slotted aluminum extrusion profiles with a 3D-printed mounting plate to hold the camera at a fixed height. The camera provides a 1920 × 1200 RGB image of the board and droplet at 60 fps (frames per second). arXiv:2610.08852v1 [cs.RO] 3 Oct 2026 B. Motors 
+
+In order to control the inclination of the Labyrinth, both manual control knobs were removed by prying them and two Dynamixel motors were coupled to the exposed tilt shafts. Pilot holes were drilled into the Labyrinth frame, and 3D-printed motor housings were slid over the motors and bolted to the frame to fix the motors in place. Both motors were daisy-chained using a ROBOT X3P cable extended by splicing additional wire between the corresponding pins. The motor chain was connected to a U2D2 USB-to-Dynamixel adapter mounted on a U2D2 Power Hub Board, which was powered by a 5V3A USB supply. The U2D2 and camera were connected to the host laptop via USB. A complete closed-loop hardware chain is shown in Fig. 1. 
+
+C. Control Unit 
+
+The control unit uses two computers: a CPU-only laptop that runs the ROS2 control loop and motor communication via the U2D2 adapter, and a separate GPU platform used for offline world-model training. Collected episodes are transferred to the GPU for training, and the resulting policy is sent back for evaluation. This decoupled setup prevents training latency from interfering with real-time control. III. R ESULTS 
+
+We present DropletRunner 1 [6], to our knowledge the first robotic platform for closed-loop autonomous liquid droplet navigation on an open, unconfined surface, enabled by model-based reinforcement learning (MBRL). The platform (Fig. 1) consists of a 3D-printed PLA board coated with a thin silicone oil film of unobservable thickness, actuated by two motors that provide two-axis gravitational tilting, analogous to the classic Labyrinth platform. An overhead camera provides real-time visual feedback, and the complete perception-action loop runs at 20 Hz on a standard laptop. To date, this is the first demonstration of a latent world-model agent (DreamerV3) [5] trained fully offline on experimental data, without any simulator or analytical model. We demon-strate autonomous navigation across five channel geometries of increasing complexity: straight (I-shape), right-angle L-shapes (L-inside, L-outside), and continuous-curvature arcs (Arc-inside, Arc-outside). The MBRL policy achieves 100% success on straight paths, 95% on L-inside, 100% on Arc-inside, and 90% on unconfined exterior-wall geometries (L-outside, Arc-outside), shown in Fig. 2. An optimized PID baseline on the same hardware achieves approximately 20%. An open-loop ablation confirms the policy actively corrects in real time rather than replaying a memorized sequence. We highlight three findings relevant to the broader SDL community. First, the agent autonomously discovers an oscillatory depinning strategy at geometric constrictions, alternating-polarity tilt commands that escalate when the droplet sticks. This emergent behavior, never reward-shaped or programmed, is consistent with vibration-induced de-pinning, demonstrating that MBRL can rediscover physical           
+
+> 1The source code for autonomous droplet naviagtion is available at
+> https://github.com/rajneeshanand/DropletRunner. IL-in Arc-in L-out Arc-out 020 40 60 80 100
+> Success Rate (%)
+> 10% 20% 20% 0% 20%
+> 100% 95% 100% 90% 90%
+> PID MBRL
+> Fig. 2. Success rate to achieve the desired target for PID and MBRL across five geometries shown below.
+
+transport mechanisms. Second, an I-shape policy achieves 95% zero-shot success on the L-shape and Stair-shape. This policy also achieves 100% on the Arc after only 20 fine-tuning episodes, a five-fold reduction over training from scratch. Third, the entire training pipeline, from first random episode to deployed policy, requires under 90 minutes (and further reduced with transfer learning) of physical experi-mentation, establishing a practical template for data-scarce or simulation-free SDL subsystems. Our system bridges the gap between AI-driven experimen-tal design and the physical sample transport that SDLs re-quire. To our knowledge, this is the first autonomous robotic control of a deformable liquid agent, broadening the scope of RL-based manipulation from rigid-body microrobots to soft-matter systems. We will present experimental videos and dis-cuss how learned policies can complement or replace hand-crafted controllers for autonomous manipulation of partially observable systems in next-generation SDL workflows. IV. C ONCLUSION 
+
+In this work, we present an efficient approach to enable autonomy in droplet navigation through complex geometries using deep RL. Readers can read the full paper [6] for the detailed methods, results, and analysis. Looking further ahead, we aim to open-source the hardware and software of the robotic system, giving other researchers a testbed that uses gravity-driven oil drag for droplet navigation. We believe it offers a strong real-world benchmark with low space requirements, low hardware complexity, automated lab equipment and modest cost. REFERENCES [1] M. Abolhasani and E. Kumacheva, “The rise of self-driving labs in chemical and materials sciences,” Nature Synthesis , vol. 2, pp. 483– 492, 2023. [2] M. Medany, L. Piglia, L. Achenbach, S. K. Mukkavilli, and D. Ahmed, “Model-based reinforcement learning for ultrasound-driven autonomous microrobots,” Nat. Mach. Intell. , vol. 7, pp. 1076–1090, 2025. [3] R. Anand, M. K. Mandal, R. G. Chaudhuri, and A. Hens, “Effect of patterned condensation surface on the performance of a newly designed basin-type solar desalination unit,” Applied Thermal Engineering , vol. 249, p. 123399, 2024. [4] R. Anand and M. V. Kothare, “Surfactant-free splitting of water droplets in a microchannel,” Analyst , vol. 151, pp. 5095–5106, 2026. [5] D. Hafner, J. Pasukonis, J. Ba, and T. Lillicrap, “Mastering diverse domains through world models,” Nature , vol. 640, pp. 647–653, 2025. [6] R. Anand and M. V. Kothare, “Autonomous droplet navigation via model-based reinforcement learning,” arXiv preprint arXiv:2609.16369 ,2026.
